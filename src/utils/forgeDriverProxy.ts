@@ -1,7 +1,7 @@
 import { forgeDriver } from "./forgeDriver";
 import { injectSqlHints, SqlHints } from "./sqlHints";
 import { ForgeSqlOperation } from "../core/ForgeSQLQueryBuilder";
-import { printQueriesWithPlan } from "./sqlUtils";
+import { handleErrorsWithPlan } from "./sqlUtils";
 
 /**
  * Error codes and constants for query analysis
@@ -57,22 +57,22 @@ export function createForgeDriverProxy(
         error?.context?.debug?.errno === QUERY_ERROR_CODES.OUT_OF_MEMORY_ERRNO;
 
       if (isTimeoutError || isOutOfMemoryError) {
+        // Wait for CLUSTER_STATEMENTS_SUMMARY to be populated with our failed query data
+        await new Promise((resolve) => setTimeout(resolve, STATEMENTS_SUMMARY_DELAY_MS));
+
+        const queryEndTime = Date.now();
+        const queryDuration = queryEndTime - queryStartTime;
+        let errorType: "OOM" | "TIMEOUT" = "TIMEOUT";
         if (isTimeoutError) {
           // eslint-disable-next-line no-console
           console.error(` TIMEOUT detected - Query exceeded time limit`);
         } else {
           // eslint-disable-next-line no-console
           console.error(`OUT OF MEMORY detected - Query exceeded memory limit`);
+          errorType = "OOM";
         }
-
-        // Wait for CLUSTER_STATEMENTS_SUMMARY to be populated with our failed query data
-        await new Promise((resolve) => setTimeout(resolve, STATEMENTS_SUMMARY_DELAY_MS));
-
-        const queryEndTime = Date.now();
-        const queryDuration = queryEndTime - queryStartTime;
-
         // Analyze the failed query using CLUSTER_STATEMENTS_SUMMARY
-        await printQueriesWithPlan(forgeSqlOperation, queryDuration);
+        await handleErrorsWithPlan(forgeSqlOperation, queryDuration, errorType);
       }
 
       // Log SQL error details if requested

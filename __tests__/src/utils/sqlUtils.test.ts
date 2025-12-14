@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import {
   formatLimitOffset,
   generateDropTableStatements,
@@ -7,9 +7,18 @@ import {
   formatDateTime,
   withTimeout,
   withTidbHint,
+  getPrimaryKeys,
+  getTableMetadata,
+  mapSelectFieldsWithAlias,
+  applyFromDriverTransform,
+  printQueriesWithPlan,
+  handleErrorsWithPlan,
+  slowQueryPerHours,
 } from "../../../src/utils/sqlUtils";
 import { DateTime } from "luxon";
-import { int, mysqlTable } from "drizzle-orm/mysql-core";
+import { int, mysqlTable, varchar, text, primaryKey } from "drizzle-orm/mysql-core";
+import { sql } from "drizzle-orm";
+import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";
 
 // Test suite for transformValue function
 describe("transformValue", () => {
@@ -333,6 +342,590 @@ describe("transformValue", () => {
       // The result should be a SQL wrapper object
       expect(result).toHaveProperty("queryChunks");
       expect(result).toHaveProperty("decoder");
+    });
+  });
+
+  describe("getTableMetadata", () => {
+    it("should extract table metadata with primary key", () => {
+      const testTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+        name: varchar("name", { length: 255 }),
+      });
+
+      const metadata = getTableMetadata(testTable);
+
+      expect(metadata).toBeDefined();
+      expect(metadata.tableName).toBe("users");
+      expect(metadata.columns).toBeDefined();
+      expect(metadata.columns.id).toBeDefined();
+      expect(metadata.columns.name).toBeDefined();
+      expect(metadata.indexes).toBeInstanceOf(Array);
+      expect(metadata.checks).toBeInstanceOf(Array);
+      expect(metadata.foreignKeys).toBeInstanceOf(Array);
+      expect(metadata.primaryKeys).toBeInstanceOf(Array);
+      expect(metadata.uniqueConstraints).toBeInstanceOf(Array);
+      expect(metadata.extras).toBeInstanceOf(Array);
+    });
+
+    it("should extract table metadata without primary key", () => {
+      const testTable = mysqlTable("posts", {
+        id: int("id"),
+        title: varchar("title", { length: 255 }),
+      });
+
+      const metadata = getTableMetadata(testTable);
+
+      expect(metadata).toBeDefined();
+      expect(metadata.tableName).toBe("posts");
+      expect(metadata.columns).toBeDefined();
+      expect(metadata.columns.id).toBeDefined();
+      expect(metadata.columns.title).toBeDefined();
+    });
+
+    it("should handle table with multiple columns", () => {
+      const testTable = mysqlTable("products", {
+        id: int("id").primaryKey(),
+        name: varchar("name", { length: 255 }),
+        description: text("description"),
+        price: int("price"),
+      });
+
+      const metadata = getTableMetadata(testTable);
+
+      expect(metadata.columns).toHaveProperty("id");
+      expect(metadata.columns).toHaveProperty("name");
+      expect(metadata.columns).toHaveProperty("description");
+      expect(metadata.columns).toHaveProperty("price");
+    });
+  });
+
+  describe("getPrimaryKeys", () => {
+    it("should return primary key from column", () => {
+      const testTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+        name: varchar("name", { length: 255 }),
+      });
+
+      const primaryKeys = getPrimaryKeys(testTable);
+
+      expect(primaryKeys).toBeDefined();
+      expect(primaryKeys.length).toBe(1);
+      expect(primaryKeys[0][0]).toBe("id");
+      expect(primaryKeys[0][1]).toBeDefined();
+    });
+
+    it("should return empty array when no primary key", () => {
+      const testTable = mysqlTable("posts", {
+        id: int("id"),
+        title: varchar("title", { length: 255 }),
+      });
+
+      const primaryKeys = getPrimaryKeys(testTable);
+
+      expect(primaryKeys).toBeDefined();
+      expect(primaryKeys).toEqual([]);
+    });
+
+    it("should handle table with composite primary key using primaryKey builder", () => {
+      const testTable = mysqlTable(
+        "order_items",
+        {
+          orderId: int("order_id"),
+          itemId: int("item_id"),
+        },
+        (table) => ({
+          pk: primaryKey({ columns: [table.orderId, table.itemId] }),
+        }),
+      );
+
+      const primaryKeys = getPrimaryKeys(testTable);
+
+      // Note: This test may return empty array if primary keys are only in builders
+      // The actual behavior depends on how drizzle-orm stores primary keys
+      expect(primaryKeys).toBeDefined();
+      expect(Array.isArray(primaryKeys)).toBe(true);
+    });
+  });
+
+  describe("mapSelectFieldsWithAlias", () => {
+    it("should map table fields to aliases", () => {
+      const testTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+        name: varchar("name", { length: 255 }),
+      });
+
+      const fields = {
+        id: testTable.id,
+        name: testTable.name,
+      };
+
+      const result = mapSelectFieldsWithAlias(fields);
+
+      expect(result).toBeDefined();
+      expect(result.selections).toBeDefined();
+      expect(result.aliasMap).toBeDefined();
+      expect(Object.keys(result.aliasMap).length).toBeGreaterThan(0);
+    });
+
+    it("should map nested fields to aliases", () => {
+      const usersTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+        name: varchar("name", { length: 255 }),
+      });
+
+      const ordersTable = mysqlTable("orders", {
+        id: int("id").primaryKey(),
+        userId: int("user_id"),
+      });
+
+      const fields = {
+        user: {
+          id: usersTable.id,
+          name: usersTable.name,
+        },
+        order: {
+          id: ordersTable.id,
+        },
+      };
+
+      const result = mapSelectFieldsWithAlias(fields);
+
+      expect(result).toBeDefined();
+      expect(result.selections).toBeDefined();
+      expect(result.selections.user).toBeDefined();
+      expect(result.selections.order).toBeDefined();
+      expect(result.aliasMap).toBeDefined();
+    });
+
+    it("should throw error for empty fields", () => {
+      expect(() => mapSelectFieldsWithAlias({} as any)).not.toThrow();
+      // @ts-expect-error Testing invalid input
+      expect(() => mapSelectFieldsWithAlias(null)).toThrow("fields is empty");
+      // @ts-expect-error Testing invalid input
+      expect(() => mapSelectFieldsWithAlias(undefined)).toThrow("fields is empty");
+    });
+
+    it("should handle SQL wrapper fields", () => {
+      const testTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+        name: varchar("name", { length: 255 }),
+      });
+
+      const fields = {
+        id: testTable.id,
+        count: sql<number>`COUNT(*)`,
+      };
+
+      const result = mapSelectFieldsWithAlias(fields);
+
+      expect(result).toBeDefined();
+      expect(result.selections).toBeDefined();
+      expect(result.selections.count).toBeDefined();
+    });
+  });
+
+  describe("applyFromDriverTransform", () => {
+    it("should transform rows without custom mapFrom", () => {
+      const testTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+        name: varchar("name", { length: 255 }),
+      });
+
+      const fields = {
+        id: testTable.id,
+        name: testTable.name,
+      };
+
+      const { selections, aliasMap } = mapSelectFieldsWithAlias(fields);
+      const rows = [
+        { id: 1, name: "John" },
+        { id: 2, name: "Jane" },
+      ];
+
+      const result = applyFromDriverTransform(rows, selections, aliasMap);
+
+      expect(result).toBeDefined();
+      expect(result.length).toBe(2);
+      expect(result[0]).toEqual({ id: 1, name: "John" });
+      expect(result[1]).toEqual({ id: 2, name: "Jane" });
+    });
+
+    it("should transform rows with null branches", () => {
+      const usersTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+        name: varchar("name", { length: 255 }),
+      });
+
+      const ordersTable = mysqlTable("orders", {
+        id: int("id").primaryKey(),
+        userId: int("user_id"),
+      });
+
+      const fields = {
+        user: {
+          id: usersTable.id,
+          name: usersTable.name,
+        },
+        order: {
+          id: ordersTable.id,
+        },
+      };
+
+      const { selections, aliasMap } = mapSelectFieldsWithAlias(fields);
+      // Note: transformObject expects objects, not null. Null values are handled by processNullBranches
+      // after transformation. So we pass empty objects that will be converted to null.
+      const rows = [
+        {
+          user: { id: 1, name: "John" },
+          order: {}, // Empty object will be converted to null by processNullBranches
+        },
+        {
+          user: { id: 2, name: "Jane" },
+          order: { id: 10 },
+        },
+      ];
+
+      const result = applyFromDriverTransform(rows, selections, aliasMap);
+
+      expect(result).toBeDefined();
+      expect(result.length).toBe(2);
+      expect(result[0].user).toBeDefined();
+      expect(result[0].order).toBeNull(); // Empty object becomes null
+      expect(result[1].user).toBeDefined();
+      expect(result[1].order).toBeDefined();
+    });
+
+    it("should handle empty rows array", () => {
+      const testTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+      });
+
+      const fields = { id: testTable.id };
+      const { selections, aliasMap } = mapSelectFieldsWithAlias(fields);
+
+      const result = applyFromDriverTransform([], selections, aliasMap);
+
+      expect(result).toBeDefined();
+      expect(result).toEqual([]);
+    });
+
+    it("should handle rows with all null nested objects", () => {
+      const usersTable = mysqlTable("users", {
+        id: int("id").primaryKey(),
+      });
+
+      const ordersTable = mysqlTable("orders", {
+        id: int("id").primaryKey(),
+      });
+
+      const fields = {
+        user: { id: usersTable.id },
+        order: { id: ordersTable.id },
+      };
+
+      const { selections, aliasMap } = mapSelectFieldsWithAlias(fields);
+      // Empty object will be converted to null by processNullBranches
+      const rows = [
+        {
+          user: { id: 1 },
+          order: {}, // Empty object becomes null
+        },
+      ];
+
+      const result = applyFromDriverTransform(rows, selections, aliasMap);
+
+      expect(result).toBeDefined();
+      expect(result.length).toBe(1);
+      expect(result[0].user).toBeDefined();
+      expect(result[0].order).toBeNull();
+    });
+  });
+
+  describe("printQueriesWithPlan", () => {
+    let mockForgeSQLORM: ForgeSqlOperation;
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+    let consoleDebugSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      consoleDebugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+
+      const mockQueryBuilder = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+      };
+
+      mockForgeSQLORM = {
+        getDrizzleQueryBuilder: vi.fn().mockReturnValue(mockQueryBuilder),
+      } as unknown as ForgeSqlOperation;
+    });
+
+    afterEach(() => {
+      consoleWarnSpy.mockRestore();
+      consoleDebugSpy.mockRestore();
+    });
+
+    it("should handle successful query execution", async () => {
+      const mockResults = [
+        {
+          digestText: "SELECT * FROM users",
+          avgLatency: "1000000", // 1ms in nanoseconds
+          avgMem: "2000000", // 2MB in bytes
+          execCount: "5",
+          plan: "Index Scan",
+          stmtType: "Select",
+        },
+      ];
+
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnValue(Promise.resolve(mockResults)),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      await printQueriesWithPlan(mockForgeSQLORM, 1000, 100);
+
+      expect(mockForgeSQLORM.getDrizzleQueryBuilder).toHaveBeenCalled();
+      expect(consoleWarnSpy).toHaveBeenCalled();
+    });
+
+    it("should handle query errors gracefully", async () => {
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockRejectedValue(new Error("Query failed")),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      await printQueriesWithPlan(mockForgeSQLORM, 1000, 100);
+
+      expect(consoleDebugSpy).toHaveBeenCalled();
+    });
+
+    it("should use default timeout when not provided", async () => {
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnValue(Promise.resolve([])),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      await printQueriesWithPlan(mockForgeSQLORM, 1000);
+
+      expect(mockForgeSQLORM.getDrizzleQueryBuilder).toHaveBeenCalled();
+    });
+  });
+
+  describe("handleErrorsWithPlan", () => {
+    let mockForgeSQLORM: ForgeSqlOperation;
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+    let consoleDebugSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      consoleDebugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+
+      mockForgeSQLORM = {
+        getDrizzleQueryBuilder: vi.fn(),
+      } as unknown as ForgeSqlOperation;
+    });
+
+    afterEach(() => {
+      consoleWarnSpy.mockRestore();
+      consoleDebugSpy.mockRestore();
+    });
+
+    it("should handle OOM errors", async () => {
+      const mockResults = [
+        {
+          digestText: "SELECT * FROM large_table",
+          avgLatency: "5000000",
+          avgMem: "100000000", // 100MB
+          execCount: "1",
+          plan: "Full Table Scan",
+          stmtType: "Select",
+        },
+      ];
+
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        orderBy: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockReturnValue(Promise.resolve(mockResults)),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      await handleErrorsWithPlan(mockForgeSQLORM, 1000, "OOM");
+
+      expect(mockForgeSQLORM.getDrizzleQueryBuilder).toHaveBeenCalled();
+      expect(mockQuery.orderBy).toHaveBeenCalled();
+      expect(mockQuery.limit).toHaveBeenCalled();
+    });
+
+    it("should handle TIMEOUT errors", async () => {
+      const mockResults = [
+        {
+          digestText: "SELECT * FROM slow_table",
+          avgLatency: "10000000000", // 10 seconds
+          avgMem: "5000000",
+          execCount: "1",
+          plan: "Nested Loop",
+          stmtType: "Select",
+        },
+      ];
+
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        orderBy: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockReturnValue(Promise.resolve(mockResults)),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      await handleErrorsWithPlan(mockForgeSQLORM, 1000, "TIMEOUT");
+
+      expect(mockForgeSQLORM.getDrizzleQueryBuilder).toHaveBeenCalled();
+      expect(mockQuery.orderBy).toHaveBeenCalled();
+    });
+
+    it("should handle query errors gracefully", async () => {
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        orderBy: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockRejectedValue(new Error("Query failed")),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      await handleErrorsWithPlan(mockForgeSQLORM, 1000, "OOM");
+
+      expect(consoleDebugSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe("slowQueryPerHours", () => {
+    let mockForgeSQLORM: ForgeSqlOperation;
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+    let consoleDebugSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      consoleDebugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+
+      mockForgeSQLORM = {
+        getDrizzleQueryBuilder: vi.fn(),
+      } as unknown as ForgeSqlOperation;
+    });
+
+    afterEach(() => {
+      consoleWarnSpy.mockRestore();
+      consoleDebugSpy.mockRestore();
+    });
+
+    it("should return slow query results", async () => {
+      const mockResults = [
+        {
+          query: "SELECT * FROM users WHERE id = ?",
+          queryTime: "5000",
+          memMax: "10000000", // 10MB
+          plan: "Index Scan",
+        },
+      ];
+
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnValue(Promise.resolve(mockResults)),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      const result = await slowQueryPerHours(mockForgeSQLORM, 1);
+
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBeGreaterThan(0);
+      expect(consoleWarnSpy).toHaveBeenCalled();
+    });
+
+    it("should handle null memMax values", async () => {
+      const mockResults = [
+        {
+          query: "SELECT * FROM users",
+          queryTime: "3000",
+          memMax: null,
+          plan: "Table Scan",
+        },
+      ];
+
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnValue(Promise.resolve(mockResults)),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      const result = await slowQueryPerHours(mockForgeSQLORM, 1);
+
+      expect(result).toBeDefined();
+      expect(result.length).toBeGreaterThan(0);
+    });
+
+    it("should handle query errors and return error message", async () => {
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockRejectedValue(new Error("Query failed")),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      const result = await slowQueryPerHours(mockForgeSQLORM, 1);
+
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+      expect(result[0]).toContain("Error occurred");
+      expect(consoleDebugSpy).toHaveBeenCalled();
+    });
+
+    it("should use default timeout when not provided", async () => {
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnValue(Promise.resolve([])),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      await slowQueryPerHours(mockForgeSQLORM, 1);
+
+      expect(mockForgeSQLORM.getDrizzleQueryBuilder).toHaveBeenCalled();
+    });
+
+    it("should use custom timeout when provided", async () => {
+      const mockQuery = {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnValue(Promise.resolve([])),
+      };
+
+      (mockForgeSQLORM.getDrizzleQueryBuilder as any).mockReturnValue(mockQuery);
+
+      await slowQueryPerHours(mockForgeSQLORM, 1, 5000);
+
+      expect(mockForgeSQLORM.getDrizzleQueryBuilder).toHaveBeenCalled();
     });
   });
 });

@@ -7,6 +7,7 @@ import { SqlHints } from "../../../src/utils/sqlHints";
 const mockForgeDriver = vi.fn();
 const mockInjectSqlHints = vi.fn();
 const mockPrintQueriesWithPlan = vi.fn();
+const mockHandleErrorsWithPlan = vi.fn();
 
 vi.mock("../../../src/utils/forgeDriver", () => ({
   forgeDriver: (...args: any[]) => mockForgeDriver(...args),
@@ -18,6 +19,7 @@ vi.mock("../../../src/utils/sqlHints", () => ({
 
 vi.mock("../../../src/utils/sqlUtils", () => ({
   printQueriesWithPlan: (...args: any[]) => mockPrintQueriesWithPlan(...args),
+  handleErrorsWithPlan: (...args: any[]) => mockHandleErrorsWithPlan(...args),
 }));
 
 describe("forgeDriverProxy", () => {
@@ -35,6 +37,7 @@ describe("forgeDriverProxy", () => {
     mockInjectSqlHints.mockImplementation((query: string) => query);
     mockForgeDriver.mockResolvedValue({ rows: [{ id: 1, name: "Test" }] });
     mockPrintQueriesWithPlan.mockResolvedValue(undefined);
+    mockHandleErrorsWithPlan.mockResolvedValue(undefined);
     trackedPromises.length = 0;
   });
 
@@ -137,9 +140,10 @@ describe("forgeDriverProxy", () => {
       }
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(" TIMEOUT detected - Query exceeded time limit");
-      expect(mockPrintQueriesWithPlan).toHaveBeenCalledWith(
+      expect(mockHandleErrorsWithPlan).toHaveBeenCalledWith(
         mockForgeSqlOperation,
         expect.any(Number),
+        "TIMEOUT",
       );
 
       vi.useRealTimers();
@@ -179,9 +183,10 @@ describe("forgeDriverProxy", () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "OUT OF MEMORY detected - Query exceeded memory limit",
       );
-      expect(mockPrintQueriesWithPlan).toHaveBeenCalledWith(
+      expect(mockHandleErrorsWithPlan).toHaveBeenCalledWith(
         mockForgeSqlOperation,
         expect.any(Number),
+        "OOM",
       );
 
       vi.useRealTimers();
@@ -267,7 +272,7 @@ describe("forgeDriverProxy", () => {
 
       await expect(proxiedDriver("SELECT * FROM users", [], "all")).rejects.toEqual(error);
 
-      expect(mockPrintQueriesWithPlan).not.toHaveBeenCalled();
+      expect(mockHandleErrorsWithPlan).not.toHaveBeenCalled();
       expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
@@ -296,10 +301,11 @@ describe("forgeDriverProxy", () => {
         expect(error).toEqual(timeoutError);
       }
 
-      // Verify that printQueriesWithPlan was called with a duration
-      expect(mockPrintQueriesWithPlan).toHaveBeenCalled();
-      const callArgs = mockPrintQueriesWithPlan.mock.calls[0];
+      // Verify that handleErrorsWithPlan was called with a duration
+      expect(mockHandleErrorsWithPlan).toHaveBeenCalled();
+      const callArgs = mockHandleErrorsWithPlan.mock.calls[0];
       expect(callArgs[1]).toBeGreaterThanOrEqual(0);
+      expect(callArgs[2]).toBe("TIMEOUT");
 
       vi.useRealTimers();
       // Wait for all async operations to complete
@@ -317,7 +323,7 @@ describe("forgeDriverProxy", () => {
 
       await expect(proxiedDriver("SELECT * FROM users", [], "all")).rejects.toEqual(error);
 
-      expect(mockPrintQueriesWithPlan).not.toHaveBeenCalled();
+      expect(mockHandleErrorsWithPlan).not.toHaveBeenCalled();
     });
 
     it("should handle errors with context but without debug", async () => {
@@ -332,7 +338,7 @@ describe("forgeDriverProxy", () => {
 
       await expect(proxiedDriver("SELECT * FROM users", [], "all")).rejects.toEqual(error);
 
-      expect(mockPrintQueriesWithPlan).not.toHaveBeenCalled();
+      expect(mockHandleErrorsWithPlan).not.toHaveBeenCalled();
     });
 
     it("should handle errors with context.debug but wrong errno", async () => {
@@ -351,7 +357,7 @@ describe("forgeDriverProxy", () => {
 
       await expect(proxiedDriver("SELECT * FROM users", [], "all")).rejects.toEqual(error);
 
-      expect(mockPrintQueriesWithPlan).not.toHaveBeenCalled();
+      expect(mockHandleErrorsWithPlan).not.toHaveBeenCalled();
     });
   });
 });
