@@ -2,6 +2,7 @@ import {
   and,
   AnyColumn,
   Column,
+  desc,
   gte,
   ilike,
   isNotNull,
@@ -712,6 +713,39 @@ export function nextVal(sequenceName: string): number {
 }
 
 /**
+ * Helper function to build base query for CLUSTER_STATEMENTS_SUMMARY table
+ */
+function buildClusterStatementsSummaryQuery(forgeSQLORM: ForgeSqlOperation, timeDiffMs: number) {
+  const statementsTable = clusterStatementsSummary;
+  return forgeSQLORM
+    .getDrizzleQueryBuilder()
+    .select({
+      digestText: withTidbHint(statementsTable.digestText),
+      avgLatency: statementsTable.avgLatency,
+      avgMem: statementsTable.avgMem,
+      execCount: statementsTable.execCount,
+      plan: statementsTable.plan,
+      stmtType: statementsTable.stmtType,
+    })
+    .from(statementsTable)
+    .where(
+      and(
+        isNotNull(statementsTable.digest),
+        not(ilike(statementsTable.digestText, "%information_schema%")),
+        notInArray(statementsTable.stmtType, ["Use", "Set", "Show", "Commit", "Rollback", "Begin"]),
+        gte(
+          statementsTable.lastSeen,
+          sql`DATE_SUB
+                        (NOW(), INTERVAL
+                        ${timeDiffMs * 1000}
+                        MICROSECOND
+                        )`,
+        ),
+      ),
+    );
+}
+
+/**
  * Analyzes and prints query performance data from CLUSTER_STATEMENTS_SUMMARY table.
  *
  * This function queries the CLUSTER_STATEMENTS_SUMMARY table to find queries that were executed
@@ -724,7 +758,7 @@ export function nextVal(sequenceName: string): number {
  *
  * @param forgeSQLORM - The ForgeSQL operation instance for database access
  * @param timeDiffMs - Time window in milliseconds to look back for queries (e.g., 1500 for last 1.5 seconds)
- * @param timeout - Optional timeout in milliseconds for the query execution (defaults to 1500ms)
+ * @param timeout - Optional timeout in milliseconds for the query execution (defaults to 3000ms)
  *
  * @example
  * ```typescript
@@ -743,43 +777,48 @@ export async function printQueriesWithPlan(
   timeout?: number,
 ) {
   try {
-    const statementsTable = clusterStatementsSummary;
     const timeoutMs = timeout ?? 3000;
     const results = await withTimeout(
-      forgeSQLORM
-        .getDrizzleQueryBuilder()
-        .select({
-          digestText: withTidbHint(statementsTable.digestText),
-          avgLatency: statementsTable.avgLatency,
-          avgMem: statementsTable.avgMem,
-          execCount: statementsTable.execCount,
-          plan: statementsTable.plan,
-          stmtType: statementsTable.stmtType,
-        })
-        .from(statementsTable)
-        .where(
-          and(
-            isNotNull(statementsTable.digest),
-            not(ilike(statementsTable.digestText, "%information_schema%")),
-            notInArray(statementsTable.stmtType, [
-              "Use",
-              "Set",
-              "Show",
-              "Commit",
-              "Rollback",
-              "Begin",
-            ]),
-            gte(
-              statementsTable.lastSeen,
-              sql`DATE_SUB
-                            (NOW(), INTERVAL
-                            ${timeDiffMs * 1000}
-                            MICROSECOND
-                            )`,
-            ),
-          ),
-        ),
+      buildClusterStatementsSummaryQuery(forgeSQLORM, timeDiffMs),
       `Timeout ${timeoutMs}ms in printQueriesWithPlan - transient timeouts are usually fine; repeated timeouts mean this diagnostic query is consistently slow and should be investigated`,
+      timeoutMs + 200,
+    );
+
+    for (const result of results) {
+      // Average execution time (convert from nanoseconds to milliseconds)
+      const avgTimeMs = Number(result.avgLatency) / 1_000_000;
+      const avgMemMB = Number(result.avgMem) / 1_000_000;
+
+      // 1. Query info: SQL, memory, time, executions
+      // eslint-disable-next-line no-console
+      console.warn(
+        `SQL: ${result.digestText} | Memory: ${avgMemMB.toFixed(2)} MB | Time: ${avgTimeMs.toFixed(2)} ms | stmtType: ${result.stmtType} | Executions: ${result.execCount}\n Plan:${result.plan}`,
+      );
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.debug(
+      `Error occurred while retrieving query execution plan: ${error instanceof Error ? error.message : "Unknown error"}. Try again after some time`,
+      error,
+    );
+  }
+}
+
+export async function handleErrorsWithPlan(
+  forgeSQLORM: ForgeSqlOperation,
+  timeDiffMs: number,
+  type: "OOM" | "TIMEOUT",
+) {
+  try {
+    const statementsTable = clusterStatementsSummary;
+    const timeoutMs = 3000;
+    const baseQuery = buildClusterStatementsSummaryQuery(forgeSQLORM, timeDiffMs);
+    const orderColumn = type === "OOM" ? statementsTable.avgMem : statementsTable.avgLatency;
+    const query = baseQuery.orderBy(desc(orderColumn)).limit(formatLimitOffset(1));
+
+    const results = await withTimeout(
+      query,
+      `Timeout ${timeoutMs}ms in handleErrorsWithPlan - transient timeouts are usually fine; repeated timeouts mean this diagnostic query is consistently slow and should be investigated`,
       timeoutMs + 200,
     );
 
