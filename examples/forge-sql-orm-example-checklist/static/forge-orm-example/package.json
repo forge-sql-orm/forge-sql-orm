@@ -4,7 +4,7 @@
   "description": "",
   "dependencies": {
     "@atlaskit/css-reset": "^7.3.9",
-    "@forge/bridge": "^5.10.0",
+    "@forge/bridge": "^5.10.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
@@ -19,7 +19,7 @@
     "prettier-plugin-pkg": "^0.21.2",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "^5.9.3",
-    "vite": "^7.2.7"
+    "vite": "^7.3.0"
   },
   "scripts": {
     "build": "vite build",

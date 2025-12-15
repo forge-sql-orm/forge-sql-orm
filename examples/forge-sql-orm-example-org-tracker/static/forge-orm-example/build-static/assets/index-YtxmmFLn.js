@@ -3,7 +3,7 @@ const __vite__mapDeps = (
   m = __vite__mapDeps,
   d = m.f || (m.f = ["./index-Byf9Kz4g.js", "./client-core-vendor-CgCV9aM-.js"]),
 ) => i.map((i) => d[i]);
-import { r as yn, c as ai } from "./react-dom-vendor-BOEB6BZs.js";
+import { r as yn, c as ai } from "./react-dom-vendor-D1dnusB7.js";
 import { g as oi, r as B } from "./client-core-vendor-CgCV9aM-.js";
 import { r as si } from "./lodash-vendor-FKT_qxrp.js";
 (function () {
