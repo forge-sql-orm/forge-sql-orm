@@ -55,14 +55,14 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.0.2",
-    "@typescript-eslint/eslint-plugin": "^8.49.0",
-    "@typescript-eslint/parser": "^8.49.0",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "knip": "^5.73.4",
     "reflect-metadata": "^0.2.2",
     "typescript": "^5.9.3",
-    "vite": "^7.2.7"
+    "vite": "^7.3.0"
   },
   "lint-staged": {
     "*.{ts,tsx,css,scss,md}": [

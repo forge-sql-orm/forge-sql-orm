@@ -1,5 +1,7 @@
 import Resolver, { Request } from "@forge/resolver";
 import { webTrigger } from "@forge/api";
+import { AsyncEvent } from "@forge/events";
+import { printDegradationQueriesConsumer } from "forge-sql-orm";
 import {
   applySchemaMigrations,
   clearCacheSchedulerTrigger,
@@ -14,6 +16,8 @@ import { FORGE_SQL_ORM } from "./utils/forgeSqlOrmUtils";
 import { demoOrders, demoUsers } from "./entities";
 import { and, eq, or, sql } from "drizzle-orm";
 import { NewUserOrder, UserOrderRow } from "./utils/Constants";
+
+const DEGRADATION_QUEUE = "degradationQueue";
 
 const SQL_CACHE_QUERY = FORGE_SQL_ORM.selectCacheable({
   userId: demoUsers.id,
@@ -127,6 +131,7 @@ resolver.define(
             );
           }
         },
+        { asyncQueueName: DEGRADATION_QUEUE },
       );
       diff = diff || new Date().getTime() - beginTime;
       console.warn("REAL TIME:" + (new Date().getTime() - beginTime));
@@ -236,7 +241,7 @@ resolver.define("insertUserOrOrder", async (req: Request<NewUserOrder>): Promise
 });
 
 export const handlerMigration = async () => {
-  return await applySchemaMigrations(migration);
+  return await applySchemaMigrations(migration as any);
 };
 
 export const dropMigrations = () => {
@@ -258,4 +263,8 @@ export const runPerformanceAnalyze = async () => {
 
 export const clearCache = () => {
   return clearCacheSchedulerTrigger({ cacheEntityName: "cache", logRawSqlQuery: true });
+};
+
+export const handlerAsyncDegradation = (event: AsyncEvent) => {
+  return printDegradationQueriesConsumer(FORGE_SQL_ORM, event);
 };

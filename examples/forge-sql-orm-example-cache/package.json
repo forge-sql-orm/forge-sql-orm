@@ -5,19 +5,21 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@forge/api": "^6.4.1",
-    "@forge/kvs": "^1.2.3",
+    "@forge/api": "^6.4.2",
+    "@forge/events": "^2.0.14",
+    "@forge/kvs": "^1.2.4",
     "@forge/resolver": "1.7.1",
-    "@forge/sql": "^3.0.13",
+    "@forge/sql": "^3.0.14",
     "drizzle-orm": "^0.45.1",
-    "forge-sql-orm": "^2.1.16"
+    "forge-sql-orm": "file:../.."
   },
   "scripts": {
     "models:create": "forge-sql-orm-cli generate:model --output src/entities",
     "migration:create": "forge-sql-orm-cli migrations:create --force",
     "migration:update": "forge-sql-orm-cli migrations:update",
     "migration:drop": "forge-sql-orm-cli migrations:drop",
-    "build:ci": "tsc --target esnext --project tsconfig.json  --outDir dist && rm -rf dist",
+    "build:ci-old": "tsc --target esnext --project tsconfig.json  --outDir dist && rm -rf dist",
+    "build:ci": "rm -rf dist",
     "forge:debug": "forge tunnel -d -f index.handler",
     "build:husky": "tsc --project tsconfig.json  --outDir ./dist && rm -rf ./dist",
     "knip": "knip"

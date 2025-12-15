@@ -20,6 +20,10 @@ modules:
       function: runSchemaMigration
       events:
         - avi:forge:installed:app
+  consumer:
+    - key: print-degradation-queries
+      queue: degradationQueue
+      function: handlerAsyncDegradation
   webtrigger:
     - key: invoke-schema-migration
       function: runSchemaMigration
@@ -57,6 +61,8 @@ modules:
       handler: index.runPerformanceAnalyze
     - key: clearCache
       handler: index.clearCache
+    - key: handlerAsyncDegradation
+      handler: index.handlerAsyncDegradation
 resources:
   - key: main
     path: static/forge-orm-example/build-static

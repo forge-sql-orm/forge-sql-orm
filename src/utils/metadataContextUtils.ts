@@ -2,12 +2,15 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { ForgeSQLMetadata } from "./forgeDriver";
 import { ForgeSqlOperation } from "../core/ForgeSQLQueryBuilder";
 import { ExplainAnalyzeRow } from "../core/SystemTables";
-import { printQueriesWithPlan } from "./sqlUtils";
+import { printQueriesWithPlan, withTimeout } from "./sqlUtils";
 import { Parser } from "node-sql-parser";
+import { PushResult, Queue } from "@forge/events";
+import { AsyncEventPrintQuery } from "../async/PrintQueryConsumer";
 
+const TIMEOUT_ASYNC_EVENT_SENT = 1200;
 const DEFAULT_WINDOW_SIZE = 15 * 1000;
 
-type Statistic = { query: string; params: unknown[]; metadata: ForgeSQLMetadata };
+export type Statistic = { query: string; params: unknown[]; metadata: ForgeSQLMetadata };
 
 export type QueryPlanMode = "TopSlowest" | "SummaryTable";
 
@@ -17,6 +20,7 @@ export type MetadataQueryOptions = {
   topQueries?: number;
   showSlowestPlans?: boolean;
   normalizeQuery?: boolean;
+  asyncQueueName?: string;
 };
 
 export type MetadataQueryContext = {
@@ -42,6 +46,7 @@ function createDefaultOptions(): Required<MetadataQueryOptions> {
     summaryTableWindowTime: DEFAULT_WINDOW_SIZE,
     showSlowestPlans: true,
     normalizeQuery: true,
+    asyncQueueName: "",
   };
 }
 
@@ -58,6 +63,7 @@ function mergeOptionsWithDefaults(options?: MetadataQueryOptions): Required<Meta
     summaryTableWindowTime: options?.summaryTableWindowTime ?? defaults.summaryTableWindowTime,
     showSlowestPlans: options?.showSlowestPlans ?? defaults.showSlowestPlans,
     normalizeQuery: options?.normalizeQuery ?? defaults.normalizeQuery,
+    asyncQueueName: options?.asyncQueueName ?? defaults.asyncQueueName,
   };
 }
 
@@ -196,16 +202,21 @@ function formatExplainPlan(planRows: ExplainAnalyzeRow[]): string {
 
 /**
  * Prints query plans using summary tables if mode is SummaryTable and within time window.
- * @param context - The metadata query context
- * @param options - The merged options with defaults
- * @returns Promise that resolves when plans are printed
+ *
+ * Attempts to use CLUSTER_STATEMENTS_SUMMARY table for query analysis if:
+ * - Mode is set to "SummaryTable"
+ * - Time since query execution start is within the configured window
+ *
+ * @param context - The async event payload containing query statistics and options
+ * @param forgeSQLORM - The ForgeSQL operation instance for database access
+ * @returns Promise that resolves to true if summary tables were used, false otherwise
  */
 async function printPlansUsingSummaryTables(
-  context: MetadataQueryContext,
-  options: Required<MetadataQueryOptions>,
+  context: AsyncEventPrintQuery,
+  forgeSQLORM: ForgeSqlOperation,
 ): Promise<boolean> {
   const timeDiff = Date.now() - context.beginTime.getTime();
-
+  const options = context.options;
   if (options.mode !== "SummaryTable") {
     return false;
   }
@@ -213,7 +224,7 @@ async function printPlansUsingSummaryTables(
   if (timeDiff <= options.summaryTableWindowTime) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     const summaryTableDiffMs = Date.now() - context.beginTime.getTime();
-    await printQueriesWithPlan(context.forgeSQLORM, summaryTableDiffMs);
+    await printQueriesWithPlan(forgeSQLORM, summaryTableDiffMs);
     return true;
   }
   // eslint-disable-next-line no-console
@@ -222,15 +233,20 @@ async function printPlansUsingSummaryTables(
 }
 
 /**
- * Prints query plans for the top slowest queries.
- * @param context - The metadata query context
- * @param options - The merged options with defaults
- * @returns Promise that resolves when plans are printed
+ * Prints query plans for the top slowest queries from the statistics.
+ *
+ * Sorts queries by execution time and prints the top N queries (based on topQueries option).
+ * For each query, it can optionally print the execution plan using EXPLAIN ANALYZE.
+ *
+ * @param context - The async event payload containing query statistics and options
+ * @param forgeSQLORM - The ForgeSQL operation instance for database access
+ * @returns Promise that resolves when all query plans are printed
  */
 async function printTopQueriesPlans(
-  context: MetadataQueryContext,
-  options: Required<MetadataQueryOptions>,
+  context: AsyncEventPrintQuery,
+  forgeSQLORM: ForgeSqlOperation,
 ): Promise<void> {
+  const options = context.options;
   const topQueries = context.statistics
     .toSorted((a, b) => b.metadata.dbExecutionTime - a.metadata.dbExecutionTime)
     .slice(0, options.topQueries);
@@ -240,7 +256,7 @@ async function printTopQueriesPlans(
       ? normalizeSqlForLogging(query.query)
       : query.query;
     if (options.showSlowestPlans) {
-      const explainAnalyzeRows = await context.forgeSQLORM
+      const explainAnalyzeRows = await forgeSQLORM
         .analyze()
         .explainAnalyzeRaw(query.query, query.params);
       const formattedPlan = formatExplainPlan(explainAnalyzeRows);
@@ -257,9 +273,33 @@ async function printTopQueriesPlans(
 
 /**
  * Saves query metadata to the current context and sets up the printQueriesWithPlan function.
+ *
+ * This function accumulates query statistics in the async context. When printQueriesWithPlan
+ * is called, it can either:
+ * - Queue the analysis for async processing (if asyncQueueName is provided)
+ * - Execute the analysis synchronously (fallback or if asyncQueueName is not set)
+ *
+ * For async processing, the function sends an event to the specified queue with a timeout.
+ * If the event cannot be sent within the timeout, it falls back to synchronous execution.
+ *
  * @param stringQuery - The SQL query string
- * @param params - Query parameters
- * @param metadata - Query execution metadata
+ * @param params - Query parameters used in the query
+ * @param metadata - Query execution metadata including execution time and response size
+ *
+ * @example
+ * ```typescript
+ * await FORGE_SQL_ORM.executeWithMetadata(
+ *   async () => {
+ *     // ... queries ...
+ *   },
+ *   async (totalDbExecutionTime, totalResponseSize, printQueries) => {
+ *     if (totalDbExecutionTime > threshold) {
+ *       await printQueries(); // Will use async queue if configured
+ *     }
+ *   },
+ *   { asyncQueueName: "degradationQueue" }
+ * );
+ * ```
  */
 export async function saveMetaDataToContext(
   stringQuery: string,
@@ -285,15 +325,41 @@ export async function saveMetaDataToContext(
   // Set up printQueriesWithPlan function
   context.printQueriesWithPlan = async () => {
     const options = mergeOptionsWithDefaults(context.options);
-
-    // Try to use summary tables first if enabled
-    const usedSummaryTables = await printPlansUsingSummaryTables(context, options);
-    if (usedSummaryTables) {
-      return;
+    const param: AsyncEventPrintQuery = {
+      statistics: context.statistics,
+      totalDbExecutionTime: context.totalDbExecutionTime,
+      totalResponseSize: context.totalResponseSize,
+      beginTime: context.beginTime,
+      options,
+    };
+    if (options.asyncQueueName) {
+      const queue = new Queue({ key: options.asyncQueueName });
+      try {
+        const eventInfo = await withTimeout<PushResult>(
+          queue.push({
+            body: param,
+            concurrency: {
+              key: "orm_" + options.asyncQueueName,
+              limit: 2,
+            },
+          }),
+          `Event was not sent within ${TIMEOUT_ASYNC_EVENT_SENT}ms`,
+          TIMEOUT_ASYNC_EVENT_SENT,
+        );
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[Performance Analysis] Query degradation event queued for async processing | Job ID: ${eventInfo.jobId} | Total DB time: ${context.totalDbExecutionTime}ms | Queries: ${context.statistics.length} | Look for consumer log with jobId: ${eventInfo.jobId}`,
+        );
+        return;
+      } catch (e: any) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          "Async printing failed — falling back to synchronous execution: " + e.message,
+          e,
+        );
+      }
     }
-
-    // Fall back to printing top queries plans
-    await printTopQueriesPlans(context, options);
+    await printDegradationQueries(context.forgeSQLORM, param);
   };
 
   // Update aggregated metrics
@@ -301,6 +367,34 @@ export async function saveMetaDataToContext(
     context.totalResponseSize += metadata.responseSize;
     context.totalDbExecutionTime += metadata.dbExecutionTime;
   }
+}
+
+/**
+ * Prints query degradation analysis for the provided event payload.
+ *
+ * This function processes query degradation events (either from async queue or synchronous call).
+ * It first attempts to use summary tables (CLUSTER_STATEMENTS_SUMMARY) if configured and within
+ * the time window. Otherwise, it falls back to printing execution plans for the top slowest queries.
+ *
+ * @param forgeSQLORM - The ForgeSQL operation instance for database access
+ * @param params - The async event payload containing query statistics, options, and metadata
+ * @returns Promise that resolves when query analysis is complete
+ *
+ * @see printPlansUsingSummaryTables - For summary table analysis
+ * @see printTopQueriesPlans - For top slowest queries analysis
+ */
+export async function printDegradationQueries(
+  forgeSQLORM: ForgeSqlOperation,
+  params: AsyncEventPrintQuery,
+): Promise<void> {
+  // Try to use summary tables first if enabled
+  const usedSummaryTables = await printPlansUsingSummaryTables(params, forgeSQLORM);
+  if (usedSummaryTables) {
+    return;
+  }
+
+  // Fall back to printing top queries plans
+  await printTopQueriesPlans(params, forgeSQLORM);
 }
 
 /**
