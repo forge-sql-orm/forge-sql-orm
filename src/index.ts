@@ -8,3 +8,4 @@ export * from "./utils/forgeDriver";
 export * from "./webtriggers";
 export * from "./lib/drizzle/extensions/additionalActions";
 export * from "./core/SystemTables";
+export * from "./async/PrintQueryConsumer";

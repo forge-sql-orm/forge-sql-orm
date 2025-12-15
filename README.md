@@ -23,7 +23,7 @@
 - ✅ **Custom Drizzle Driver** for direct integration with @forge/sql
 - ✅ **Local Cache System (Level 1)** for in-memory query optimization within single resolver invocation scope
 - ✅ **Global Cache System (Level 2)** with cross-invocation caching, automatic cache invalidation and context-aware operations (using [@forge/kvs](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/) )
-- ✅ **Performance Monitoring**: Query execution metrics and analysis capabilities with automatic error analysis for timeout and OOM errors, plus scheduled slow query monitoring with execution plans
+- ✅ **Performance Monitoring**: Query execution metrics and analysis capabilities with automatic error analysis for timeout and OOM errors, scheduled slow query monitoring with execution plans, and async query degradation analysis for non-blocking performance monitoring
 - ✅ **Type-Safe Query Building**: Write SQL queries with full TypeScript support
 - ✅ **Supports complex SQL queries** with joins and filtering using Drizzle ORM
 - ✅ **Advanced Query Methods**: `selectFrom()`, `selectDistinctFrom()`, `selectCacheableFrom()`, `selectDistinctCacheableFrom()` for all-column queries with field aliasing
@@ -2806,6 +2806,7 @@ All options are **optional**. If not specified, default values are used. You can
 | `topQueries`             | `number`                         | `1`            | Number of top slowest queries to analyze when `mode` is `'TopSlowest'`                                                                                                                        |
 | `showSlowestPlans`       | `boolean`                        | `true`         | Whether to show execution plans for slowest queries in TopSlowest mode. If `false`, only SQL and execution time are printed                                                                   |
 | `normalizeQuery`         | `boolean`                        | `true`         | Whether to normalize SQL queries by replacing parameter values with `?` placeholders. Set to `false` to disable normalization if it causes issues with complex queries                        |
+| `asyncQueueName`         | `string`                         | `""`           | Queue name for async processing. If provided, query analysis will be queued for background processing instead of running synchronously. Requires consumer configuration in `manifest.yml`     |
 
 **Examples:**
 
@@ -2890,6 +2891,194 @@ resolver.define("fetch", async (req: Request) => {
 - **Zero Configuration**: Works out of the box with sensible defaults
 
 > **💡 Tip**: When multiple resolvers are running concurrently, their query data may also appear in `printQueriesWithPlan()` analysis when using SummaryTable mode, as it queries the global `CLUSTER_STATEMENTS_SUMMARY` table.
+
+### Async Query Degradation Analysis
+
+Forge-SQL-ORM supports asynchronous processing of query degradation analysis, allowing you to offload performance analysis to a background queue. This is particularly useful for production environments where you want to avoid blocking resolver responses while still capturing detailed performance metrics.
+
+#### Key Features
+
+- **Non-Blocking Analysis**: Query analysis runs asynchronously without blocking resolver responses
+- **Automatic Fallback**: Falls back to synchronous execution if async queue fails
+- **Log Correlation**: Job IDs help correlate resolver logs with consumer logs
+- **Queue-Based Processing**: Uses Forge's event queue system for reliable processing
+- **Configurable Timeout**: Customizable timeout for event queuing (default: 1200ms)
+
+#### Basic Setup
+
+**1. Configure consumer in `manifest.yml`:**
+
+```yaml
+modules:
+  consumer:
+    - key: print-degradation-queries
+      queue: degradationQueue
+      function: handlerAsyncDegradation
+
+  function:
+    - key: handlerAsyncDegradation
+      handler: index.handlerAsyncDegradation
+```
+
+**2. Create the handler function:**
+
+```typescript
+import { AsyncEvent } from "@forge/events";
+import { printDegradationQueriesConsumer } from "forge-sql-orm";
+import { FORGE_SQL_ORM } from "./utils/forgeSqlOrmUtils";
+
+export const handlerAsyncDegradation = (event: AsyncEvent) => {
+  return printDegradationQueriesConsumer(FORGE_SQL_ORM, event);
+};
+```
+
+**3. Enable async processing in resolver:**
+
+```typescript
+resolver.define("fetch", async (req: Request) => {
+  return await FORGE_SQL_ORM.executeWithMetadata(
+    async () => {
+      // ... your queries ...
+      return await SQL_QUERY;
+    },
+    async (totalDbExecutionTime, totalResponseSize, printQueries) => {
+      if (totalDbExecutionTime > 800) {
+        await printQueries(); // Will queue for async processing
+      }
+    },
+    { asyncQueueName: "degradationQueue" }, // Enable async processing
+  );
+});
+```
+
+#### Configuration Options
+
+The `asyncQueueName` option enables async processing:
+
+| Option           | Type     | Default | Description                                                                                                                                                |
+| ---------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `asyncQueueName` | `string` | `""`    | Queue name for async processing. If provided, query analysis will be queued instead of running synchronously. If empty or not provided, runs synchronously |
+
+#### How It Works
+
+1. **Resolver Execution**: When `printQueriesWithPlan()` is called with `asyncQueueName` configured:
+   - Creates an event payload with query statistics and metadata
+   - Sends event to the specified queue with a timeout (default: 1200ms)
+   - Logs a warning message with Job ID for correlation
+   - Returns immediately without waiting for analysis
+
+2. **Async Processing**: The consumer function (`handlerAsyncDegradation`):
+   - Receives the event from the queue
+   - Logs processing start with Job ID
+   - Executes query analysis (TopSlowest or SummaryTable mode)
+   - Prints execution plans and performance metrics
+
+3. **Fallback Behavior**: If queue push fails or times out:
+   - Falls back to synchronous execution automatically
+   - Logs a warning message
+   - Analysis still completes, just synchronously
+
+#### Log Correlation
+
+Both resolver and consumer logs include Job IDs to help you correlate related events:
+
+**Resolver log (when event is queued):**
+
+```
+WARN [Performance Analysis] Query degradation event queued for async processing | Job ID: abc-123 | Total DB time: 3531ms | Queries: 3 | Look for consumer log with jobId: abc-123
+```
+
+**Consumer log (when event is processed):**
+
+```
+WARN [Performance Analysis] Processing query degradation event | Job ID: abc-123 | Total DB time: 3531ms | Queries: 3 | Started: 2025-12-15T18:12:34.251Z
+WARN SQL: SELECT ... | Time: 3514 ms
+ Plan:
+ Projection_7 | task:root | ...
+```
+
+**To find all related logs:**
+
+- Search logs for: `"Job ID: abc-123"`
+- This will show both the queuing event and the processing event
+
+#### Example: Complete Setup
+
+**manifest.yml:**
+
+```yaml
+modules:
+  consumer:
+    - key: print-degradation-queries
+      queue: degradationQueue
+      function: handlerAsyncDegradation
+
+  function:
+    - key: handlerAsyncDegradation
+      handler: index.handlerAsyncDegradation
+```
+
+**index.ts:**
+
+```typescript
+import { AsyncEvent } from "@forge/events";
+import { printDegradationQueriesConsumer } from "forge-sql-orm";
+import { FORGE_SQL_ORM } from "./utils/forgeSqlOrmUtils";
+
+// Consumer handler
+export const handlerAsyncDegradation = (event: AsyncEvent) => {
+  return printDegradationQueriesConsumer(FORGE_SQL_ORM, event);
+};
+
+// Resolver with async analysis
+resolver.define("fetch", async (req: Request) => {
+  return await FORGE_SQL_ORM.executeWithMetadata(
+    async () => {
+      const users = await FORGE_SQL_ORM.selectFrom(demoUsers);
+      const orders = await FORGE_SQL_ORM.selectFrom(demoOrders);
+      return { users, orders };
+    },
+    async (totalDbExecutionTime, totalResponseSize, printQueries) => {
+      const threshold = 800; // ms baseline
+
+      if (totalDbExecutionTime > threshold) {
+        console.warn(`[Performance Warning] Resolver exceeded DB time: ${totalDbExecutionTime} ms`);
+        await printQueries(); // Queued for async processing
+      }
+    },
+    {
+      asyncQueueName: "degradationQueue", // Enable async processing
+      mode: "TopSlowest",
+      topQueries: 1,
+    },
+  );
+});
+```
+
+#### Benefits
+
+- **Non-Blocking**: Resolver responses are not delayed by query analysis
+- **Production Ready**: Suitable for production environments where performance is critical
+- **Reliable**: Automatic fallback ensures analysis always completes
+- **Traceable**: Job IDs enable easy log correlation
+- **Scalable**: Queue-based processing handles high load scenarios
+
+#### When to Use Async Processing
+
+**Use async processing when:**
+
+- You're in a production environment
+- Resolver response time is critical
+- You want to avoid blocking user requests
+- You need detailed analysis but can process it later
+
+**Use synchronous processing when:**
+
+- You're in development/debugging
+- You need immediate analysis results
+- You want simpler setup (no queue configuration)
+
+> **💡 Tip**: The async queue name must match the queue name configured in your `manifest.yml` consumer section. If the queue doesn't exist or the event fails to send, the system automatically falls back to synchronous execution.
 
 ### Slow Query Monitoring
 

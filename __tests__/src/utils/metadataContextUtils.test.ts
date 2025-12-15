@@ -9,11 +9,33 @@ import { ForgeSQLMetadata } from "../../../src/utils/forgeDriver";
 import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";
 import { ExplainAnalyzeRow } from "../../../src/core/SystemTables";
 import { printQueriesWithPlan } from "../../../src/utils/sqlUtils";
+import { Queue, PushResult } from "@forge/events";
 
 // Mock dependencies
+const mockWithTimeout = vi.fn();
 vi.mock("../../../src/utils/sqlUtils", () => ({
   printQueriesWithPlan: vi.fn(),
+  withTimeout: (...args: any[]) => mockWithTimeout(...args),
 }));
+
+const mockQueuePush = vi.fn();
+vi.mock("@forge/events", () => ({
+  Queue: vi.fn().mockImplementation(() => {
+    const pushFn = vi.fn().mockResolvedValue({ jobId: "test-id" });
+    // Store reference to the push function
+    (globalThis as any).__lastQueuePush = pushFn;
+    return {
+      push: pushFn,
+    };
+  }),
+  PushResult: {},
+}));
+
+const mockSetTimeout = vi.fn((callback: any) => {
+  callback();
+  return 1 as any;
+});
+vi.stubGlobal("setTimeout", mockSetTimeout);
 
 describe("metadataContextUtils", () => {
   let mockForgeSQLORM: ForgeSqlOperation;
@@ -115,6 +137,7 @@ describe("metadataContextUtils", () => {
         summaryTableWindowTime: 15000,
         showSlowestPlans: true,
         normalizeQuery: true,
+        asyncQueueName: "",
       });
     });
 
@@ -130,6 +153,7 @@ describe("metadataContextUtils", () => {
         summaryTableWindowTime: 15000,
         showSlowestPlans: true,
         normalizeQuery: true,
+        asyncQueueName: "",
       });
     });
 
@@ -473,6 +497,7 @@ describe("metadataContextUtils", () => {
         summaryTableWindowTime: 20000,
         showSlowestPlans: false,
         normalizeQuery: true,
+        asyncQueueName: "",
       });
     });
   });
@@ -684,6 +709,128 @@ describe("metadataContextUtils", () => {
       expect(warnCall).toContain("123");
       // Should not contain normalized version
       expect(warnCall).not.toContain("name = ?");
+    });
+  });
+
+  describe("async queue processing", () => {
+    const mockMetadata: ForgeSQLMetadata = {
+      dbExecutionTime: 100,
+      responseSize: 1024,
+      fields: [],
+    };
+
+    beforeEach(() => {
+      mockContext.options = {
+        mode: "TopSlowest",
+        topQueries: 1,
+        asyncQueueName: "testQueue",
+      };
+      mockAnalyze.explainAnalyzeRaw.mockResolvedValue([]);
+      mockQueuePush.mockClear();
+      mockWithTimeout.mockClear();
+      vi.clearAllMocks();
+      // Reset Queue mock
+      vi.mocked(Queue).mockClear();
+    });
+
+    it("should queue event for async processing when asyncQueueName is set", async () => {
+      const mockJobId = "test-job-id-123";
+      const mockPushResult: PushResult = { jobId: mockJobId } as PushResult;
+
+      // Setup mocks before calling saveMetaDataToContext
+      mockWithTimeout.mockImplementation(async (promise) => {
+        return await promise;
+      });
+
+      // Setup the queue push mock to return the result
+      vi.mocked(Queue).mockImplementation(function () {
+        const pushFn = vi.fn().mockResolvedValue(mockPushResult);
+        return {
+          push: pushFn,
+        } as any;
+      });
+
+      await saveMetaDataToContext("SELECT * FROM users", [], mockMetadata);
+      await mockContext.printQueriesWithPlan();
+
+      // Verify Queue was instantiated
+      expect(vi.mocked(Queue)).toHaveBeenCalledWith({ key: "testQueue" });
+      // Verify that async queue processing was attempted (withTimeout should be called)
+      expect(mockWithTimeout).toHaveBeenCalled();
+      // Verify success message was logged
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          "[Performance Analysis] Query degradation event queued for async processing",
+        ),
+      );
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`Job ID: ${mockJobId}`));
+      // Should not call printDegradationQueries directly when queue succeeds
+      expect(mockAnalyze.explainAnalyzeRaw).not.toHaveBeenCalled();
+    });
+
+    it("should fall back to synchronous execution when queue push fails", async () => {
+      const mockError = new Error("Queue push failed");
+      mockQueuePush.mockRejectedValue(mockError);
+      mockWithTimeout.mockImplementation(async (promise) => {
+        return await promise;
+      });
+
+      await saveMetaDataToContext("SELECT * FROM users", [], mockMetadata);
+      await mockContext.printQueriesWithPlan();
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Async printing failed — falling back to synchronous execution"),
+        expect.any(Error),
+      );
+      // Should fall back to synchronous execution
+      expect(mockAnalyze.explainAnalyzeRaw).toHaveBeenCalled();
+    });
+
+    it("should fall back to synchronous execution when withTimeout fails", async () => {
+      const mockError = new Error("Timeout exceeded");
+      mockQueuePush.mockResolvedValue({ jobId: "test-id" });
+      mockWithTimeout.mockRejectedValue(mockError);
+
+      await saveMetaDataToContext("SELECT * FROM users", [], mockMetadata);
+      await mockContext.printQueriesWithPlan();
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Async printing failed — falling back to synchronous execution"),
+        expect.any(Error),
+      );
+      // Should fall back to synchronous execution
+      expect(mockAnalyze.explainAnalyzeRaw).toHaveBeenCalled();
+    });
+
+    it("should use synchronous execution when asyncQueueName is empty", async () => {
+      mockContext.options = {
+        mode: "TopSlowest",
+        topQueries: 1,
+        asyncQueueName: "",
+      };
+
+      await saveMetaDataToContext("SELECT * FROM users", [], mockMetadata);
+      await mockContext.printQueriesWithPlan();
+
+      expect(vi.mocked(Queue)).not.toHaveBeenCalled();
+      expect(mockQueuePush).not.toHaveBeenCalled();
+      // Should use synchronous execution
+      expect(mockAnalyze.explainAnalyzeRaw).toHaveBeenCalled();
+    });
+
+    it("should use synchronous execution when asyncQueueName is not set", async () => {
+      mockContext.options = {
+        mode: "TopSlowest",
+        topQueries: 1,
+      };
+
+      await saveMetaDataToContext("SELECT * FROM users", [], mockMetadata);
+      await mockContext.printQueriesWithPlan();
+
+      expect(vi.mocked(Queue)).not.toHaveBeenCalled();
+      expect(mockQueuePush).not.toHaveBeenCalled();
+      // Should use synchronous execution
+      expect(mockAnalyze.explainAnalyzeRaw).toHaveBeenCalled();
     });
   });
 });
