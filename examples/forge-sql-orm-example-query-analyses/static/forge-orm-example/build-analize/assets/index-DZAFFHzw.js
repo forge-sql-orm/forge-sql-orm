@@ -3,17 +3,17 @@ const __vite__mapDeps = (
   m = __vite__mapDeps,
   d = m.f ||
     (m.f = [
-      "./index-rttqV1lv.js",
-      "./client-core-vendor-B82q9aJI.js",
-      "./body-CQaHJ-fI.js",
+      "./index-Ds7nV9OR.js",
+      "./client-core-vendor-Dxn4qry8.js",
+      "./body-p4f1DHvd.js",
       "./react-dom-vendor-B-l3JLOa.js",
-      "./lodash-vendor--Z7471Vs.js",
+      "./lodash-vendor-BPQ1tp_f.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
 import { r as ft, a as qa, c as yg } from "./react-dom-vendor-B-l3JLOa.js";
-import { g as ou, r as Jt, a as Qt, b as xt, s as Ge } from "./client-core-vendor-B82q9aJI.js";
-import { r as mg } from "./lodash-vendor--Z7471Vs.js";
+import { g as ou, r as Jt, a as Qt, b as xt, s as Ge } from "./client-core-vendor-Dxn4qry8.js";
+import { r as mg } from "./lodash-vendor-BPQ1tp_f.js";
 function wg(e, t) {
   for (var r = 0; r < t.length; r++) {
     const n = t[r];
@@ -2194,7 +2194,7 @@ function s_() {
   const e = o_(),
     t = async (r, n) => {
       const i = await Uv(
-          () => import("./index-rttqV1lv.js").then((l) => l.i),
+          () => import("./index-Ds7nV9OR.js").then((l) => l.i),
           __vite__mapDeps([0, 1]),
           import.meta.url,
         ),
@@ -10098,7 +10098,7 @@ function D0() {
   let n = class {
     constructor(a) {
       ((this._sdkKey = a),
-        (this._rawValues = null),
+        (this._valuesForExternalUse = null),
         (this._values = null),
         (this._source = "Uninitialized"),
         (this._lcut = 0),
@@ -10108,7 +10108,7 @@ function D0() {
     }
     reset() {
       ((this._values = null),
-        (this._rawValues = null),
+        (this._valuesForExternalUse = null),
         (this._source = "Loading"),
         (this._lcut = 0),
         (this._receivedAt = 0),
@@ -10119,9 +10119,7 @@ function D0() {
       this._values || (this._source = "NoValues");
     }
     getValues() {
-      return this._rawValues
-        ? (0, e._typedJsonParse)(this._rawValues, "has_updates", "EvaluationStoreValues")
-        : null;
+      return this._valuesForExternalUse;
     }
     setValues(a, o) {
       var u, s;
@@ -10132,7 +10130,11 @@ function D0() {
         : ((this._source = a.source),
           c?.has_updates !== !0 ||
             ((u = c.time) !== null && u !== void 0 ? u : 0) < this._lcut ||
-            ((this._rawValues = a.data),
+            ((this._valuesForExternalUse = (0, e._typedJsonParse)(
+              a.data,
+              "has_updates",
+              "EvaluationResponse",
+            )),
             (this._lcut = c.time),
             (this._receivedAt = a.receivedAt),
             c.response_format === "init-v2"
@@ -10770,22 +10772,20 @@ function N0() {
       });
     }
     getContext() {
-      let s = {};
-      try {
-        s = JSON.parse(JSON.stringify(this._user));
-      } catch {
-        t.Log.error("Failed to parse user");
-      }
-      return {
-        sdkKey: this._sdkKey,
-        options: this._options,
-        values: this._store.getValues(),
-        user: s,
-        errorBoundary: this._errorBoundary,
-        session: t.StatsigSession.get(this._sdkKey),
-        stableID: t.StableID.get(this._sdkKey),
-        sdkInstanceID: this._sdkInstanceID,
-      };
+      let s = (0, t._cloneObject)("StatsigUser", this._user);
+      return (
+        s == null && (t.Log.error("Failed to clone user"), (s = {})),
+        {
+          sdkKey: this._sdkKey,
+          options: this._options,
+          values: this._store.getValues(),
+          user: s,
+          errorBoundary: this._errorBoundary,
+          session: t.StatsigSession.get(this._sdkKey),
+          stableID: t.StableID.get(this._sdkKey),
+          sdkInstanceID: this._sdkInstanceID,
+        }
+      );
     }
     checkGate(s, c) {
       return this.getFeatureGate(s, c).value;
@@ -15033,7 +15033,7 @@ var w1 = ["as", "children", "isInset", "testId", "style", "xcss"],
         action: "clicked",
         componentName: c || "Pressable",
         packageName: "@atlaskit/primitives",
-        packageVersion: "16.4.1",
+        packageVersion: "0.0.0-development",
         analyticsData: l,
         actionSubject: "button",
       });
@@ -17233,7 +17233,7 @@ var ru = {
   kS = {
     componentName: "pagination",
     packageName: "@atlaskit/pagination",
-    packageVersion: "16.1.19",
+    packageVersion: "0.0.0-development",
   };
 function Df(e) {
   var t = e.chevronDirection,
@@ -20730,14 +20730,14 @@ var vx = function (t) {
         action: "sorted",
         componentName: "dynamicTable",
         packageName: "@atlaskit/dynamic-table",
-        packageVersion: "18.3.9",
+        packageVersion: "0.0.0-development",
       }),
       Ue = Ii({
         fn: $,
         action: "ranked",
         componentName: "dynamicTable",
         packageName: "@atlaskit/dynamic-table",
-        packageVersion: "18.3.9",
+        packageVersion: "0.0.0-development",
       });
     m.useEffect(
       function () {
@@ -20855,7 +20855,7 @@ var vx = function (t) {
   },
   px = m.lazy(function () {
     return Uv(
-      () => import("./body-CQaHJ-fI.js"),
+      () => import("./body-p4f1DHvd.js"),
       __vite__mapDeps([2, 3, 1, 4, 5]),
       import.meta.url,
     );

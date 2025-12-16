@@ -4,7 +4,7 @@
   "description": "",
   "dependencies": {
     "@atlaskit/css-reset": "^7.3.9",
-    "@atlaskit/dynamic-table": "^18.3.10",
+    "@atlaskit/dynamic-table": "^18.3.11",
     "@forge/bridge": "^5.10.1",
     "forge-sql-orm": "^2.1.16",
     "mobx": "6.15.0",
@@ -19,7 +19,7 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^5.1.2",
     "dotenv": "17.2.3",
-    "knip": "^5.73.4",
+    "knip": "^5.74.0",
     "prettier": "^3.7.4",
     "prettier-plugin-pkg": "^0.21.2",
     "rollup-plugin-visualizer": "^6.0.5",
