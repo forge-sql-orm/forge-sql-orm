@@ -6176,14 +6176,7 @@ Error generating stack: ` +
     var t = e.ref;
     if (t !== null) {
       var n = e.stateNode;
-      switch (e.tag) {
-        case 5:
-          e = n;
-          break;
-        default:
-          e = n;
-      }
-      typeof t == "function" ? t(e) : (t.current = e);
+      (e.tag, (e = n), typeof t == "function" ? t(e) : (t.current = e));
     }
   }
   function Xs(e) {
@@ -8091,13 +8084,7 @@ Error generating stack: ` +
     );
   }
   function kl(e) {
-    if (((e = e.current), !e.child)) return null;
-    switch (e.child.tag) {
-      case 5:
-        return e.child.stateNode;
-      default:
-        return e.child.stateNode;
-    }
+    return ((e = e.current), e.child ? (e.child.tag === 5, e.child.stateNode) : null);
   }
   function ha(e, t) {
     if (((e = e.memoizedState), e !== null && e.dehydrated !== null)) {

@@ -5,13 +5,13 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-JJ6DjNTc.js",
       "./client-core-vendor-DC5q1RXn.js",
-      "./body-BjKBSLjb.js",
-      "./react-dom-vendor-B-l3JLOa.js",
+      "./body-Kp_gimtc.js",
+      "./react-dom-vendor--YlRhZCI.js",
       "./lodash-vendor-B0QWQanV.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
-import { r as lt, a as Na, c as _g } from "./react-dom-vendor-B-l3JLOa.js";
+import { r as lt, a as Na, c as _g } from "./react-dom-vendor--YlRhZCI.js";
 import { g as Xt, a as nu, r as Jt, b as St, s as Ve } from "./client-core-vendor-DC5q1RXn.js";
 import { r as bg } from "./lodash-vendor-B0QWQanV.js";
 function mg(e, t) {
@@ -11240,7 +11240,7 @@ var Ky = ["as", "children", "isInset", "testId", "style", "xcss"],
         action: "clicked",
         componentName: c || "Pressable",
         packageName: "@atlaskit/primitives",
-        packageVersion: "0.0.0-development",
+        packageVersion: "16.4.4",
         analyticsData: l,
         actionSubject: "button",
       });
@@ -13912,13 +13912,7 @@ var gi = { none: 0, small: 100, medium: 350, large: 700 },
     return r;
   },
   E1 = function (t) {
-    switch (t.cleanup) {
-      case "next-effect":
-        return;
-      case "unmount":
-      default:
-        return [];
-    }
+    if (t.cleanup !== "next-effect") return [];
   },
   k1 = function () {
     var t = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : { cleanup: "unmount" },
@@ -17062,7 +17056,7 @@ var qS = function (t) {
   },
   US = y.lazy(function () {
     return Nv(
-      () => import("./body-BjKBSLjb.js"),
+      () => import("./body-Kp_gimtc.js"),
       __vite__mapDeps([2, 3, 1, 4, 5]),
       import.meta.url,
     );

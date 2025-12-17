@@ -5,13 +5,13 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-JJ6DjNTc.js",
       "./client-core-vendor-DC5q1RXn.js",
-      "./body-CcOMRma8.js",
-      "./react-dom-vendor-B-l3JLOa.js",
+      "./body-BS4L6Hoa.js",
+      "./react-dom-vendor--YlRhZCI.js",
       "./lodash-vendor-B0QWQanV.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
-import { r as mt, a as ei, c as Zg } from "./react-dom-vendor-B-l3JLOa.js";
+import { r as mt, a as ei, c as Zg } from "./react-dom-vendor--YlRhZCI.js";
 import { g as sr, a as wc, r as ar, b as Dt, s as et } from "./client-core-vendor-DC5q1RXn.js";
 import { r as Qg } from "./lodash-vendor-B0QWQanV.js";
 function eb(e, t) {
@@ -15076,7 +15076,7 @@ var J1 = ["as", "children", "isInset", "testId", "style", "xcss"],
         action: "clicked",
         componentName: u || "Pressable",
         packageName: "@atlaskit/primitives",
-        packageVersion: "0.0.0-development",
+        packageVersion: "16.4.4",
         analyticsData: l,
         actionSubject: "button",
       });
@@ -18249,13 +18249,7 @@ var Pa = { none: 0, small: 100, medium: 350, large: 700 },
     return r;
   },
   SS = function (t) {
-    switch (t.cleanup) {
-      case "next-effect":
-        return;
-      case "unmount":
-      default:
-        return [];
-    }
+    if (t.cleanup !== "next-effect") return [];
   },
   ES = function () {
     var t = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : { cleanup: "unmount" },
@@ -21399,7 +21393,7 @@ var qx = function (t) {
   },
   Ux = m.lazy(function () {
     return dp(
-      () => import("./body-CcOMRma8.js"),
+      () => import("./body-BS4L6Hoa.js"),
       __vite__mapDeps([2, 3, 1, 4, 5]),
       import.meta.url,
     );
@@ -21646,12 +21640,7 @@ function Jx(e, t) {
     : t;
 }
 function Yx(e) {
-  switch (e) {
-    case "compact":
-      return "small";
-    default:
-      return "medium";
-  }
+  return e === "compact" ? "small" : "medium";
 }
 function Xx(e) {
   var t = e.appearance,
