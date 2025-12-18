@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-JJ6DjNTc.js",
       "./client-core-vendor-DC5q1RXn.js",
-      "./body-BCslMX3D.js",
+      "./body-BF3Xd27F.js",
       "./react-dom-vendor--YlRhZCI.js",
       "./lodash-vendor-B0QWQanV.js",
       "./body-BMQTJ_qR.css",
@@ -14910,7 +14910,7 @@ var I1 = ["as", "children", "isInset", "testId", "style", "xcss"],
         action: "clicked",
         componentName: u || "Pressable",
         packageName: "@atlaskit/primitives",
-        packageVersion: "16.4.4",
+        packageVersion: "0.0.0-development",
         analyticsData: l,
         actionSubject: "button",
       });
@@ -20422,7 +20422,11 @@ function zr(e) {
   return e;
 }
 var sx = J1.tooltip(),
-  sv = { componentName: "tooltip", packageName: "@atlaskit/tooltip", packageVersion: "20.10.0" },
+  sv = {
+    componentName: "tooltip",
+    packageName: "@atlaskit/tooltip",
+    packageVersion: "0.0.0-development",
+  },
   cx = { top: "bottom", bottom: "top", left: "right", right: "left" },
   ux = function (t) {
     return t.split("-")[0];
@@ -21227,7 +21231,7 @@ var kx = function (t) {
   },
   Ox = m.lazy(function () {
     return ep(
-      () => import("./body-BCslMX3D.js"),
+      () => import("./body-BF3Xd27F.js"),
       __vite__mapDeps([2, 3, 1, 4, 5]),
       import.meta.url,
     );
@@ -22022,7 +22026,7 @@ function zx(e) {
   }
   return e;
 }
-var $x = { componentName: "tabs", packageName: "@atlaskit/tabs", packageVersion: "18.2.5" },
+var $x = { componentName: "tabs", packageName: "@atlaskit/tabs", packageVersion: "18.3.0" },
   _v = function (t) {
     var r = t.tabPanel,
       n = t.index,

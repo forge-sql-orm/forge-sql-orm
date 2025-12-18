@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-Ds7nV9OR.js",
       "./client-core-vendor-Dxn4qry8.js",
-      "./body-BZL4FwoG.js",
+      "./body-DfQkMGxe.js",
       "./react-dom-vendor--YlRhZCI.js",
       "./lodash-vendor-BPQ1tp_f.js",
       "./body-BMQTJ_qR.css",
@@ -14867,7 +14867,7 @@ var n1 = ["as", "children", "isInset", "testId", "style", "xcss"],
         action: "clicked",
         componentName: c || "Pressable",
         packageName: "@atlaskit/primitives",
-        packageVersion: "16.4.4",
+        packageVersion: "0.0.0-development",
         analyticsData: l,
         actionSubject: "button",
       });
@@ -19878,7 +19878,11 @@ function Dr(e) {
   return e;
 }
 var Tk = w1.tooltip(),
-  Kf = { componentName: "tooltip", packageName: "@atlaskit/tooltip", packageVersion: "20.10.0" },
+  Kf = {
+    componentName: "tooltip",
+    packageName: "@atlaskit/tooltip",
+    packageVersion: "0.0.0-development",
+  },
   Mk = { top: "bottom", bottom: "top", left: "right", right: "left" },
   Lk = function (t) {
     return t.split("-")[0];
@@ -20683,7 +20687,7 @@ var Yk = function (t) {
   },
   Jk = m.lazy(function () {
     return Iv(
-      () => import("./body-BZL4FwoG.js"),
+      () => import("./body-DfQkMGxe.js"),
       __vite__mapDeps([2, 3, 1, 4, 5]),
       import.meta.url,
     );
