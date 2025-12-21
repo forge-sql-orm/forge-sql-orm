@@ -7,7 +7,7 @@ import {
   clearCacheSchedulerTrigger,
   slowQuerySchedulerTrigger,
 } from "../../../src/webtriggers";
-import { getTables, forgeSystemTables } from "../../../src/core/SystemTables";
+import { getTables } from "../../../src/core/SystemTables";
 import { generateDropTableStatements, slowQueryPerHours } from "../../../src/utils/sqlUtils";
 import { clearExpiredCache } from "../../../src/utils/cacheUtils";
 import { sql } from "@forge/sql";
