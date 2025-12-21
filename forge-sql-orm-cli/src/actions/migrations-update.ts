@@ -902,7 +902,7 @@ export const updateMigration = async (options: any) => {
               autoincrement: (column as any).autoincrement,
               columnType: column.columnType,
               name: column.name,
-              default: metadata.columns.email.hasDefault ? String(column.default) : undefined,
+              default: column.hasDefault ? String(column.default) : undefined,
               getSQLType: () => column.getSQLType(),
             };
           });
