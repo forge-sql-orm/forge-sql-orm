@@ -681,7 +681,7 @@ function generateSchemaChanges(
       const hasDrizzleDefault = drizzleCol.default !== null && drizzleCol.default !== undefined;
       const hasDbDefault = dbCol.COLUMN_DEFAULT !== null && dbCol.COLUMN_DEFAULT !== undefined;
       const defaultChanged =
-        hasDrizzleDefault && hasDbDefault && drizzleCol.default !== dbCol.COLUMN_DEFAULT;
+        hasDrizzleDefault && hasDbDefault && !drizzleCol.default?.includes(dbCol.COLUMN_DEFAULT);
 
       // Column needs modification if any of these changed
       if (typeChanged || nullabilityChanged || defaultChanged) {
@@ -902,7 +902,25 @@ export const updateMigration = async (options: any) => {
               autoincrement: (column as any).autoincrement,
               columnType: column.columnType,
               name: column.name,
-              default: column.hasDefault ? String(column.default) : undefined,
+              default: (() => {
+                if (!column.hasDefault) {
+                  return undefined;
+                }
+
+                const defaultValue = column.default;
+
+                // If default is an object with toQuery method (e.g., SQL expression)
+                if (
+                  typeof defaultValue === "object" &&
+                  defaultValue !== null &&
+                  typeof (defaultValue as any).toQuery === "function"
+                ) {
+                  return (defaultValue as any).toQuery({}).sql;
+                }
+
+                // Otherwise, convert to string
+                return String(defaultValue);
+              })(),
               getSQLType: () => column.getSQLType(),
             };
           });
