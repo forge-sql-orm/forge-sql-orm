@@ -17,6 +17,6 @@ export default defineConfig({
             lines: 80,
         },
     },
-    include: ['src/**/*.test.ts', '__tests__/**/*.test.ts', 'forge-sql-orm-cli/__tests__/**/*.test.ts'],
+    include: ['src/**/*.test.ts', '__tests__/**/*.test.ts'],
   },
 });
