@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import fs from "fs";
 import path from "path";
-
-import { execSync } from "child_process";
+import mysql from "mysql2/promise";
+import { RowDataPacket } from "mysql2";
 
 /**
  * Options for migration creation
@@ -11,6 +11,16 @@ export interface CreateMigrationOptions {
   output: string;
   entitiesPath: string;
   force?: boolean;
+  host?: string;
+  port?: number;
+  user?: string;
+  password?: string;
+  dbName?: string;
+}
+
+interface CreateTableRow extends RowDataPacket {
+  Table: string;
+  "Create Table": string;
 }
 
 /**
@@ -36,28 +46,36 @@ export const loadMigrationVersion = async (migrationPath: string): Promise<numbe
 };
 
 /**
+ * Regular expressions for adding IF NOT EXISTS to SQL statements
+ * Note: MySQL/TiDB does not support IF NOT EXISTS for ALTER TABLE ADD CONSTRAINT
+ */
+const SQL_KIND_REGEX = /CREATE (?!.*IF NOT EXISTS)(UNIQUE INDEX|INDEX|TABLE) /gim;
+
+/**
+ * Inserts IF NOT EXISTS into CREATE statements.
+ * Only adds IF NOT EXISTS to CREATE TABLE, CREATE INDEX, and CREATE UNIQUE INDEX.
+ * Does not add IF NOT EXISTS to ALTER TABLE statements as MySQL/TiDB doesn't support it.
+ * @param content - The SQL content.
+ * @returns The SQL content with IF NOT EXISTS added.
+ */
+function insertNotExists(content: string): string {
+  SQL_KIND_REGEX.lastIndex = 0;
+
+  // Add IF NOT EXISTS to CREATE TABLE, CREATE INDEX, CREATE UNIQUE INDEX
+  // Note: ALTER TABLE ADD CONSTRAINT and ALTER TABLE ADD INDEX don't support IF NOT EXISTS in MySQL/TiDB
+  content = content.replace(SQL_KIND_REGEX, "CREATE $1 IF NOT EXISTS ");
+
+  return content;
+}
+
+/**
  * Cleans SQL statements by removing unnecessary database options.
  * @param sql - The raw SQL statement.
  * @returns The cleaned SQL statement.
  */
 export function cleanSQLStatement(sql: string): string {
-  // Add IF NOT EXISTS to CREATE TABLE statements
-  sql = sql.replace(/create\s+table\s+(\w+)/gi, "create table if not exists $1");
-
-  // Add IF NOT EXISTS to CREATE INDEX statements
-  sql = sql.replace(/create\s+index\s+(\w+)/gi, "create index if not exists $1");
-
-  // Add IF NOT EXISTS to ADD INDEX statements
-  sql = sql.replace(
-    /alter\s+table\s+(\w+)\s+add\s+index\s+(\w+)/gi,
-    "alter table $1 add index if not exists $2",
-  );
-
-  // Add IF NOT EXISTS to ADD CONSTRAINT statements
-  sql = sql.replace(
-    /alter\s+table\s+(\w+)\s+add\s+constraint\s+(\w+)/gi,
-    "alter table $1 add constraint if not exists $2",
-  );
+  // Add IF NOT EXISTS to relevant statements
+  sql = insertNotExists(sql);
 
   // Remove unnecessary database options
   return sql.replace(/\s+default\s+character\s+set\s+utf8mb4\s+engine\s*=\s*InnoDB;?/gi, "").trim();
@@ -143,27 +161,51 @@ ${callLines.join("\n")}
 }
 
 /**
- * Extracts only the relevant SQL statements for migration.
- * @param schema - The full database schema as SQL.
- * @returns Filtered list of SQL statements.
+ * Gets list of tables from the database
+ * @param connection - MySQL connection
+ * @returns Array of table names
  */
-export const extractCreateStatements = (schema: string): string[] => {
-  // Split by statement-breakpoint and semicolon
-  const statements = schema
-    .split(/--> statement-breakpoint|;/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
+async function getTables(connection: mysql.Connection): Promise<string[]> {
+  const [rows] = await connection.execute<any[]>("SHOW TABLES");
+  return rows.map((row) => Object.values(row)[0] as string);
+}
 
-  return statements.filter(
-    (stmt) =>
-      stmt.toLowerCase().startsWith("create table") ||
-      stmt.toLowerCase().startsWith("alter table") ||
-      stmt.toLowerCase().includes("add index") ||
-      stmt.toLowerCase().includes("create index") ||
-      stmt.toLowerCase().includes("add unique index") ||
-      stmt.toLowerCase().includes("add constraint"),
-  );
-};
+/**
+ * Gets CREATE TABLE statement for a specific table
+ * @param connection - MySQL connection
+ * @param tableName - Name of the table
+ * @returns CREATE TABLE statement
+ */
+async function getCreateTableStatement(
+  connection: mysql.Connection,
+  tableName: string,
+): Promise<string | null> {
+  const [rows] = await connection.execute<CreateTableRow[]>(`SHOW CREATE TABLE \`${tableName}\``);
+  const result = rows as CreateTableRow[];
+  if (result.length > 0 && result[0]["Create Table"]) {
+    return result[0]["Create Table"];
+  }
+  return null;
+}
+
+/**
+ * Gets all CREATE TABLE statements from the database
+ * @param connection - MySQL connection
+ * @returns Array of CREATE TABLE statements
+ */
+async function getAllCreateTableStatements(connection: mysql.Connection): Promise<string[]> {
+  const tables = await getTables(connection);
+  const statements: string[] = [];
+
+  for (const table of tables) {
+    const createTable = await getCreateTableStatement(connection, table);
+    if (createTable) {
+      statements.push(createTable);
+    }
+  }
+
+  return statements;
+}
 
 /**
  * Creates a full database migration.
@@ -186,29 +228,45 @@ export const createMigration = async (options: CreateMigrationOptions) => {
       }
     }
 
-    // Generate SQL using drizzle-kit
-    await execSync(
-      `npx drizzle-kit generate --name=init --dialect mysql --out ${options.output} --schema ${options.entitiesPath}`,
-      { encoding: "utf-8" },
-    );
-    const initSqlFile = path.join(options.output, "0000_init.sql");
-    const sql = fs.readFileSync(initSqlFile, "utf-8");
+    // Validate database connection parameters
+    if (!options.host || !options.port || !options.user || !options.password || !options.dbName) {
+      console.error(
+        `❌ Error: Database connection parameters are required (host, port, user, password, dbName)`,
+      );
+      process.exit(1);
+    }
 
-    // Extract and clean statements
-    const createStatements = extractCreateStatements(sql);
+    // Create database connection
+    const connection = await mysql.createConnection({
+      host: options.host,
+      port: options.port,
+      user: options.user,
+      password: options.password,
+      database: options.dbName,
+    });
 
-    // Generate and save migration files
-    const migrationFile = generateMigrationFile(createStatements, 1);
-    saveMigrationFiles(migrationFile, 1, options.output);
+    try {
+      console.log(`✅ Connected to database: ${options.dbName}`);
 
-    fs.rmSync(initSqlFile, { force: true });
-    console.log(`✅ Removed SQL file: ${initSqlFile}`);
-    // Remove meta directory after processing
-    let metaDir = path.join(options.output, "meta");
-    fs.rmSync(metaDir, { recursive: true, force: true });
-    console.log(`✅ Removed: ${metaDir}`);
-    console.log(`✅ Migration successfully created!`);
-    process.exit(0);
+      // Get all CREATE TABLE statements from the database
+      console.log(`📋 Fetching CREATE TABLE statements from database...`);
+      const createStatements = await getAllCreateTableStatements(connection);
+
+      if (createStatements.length === 0) {
+        console.warn(`⚠️ Warning: No tables found in the database.`);
+      } else {
+        console.log(`✅ Found ${createStatements.length} table(s)`);
+      }
+
+      // Generate and save migration files
+      const migrationFile = generateMigrationFile(createStatements, 1);
+      saveMigrationFiles(migrationFile, 1, options.output);
+
+      console.log(`✅ Migration successfully created!`);
+      process.exit(0);
+    } finally {
+      await connection.end();
+    }
   } catch (error) {
     console.error(`❌ Error during migration creation:`, error);
     process.exit(1);

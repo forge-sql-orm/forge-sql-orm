@@ -3,7 +3,7 @@ set -euo pipefail
 
 # -------- configurable ----------
 CONTAINER_NAME="forge-sql-orm-mysql"
-IMAGE="mysql:latest"
+IMAGE="mysql:8.0"
 HOST_PORT="3366"
 MYSQL_ROOT_PASSWORD="admin"
 MYSQL_DATABASE="sqlforgesqlorm"
@@ -32,7 +32,7 @@ for i in {1..60}; do
   if docker exec "${CONTAINER_NAME}" mysqladmin ping -proot -p"${MYSQL_ROOT_PASSWORD}" --silent >/dev/null 2>&1; then
     break
   fi
-  sleep 1
+  sleep 2
 done
 
 # extra sanity check
@@ -52,7 +52,6 @@ echo "==> Creating table 'users' in database '${MYSQL_DATABASE}'"
 docker exec -i "${CONTAINER_NAME}" \
   mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" "${MYSQL_DATABASE}" <<'SQL'
 SET foreign_key_checks = 0;
-create table `test_example_table` (`id` int not null auto_increment primary key, `name` varchar(200) null, `email` varchar(200) null);
 SET foreign_key_checks = 1
 SQL
 
