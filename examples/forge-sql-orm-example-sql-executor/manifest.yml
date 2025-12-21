@@ -46,7 +46,7 @@ resources:
       port: 3099
 app:
   runtime:
-    name: nodejs22.x
+    name: nodejs24.x
   id: ari:cloud:ecosystem::app/49122813-fd5b-4f67-8cb2-92bbdd1991b0
 permissions:
   content:

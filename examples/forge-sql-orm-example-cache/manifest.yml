@@ -70,7 +70,7 @@ resources:
       port: 3099
 app:
   runtime:
-    name: nodejs22.x
+    name: nodejs24.x
   id: ari:cloud:ecosystem::app/18964d3c-440a-4ec3-a5d4-e0475c5831a5
   storage:
     entities:
