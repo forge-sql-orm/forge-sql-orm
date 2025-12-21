@@ -208,27 +208,12 @@ program
   .option("--password <string>", "Database password")
   .option("--dbName <string>", "Database name")
   .option("--output <string>", "Output path for migrations")
-  .option("--entitiesPath <string>", "Path to the folder containing entities")
   .option("--force", "Force creation even if migrations exist")
   .option("--saveEnv", "Save configuration to .env file")
   .action(async (cmd) => {
-    const config = await getConfig(
-      cmd,
-      "./database/migration",
-      () => ({
-        entitiesPath: cmd.entitiesPath || process.env.FORGE_SQL_ORM_ENTITIESPATH,
-        force: cmd.force || false,
-      }),
-      (cfg, questions: unknown[]) => {
-        if (!cfg.entitiesPath)
-          questions.push({
-            type: "input",
-            name: "entitiesPath",
-            message: "Enter the path to entities:",
-            default: "./database/entities",
-          });
-      },
-    );
+    const config = await getConfig(cmd, "./database/migration", () => ({
+      force: cmd.force || false,
+    }));
     await createMigration(config);
   });
 
@@ -297,4 +282,4 @@ program
   });
 
 // 🔥 Execute CLI
-  program.parse(process.argv);
+program.parse(process.argv);
