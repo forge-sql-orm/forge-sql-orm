@@ -4,14 +4,14 @@ modules:
       resource: main
       resolver:
         function: resolver
-      title: Forge SQL ORM Data Sync(Cache example)
+      title: Forge SQL ORM AtlasCamp
   scheduledTrigger:
     - key: scheduled-schema-migration
       function: runSchemaMigration
-      interval: hour
+      interval: day
     - key: runSlowQuery
       function: runSlowQueryFunc
-      interval: hour
+      interval: day
     - key: clear-cache-trigger
       function: clearCache
       interval: fiveMinute
@@ -24,25 +24,14 @@ modules:
     - key: print-degradation-queries
       queue: degradationQueue
       function: handlerAsyncDegradation
+    - key: runSchemaMigrationQueue
+      queue: migrationQueue
+      function: handlerAsyncMigration
   webtrigger:
     - key: invoke-schema-migration
       function: runSchemaMigration
-      security:
-        egress:
-          allowDataEgress: false
-          allowedResponses:
-            - statusCode: 200
-              body: '{"body": "Migrations successfully executed"}'
-    - key: drop-schema-migration
-      function: dropMigrations
-    - key: fetch-schema
-      function: fetchSchema
-    - key: print-performance
-      function: runPerformanceAnalyze
-    - key: print-slowest-queries
-      function: runSlowQueryFunc
-    - key: clearCacheWeb
-      function: clearCache
+#    - key: fetch-schema
+#      function: fetchSchema
   sql:
     - key: main
       engine: mysql
@@ -53,16 +42,17 @@ modules:
       handler: index.handlerMigration
     - key: dropMigrations
       handler: index.dropMigrations
-    - key: fetchSchema
-      handler: index.fetchMigrations
+#    - key: fetchSchema
+#      handler: index.fetchMigrations
     - key: runSlowQueryFunc
       handler: index.runSlowQuery
-    - key: runPerformanceAnalyze
-      handler: index.runPerformanceAnalyze
     - key: clearCache
       handler: index.clearCache
     - key: handlerAsyncDegradation
       handler: index.handlerAsyncDegradation
+    - key: handlerAsyncMigration
+      handler: index.handlerAsyncMigration
+      timeoutSeconds: 900
 resources:
   - key: main
     path: static/forge-orm-example/build-static

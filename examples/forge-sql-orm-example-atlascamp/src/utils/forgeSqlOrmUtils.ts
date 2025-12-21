@@ -1,7 +1,7 @@
 import ForgeSQL from "forge-sql-orm";
 
 export const FORGE_SQL_ORM = new ForgeSQL({
-  logRawSqlQuery: true,
+  logRawSqlQuery: false,
   cacheEntityName: "cache",
   cacheTTL: 180,
 });
