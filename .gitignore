@@ -128,3 +128,6 @@ dist-cli
 .yarn/install-state.gz
 .pnp.*
 dependency-chunks.html
+.cursor
+.idea
+.env
