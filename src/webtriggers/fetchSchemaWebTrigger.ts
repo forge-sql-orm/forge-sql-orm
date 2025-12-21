@@ -60,9 +60,9 @@ async function generateCreateTableStatements(tables: string[]): Promise<string[]
 
   for (const table of tables) {
     const createTableResult = await sql.executeDDL<CreateTableRow>(`SHOW CREATE TABLE "${table}"`);
-
     const createTableStatements = createTableResult.rows
       .filter((row) => !isSystemTable(row.Table))
+      .filter((row) => Boolean(row["Create Table"]))
       .map((row) => formatCreateTableStatement(row["Create Table"]));
 
     statements.push(...createTableStatements);

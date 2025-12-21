@@ -7,11 +7,12 @@ import {
   clearCacheSchedulerTrigger,
   slowQuerySchedulerTrigger,
 } from "../../../src/webtriggers";
-import { getTables } from "../../../src/core/SystemTables";
+import { getTables, forgeSystemTables } from "../../../src/core/SystemTables";
 import { generateDropTableStatements, slowQueryPerHours } from "../../../src/utils/sqlUtils";
 import { clearExpiredCache } from "../../../src/utils/cacheUtils";
 import { sql } from "@forge/sql";
 import { MigrationRunner } from "@forge/sql/out/migration";
+import { getTableName } from "drizzle-orm/table";
 
 vi.useFakeTimers();
 vi.setSystemTime(new Date("2023-04-12 00:00:01"));
@@ -62,10 +63,18 @@ vi.mock("@forge/sql", () => {
   };
 });
 
+// Mock drizzle-orm/table
+vi.mock("drizzle-orm/table", () => ({
+  getTableName: vi.fn((table: any) => table?._?.name || table?.name || "unknown"),
+}));
+
 // Mock SystemTables
+const mockForgeSystemTables: any[] = [];
 vi.mock("../../../src/core/SystemTables", () => ({
   getTables: vi.fn().mockResolvedValue([]),
-  forgeSystemTables: [],
+  get forgeSystemTables() {
+    return mockForgeSystemTables;
+  },
   clusterStatementsSummary: {
     digest: "digest",
     stmtType: "stmtType",
@@ -178,6 +187,12 @@ describe("WebTriggers", () => {
     // Reset mocks
     vi.clearAllMocks();
     mockMigrationRunner = (vi.mocked(sql) as any).migrationRunner;
+    // Reset mockForgeSystemTables
+    mockForgeSystemTables.length = 0;
+    // Reset getTableName mock
+    vi.mocked(getTableName).mockImplementation(
+      (table: any) => table?._?.name || table?.name || "unknown",
+    );
   });
 
   describe("fetchSchemaWebTrigger", () => {
@@ -204,13 +219,234 @@ describe("WebTriggers", () => {
       expect(result.body).toContain("SET foreign_key_checks = 1");
     });
 
-    it("should handle errors gracefully", async () => {
+    it("should filter out system tables", async () => {
+      // Mock getTables to return table names including a system table
+      (getTables as any).mockResolvedValue(["table1", "__migrations", "table2"]);
+
+      // Mock forgeSystemTables to include __migrations
+      const mockSystemTable = { _: { name: "__migrations" } };
+      mockForgeSystemTables.push(mockSystemTable);
+
+      // Mock getTableName to return the table name
+      vi.mocked(getTableName).mockImplementation((table: any) => {
+        if (table === mockSystemTable || table?._?.name === "__migrations") {
+          return "__migrations";
+        }
+        return table?._?.name || table?.name || "unknown";
+      });
+
+      // Mock executeDDL to return create table statements
+      vi.mocked(sql.executeDDL).mockImplementation((query: string) => {
+        if (query.includes("table1")) {
+          return Promise.resolve({
+            rows: [{ "Create Table": "CREATE TABLE table1 (...)", Table: "table1" }],
+          });
+        }
+        if (query.includes("__migrations")) {
+          return Promise.resolve({
+            rows: [{ "Create Table": "CREATE TABLE __migrations (...)", Table: "__migrations" }],
+          });
+        }
+        if (query.includes("table2")) {
+          return Promise.resolve({
+            rows: [{ "Create Table": "CREATE TABLE table2 (...)", Table: "table2" }],
+          });
+        }
+        return Promise.resolve({ rows: [] });
+      });
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(200);
+      expect(result.body).toContain("CREATE TABLE IF NOT EXISTS table1");
+      expect(result.body).toContain("CREATE TABLE IF NOT EXISTS table2");
+      expect(result.body).not.toContain("__migrations");
+    });
+
+    it("should filter out rows with empty Create Table", async () => {
+      (getTables as any).mockResolvedValue(["table1", "table2"]);
+
+      vi.mocked(sql.executeDDL).mockImplementation(() =>
+        Promise.resolve({
+          rows: [
+            { "Create Table": "CREATE TABLE table1 (...)", Table: "table1" },
+            { "Create Table": "", Table: "table2" },
+            { "Create Table": null, Table: "table3" },
+          ],
+        }),
+      );
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(200);
+      expect(result.body).toContain("CREATE TABLE IF NOT EXISTS table1");
+      expect(result.body).not.toContain("table2");
+      expect(result.body).not.toContain("table3");
+    });
+
+    it("should format CREATE TABLE statements correctly (remove quotes, add IF NOT EXISTS)", async () => {
+      (getTables as any).mockResolvedValue(["table1"]);
+
+      vi.mocked(sql.executeDDL).mockImplementation(() =>
+        Promise.resolve({
+          rows: [
+            {
+              "Create Table": 'CREATE TABLE "table1" (`id` int)',
+              Table: "table1",
+            },
+          ],
+        }),
+      );
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(200);
+      expect(result.body).toContain("CREATE TABLE IF NOT EXISTS table1");
+      expect(result.body).not.toContain('"');
+      // Note: formatCreateTableStatement only removes double quotes, not backticks
+      // Backticks are valid MySQL syntax for identifiers
+    });
+
+    it("should handle empty table list", async () => {
+      (getTables as any).mockResolvedValue([]);
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(200);
+      expect(result.body).toContain("SET foreign_key_checks = 0");
+      expect(result.body).toContain("SET foreign_key_checks = 1");
+      // Should only contain the foreign key check statements
+      const statements = result.body.split(";\n");
+      expect(statements.length).toBe(2);
+    });
+
+    it("should handle case when all tables are system tables", async () => {
+      const mockSystemTable = { _: { name: "__migrations" } };
+      mockForgeSystemTables.push(mockSystemTable);
+
+      vi.mocked(getTableName).mockImplementation((table: any) => {
+        if (table === mockSystemTable || table?._?.name === "__migrations") {
+          return "__migrations";
+        }
+        return table?._?.name || table?.name || "unknown";
+      });
+
+      (getTables as any).mockResolvedValue(["__migrations"]);
+
+      vi.mocked(sql.executeDDL).mockImplementation(() =>
+        Promise.resolve({
+          rows: [{ "Create Table": "CREATE TABLE __migrations (...)", Table: "__migrations" }],
+        }),
+      );
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(200);
+      expect(result.body).not.toContain("__migrations");
+      expect(result.body).toContain("SET foreign_key_checks = 0");
+      expect(result.body).toContain("SET foreign_key_checks = 1");
+    });
+
+    it("should handle errors with debug.sqlMessage", async () => {
+      const error: any = new Error("Database error");
+      error.debug = { sqlMessage: "SQL syntax error" };
+      (getTables as any).mockRejectedValue(error);
+
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(500);
+      expect(result.body).toBe("SQL syntax error");
+      expect(consoleErrorSpy).toHaveBeenCalledWith("SQL syntax error");
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("should handle errors with debug.message", async () => {
+      const error: any = new Error("Database error");
+      error.debug = { message: "Connection failed" };
+      (getTables as any).mockRejectedValue(error);
+
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(500);
+      expect(result.body).toBe("Connection failed");
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Connection failed");
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("should handle errors with only error.message", async () => {
       (getTables as any).mockRejectedValue(new Error("Failed to get tables"));
+
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchSchemaWebTrigger();
 
       expect(result.statusCode).toBe(500);
       expect(result.body).toContain("Failed to get tables");
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to get tables");
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("should handle errors with unknown error format", async () => {
+      const error = { unknown: "property" };
+      (getTables as any).mockRejectedValue(error);
+
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(500);
+      expect(result.body).toBe("Unknown error occurred");
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Unknown error occurred");
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("should handle errors during executeDDL", async () => {
+      (getTables as any).mockResolvedValue(["table1"]);
+
+      const error: any = new Error("DDL execution failed");
+      error.debug = { sqlMessage: "Table does not exist" };
+      vi.mocked(sql.executeDDL).mockRejectedValue(error);
+
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(500);
+      expect(result.body).toBe("Table does not exist");
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Table does not exist");
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("should properly format SQL statements with semicolons", async () => {
+      (getTables as any).mockResolvedValue(["table1", "table2"]);
+
+      vi.mocked(sql.executeDDL).mockImplementation(() =>
+        Promise.resolve({
+          rows: [
+            { "Create Table": "CREATE TABLE table1 (...)", Table: "table1" },
+            { "Create Table": "CREATE TABLE table2 (...)", Table: "table2" },
+          ],
+        }),
+      );
+
+      const result = await fetchSchemaWebTrigger();
+
+      expect(result.statusCode).toBe(200);
+      const statements = result.body.split(";\n");
+      expect(statements.length).toBeGreaterThanOrEqual(4);
+      expect(statements[0]).toBe("SET foreign_key_checks = 0");
+      expect(statements[1]).toContain("CREATE TABLE IF NOT EXISTS table1");
+      expect(statements[2]).toContain("CREATE TABLE IF NOT EXISTS table2");
+      expect(statements[statements.length - 1]).toBe("SET foreign_key_checks = 1");
     });
   });
 
