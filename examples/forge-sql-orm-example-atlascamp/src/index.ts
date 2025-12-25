@@ -35,10 +35,10 @@ const DEGRADATION_QUEUE = "degradationQueue";
 const MIGRATION_QUEUE = "migrationQueue";
 const migrationQueue = new Queue({ key: MIGRATION_QUEUE });
 
-// const USER_ID = "fce59721-2149-46da-ac36-ad9aede46235";
+//const USER_ID = "fce59721-2149-46da-ac36-ad9aede46235";
 const USER_ID = "ef758625-1f8d-461b-ac5c-e43444b94273";
 
-const query =
+const query1 =
   "SELECT d.id, d.owner_user_id as userId, d.created_at as createdAt, d.id as documentId , d.title, d.body \n" +
   "FROM document d\n" +
   "JOIN (\n" +
@@ -50,9 +50,8 @@ const query =
   "  ORDER BY d2.created_at DESC\n" +
   "  LIMIT 10 OFFSET 0\n" +
   ") x ON x.id = d.id\n" +
-  "CROSS JOIN (SELECT SLEEP(1)) t\n" +
   "ORDER BY d.created_at DESC;";
-const query1 =
+const query =
   "SELECT d.id, d.owner_user_id, d.created_at, d.title, d.body\n" +
   "FROM document d\n" +
   "WHERE d.id IN (\n" +
@@ -62,7 +61,7 @@ const query1 =
   "        SELECT rp.permission_id\n" +
   "        FROM user_role ur\n" +
   "        JOIN role_permission rp ON ur.role_id = rp.role_id\n" +
-  "        WHERE ur.user_id = 'fce59721-2149-46da-ac36-ad9aede46235'\n" +
+  "        WHERE ur.user_id = 'ef758625-1f8d-461b-ac5c-e43444b94273'\n" +
   "    )\n" +
   ")\n" +
   "ORDER BY d.created_at DESC\n" +
@@ -152,29 +151,53 @@ resolver.define("getQueryResultCache", async () => {
     .innerJoin(rolePermission, and(eq(userRole.roleId, rolePermission.roleId)))
     .where(eq(userRole.userId, USER_ID));
 
-  return await FORGE_SQL_ORM.select({
-    id: document.id,
-    userId: document.ownerUserId,
-    createdAt: document.createdAt,
-    title: document.title,
-    documentId: documentAcl.documentId,
-    permissionId: documentAcl.permissionId,
-    body: document.body,
-  })
-    .from(document)
-    .innerJoin(documentAcl, eq(documentAcl.documentId, document.id))
-    .where(
-      or(
-        inArray(
-          documentAcl.permissionId,
-          perms.map((p) => p.permission_id),
+  return (
+    await FORGE_SQL_ORM.executeWithMetadata(
+      () =>
+        FORGE_SQL_ORM.execute(
+          "SELECT d.id, d.owner_user_id as userId, d.created_at as createdAt, d.title, d.body\n" +
+            "FROM document d\n" +
+            "WHERE d.id IN (\n" +
+            "    SELECT a.document_id\n" +
+            "    FROM document_acl a\n" +
+            "    WHERE a.permission_id IN (" +
+            perms.map((p) => `'${p.permission_id}'`).join(",") +
+            " )\n" +
+            "ORDER BY d.created_at DESC\n" +
+            "LIMIT 10 OFFSET 999" +
+            ");\n",
         ),
-        // eq(document.ownerUserId, USER_ID),
-      ),
+      async (totalDbExecutionTime, totalResponseSize, printQueriesWithPlan) => {
+        await printQueriesWithPlan();
+      },
     )
-    .orderBy(desc(document.createdAt))
-    .limit(formatLimitOffset(10))
-    .offset(formatLimitOffset(0));
+  )[0];
+  // return FORGE_SQL_ORM.executeWithMetadata(()=> FORGE_SQL_ORM.select({
+  //   id: document.id,
+  //   userId: document.ownerUserId,
+  //   createdAt: document.createdAt,
+  //   title: document.title,
+  //   documentId: documentAcl.documentId,
+  //   permissionId: documentAcl.permissionId,
+  //   body: document.body,
+  // })
+  //   .from(document)
+  //   .innerJoin(documentAcl, eq(documentAcl.documentId, document.id))
+  //   .where(
+  //     or(
+  //       inArray(
+  //         documentAcl.permissionId,
+  //         perms.map((p) => p.permission_id),
+  //       ),
+  //       // eq(document.ownerUserId, USER_ID),
+  //     ),
+  //   )
+  //   .orderBy(desc(document.createdAt))
+  //   .limit(formatLimitOffset(10))
+  //   .offset(formatLimitOffset(999)),
+  //     async (totalDbExecutionTime, totalResponseSize, printQueriesWithPlan)=>{
+  //         await printQueriesWithPlan()
+  //     });
 });
 
 resolver.define("getQueryResult", async () => {

@@ -8,10 +8,10 @@ modules:
   scheduledTrigger:
     - key: scheduled-schema-migration
       function: runSchemaMigration
-      interval: hour
+      interval: day
     - key: runSlowQuery
       function: runSlowQueryFunc
-      interval: hour
+      interval: day
     - key: clear-cache-trigger
       function: clearCache
       interval: fiveMinute
