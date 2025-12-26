@@ -2,7 +2,6 @@ import Resolver, { Request } from "@forge/resolver";
 import { spawn } from "child_process";
 import { sql } from "@forge/sql";
 import { dropSchemaMigrations, applySchemaMigrations, fetchSchemaWebTrigger } from "forge-sql-orm";
-import migration from "./migration";
 
 const resolver = new Resolver();
 
@@ -68,7 +67,7 @@ resolver.define("executeCommand", async (request: Request<{ command: string }>) 
 export const handler = resolver.getDefinitions();
 
 export const handlerMigration = async () => {
-  return applySchemaMigrations(migration);
+  return applySchemaMigrations(async (migrationRunner) => migrationRunner);
 };
 
 export const dropMigrations = () => {
