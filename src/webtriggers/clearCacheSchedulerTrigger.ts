@@ -1,6 +1,5 @@
 import { clearExpiredCache } from "../utils/cacheUtils";
 import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
-import { checkProductionEnvironment } from "../utils/sqlUtils";
 
 /**
  * Scheduler trigger for clearing expired cache entries.
@@ -41,10 +40,6 @@ import { checkProductionEnvironment } from "../utils/sqlUtils";
  * ```
  */
 export const clearCacheSchedulerTrigger = async (options?: ForgeSqlOrmOptions) => {
-  const productionCheck = checkProductionEnvironment("clearCacheSchedulerTrigger");
-  if (productionCheck) {
-    return productionCheck;
-  }
   try {
     const newOptions: ForgeSqlOrmOptions = options ?? {
       logRawSqlQuery: false,

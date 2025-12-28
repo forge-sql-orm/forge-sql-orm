@@ -14,15 +14,15 @@ modules:
       function: runSchemaMigration
       events:
         - avi:forge:installed:app
-  webtrigger:
-    - key: invoke-schema-migration
-      function: runSchemaMigration
-      security:
-        egress:
-          allowDataEgress: false
-          allowedResponses:
-            - statusCode: 200
-              body: '{"body": "Migrations successfully executed"}'
+    #  webtrigger:
+    #    - key: invoke-schema-migration
+    #      function: runSchemaMigration
+    #      security:
+    #        egress:
+    #          allowDataEgress: false
+    #          allowedResponses:
+    #            - statusCode: 200
+    #              body: '{"body": "Migrations successfully executed"}'
     - key: drop-schema-migration
       function: dropMigrations
     - key: fetch-schema
