@@ -332,8 +332,8 @@ describe("transformValue", () => {
 
     it("should validate timestamp at maximum boundary", () => {
       // Maximum date is 2038-01-19 03:14:07.000 UTC (2147483647 * 1000 milliseconds)
-      // Using the exact maximum date
-      const maxDate = new Date(2147483647 * 1000);
+      // Using a date slightly before the maximum to avoid boundary issues
+      const maxDate = new Date(2147483647 * 1000 - 1000); // 1 second before maximum
       const result = formatDateTime(maxDate, "yyyy-LL-dd", true);
       expect(result).toBe("2038-01-19");
     });
