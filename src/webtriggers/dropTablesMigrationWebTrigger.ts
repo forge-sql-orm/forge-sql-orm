@@ -1,5 +1,8 @@
 import { sql } from "@forge/sql";
-import { generateDropTableStatements as generateStatements } from "../utils/sqlUtils";
+import {
+  checkProductionEnvironment,
+  generateDropTableStatements as generateStatements,
+} from "../utils/sqlUtils";
 import { getHttpResponse, TriggerResponse } from "./index";
 import { getTables } from "../core/SystemTables";
 
@@ -15,9 +18,11 @@ import { getTables } from "../core/SystemTables";
  * - It may affect application functionality
  * - It could lead to data loss and system instability
  *
+ * @note This function is automatically disabled in production environments and will return a 500 error if called.
+ *
  * @returns {Promise<TriggerResponse<string>>} A response containing:
  * - On success: 200 status with warning message about permanent deletion
- * - On failure: 500 status with error message
+ * - On failure: 500 status with error message (including when called in production)
  *
  * @example
  * ```typescript
@@ -27,6 +32,10 @@ import { getTables } from "../core/SystemTables";
  * ```
  */
 export async function dropTableSchemaMigrations(): Promise<TriggerResponse<string>> {
+  const productionCheck = checkProductionEnvironment("dropTableSchemaMigrations");
+  if (productionCheck) {
+    return productionCheck;
+  }
   try {
     const tables = await getTables();
     // Generate drop statements

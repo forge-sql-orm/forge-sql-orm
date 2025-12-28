@@ -24,25 +24,25 @@ modules:
     - key: print-degradation-queries
       queue: degradationQueue
       function: handlerAsyncDegradation
-  webtrigger:
-    - key: invoke-schema-migration
-      function: runSchemaMigration
-      security:
-        egress:
-          allowDataEgress: false
-          allowedResponses:
-            - statusCode: 200
-              body: '{"body": "Migrations successfully executed"}'
-    - key: drop-schema-migration
-      function: dropMigrations
-    - key: fetch-schema
-      function: fetchSchema
-    - key: print-performance
-      function: runPerformanceAnalyze
-    - key: print-slowest-queries
-      function: runSlowQueryFunc
-    - key: clearCacheWeb
-      function: clearCache
+  #  webtrigger:
+  #    - key: invoke-schema-migration
+  #      function: runSchemaMigration
+  #      security:
+  #        egress:
+  #          allowDataEgress: false
+  #          allowedResponses:
+  #            - statusCode: 200
+  #              body: '{"body": "Migrations successfully executed"}'
+  #    - key: drop-schema-migration
+  #      function: dropMigrations
+  #    - key: fetch-schema
+  #      function: fetchSchema
+  #    - key: print-performance
+  #      function: runPerformanceAnalyze
+  #    - key: print-slowest-queries
+  #      function: runSlowQueryFunc
+  #    - key: clearCacheWeb
+  #      function: clearCache
   sql:
     - key: main
       engine: mysql

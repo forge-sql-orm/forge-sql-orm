@@ -15,6 +15,7 @@ vi.mock("../../../src/core/SystemTables", () => ({
 
 vi.mock("../../../src/utils/sqlUtils", () => ({
   generateDropTableStatements: (...args: any[]) => mockGenerateStatements(...args),
+  checkProductionEnvironment: vi.fn().mockResolvedValue(null),
 }));
 
 vi.mock("@forge/sql", () => ({

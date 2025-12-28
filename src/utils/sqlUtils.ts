@@ -29,6 +29,8 @@ import { ForgeSqlOperation } from "../core/ForgeSQLQueryBuilder";
 import { ColumnDataType } from "drizzle-orm/column-builder";
 import { AnyMySqlColumn } from "drizzle-orm/mysql-core/columns/common";
 import type { ColumnBaseConfig } from "drizzle-orm/column";
+import { getHttpResponse, TriggerResponse } from "../webtriggers";
+import { getAppContext } from "@forge/api";
 
 /**
  * Interface representing table metadata information
@@ -968,4 +970,23 @@ export function withTidbHint<
   // We lie a bit to TypeScript here: at runtime this is a new SQL fragment,
   // but returning TExpr keeps the column type info in downstream inference.
   return sql`/*+ SET_VAR(tidb_session_alias=${sql.raw(SESSION_ALIAS_NAME_ORM)}) */ ${column}` as unknown as AnyMySqlColumn<TPartial>;
+}
+
+/**
+ * Checks if the current environment is production and returns an error response if so.
+ * This function is used to prevent development-only operations from running in production.
+ *
+ * @param functionName - The name of the function being checked (for logging purposes)
+ * @returns {TriggerResponse<string> | null} Returns error response if in production, null otherwise
+ */
+export function checkProductionEnvironment(functionName: string): TriggerResponse<string> | null {
+  const environmentType = getAppContext()?.environmentType;
+  if (environmentType === "PRODUCTION") {
+    // eslint-disable-next-line no-console
+    console.log(`${functionName} is disabled in production environment`);
+    return getHttpResponse<string>(500, `${functionName} is disabled in production environment`);
+  }
+  // eslint-disable-next-line no-console
+  console.log(`${functionName} triggered in ${environmentType}`);
+  return null;
 }

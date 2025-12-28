@@ -126,6 +126,7 @@ vi.mock("../../../src/utils/sqlUtils", () => ({
     .mockResolvedValue([
       "Found SlowQuery SQL: SELECT * FROM users | Memory: 2.50 MB | Time: 150.00 ms\n Plan:IndexScan(users)",
     ]),
+  checkProductionEnvironment: vi.fn().mockResolvedValue(null),
 }));
 
 // Mock cacheUtils
