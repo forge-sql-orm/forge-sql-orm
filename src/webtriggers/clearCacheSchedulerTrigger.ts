@@ -1,11 +1,14 @@
 import { clearExpiredCache } from "../utils/cacheUtils";
 import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
+import { checkProductionEnvironment } from "../utils/sqlUtils";
 
 /**
  * Scheduler trigger for clearing expired cache entries.
  *
  * This trigger should be configured as a Forge scheduler to automatically
  * clean up expired cache entries based on their TTL (Time To Live).
+ *
+ * @note This function is automatically disabled in production environments and will return a 500 error if called.
  *
  * @param options - Optional ForgeSQL ORM configuration. If not provided,
  *                  uses default cache settings with cacheEntityName: "cache"
@@ -38,6 +41,10 @@ import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
  * ```
  */
 export const clearCacheSchedulerTrigger = async (options?: ForgeSqlOrmOptions) => {
+  const productionCheck = checkProductionEnvironment("clearCacheSchedulerTrigger");
+  if (productionCheck) {
+    return productionCheck;
+  }
   try {
     const newOptions: ForgeSqlOrmOptions = options ?? {
       logRawSqlQuery: false,
