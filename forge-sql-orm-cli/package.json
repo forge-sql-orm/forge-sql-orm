@@ -46,7 +46,7 @@
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
-    "forge-sql-orm": "^2.1.18",
+    "forge-sql-orm": "^2.1.21",
     "inquirer": "^13.1.0",
     "mysql2": "^3.16.0",
     "reflect-metadata": "^0.2.2",
