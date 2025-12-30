@@ -31,10 +31,10 @@ class RovoIntegrationSettingImpl implements RovoIntegrationSetting {
    *
    * @param {string} accountId - The account ID of the active user
    * @param {string} tableName - The name of the table to query
-   * @param {Record<string, string>} contextParam - Context parameters for query substitution
+   * @param {Record<string, string>} contextParam - Context parameters for query substitution (parameter name -> value mapping)
    * @param {boolean} rls - Whether Row-Level Security is enabled
    * @param {string[]} rlsFields - Array of field names required for RLS validation
-   * @param {(alias: string) => string} rlsWherePart - Function that generates WHERE clause for RLS
+   * @param {(alias: string) => string} rlsWherePart - Function that generates WHERE clause for RLS filtering
    */
   constructor(
     accountId: string,
@@ -136,20 +136,82 @@ class RovoIntegrationSettingCreatorImpl implements RovoIntegrationSettingCreator
   }
 
   /**
-   * Adds a context parameter for query substitution.
-   * Context parameters are replaced in the SQL query before execution.
+   * Adds a string context parameter for query substitution.
+   * The value will be wrapped in single quotes in the SQL query.
    *
-   * @param {string} parameterName - The parameter name to replace in the query
-   * @param {string} value - The value to substitute for the parameter
+   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{projectKey}}')
+   * @param {string} value - The string value to substitute for the parameter
    * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
    *
    * @example
    * ```typescript
-   * builder.addContextParameter('{{projectKey}}', 'PROJ-123');
+   * builder.addStringContextParameter('{{projectKey}}', 'PROJ-123');
+   * // In SQL: {{projectKey}} will be replaced with 'PROJ-123'
    * ```
    */
-  addContextParameter(parameterName: string, value: string): RovoIntegrationSettingCreator {
-    this.contextParam[parameterName] = value;
+  addStringContextParameter(parameterName: string, value: string): RovoIntegrationSettingCreator {
+    this.addContextParameter(parameterName, value, true);
+    return this;
+  }
+
+  /**
+   * Adds a number context parameter for query substitution.
+   * The value will be inserted as-is without quotes in the SQL query.
+   *
+   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{limit}}')
+   * @param {number} value - The numeric value to substitute for the parameter
+   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
+   *
+   * @example
+   * ```typescript
+   * builder.addNumberContextParameter('{{limit}}', 100);
+   * // In SQL: {{limit}} will be replaced with 100
+   * ```
+   */
+  addNumberContextParameter(parameterName: string, value: number): RovoIntegrationSettingCreator {
+    this.addContextParameter(parameterName, String(value), false);
+    return this;
+  }
+
+  /**
+   * Adds a boolean context parameter for query substitution.
+   * The value will be converted to 1 (true) or 0 (false) and inserted as a number.
+   *
+   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{isActive}}')
+   * @param {boolean} value - The boolean value to substitute for the parameter
+   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
+   *
+   * @example
+   * ```typescript
+   * builder.addBooleanContextParameter('{{isActive}}', true);
+   * // In SQL: {{isActive}} will be replaced with 1
+   * ```
+   */
+  addBooleanContextParameter(parameterName: string, value: boolean): RovoIntegrationSettingCreator {
+    this.addNumberContextParameter(parameterName, value ? 1 : 0);
+    return this;
+  }
+  /**
+   * Adds a context parameter for query substitution.
+   * Context parameters are replaced in the SQL query before execution.
+   *
+   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{projectKey}}')
+   * @param {string} value - The value to substitute for the parameter
+   * @param {boolean} wrap - Whether to wrap the value in single quotes (true for strings, false for numbers)
+   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
+   *
+   * @example
+   * ```typescript
+   * builder.addContextParameter('{{projectKey}}', 'PROJ-123', true);
+   * // In SQL: {{projectKey}} will be replaced with 'PROJ-123'
+   * ```
+   */
+  addContextParameter(
+    parameterName: string,
+    value: string,
+    wrap: boolean,
+  ): RovoIntegrationSettingCreator {
+    this.contextParam[parameterName] = wrap ? `'${value}'` : value;
     return this;
   }
 
@@ -179,6 +241,12 @@ class RovoIntegrationSettingCreatorImpl implements RovoIntegrationSettingCreator
       private isUseRlsConditionalSettings: () => Promise<boolean> = async () => true;
       private rlsFieldsSettings: string[] = [];
       private wherePartSettings: (alias: string) => string = () => "";
+
+      /**
+       * Creates a new RlsSettingsImpl instance.
+       *
+       * @param {RovoIntegrationSettingCreatorImpl} parent - The parent settings builder instance
+       */
       constructor(private readonly parent: RovoIntegrationSettingCreatorImpl) {}
       /**
        * Sets a conditional function to determine if RLS should be applied.
@@ -328,8 +396,8 @@ export class Rovo implements RovoIntegration {
   /**
    * Creates a new Rovo instance.
    *
-   * @param {ForgeSqlOperation} forgeSqlOperations - The ForgeSQL operations instance for query analysis
-   * @param options - Configuration options for the ORM
+   * @param {ForgeSqlOperation} forgeSqlOperations - The ForgeSQL operations instance for query analysis and execution
+   * @param {ForgeSqlOrmOptions} options - Configuration options for the ORM (e.g., logging settings)
    */
   constructor(forgeSqlOperations: ForgeSqlOperation, options: ForgeSqlOrmOptions) {
     this.forgeOperations = forgeSqlOperations;
@@ -337,10 +405,11 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Parses SQL query into AST and validates it's a single SELECT statement
-   * @param sqlQuery - Normalized SQL query string
-   * @returns Parsed AST of the SELECT statement
-   * @throws Error if parsing fails or query is not a single SELECT statement
+   * Parses SQL query into AST and validates it's a single SELECT statement.
+   *
+   * @param {string} sqlQuery - Normalized SQL query string
+   * @returns {Select} Parsed AST of the SELECT statement
+   * @throws {Error} If parsing fails or query is not a single SELECT statement
    */
   private parseSqlQuery(sqlQuery: string): Select {
     const parser = new Parser();
@@ -370,9 +439,10 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Recursively processes array or single node and extracts tables
-   * @param items - Array of nodes or single node
-   * @param tables - Accumulator array for table names
+   * Recursively processes array or single node and extracts table names.
+   *
+   * @param {any} items - Array of AST nodes or single AST node
+   * @param {string[]} tables - Accumulator array for collecting table names (modified in place)
    */
   private extractTablesFromItems(items: any, tables: string[]): void {
     if (Array.isArray(items)) {
@@ -385,9 +455,10 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Extracts table name from table node
-   * @param node - AST node with table information
-   * @returns Table name in uppercase or null if not applicable
+   * Extracts table name from table AST node.
+   *
+   * @param {any} node - AST node with table information
+   * @returns {string | null} Table name in uppercase, or null if not applicable (e.g., 'dual' table)
    */
   private extractTableName(node: any): string | null {
     if (!node.table) {
@@ -398,9 +469,11 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Recursively extracts all table names from SQL AST node
-   * @param node - AST node to extract tables from
-   * @returns Array of table names (uppercase)
+   * Recursively extracts all table names from SQL AST node.
+   * Traverses FROM and JOIN clauses to find all referenced tables.
+   *
+   * @param {any} node - AST node to extract tables from
+   * @returns {string[]} Array of table names in uppercase
    */
   private extractTables(node: any): string[] {
     const tables: string[] = [];
@@ -427,9 +500,11 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Recursively checks if AST node contains scalar subqueries
-   * @param node - AST node to check
-   * @returns true if node contains scalar subquery, false otherwise
+   * Recursively checks if AST node contains scalar subqueries.
+   * Used for security validation to prevent subquery-based attacks.
+   *
+   * @param {any} node - AST node to check for subqueries
+   * @returns {boolean} True if node contains scalar subquery, false otherwise
    */
   private hasScalarSubquery(node: any): boolean {
     if (!node) return false;
@@ -452,13 +527,16 @@ export class Rovo implements RovoIntegration {
   /**
    * Creates a settings builder for Rovo queries using a raw table name.
    *
-   * @param {string} tableName - The name of the table to query
-   * @param {string} accountId - The account ID of the active user
+   * @param {string} tableName - The name of the table to query (case-insensitive)
+   * @param {string} accountId - The account ID of the active user for RLS filtering
    * @returns {RovoIntegrationSettingCreator} Builder for configuring Rovo query settings
    *
    * @example
    * ```typescript
    * const builder = rovo.rovoRawSettingBuilder('users', accountId);
+   * const settings = await builder
+   *   .addStringContextParameter('{{status}}', 'active')
+   *   .build();
    * ```
    */
   rovoRawSettingBuilder(tableName: string, accountId: string): RovoIntegrationSettingCreator {
@@ -467,14 +545,21 @@ export class Rovo implements RovoIntegration {
 
   /**
    * Creates a settings builder for Rovo queries using a Drizzle table object.
+   * This is a convenience method that extracts the table name from the Drizzle table object.
    *
    * @param {AnyMySqlTable} table - The Drizzle table object
-   * @param {string} accountId - The account ID of the active user
+   * @param {string} accountId - The account ID of the active user for RLS filtering
    * @returns {RovoIntegrationSettingCreator} Builder for configuring Rovo query settings
    *
    * @example
    * ```typescript
    * const builder = rovo.rovoSettingBuilder(usersTable, accountId);
+   * const settings = await builder
+   *   .useRLS()
+   *   .addRlsColumn(usersTable.id)
+   *   .addRlsWherePart((alias) => `${alias}.userId = '${accountId}'`)
+   *   .finish()
+   *   .build();
    * ```
    */
   rovoSettingBuilder(table: AnyMySqlTable, accountId: string): RovoIntegrationSettingCreator {
@@ -482,33 +567,12 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Executes a dynamic SQL query with comprehensive security validations.
+   * Validates basic input parameters for the SQL query.
    *
-   * This method performs multiple security checks:
-   * 1. Validates that the query is a SELECT statement
-   * 2. Ensures the query targets only the specified table
-   * 3. Blocks JOINs, subqueries, and window functions
-   * 4. Applies Row-Level Security filtering if enabled
-   * 5. Validates query results to ensure security fields are present
-   *
-   * @param {string} dynamicSql - The SQL query to execute (must be a SELECT statement)
-   * @param {RovoIntegrationSetting} settings - Configuration settings for the query
-   * @returns {Promise<Result<unknown>>} Query execution result with metadata
-   * @throws {Error} If the query violates security restrictions
-   *
-   * @example
-   * ```typescript
-   * const result = await rovo.dynamicIsolatedQuery(
-   *   "SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name",
-   *   settings
-   * );
-   *
-   * console.log(result.rows); // Query results
-   * console.log(result.metadata); // Query metadata
-   * ```
-   */
-  /**
-   * Validates basic input parameters
+   * @param {string} query - The SQL query string to validate
+   * @param {string} tableName - The expected table name
+   * @returns {string} The trimmed query string
+   * @throws {Error} If query is empty, table name is missing, or query is not a SELECT statement
    */
   private validateInputs(query: string, tableName: string): string {
     if (!query?.trim()) {
@@ -530,7 +594,12 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Normalizes SQL query using AST parsing and stringification
+   * Normalizes SQL query using AST parsing and stringification.
+   * This ensures consistent formatting and validates the query structure.
+   *
+   * @param {string} sql - The SQL query string to normalize
+   * @returns {string} The normalized SQL query string
+   * @throws {Error} If parsing fails, query is not a SELECT statement, or multiple statements are detected
    */
   private normalizeSqlString(sql: string): string {
     try {
@@ -566,7 +635,12 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Validates that query targets the correct table
+   * Validates that query targets the correct table.
+   * Checks that the FROM clause references only the expected table.
+   *
+   * @param {string} normalized - The normalized SQL query string
+   * @param {string} tableName - The expected table name
+   * @throws {Error} If query does not target the expected table
    */
   private validateTableName(normalized: string, tableName: string): void {
     const upperTableName = tableName.toUpperCase();
@@ -581,7 +655,12 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Validates query structure (tables, subqueries)
+   * Validates query structure for security compliance.
+   * Checks that only the specified table is referenced and no scalar subqueries are present.
+   *
+   * @param {Select} selectAst - The parsed SELECT AST node
+   * @param {string} tableName - The expected table name
+   * @throws {Error} If query references other tables or contains scalar subqueries
    */
   private validateQueryStructure(selectAst: Select, tableName: string): void {
     const upperTableName = tableName.toUpperCase();
@@ -616,7 +695,13 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Validates query execution plan for security violations
+   * Validates query execution plan for security violations.
+   * Uses EXPLAIN to detect JOINs, window functions, and references to other tables.
+   *
+   * @param {string} normalized - The normalized SQL query string
+   * @param {string} tableName - The expected table name
+   * @returns {Promise<void>}
+   * @throws {Error} If execution plan reveals JOINs, window functions, or references to other tables
    */
   private async validateExecutionPlan(normalized: string, tableName: string): Promise<void> {
     const explainRows = await this.forgeOperations.analyze().explainRaw(normalized, []);
@@ -667,7 +752,12 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Applies row-level security filtering to query
+   * Applies row-level security filtering to query.
+   * Wraps the original query in a subquery and adds a WHERE clause with RLS conditions.
+   *
+   * @param {string} normalized - The normalized SQL query string
+   * @param {RovoIntegrationSetting} settings - Rovo settings containing RLS configuration
+   * @returns {string} The SQL query with RLS filtering applied
    */
   private applyRLSFiltering(normalized: string, settings: RovoIntegrationSetting): string {
     if (normalized.endsWith(";")) {
@@ -684,7 +774,13 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Validates query results for RLS compliance
+   * Validates query results for RLS compliance.
+   * Ensures that required RLS fields are present and all fields originate from the correct table.
+   *
+   * @param {Result<unknown>} result - The query execution result
+   * @param {RovoIntegrationSetting} settings - Rovo settings containing RLS field requirements
+   * @param {string} upperTableName - The expected table name in uppercase
+   * @throws {Error} If required RLS fields are missing or fields originate from other tables
    */
   private validateQueryResults(
     result: Result<unknown>,
@@ -731,6 +827,32 @@ export class Rovo implements RovoIntegration {
     }
   }
 
+  /**
+   * Executes a dynamic SQL query with comprehensive security validations.
+   *
+   * This method performs multiple security checks:
+   * 1. Validates that the query is a SELECT statement
+   * 2. Ensures the query targets only the specified table
+   * 3. Blocks JOINs, subqueries, and window functions
+   * 4. Applies Row-Level Security filtering if enabled
+   * 5. Validates query results to ensure security fields are present
+   *
+   * @param {string} dynamicSql - The SQL query to execute (must be a SELECT statement)
+   * @param {RovoIntegrationSetting} settings - Configuration settings for the query
+   * @returns {Promise<Result<unknown>>} Query execution result with metadata
+   * @throws {Error} If the query violates security restrictions, parsing fails, or validation errors occur
+   *
+   * @example
+   * ```typescript
+   * const result = await rovo.dynamicIsolatedQuery(
+   *   "SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name",
+   *   settings
+   * );
+   *
+   * console.log(result.rows); // Query results
+   * console.log(result.metadata); // Query metadata
+   * ```
+   */
   async dynamicIsolatedQuery(
     dynamicSql: string,
     settings: RovoIntegrationSetting,

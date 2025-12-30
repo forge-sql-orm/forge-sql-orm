@@ -134,33 +134,6 @@ vi.mock("../../../src/utils/cacheUtils", () => ({
   clearExpiredCache: vi.fn().mockResolvedValue(undefined),
 }));
 
-// Mock drizzle-orm/mysql-core
-vi.mock("drizzle-orm/mysql-core", () => ({
-  unionAll: vi.fn().mockImplementation(() => ({
-    as: vi.fn().mockReturnValue({
-      digest: "digest",
-      stmtType: "stmtType",
-      schemaName: "schemaName",
-      execCount: "execCount",
-      avgLatencyNs: "avgLatencyNs",
-      maxLatencyNs: "maxLatencyNs",
-      minLatencyNs: "minLatencyNs",
-      avgProcessTimeNs: "avgProcessTimeNs",
-      avgWaitTimeNs: "avgWaitTimeNs",
-      avgBackoffTimeNs: "avgBackoffTimeNs",
-      avgMemBytes: "avgMemBytes",
-      maxMemBytes: "maxMemBytes",
-      avgTotalKeys: "avgTotalKeys",
-      firstSeen: "firstSeen",
-      lastSeen: "lastSeen",
-      planInCache: "planInCache",
-      planCacheHits: "planCacheHits",
-      digestText: "digestText",
-      plan: "plan",
-    }),
-  })),
-}));
-
 // Mock ForgeSQLORM
 vi.mock("../../../src/core/ForgeSQLORM", () => {
   const mockQueryBuilder = {
