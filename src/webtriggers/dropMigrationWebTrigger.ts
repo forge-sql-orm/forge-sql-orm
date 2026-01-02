@@ -4,7 +4,7 @@ import {
   generateDropTableStatements as generateStatements,
 } from "../utils/sqlUtils";
 import { getHttpResponse, TriggerResponse } from "./index";
-import { getTables } from "../core/SystemTables";
+import { getTables } from "../core";
 
 /**
  * ⚠️ DEVELOPMENT ONLY WEB TRIGGER ⚠️
