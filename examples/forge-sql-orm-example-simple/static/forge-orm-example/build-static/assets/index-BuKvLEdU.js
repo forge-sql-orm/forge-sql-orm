@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-JJ6DjNTc.js",
       "./client-core-vendor-DC5q1RXn.js",
-      "./body-Cy0DDytZ.js",
+      "./body-amn1_ZWO.js",
       "./react-dom-vendor--YlRhZCI.js",
       "./lodash-vendor-B0QWQanV.js",
       "./body-BMQTJ_qR.css",
@@ -722,7 +722,7 @@ var ho = {},
   en = {},
   tn = {},
   Nu;
-function _e() {
+function ge() {
   if (Nu) return tn;
   ((Nu = 1), Object.defineProperty(tn, "__esModule", { value: !0 }), (tn.BridgeAPIError = void 0));
   class e extends Error {}
@@ -732,7 +732,7 @@ var Uu;
 function oe() {
   if (Uu) return en;
   ((Uu = 1), Object.defineProperty(en, "__esModule", { value: !0 }), (en.getCallBridge = void 0));
-  const e = _e();
+  const e = ge();
   function t(n) {
     return !!n?.callBridge;
   }
@@ -751,7 +751,7 @@ var rn = {},
 function Fa() {
   if (qu) return rn;
   ((qu = 1), Object.defineProperty(rn, "__esModule", { value: !0 }), (rn.withRateLimiter = void 0));
-  const e = _e(),
+  const e = ge(),
     t = (r, n, i, a) => {
       let o = Date.now(),
         u = 0;
@@ -772,7 +772,7 @@ function hg() {
       (function (e) {
         (Object.defineProperty(e, "__esModule", { value: !0 }), (e.makeInvoke = e.invoke = void 0));
         const t = oe(),
-          r = _e(),
+          r = ge(),
           n = Fa(),
           i = (0, t.getCallBridge)(),
           a = (s) => {
@@ -822,7 +822,7 @@ function wv() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e._invokeEndpointFn = e.InvokeType = void 0));
         const t = oe(),
-          r = _e(),
+          r = ge(),
           n = Fa(),
           i = 500,
           a = 25,
@@ -900,7 +900,7 @@ function mg() {
   if (Ku) return sn;
   ((Ku = 1), Object.defineProperty(sn, "__esModule", { value: !0 }), (sn.submit = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = (0, e.getCallBridge)(),
     n = async (i) => {
       if ((await r("submit", i)) === !1)
@@ -914,7 +914,7 @@ function yg() {
   if (Ju) return un;
   ((Ju = 1), Object.defineProperty(un, "__esModule", { value: !0 }), (un.close = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = (0, e.getCallBridge)(),
     n = async (i) => {
       try {
@@ -932,7 +932,7 @@ function wg() {
   if (Yu) return cn;
   ((Yu = 1), Object.defineProperty(cn, "__esModule", { value: !0 }), (cn.open = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = (0, e.getCallBridge)(),
     n = async () => {
       try {
@@ -950,7 +950,7 @@ function Og() {
   if (Xu) return ln;
   ((Xu = 1), Object.defineProperty(ln, "__esModule", { value: !0 }), (ln.refresh = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = (0, e.getCallBridge)(),
     n = async (i) => {
       if ((await r("refresh", i)) === !1)
@@ -1327,7 +1327,7 @@ function Ag() {
     Object.defineProperty(hn, "__esModule", { value: !0 }),
     (hn.changeWindowTitle = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = (0, e.getCallBridge)(),
     n = async (i) => {
       try {
@@ -1493,12 +1493,21 @@ function Dg() {
   ((vc = 1), Object.defineProperty(_n, "__esModule", { value: !0 }), (_n.emitReadyEvent = void 0));
   const e = xv(),
     t = Iv(),
-    r = "EXTENSION_READY",
-    n = async () => {
-      const i = await t.view.getContext();
-      await e.events.emit(r, { localId: i.localId });
+    r = oe(),
+    n = ge(),
+    i = (0, r.getCallBridge)(),
+    a = "EXTENSION_READY",
+    o = async () => {
+      const u = await t.view.getContext();
+      await e.events.emit(a, { localId: u.localId });
+      try {
+        if ((await i("emitReadyEvent")) === !1)
+          throw new n.BridgeAPIError("Unable to emit ready event.");
+      } catch {
+        throw new n.BridgeAPIError("Unable to emit ready event.");
+      }
     };
-  return ((_n.emitReadyEvent = n), _n);
+  return ((_n.emitReadyEvent = o), _n);
 }
 const Tg = "modulepreload",
   Mg = function (e, t) {
@@ -2326,7 +2335,7 @@ function Yg() {
   if (Fc) return Dn;
   ((Fc = 1), Object.defineProperty(Dn, "__esModule", { value: !0 }), (Dn.Modal = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = (0, e.getCallBridge)(),
     n = () => {};
   class i {
@@ -2490,7 +2499,7 @@ function e_() {
   if (Uc) return Tn;
   ((Uc = 1), Object.defineProperty(Tn, "__esModule", { value: !0 }), (Tn.showFlag = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = (0, e.getCallBridge)(),
     n = (i) => {
       var a;
@@ -2617,7 +2626,7 @@ function o_() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e.open = e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE = void 0));
         const t = oe(),
-          r = _e(),
+          r = ge(),
           n = 30,
           i = (0, t.getCallBridge)();
         e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE =
@@ -2766,7 +2775,7 @@ function Na() {
   ((Qc = 1),
     Object.defineProperty(Bn, "__esModule", { value: !0 }),
     (Bn.checkRestrictedEnvironment = void 0));
-  const e = _e(),
+  const e = ge(),
     t = eu(),
     r = jv(),
     n = async () => {
@@ -2785,7 +2794,7 @@ function f_() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e.upload = e.createUploadPromises = void 0));
         const t = Ti(),
-          r = _e(),
+          r = ge(),
           n = Na(),
           a = (0, oe().getCallBridge)(),
           o = (l, d) => {
@@ -2908,7 +2917,7 @@ function v_() {
   if (tl) return Un;
   ((tl = 1), Object.defineProperty(Un, "__esModule", { value: !0 }), (Un.deleteObjects = void 0));
   const e = Ti(),
-    t = _e(),
+    t = ge(),
     r = Na(),
     i = (0, oe().getCallBridge)(),
     a = async ({ functionKey: o, keys: u }) => {
@@ -2934,7 +2943,7 @@ function p_() {
   if (rl) return qn;
   ((rl = 1), Object.defineProperty(qn, "__esModule", { value: !0 }), (qn.download = void 0));
   const e = Ti(),
-    t = _e(),
+    t = ge(),
     r = Na(),
     i = (0, oe().getCallBridge)(),
     a = async ({ functionKey: o, keys: u }) => {
@@ -2980,7 +2989,7 @@ function h_() {
   if (nl) return zn;
   ((nl = 1), Object.defineProperty(zn, "__esModule", { value: !0 }), (zn.getMetadata = void 0));
   const e = Ti(),
-    t = _e(),
+    t = ge(),
     r = Na(),
     i = (0, oe().getCallBridge)(),
     a = async ({ functionKey: o, keys: u }) => {
@@ -3976,7 +3985,7 @@ function E_() {
     Object.defineProperty(Wn, "__esModule", { value: !0 }),
     (Wn.initFeatureFlags = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = Fa(),
     n = 500,
     i = 1e3 * 25,
@@ -4076,7 +4085,7 @@ function x_() {
     Object.defineProperty(Kn, "__esModule", { value: !0 }),
     (Kn.trackFeatureFlagEvent = void 0));
   const e = oe(),
-    t = _e(),
+    t = ge(),
     r = Tv(),
     n = Fa(),
     i = 500,
@@ -12981,7 +12990,7 @@ var _w = {
         packageVersion: "0.0.0-development",
         analyticsData: n,
       }),
-      ge = y.useCallback(
+      _e = y.useCallback(
         function (pe) {
           (pe.preventDefault(), P(pe));
         },
@@ -13029,7 +13038,7 @@ var _w = {
               onBlur: w,
               onClick: le,
               onFocus: D,
-              onMouseDown: ge,
+              onMouseDown: _e,
               tabIndex: b ? -1 : Y,
               type: $,
             },
@@ -14835,18 +14844,18 @@ function aO(e) {
         _ = bt(h),
         b = _ === h,
         m = s || (b || !g ? [da(h)] : iO(h)),
-        O = [h].concat(m).reduce(function (le, ge) {
+        O = [h].concat(m).reduce(function (le, _e) {
           return le.concat(
-            bt(ge) === pu
+            bt(_e) === pu
               ? nO(t, {
-                  placement: ge,
+                  placement: _e,
                   boundary: l,
                   rootBoundary: d,
                   padding: c,
                   flipVariations: g,
                   allowedAutoPlacements: f,
                 })
-              : ge,
+              : _e,
           );
         }, []),
         w = t.rects.reference,
@@ -14883,11 +14892,11 @@ function aO(e) {
     if (D)
       for (
         var A = g ? 3 : 1,
-          be = function (ge) {
+          be = function (_e) {
             var ce = O.find(function (qe) {
               var Oe = k.get(qe);
               if (Oe)
-                return Oe.slice(0, ge).every(function (tt) {
+                return Oe.slice(0, _e).every(function (tt) {
                   return tt;
                 });
             });
@@ -15045,11 +15054,11 @@ function hO(e) {
         ae = b === Ur ? -D[G] : -k[G],
         ue = t.elements.arrow,
         le = v && ue ? gu(ue) : { width: 0, height: 0 },
-        ge = t.modifiersData["arrow#persistent"]
+        _e = t.modifiersData["arrow#persistent"]
           ? t.modifiersData["arrow#persistent"].padding
           : qp(),
-        ce = ge[V],
-        qe = ge[Y],
+        ce = _e[V],
+        qe = _e[Y],
         Oe = gi(0, k[G], le[G]),
         tt = m ? k[G] / 2 - A - Oe - ce - P.mainAxis : be - Oe - ce - P.mainAxis,
         pe = m ? -k[G] / 2 + A + Oe + qe + P.mainAxis : ae + Oe + qe + P.mainAxis,
@@ -16135,13 +16144,13 @@ function lS(e) {
     ae = K(be, 2),
     ue = ae[0],
     le = ae[1],
-    ge = y.useRef(null),
+    _e = y.useRef(null),
     ce = y.useRef(null),
     qe = function (re) {
-      ((ce.current = re), (ge.current = re ? re.firstElementChild : null));
+      ((ce.current = re), (_e.current = re ? re.firstElementChild : null));
     },
     Oe = y.useCallback(function (F) {
-      ge.current = F;
+      _e.current = F;
     }, []),
     tt = ui(ue),
     pe = ui(X),
@@ -16325,7 +16334,7 @@ function lS(e) {
         var Pt;
         return (Pt = A.current) === null || Pt === void 0 ? void 0 : Pt.mousePosition;
       }
-      return ge.current || void 0;
+      return _e.current || void 0;
     },
     Yr = aS("tooltip", Au),
     co = {
@@ -16342,7 +16351,7 @@ function lS(e) {
   y.useEffect(
     function () {
       if (!Du) {
-        var F = ge.current;
+        var F = _e.current;
         if (!(!F || !Yr))
           return (
             F.setAttribute("aria-describedby", Yr),
@@ -16763,7 +16772,7 @@ var OS = function (t) {
       ae = K(be, 2),
       ue = ae[0],
       le = ae[1],
-      ge = y.useRef(null),
+      _e = y.useRef(null),
       ce = Si({
         fn: S,
         action: "sorted",
@@ -16832,7 +16841,7 @@ var OS = function (t) {
           isLoading: g && rt,
           spinnerSize: qt,
           targetRef: function () {
-            return ge.current;
+            return _e.current;
           },
           testId: l,
           loadingLabel: s,
@@ -16853,7 +16862,7 @@ var OS = function (t) {
             }),
           rt &&
             E.createElement(ES, {
-              ref: ge,
+              ref: _e,
               highlightedRowIndex: i,
               rows: a,
               head: n,
@@ -16894,7 +16903,7 @@ var OS = function (t) {
   },
   SS = y.lazy(function () {
     return Rv(
-      () => import("./body-Cy0DDytZ.js"),
+      () => import("./body-amn1_ZWO.js"),
       __vite__mapDeps([2, 3, 1, 4, 5]),
       import.meta.url,
     );

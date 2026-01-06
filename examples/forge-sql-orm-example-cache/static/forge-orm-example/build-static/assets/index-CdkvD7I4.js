@@ -4,7 +4,7 @@ const __vite__mapDeps = (
   d = m.f || (m.f = ["./index-DzmuzxgH.js", "./client-core-vendor-kqFzl-gg.js"]),
 ) => i.map((i) => d[i]);
 import { r as gn, c as ri } from "./react-dom-vendor-BXC0oJZi.js";
-import { g as ni, a as ii, r as F } from "./client-core-vendor-kqFzl-gg.js";
+import { g as ni, a as ii, r as A } from "./client-core-vendor-kqFzl-gg.js";
 import { r as oi } from "./lodash-vendor-wRvQIJsp.js";
 (function () {
   const r = document.createElement("link").relList;
@@ -419,7 +419,7 @@ function Bn(e, r, a) {
     (d(p), o.shift(), o.length && c(o[0][0], o[0][1]));
   }
 }
-function Fn(e) {
+function An(e) {
   var r, a;
   return (
     (r = {}),
@@ -441,7 +441,7 @@ function Fn(e) {
       : o;
   }
 }
-function An(e) {
+function Fn(e) {
   if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
   var r = e[Symbol.asyncIterator],
     a;
@@ -616,8 +616,8 @@ const di = {
     __spreadArray: In,
     __await: G,
     __asyncGenerator: Bn,
-    __asyncDelegator: Fn,
-    __asyncValues: An,
+    __asyncDelegator: An,
+    __asyncValues: Fn,
     __makeTemplateObject: qn,
     __importStar: Mn,
     __importDefault: Dn,
@@ -636,9 +636,9 @@ const di = {
         get __assign() {
           return ze;
         },
-        __asyncDelegator: Fn,
+        __asyncDelegator: An,
         __asyncGenerator: Bn,
-        __asyncValues: An,
+        __asyncValues: Fn,
         __await: G,
         __awaiter: Pn,
         __classPrivateFieldGet: Tn,
@@ -699,17 +699,17 @@ var $e = {},
   et = {},
   K = {},
   W = {},
-  Ft;
+  At;
 function O() {
-  if (Ft) return W;
-  ((Ft = 1), Object.defineProperty(W, "__esModule", { value: !0 }), (W.BridgeAPIError = void 0));
+  if (At) return W;
+  ((At = 1), Object.defineProperty(W, "__esModule", { value: !0 }), (W.BridgeAPIError = void 0));
   class e extends Error {}
   return ((W.BridgeAPIError = e), W);
 }
-var At;
+var Ft;
 function R() {
-  if (At) return K;
-  ((At = 1), Object.defineProperty(K, "__esModule", { value: !0 }), (K.getCallBridge = void 0));
+  if (Ft) return K;
+  ((Ft = 1), Object.defineProperty(K, "__esModule", { value: !0 }), (K.getCallBridge = void 0));
   const e = O();
   function r(s) {
     return !!s?.callBridge;
@@ -1463,19 +1463,28 @@ function Jn() {
   return ((le.events = { emit: s, on: n }), le);
 }
 var ar;
-function Fi() {
+function Ai() {
   if (ar) return ue;
   ((ar = 1), Object.defineProperty(ue, "__esModule", { value: !0 }), (ue.emitReadyEvent = void 0));
   const e = Jn(),
     r = Zn(),
-    a = "EXTENSION_READY",
-    s = async () => {
-      const n = await r.view.getContext();
-      await e.events.emit(a, { localId: n.localId });
+    a = R(),
+    s = O(),
+    n = (0, a.getCallBridge)(),
+    o = "EXTENSION_READY",
+    t = async () => {
+      const l = await r.view.getContext();
+      await e.events.emit(o, { localId: l.localId });
+      try {
+        if ((await n("emitReadyEvent")) === !1)
+          throw new s.BridgeAPIError("Unable to emit ready event.");
+      } catch {
+        throw new s.BridgeAPIError("Unable to emit ready event.");
+      }
     };
-  return ((ue.emitReadyEvent = s), ue);
+  return ((ue.emitReadyEvent = t), ue);
 }
-const Ai = "modulepreload",
+const Fi = "modulepreload",
   qi = function (e, r) {
     return new URL(e, r).href;
   },
@@ -1510,7 +1519,7 @@ const Ai = "modulepreload",
           else if (document.querySelector(`link[href="${u}"]${g}`)) return;
           const d = document.createElement("link");
           if (
-            ((d.rel = f ? "stylesheet" : Ai),
+            ((d.rel = f ? "stylesheet" : Fi),
             f || (d.as = "script"),
             (d.crossOrigin = ""),
             (d.href = u),
@@ -2224,7 +2233,7 @@ function Zn() {
     o = Si(),
     t = Ci(),
     l = Ii(),
-    c = Fi(),
+    c = Ai(),
     i = Wi();
   return (
     (Y.view = {
@@ -2440,10 +2449,10 @@ function Zi() {
   };
   return ((D.productFetchApi = o), D);
 }
-var Fr;
+var Ar;
 function $i() {
-  if (Fr) return x;
-  Fr = 1;
+  if (Ar) return x;
+  Ar = 1;
   var e;
   (Object.defineProperty(x, "__esModule", { value: !0 }),
     (x.requestRemote = x.requestBitbucket = x.requestJira = x.requestConfluence = void 0));
@@ -2460,10 +2469,10 @@ function $i() {
 }
 var ft = {},
   Pe = {},
-  Ar;
+  Fr;
 function eo() {
-  if (Ar) return Pe;
-  ((Ar = 1), Object.defineProperty(Pe, "__esModule", { value: !0 }), (Pe.showFlag = void 0));
+  if (Fr) return Pe;
+  ((Fr = 1), Object.defineProperty(Pe, "__esModule", { value: !0 }), (Pe.showFlag = void 0));
   const e = R(),
     r = O(),
     a = (0, e.getCallBridge)(),
@@ -2827,7 +2836,7 @@ function ho() {
                     ? {
                         promise: (async () => {
                           try {
-                            const A = await fetch(y, {
+                            const F = await fetch(y, {
                               method: "PUT",
                               body: I,
                               headers: {
@@ -2836,17 +2845,17 @@ function ho() {
                               },
                             });
                             return {
-                              success: A.ok,
+                              success: F.ok,
                               key: w,
-                              status: A.status,
-                              error: A.ok ? void 0 : `Upload failed with status ${A.status}`,
+                              status: F.status,
+                              error: F.ok ? void 0 : `Upload failed with status ${F.status}`,
                             };
-                          } catch (A) {
+                          } catch (F) {
                             return {
                               success: !1,
                               key: w,
                               status: 503,
-                              error: A instanceof Error ? A.message : "Upload failed",
+                              error: F instanceof Error ? F.message : "Upload failed",
                             };
                           }
                         })(),
@@ -2903,11 +2912,11 @@ function _o() {
     };
   return ((Be.deleteObjects = o), Be);
 }
-var Fe = {},
+var Ae = {},
   Qr;
 function go() {
-  if (Qr) return Fe;
-  ((Qr = 1), Object.defineProperty(Fe, "__esModule", { value: !0 }), (Fe.download = void 0));
+  if (Qr) return Ae;
+  ((Qr = 1), Object.defineProperty(Ae, "__esModule", { value: !0 }), (Ae.download = void 0));
   const e = Ne(),
     r = O(),
     a = Xe(),
@@ -2947,13 +2956,13 @@ function go() {
       });
       return await Promise.all(i);
     };
-  return ((Fe.download = o), Fe);
+  return ((Ae.download = o), Ae);
 }
-var Ae = {},
+var Fe = {},
   Xr;
 function vo() {
-  if (Xr) return Ae;
-  ((Xr = 1), Object.defineProperty(Ae, "__esModule", { value: !0 }), (Ae.getMetadata = void 0));
+  if (Xr) return Fe;
+  ((Xr = 1), Object.defineProperty(Fe, "__esModule", { value: !0 }), (Fe.getMetadata = void 0));
   const e = Ne(),
     r = O(),
     a = Xe(),
@@ -2978,7 +2987,7 @@ function vo() {
         }),
       );
     };
-  return ((Ae.getMetadata = o), Ae);
+  return ((Fe.getMetadata = o), Fe);
 }
 var Yr;
 function po() {
@@ -3030,7 +3039,7 @@ var Et = {},
 function mo() {
   if ($r) return Ve;
   (($r = 1), Object.defineProperty(Ve, "__esModule", { value: !0 }));
-  const e = F();
+  const e = A();
   let r = class {
     constructor(s) {
       ((this._sdkKey = s),
@@ -3178,7 +3187,7 @@ function bo() {
   ((en = 1),
     Object.defineProperty(Me, "__esModule", { value: !0 }),
     (Me._resolveDeltasResponse = void 0));
-  const e = F(),
+  const e = A(),
     r = 2;
   function a(t, l) {
     const c = (0, e._typedJsonParse)(l, "checksum", "DeltasEvaluationResponse");
@@ -3265,7 +3274,7 @@ function ei() {
       });
     };
   Object.defineProperty(N, "__esModule", { value: !0 });
-  const r = F(),
+  const r = A(),
     a = bo();
   class s extends r.NetworkCore {
     constructor(o, t) {
@@ -3359,7 +3368,7 @@ function wo() {
   ((rn = 1),
     Object.defineProperty(De, "__esModule", { value: !0 }),
     (De._makeParamStoreGetter = void 0));
-  const e = F(),
+  const e = A(),
     r = { disableExposureLog: !0 };
   function a(u) {
     return u == null || u.disableExposureLog === !1;
@@ -3446,7 +3455,7 @@ function Eo() {
     };
   (Object.defineProperty(k, "__esModule", { value: !0 }),
     (k.StatsigEvaluationsDataAdapter = void 0));
-  const r = F(),
+  const r = A(),
     a = ei();
   let s = class extends r.DataAdapterCore {
     constructor() {
@@ -3537,7 +3546,7 @@ function Ro() {
       });
     };
   Object.defineProperty(L, "__esModule", { value: !0 });
-  const r = F(),
+  const r = A(),
     a = mo(),
     s = ei(),
     n = wo(),
@@ -3933,9 +3942,9 @@ function Oo() {
                 c !== "default" && !Object.prototype.hasOwnProperty.call(l, c) && r(l, t, c);
             };
         (Object.defineProperty(e, "__esModule", { value: !0 }), (e.StatsigClient = void 0));
-        const s = F(),
+        const s = A(),
           n = Ro();
-        ((e.StatsigClient = n.default), a(F(), e));
+        ((e.StatsigClient = n.default), a(A(), e));
         const o = Object.assign((0, s._getStatsigGlobal)(), { StatsigClient: n.default });
         e.default = o;
       })(T)),
@@ -4980,10 +4989,10 @@ const Bo = () => {
       ],
     });
   },
-  Fo = document.getElementById("root"),
-  Ao = ri.createRoot(Fo),
+  Ao = document.getElementById("root"),
+  Fo = ri.createRoot(Ao),
   _n = () => {
-    Ao.render(m.jsx(ui.StrictMode, { children: m.jsx(Bo, {}) }));
+    Fo.render(m.jsx(ui.StrictMode, { children: m.jsx(Bo, {}) }));
   };
 Le.view.theme
   .enable()
