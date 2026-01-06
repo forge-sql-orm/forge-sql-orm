@@ -1144,13 +1144,70 @@ export interface RlsSettings {
  */
 export interface RovoIntegrationSettingCreator {
   /**
-   * Adds a context parameter for query substitution.
+   * Adds a string context parameter for query substitution.
+   * The value will be wrapped in single quotes in the SQL query.
    *
-   * @param {string} parameterName - The parameter name to replace in the query
-   * @param {string} value - The value to substitute for the parameter
+   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{projectKey}}')
+   * @param {string} value - The string value to substitute for the parameter
    * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
+   *
+   * @example
+   * ```typescript
+   * builder.addStringContextParameter('{{projectKey}}', 'PROJ-123');
+   * // In SQL: {{projectKey}} will be replaced with 'PROJ-123'
+   * ```
    */
-  addContextParameter(parameterName: string, value: string): RovoIntegrationSettingCreator;
+  addStringContextParameter(parameterName: string, value: string): RovoIntegrationSettingCreator;
+  /**
+   * Adds a number context parameter for query substitution.
+   * The value will be inserted as-is without quotes in the SQL query.
+   *
+   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{limit}}')
+   * @param {number} value - The numeric value to substitute for the parameter
+   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
+   *
+   * @example
+   * ```typescript
+   * builder.addNumberContextParameter('{{limit}}', 100);
+   * // In SQL: {{limit}} will be replaced with 100
+   * ```
+   */
+  addNumberContextParameter(parameterName: string, value: number): RovoIntegrationSettingCreator;
+  /**
+   * Adds a boolean context parameter for query substitution.
+   * The value will be converted to 1 (true) or 0 (false) and inserted as a number.
+   *
+   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{isActive}}')
+   * @param {boolean} value - The boolean value to substitute for the parameter
+   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
+   *
+   * @example
+   * ```typescript
+   * builder.addBooleanContextParameter('{{isActive}}', true);
+   * // In SQL: {{isActive}} will be replaced with 1
+   * ```
+   */
+  addBooleanContextParameter(parameterName: string, value: boolean): RovoIntegrationSettingCreator;
+  /**
+   * Adds a context parameter for query substitution.
+   * Context parameters are replaced in the SQL query before execution.
+   *
+   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{projectKey}}')
+   * @param {string} value - The value to substitute for the parameter
+   * @param {boolean} wrap - Whether to wrap the value in single quotes (true for strings, false for numbers)
+   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
+   *
+   * @example
+   * ```typescript
+   * builder.addContextParameter('{{projectKey}}', 'PROJ-123', true);
+   * // In SQL: {{projectKey}} will be replaced with 'PROJ-123'
+   * ```
+   */
+  addContextParameter(
+    parameterName: string,
+    value: string,
+    wrap: boolean,
+  ): RovoIntegrationSettingCreator;
 
   /**
    * Enables Row-Level Security (RLS) for the query.

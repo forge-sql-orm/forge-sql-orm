@@ -26,7 +26,7 @@ import {
   SelectAliasedDistinctType,
   SelectAliasedType,
   UpdateAndEvictCacheType,
-} from "../lib/drizzle/extensions/additionalActions";
+} from "../lib";
 import { ForgeSQLAnalyseOperation } from "./ForgeSQLAnalyseOperations";
 import { ForgeSQLCacheOperations } from "./ForgeSQLCacheOperations";
 import { MySqlTable } from "drizzle-orm/mysql-core/table";

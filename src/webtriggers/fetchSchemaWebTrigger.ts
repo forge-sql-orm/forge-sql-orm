@@ -2,6 +2,7 @@ import { sql } from "@forge/sql";
 import { getHttpResponse, TriggerResponse } from "./index";
 import { forgeSystemTables, getTables } from "../core/SystemTables";
 import { getTableName } from "drizzle-orm/table";
+import { checkProductionEnvironment } from "../utils/sqlUtils";
 
 interface CreateTableRow {
   Table: string;
@@ -20,9 +21,11 @@ interface CreateTableRow {
  * - Generates SQL that could potentially be used maliciously
  * - May expose sensitive table names and structures
  *
+ * @note This function is automatically disabled in production environments and will return a 500 error if called.
+ *
  * @returns {Promise<TriggerResponse<string>>} A response containing SQL statements to recreate the database schema
  * - On success: Returns 200 status with SQL statements
- * - On failure: Returns 500 status with error message
+ * - On failure: Returns 500 status with error message (including when called in production)
  *
  * @example
  * ```typescript
@@ -34,6 +37,10 @@ interface CreateTableRow {
  * ```
  */
 export async function fetchSchemaWebTrigger(): Promise<TriggerResponse<string>> {
+  const productionCheck = checkProductionEnvironment("fetchSchemaWebTrigger");
+  if (productionCheck) {
+    return productionCheck;
+  }
   try {
     const tables = await getTables();
     const createTableStatements = await generateCreateTableStatements(tables);

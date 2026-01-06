@@ -699,7 +699,7 @@ var et = {},
   K = {},
   H = {},
   Dt;
-function O() {
+function E() {
   if (Dt) return H;
   ((Dt = 1), Object.defineProperty(H, "__esModule", { value: !0 }), (H.BridgeAPIError = void 0));
   class e extends Error {}
@@ -709,7 +709,7 @@ var kt;
 function b() {
   if (kt) return K;
   ((kt = 1), Object.defineProperty(K, "__esModule", { value: !0 }), (K.getCallBridge = void 0));
-  const e = O();
+  const e = E();
   function r(s) {
     return !!s?.callBridge;
   }
@@ -728,7 +728,7 @@ var J = {},
 function We() {
   if (Tt) return J;
   ((Tt = 1), Object.defineProperty(J, "__esModule", { value: !0 }), (J.withRateLimiter = void 0));
-  const e = O(),
+  const e = E(),
     r = (a, s, i, o) => {
       let t = Date.now(),
         l = 0;
@@ -749,7 +749,7 @@ function vi() {
       (function (e) {
         (Object.defineProperty(e, "__esModule", { value: !0 }), (e.makeInvoke = e.invoke = void 0));
         const r = b(),
-          a = O(),
+          a = E(),
           s = We(),
           i = (0, r.getCallBridge)(),
           o = (c) => {
@@ -799,7 +799,7 @@ function Kn() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e._invokeEndpointFn = e.InvokeType = void 0));
         const r = b(),
-          a = O(),
+          a = E(),
           s = We(),
           i = 500,
           o = 25,
@@ -877,7 +877,7 @@ function yi() {
   if (Vt) return $;
   ((Vt = 1), Object.defineProperty($, "__esModule", { value: !0 }), ($.submit = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = (0, e.getCallBridge)(),
     s = async (i) => {
       if ((await a("submit", i)) === !1)
@@ -891,7 +891,7 @@ function mi() {
   if (xt) return Z;
   ((xt = 1), Object.defineProperty(Z, "__esModule", { value: !0 }), (Z.close = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = (0, e.getCallBridge)(),
     s = async (i) => {
       try {
@@ -909,7 +909,7 @@ function bi() {
   if (zt) return Q;
   ((zt = 1), Object.defineProperty(Q, "__esModule", { value: !0 }), (Q.open = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = (0, e.getCallBridge)(),
     s = async () => {
       try {
@@ -927,7 +927,7 @@ function wi() {
   if (Kt) return ee;
   ((Kt = 1), Object.defineProperty(ee, "__esModule", { value: !0 }), (ee.refresh = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = (0, e.getCallBridge)(),
     s = async (i) => {
       if ((await a("refresh", i)) === !1)
@@ -1301,7 +1301,7 @@ function Ai() {
     Object.defineProperty(oe, "__esModule", { value: !0 }),
     (oe.changeWindowTitle = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = (0, e.getCallBridge)(),
     s = async (i) => {
       try {
@@ -1467,12 +1467,21 @@ function Ci() {
   ((sr = 1), Object.defineProperty(se, "__esModule", { value: !0 }), (se.emitReadyEvent = void 0));
   const e = Yn(),
     r = ei(),
-    a = "EXTENSION_READY",
-    s = async () => {
-      const i = await r.view.getContext();
-      await e.events.emit(a, { localId: i.localId });
+    a = b(),
+    s = E(),
+    i = (0, a.getCallBridge)(),
+    o = "EXTENSION_READY",
+    t = async () => {
+      const l = await r.view.getContext();
+      await e.events.emit(o, { localId: l.localId });
+      try {
+        if ((await i("emitReadyEvent")) === !1)
+          throw new s.BridgeAPIError("Unable to emit ready event.");
+      } catch {
+        throw new s.BridgeAPIError("Unable to emit ready event.");
+      }
     };
-  return ((se.emitReadyEvent = s), se);
+  return ((se.emitReadyEvent = t), se);
 }
 const Di = "modulepreload",
   ki = function (e, r) {
@@ -1665,11 +1674,11 @@ function Fi() {
       (d[h++] = (m >>> 16) & 255),
       (d[h++] = (m >>> 8) & 255),
       (d[h++] = m & 255));
-    const E = ((v / 4294967296) * 1e4) & 268435455;
-    ((d[h++] = (E >>> 8) & 255),
-      (d[h++] = E & 255),
-      (d[h++] = ((E >>> 24) & 15) | 16),
-      (d[h++] = (E >>> 16) & 255),
+    const O = ((v / 4294967296) * 1e4) & 268435455;
+    ((d[h++] = (O >>> 8) & 255),
+      (d[h++] = O & 255),
+      (d[h++] = ((O >>> 24) & 15) | 16),
+      (d[h++] = (O >>> 16) & 255),
       (d[h++] = (_ >>> 8) | 128),
       (d[h++] = _ & 255));
     for (let w = 0; w < 6; ++w) d[h + w] = p[w];
@@ -1803,7 +1812,7 @@ function Ui() {
       g = -1732584194,
       y = 271733878;
     for (let m = 0; m < d.length; m += 16) {
-      const E = _,
+      const O = _,
         w = v,
         A = g,
         V = y;
@@ -1871,7 +1880,7 @@ function Ui() {
         (y = f(y, _, v, g, d[m + 11], 10, -1120210379)),
         (g = f(g, y, _, v, d[m + 2], 15, 718787259)),
         (v = f(v, g, y, _, d[m + 9], 21, -343485551)),
-        (_ = o(_, E)),
+        (_ = o(_, O)),
         (v = o(v, w)),
         (g = o(g, A)),
         (y = o(y, V)));
@@ -2300,7 +2309,7 @@ function Yi() {
   if (jr) return Oe;
   ((jr = 1), Object.defineProperty(Oe, "__esModule", { value: !0 }), (Oe.Modal = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = (0, e.getCallBridge)(),
     s = () => {};
   class i {
@@ -2404,8 +2413,8 @@ function Zi() {
             status: y,
             isAttachment: m,
           } = await t("fetchRemote", p),
-          E = m ? (0, e.base64ToBlob)(_, v["content-type"]) : _;
-        return new Response(E || null, { headers: v, status: y, statusText: g });
+          O = m ? (0, e.base64ToBlob)(_, v["content-type"]) : _;
+        return new Response(O || null, { headers: v, status: y, statusText: g });
       };
       return { requestRemote: (c, n) => l(c, n) };
     };
@@ -2426,9 +2435,9 @@ function Zi() {
           headers: g,
           statusText: y,
           status: m,
-          isAttachment: E,
+          isAttachment: O,
         } = await t("fetchProduct", _),
-        w = E ? (0, e.base64ToBlob)(v, g["content-type"]) : v;
+        w = O ? (0, e.base64ToBlob)(v, g["content-type"]) : v;
       return new Response(w || null, { headers: g, status: m, statusText: y });
     };
     return {
@@ -2464,7 +2473,7 @@ function eo() {
   if (kr) return Re;
   ((kr = 1), Object.defineProperty(Re, "__esModule", { value: !0 }), (Re.showFlag = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = (0, e.getCallBridge)(),
     s = (i) => {
       var o;
@@ -2591,7 +2600,7 @@ function ao() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e.open = e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE = void 0));
         const r = b(),
-          a = O(),
+          a = E(),
           s = 30,
           i = (0, r.getCallBridge)();
         e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE =
@@ -2740,7 +2749,7 @@ function $e() {
   ((Jr = 1),
     Object.defineProperty(qe, "__esModule", { value: !0 }),
     (qe.checkRestrictedEnvironment = void 0));
-  const e = O(),
+  const e = E(),
     r = At(),
     a = ti(),
     s = async () => {
@@ -2759,7 +2768,7 @@ function _o() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e.upload = e.createUploadPromises = void 0));
         const r = Ne(),
-          a = O(),
+          a = E(),
           s = $e(),
           o = (0, b().getCallBridge)(),
           t = (u, f) => {
@@ -2806,18 +2815,18 @@ function _o() {
               v = new Map();
             return (
               h.forEach((y, m) => {
-                const E = d[m];
-                (_.set(E.checksum, y), v.set(E.checksum, m));
+                const O = d[m];
+                (_.set(O.checksum, y), v.set(O.checksum, m));
               }),
               Object.entries(p).map(([y, m]) => {
-                const { key: E, checksum: w } = m,
+                const { key: O, checksum: w } = m,
                   A = _.get(w),
                   V = v.get(w);
                 return V === void 0
                   ? {
                       promise: Promise.resolve({
                         success: !1,
-                        key: E,
+                        key: O,
                         error: `Index not found for checksum ${w}`,
                       }),
                       index: -1,
@@ -2836,14 +2845,14 @@ function _o() {
                             });
                             return {
                               success: C.ok,
-                              key: E,
+                              key: O,
                               status: C.status,
                               error: C.ok ? void 0 : `Upload failed with status ${C.status}`,
                             };
                           } catch (C) {
                             return {
                               success: !1,
-                              key: E,
+                              key: O,
                               status: 503,
                               error: C instanceof Error ? C.message : "Upload failed",
                             };
@@ -2856,7 +2865,7 @@ function _o() {
                     : {
                         promise: Promise.resolve({
                           success: !1,
-                          key: E,
+                          key: O,
                           error: `Blob not found for checksum ${w}`,
                         }),
                         index: V,
@@ -2882,7 +2891,7 @@ function vo() {
   if (Xr) return je;
   ((Xr = 1), Object.defineProperty(je, "__esModule", { value: !0 }), (je.deleteObjects = void 0));
   const e = Ne(),
-    r = O(),
+    r = E(),
     a = $e(),
     i = (0, b().getCallBridge)(),
     o = async ({ functionKey: t, keys: l }) => {
@@ -2908,7 +2917,7 @@ function ho() {
   if (Yr) return Me;
   ((Yr = 1), Object.defineProperty(Me, "__esModule", { value: !0 }), (Me.download = void 0));
   const e = Ne(),
-    r = O(),
+    r = E(),
     a = $e(),
     i = (0, b().getCallBridge)(),
     o = async ({ functionKey: t, keys: l }) => {
@@ -2954,7 +2963,7 @@ function go() {
   if ($r) return Ce;
   (($r = 1), Object.defineProperty(Ce, "__esModule", { value: !0 }), (Ce.getMetadata = void 0));
   const e = Ne(),
-    r = O(),
+    r = E(),
     a = $e(),
     i = (0, b().getCallBridge)(),
     o = async ({ functionKey: t, keys: l }) => {
@@ -3950,7 +3959,7 @@ function Po() {
     Object.defineProperty(Fe, "__esModule", { value: !0 }),
     (Fe.initFeatureFlags = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = We(),
     s = 500,
     i = 1e3 * 25,
@@ -4050,7 +4059,7 @@ function Io() {
     Object.defineProperty(Ue, "__esModule", { value: !0 }),
     (Ue.trackFeatureFlagEvent = void 0));
   const e = b(),
-    r = O(),
+    r = E(),
     a = ni(),
     s = We(),
     i = 500,

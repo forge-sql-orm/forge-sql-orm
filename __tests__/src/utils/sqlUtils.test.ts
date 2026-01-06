@@ -14,11 +14,18 @@ import {
   printQueriesWithPlan,
   handleErrorsWithPlan,
   slowQueryPerHours,
+  checkProductionEnvironment,
 } from "../../../src/utils/sqlUtils";
 import { DateTime } from "luxon";
 import { int, mysqlTable, varchar, text, primaryKey } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";
+
+// Mock @forge/api
+const mockGetAppContext = vi.fn();
+vi.mock("@forge/api", () => ({
+  getAppContext: () => mockGetAppContext(),
+}));
 
 // Test suite for transformValue function
 describe("transformValue", () => {
@@ -216,6 +223,29 @@ describe("transformValue", () => {
       const tables = ["users"];
       expect(generateDropTableStatements(tables, { sequence: false, table: false })).toEqual([]);
     });
+
+    it("should handle empty table name", () => {
+      const tables = [""];
+      const expected = ["DROP TABLE IF EXISTS ``;", "DROP SEQUENCE IF EXISTS ``;"];
+      expect(generateDropTableStatements(tables)).toEqual(expected);
+    });
+
+    it("should handle table names with backticks", () => {
+      const tables = ["`users`"];
+      // The function wraps table names in backticks, so `users` becomes ``users``
+      const expected = ["DROP TABLE IF EXISTS ``users``;", "DROP SEQUENCE IF EXISTS ``users``;"];
+      expect(generateDropTableStatements(tables)).toEqual(expected);
+    });
+
+    it("should warn when both options are false", () => {
+      const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const tables = ["users"];
+      generateDropTableStatements(tables, { sequence: false, table: false });
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'No drop operations requested: both "table" and "sequence" options are false',
+      );
+      consoleWarnSpy.mockRestore();
+    });
   });
 
   describe("formatDateTime", () => {
@@ -273,6 +303,40 @@ describe("transformValue", () => {
       // @ts-expect-error Testing invalid input type
       expect(() => formatDateTime(null, "yyyy-LL-dd", false)).toThrow("Unsupported type");
     });
+
+    it("should handle ISO string format", () => {
+      // ISO format is supported by parseStringToDateTime
+      const dateString = "2024-03-03T12:34:56.789Z";
+      const result = formatDateTime(dateString, "yyyy-LL-dd", false);
+      expect(result).toBe("2024-03-03");
+    });
+
+    it("should handle SQL string format", () => {
+      // SQL format is supported by parseStringToDateTime
+      const dateString = "2024-03-03 12:34:56";
+      const result = formatDateTime(dateString, "yyyy-LL-dd", false);
+      expect(result).toBe("2024-03-03");
+    });
+
+    it("should handle number string as timestamp", () => {
+      const timestamp = new Date("2024-03-03T12:34:56.789").getTime();
+      const result = formatDateTime(String(timestamp), "yyyy-LL-dd", false);
+      expect(result).toBe("2024-03-03");
+    });
+
+    it("should validate timestamp at minimum boundary", () => {
+      const minDate = new Date("1970-01-01T00:00:01.000Z");
+      const result = formatDateTime(minDate, "yyyy-LL-dd", true);
+      expect(result).toBe("1970-01-01");
+    });
+
+    it("should validate timestamp at maximum boundary", () => {
+      // Maximum date is 2038-01-19 03:14:07.000 UTC (2147483647 * 1000 milliseconds)
+      // Using a date slightly before the maximum to avoid boundary issues
+      const maxDate = new Date(2147483647 * 1000 - 1000); // 1 second before maximum
+      const result = formatDateTime(maxDate, "yyyy-LL-dd", true);
+      expect(result).toBe("2038-01-19");
+    });
   });
 
   describe("withTimeout", () => {
@@ -312,6 +376,40 @@ describe("transformValue", () => {
       expect(clearTimeoutSpy).toHaveBeenCalled();
       clearTimeoutSpy.mockRestore();
     });
+
+    it("should clear timeout when promise rejects", async () => {
+      const clearTimeoutSpy = vi.spyOn(global, "clearTimeout");
+      const promise = Promise.reject(new Error("Test error"));
+      const resultPromise = withTimeout(promise, "Test timeout", 1000);
+
+      await expect(resultPromise).rejects.toThrow("Test error");
+
+      // Give a small delay to ensure clearTimeout is called
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(clearTimeoutSpy).toHaveBeenCalled();
+      clearTimeoutSpy.mockRestore();
+    });
+
+    it("should handle very short timeout", async () => {
+      const promise = new Promise<string>(() => {
+        // Never resolves
+      });
+
+      const resultPromise = withTimeout(promise, "Very short timeout", 10);
+
+      await expect(resultPromise).rejects.toThrow("Very short timeout");
+    }, 200);
+
+    it("should handle zero timeout", async () => {
+      const promise = new Promise<string>(() => {
+        // Never resolves
+      });
+
+      const resultPromise = withTimeout(promise, "Zero timeout", 0);
+
+      await expect(resultPromise).rejects.toThrow("Zero timeout");
+    }, 200);
   });
 
   describe("withTidbHint", () => {
@@ -926,6 +1024,78 @@ describe("transformValue", () => {
       await slowQueryPerHours(mockForgeSQLORM, 1, 5000);
 
       expect(mockForgeSQLORM.getDrizzleQueryBuilder).toHaveBeenCalled();
+    });
+  });
+
+  describe("checkProductionEnvironment", () => {
+    let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+      vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+      consoleLogSpy.mockRestore();
+      vi.clearAllMocks();
+    });
+
+    it("should return error response when in production environment", () => {
+      mockGetAppContext.mockReturnValue({ environmentType: "PRODUCTION" });
+
+      const result = checkProductionEnvironment("testFunction");
+
+      expect(result).toBeDefined();
+      expect(result?.statusCode).toBe(500);
+      expect(result?.body).toBe("testFunction is disabled in production environment");
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        "testFunction is disabled in production environment",
+      );
+    });
+
+    it("should return null when not in production environment", () => {
+      mockGetAppContext.mockReturnValue({ environmentType: "DEVELOPMENT" });
+
+      const result = checkProductionEnvironment("testFunction");
+
+      expect(result).toBeNull();
+      expect(consoleLogSpy).toHaveBeenCalledWith("testFunction triggered in DEVELOPMENT");
+    });
+
+    it("should return null when environment type is STAGING", () => {
+      mockGetAppContext.mockReturnValue({ environmentType: "STAGING" });
+
+      const result = checkProductionEnvironment("testFunction");
+
+      expect(result).toBeNull();
+      expect(consoleLogSpy).toHaveBeenCalledWith("testFunction triggered in STAGING");
+    });
+
+    it("should handle undefined app context", () => {
+      mockGetAppContext.mockReturnValue(undefined);
+
+      const result = checkProductionEnvironment("testFunction");
+
+      expect(result).toBeNull();
+      expect(consoleLogSpy).toHaveBeenCalledWith("testFunction triggered in undefined");
+    });
+
+    it("should handle null app context", () => {
+      mockGetAppContext.mockReturnValue(null);
+
+      const result = checkProductionEnvironment("testFunction");
+
+      expect(result).toBeNull();
+      expect(consoleLogSpy).toHaveBeenCalledWith("testFunction triggered in undefined");
+    });
+
+    it("should handle app context without environmentType", () => {
+      mockGetAppContext.mockReturnValue({});
+
+      const result = checkProductionEnvironment("testFunction");
+
+      expect(result).toBeNull();
+      expect(consoleLogSpy).toHaveBeenCalledWith("testFunction triggered in undefined");
     });
   });
 });

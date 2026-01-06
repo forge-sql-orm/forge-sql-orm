@@ -5,19 +5,19 @@ modules:
       resolver:
         function: resolver
       title: Forge SQL Query Analyses
-  webtrigger:
-    - key: invoke-schema-migration
-      function: runSchemaMigration
-      security:
-        egress:
-          allowDataEgress: false
-          allowedResponses:
-            - statusCode: 200
-              body: '{"body": "Migrations successfully executed"}'
-    - key: drop-schema-migration
-      function: dropMigrations
-    - key: fetch-schema
-      function: fetchSchema
+  #  webtrigger:
+  #    - key: invoke-schema-migration
+  #      function: runSchemaMigration
+  #      security:
+  #        egress:
+  #          allowDataEgress: false
+  #          allowedResponses:
+  #            - statusCode: 200
+  #              body: '{"body": "Migrations successfully executed"}'
+  #    - key: drop-schema-migration
+  #      function: dropMigrations
+  #    - key: fetch-schema
+  #      function: fetchSchema
   consumer:
     - key: initialize-database
       queue: insertQueue

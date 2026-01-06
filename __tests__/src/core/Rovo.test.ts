@@ -684,4 +684,541 @@ describe("Rovo", () => {
       Parser.prototype.astify = originalAstify;
     });
   });
+
+  describe("Context Parameter Methods", () => {
+    it("should add string context parameter with quotes", async () => {
+      const settings = await rovo
+        .rovoRawSettingBuilder("test_users", "account-123")
+        .addStringContextParameter(":status", "active")
+        .build();
+
+      const params = settings.getParameters();
+      expect(params[":status"]).toBe("'active'");
+    });
+
+    it("should add number context parameter without quotes", async () => {
+      const settings = await rovo
+        .rovoRawSettingBuilder("test_users", "account-123")
+        .addNumberContextParameter(":limit", 100)
+        .build();
+
+      const params = settings.getParameters();
+      expect(params[":limit"]).toBe("100");
+    });
+
+    it("should add boolean context parameter as 1 or 0", async () => {
+      const settingsTrue = await rovo
+        .rovoRawSettingBuilder("test_users", "account-123")
+        .addBooleanContextParameter(":isActive", true)
+        .build();
+
+      const settingsFalse = await rovo
+        .rovoRawSettingBuilder("test_users", "account-123")
+        .addBooleanContextParameter(":isActive", false)
+        .build();
+
+      const paramsTrue = settingsTrue.getParameters();
+      const paramsFalse = settingsFalse.getParameters();
+      expect(paramsTrue[":isActive"]).toBe("1");
+      expect(paramsFalse[":isActive"]).toBe("0");
+    });
+
+    it("should chain context parameter methods", async () => {
+      const mockResult: Result<unknown> = {
+        rows: [{ id: 1 }],
+        metadata: { fields: [{ name: "id", orgTable: "test_users" }] },
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      const settings = await rovo
+        .rovoRawSettingBuilder("test_users", "account-123")
+        .addStringContextParameter(":status", "active")
+        .addNumberContextParameter(":maxCount", 10)
+        .addBooleanContextParameter(":isActive", true)
+        .build();
+
+      await rovo.dynamicIsolatedQuery(
+        "SELECT id FROM test_users WHERE status = :status AND maxCount = :maxCount AND isActive = :isActive",
+        settings,
+      );
+
+      const callArgs = vi.mocked(sql.executeRaw).mock.calls[0][0];
+      expect(callArgs).toContain("'active'");
+      expect(callArgs).toContain("10");
+      expect(callArgs).toContain("1");
+    });
+  });
+
+  describe("Table Name Validation Edge Cases", () => {
+    it("should handle table names with backticks", async () => {
+      const mockResult: Result<unknown> = {
+        rows: [{ id: 1 }],
+        metadata: { fields: [{ name: "id", orgTable: "test_users" }] },
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      // Table name with backticks should still work
+      await expect(
+        rovo.dynamicIsolatedQuery("SELECT id FROM `test_users`", settings),
+      ).resolves.toBeDefined();
+    });
+
+    it("should handle case-insensitive table names", async () => {
+      const mockResult: Result<unknown> = {
+        rows: [{ id: 1 }],
+        metadata: { fields: [{ name: "id", orgTable: "test_users" }] },
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(
+        rovo.dynamicIsolatedQuery("SELECT id FROM TEST_USERS", settings),
+      ).resolves.toBeDefined();
+    });
+  });
+
+  describe("JOIN Detection in Execution Plan", () => {
+    it("should detect CARTESIAN JOIN", async () => {
+      const mockExplainResult = [
+        {
+          id: "1",
+          operatorInfo: "CartesianJoin",
+          accessObject: "table:test_users",
+        },
+      ];
+
+      const testForgeOperations = createMockForgeOperations();
+      const explainRawMock = vi.fn().mockResolvedValue(mockExplainResult as any);
+      testForgeOperations.analyze = () =>
+        ({
+          explainRaw: explainRawMock,
+        }) as any;
+      const testRovo = new Rovo(testForgeOperations, mockOptions);
+
+      const settings = await testRovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(
+        testRovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings),
+      ).rejects.toThrow("Security violation: JOIN operations are not allowed");
+    });
+
+    it("should detect NESTED LOOP JOIN", async () => {
+      const mockExplainResult = [
+        {
+          id: "1",
+          operatorInfo: "NestedLoopJoin",
+          accessObject: "table:test_users",
+        },
+      ];
+
+      const testForgeOperations = createMockForgeOperations();
+      const explainRawMock = vi.fn().mockResolvedValue(mockExplainResult as any);
+      testForgeOperations.analyze = () =>
+        ({
+          explainRaw: explainRawMock,
+        }) as any;
+      const testRovo = new Rovo(testForgeOperations, mockOptions);
+
+      const settings = await testRovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(
+        testRovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings),
+      ).rejects.toThrow("Security violation: JOIN operations are not allowed");
+    });
+
+    it("should detect HASH JOIN", async () => {
+      const mockExplainResult = [
+        {
+          id: "1",
+          operatorInfo: "HashJoin",
+          accessObject: "table:test_users",
+        },
+      ];
+
+      const testForgeOperations = createMockForgeOperations();
+      const explainRawMock = vi.fn().mockResolvedValue(mockExplainResult as any);
+      testForgeOperations.analyze = () =>
+        ({
+          explainRaw: explainRawMock,
+        }) as any;
+      const testRovo = new Rovo(testForgeOperations, mockOptions);
+
+      const settings = await testRovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(
+        testRovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings),
+      ).rejects.toThrow("Security violation: JOIN operations are not allowed");
+    });
+  });
+
+  describe("Window Functions Detection", () => {
+    it("should detect window function in operatorInfo with OVER()", async () => {
+      const mockExplainResult = [
+        {
+          id: "1",
+          operatorInfo: "COUNT(*) OVER()",
+          accessObject: "table:test_users",
+        },
+      ];
+
+      const testForgeOperations = createMockForgeOperations();
+      const explainRawMock = vi.fn().mockResolvedValue(mockExplainResult as any);
+      testForgeOperations.analyze = () =>
+        ({
+          explainRaw: explainRawMock,
+        }) as any;
+      const testRovo = new Rovo(testForgeOperations, mockOptions);
+
+      const settings = await testRovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(
+        testRovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings),
+      ).rejects.toThrow("Window functions");
+    });
+
+    it("should detect window function in operatorInfo with OVER(", async () => {
+      const mockExplainResult = [
+        {
+          id: "1",
+          operatorInfo: "ROW_NUMBER() OVER(PARTITION BY id)",
+          accessObject: "table:test_users",
+        },
+      ];
+
+      const testForgeOperations = createMockForgeOperations();
+      const explainRawMock = vi.fn().mockResolvedValue(mockExplainResult as any);
+      testForgeOperations.analyze = () =>
+        ({
+          explainRaw: explainRawMock,
+        }) as any;
+      const testRovo = new Rovo(testForgeOperations, mockOptions);
+
+      const settings = await testRovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(
+        testRovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings),
+      ).rejects.toThrow("Window functions");
+    });
+
+    it("should detect window function in id field", async () => {
+      const mockExplainResult = [
+        {
+          id: "Window",
+          operatorInfo: "TableReader",
+          accessObject: "table:test_users",
+        },
+      ];
+
+      const testForgeOperations = createMockForgeOperations();
+      const explainRawMock = vi.fn().mockResolvedValue(mockExplainResult as any);
+      testForgeOperations.analyze = () =>
+        ({
+          explainRaw: explainRawMock,
+        }) as any;
+      const testRovo = new Rovo(testForgeOperations, mockOptions);
+
+      const settings = await testRovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(
+        testRovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings),
+      ).rejects.toThrow("Window functions");
+    });
+  });
+
+  describe("Error Handling", () => {
+    it("should throw error when accountId is missing", async () => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "").build();
+
+      await expect(rovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings)).rejects.toThrow(
+        "Authentication error: User account ID is missing",
+      );
+    });
+
+    it("should handle parsing errors in normalizeSqlString", async () => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      // Mock parser to throw a generic error
+      const Parser = (await import("node-sql-parser")).Parser;
+      const originalAstify = Parser.prototype.astify;
+      Parser.prototype.astify = vi.fn().mockImplementation(() => {
+        throw new Error("Generic parsing error");
+      });
+
+      await expect(rovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings)).rejects.toThrow(
+        "SQL parsing error",
+      );
+
+      // Restore original
+      Parser.prototype.astify = originalAstify;
+    });
+
+    it("should handle parsing errors without message", async () => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      // Mock parser to throw error without message
+      const Parser = (await import("node-sql-parser")).Parser;
+      const originalAstify = Parser.prototype.astify;
+      Parser.prototype.astify = vi.fn().mockImplementation(() => {
+        const error: any = new Error();
+        error.message = undefined;
+        throw error;
+      });
+
+      await expect(rovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings)).rejects.toThrow(
+        "SQL parsing error",
+      );
+
+      // Restore original
+      Parser.prototype.astify = originalAstify;
+    });
+  });
+
+  describe("Logging", () => {
+    it("should log SQL query when logRawSqlQuery is enabled", async () => {
+      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+      const mockOptionsWithLogging: ForgeSqlOrmOptions = {
+        logRawSqlQuery: true,
+      };
+      const testRovo = new Rovo(mockForgeOperations, mockOptionsWithLogging);
+
+      const mockResult: Result<unknown> = {
+        rows: [{ id: 1 }],
+        metadata: { fields: [{ name: "id", orgTable: "test_users" }] },
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      const settings = await testRovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await testRovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings);
+
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Rovo query:"));
+      consoleSpy.mockRestore();
+    });
+
+    it("should not log SQL query when logRawSqlQuery is disabled", async () => {
+      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+      const mockResult: Result<unknown> = {
+        rows: [{ id: 1 }],
+        metadata: { fields: [{ name: "id", orgTable: "test_users" }] },
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await rovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings);
+
+      expect(consoleSpy).not.toHaveBeenCalled();
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe("RLS Validation Edge Cases", () => {
+    it("should skip validation when result has no metadata", async () => {
+      const mockResult: Result<unknown> = {
+        rows: [{ id: 1 }],
+        metadata: undefined,
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      const settings = await rovo
+        .rovoRawSettingBuilder("test_users", "account-123")
+        .useRLS()
+        .addRlsColumnName("id")
+        .addRlsWherePart((alias) => `${alias}.id = 'account-123'`)
+        .finish()
+        .build();
+
+      // Should not throw even without metadata
+      await expect(
+        rovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings),
+      ).resolves.toBeDefined();
+    });
+
+    it("should skip validation when result has no fields", async () => {
+      const mockResult: Result<unknown> = {
+        rows: [{ id: 1 }],
+        metadata: { fields: undefined },
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      const settings = await rovo
+        .rovoRawSettingBuilder("test_users", "account-123")
+        .useRLS()
+        .addRlsColumnName("id")
+        .addRlsWherePart((alias) => `${alias}.id = 'account-123'`)
+        .finish()
+        .build();
+
+      // Should not throw even without fields
+      await expect(
+        rovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings),
+      ).resolves.toBeDefined();
+    });
+
+    it("should validate RLS fields with case-insensitive matching", async () => {
+      const mockResult: Result<unknown> = {
+        rows: [{ ID: 1 }],
+        metadata: {
+          fields: [{ name: "ID", orgTable: "test_users" }],
+        },
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      const settings = await rovo
+        .rovoRawSettingBuilder("test_users", "account-123")
+        .useRLS()
+        .addRlsColumnName("id")
+        .addRlsWherePart((alias) => `${alias}.id = 'account-123'`)
+        .finish()
+        .build();
+
+      // Should work with case-insensitive field matching
+      await expect(
+        rovo.dynamicIsolatedQuery("SELECT ID FROM test_users", settings),
+      ).resolves.toBeDefined();
+    });
+  });
+
+  describe("Table Extraction Edge Cases", () => {
+    it("should handle table extraction from JOIN clause", async () => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      // Mock parser to return AST with JOIN
+      const Parser = (await import("node-sql-parser")).Parser;
+      const originalAstify = Parser.prototype.astify;
+      const originalSqlify = Parser.prototype.sqlify;
+
+      const mockAst = {
+        type: "select",
+        from: [{ type: "table", table: { name: "test_users" } }],
+        join: [
+          {
+            type: "table",
+            table: { name: "other_table" },
+          },
+        ],
+        columns: [{ type: "column_ref", table: null, column: "id" }],
+      };
+
+      Parser.prototype.astify = vi.fn().mockReturnValue(mockAst);
+      Parser.prototype.sqlify = vi.fn().mockImplementation(() => {
+        return "SELECT `id` FROM `test_users` JOIN `other_table`";
+      });
+
+      await expect(
+        rovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings),
+      ).rejects.toThrow("Security violation: Query references table(s) other than");
+
+      // Restore original
+      Parser.prototype.astify = originalAstify;
+      Parser.prototype.sqlify = originalSqlify;
+    });
+
+    it("should handle table extraction with dual table (should be ignored)", async () => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      // Mock parser to return AST with dual table
+      const Parser = (await import("node-sql-parser")).Parser;
+      const originalAstify = Parser.prototype.astify;
+      const originalSqlify = Parser.prototype.sqlify;
+
+      const mockAst = {
+        type: "select",
+        from: [
+          { type: "table", table: { name: "test_users" } },
+          { type: "dual", table: "dual" },
+        ],
+        columns: [{ type: "column_ref", table: null, column: "id" }],
+      };
+
+      Parser.prototype.astify = vi.fn().mockReturnValue(mockAst);
+      Parser.prototype.sqlify = vi.fn().mockImplementation(() => {
+        return "SELECT `id` FROM `test_users`";
+      });
+
+      // Dual table should be ignored, so this should pass
+      const mockResult: Result<unknown> = {
+        rows: [{ id: 1 }],
+        metadata: { fields: [{ name: "id", orgTable: "test_users" }] },
+      } as any;
+
+      vi.mocked(sql.executeRaw).mockResolvedValue(mockResult);
+
+      await expect(
+        rovo.dynamicIsolatedQuery("SELECT id FROM test_users", settings),
+      ).resolves.toBeDefined();
+
+      // Restore original
+      Parser.prototype.astify = originalAstify;
+      Parser.prototype.sqlify = originalSqlify;
+    });
+
+    it("should handle error with SQL parsing error message", async () => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      // Mock parser to throw error with "SQL parsing error" message
+      const Parser = (await import("node-sql-parser")).Parser;
+      const originalAstify = Parser.prototype.astify;
+      Parser.prototype.astify = vi.fn().mockImplementation(() => {
+        const error: any = new Error("SQL parsing error: something went wrong");
+        throw error;
+      });
+
+      await expect(rovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings)).rejects.toThrow(
+        "SQL parsing error",
+      );
+
+      // Restore original
+      Parser.prototype.astify = originalAstify;
+    });
+
+    it("should handle error that already includes 'Only' in message", async () => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      // Mock parser to throw error with "Only" in message
+      const Parser = (await import("node-sql-parser")).Parser;
+      const originalAstify = Parser.prototype.astify;
+      Parser.prototype.astify = vi.fn().mockImplementation(() => {
+        const error: any = new Error("Only SELECT queries are allowed");
+        throw error;
+      });
+
+      await expect(rovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings)).rejects.toThrow(
+        "Only SELECT queries are allowed",
+      );
+
+      // Restore original
+      Parser.prototype.astify = originalAstify;
+    });
+
+    it("should handle error that already includes 'single SELECT' in message", async () => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      // Mock parser to throw error with "single SELECT" in message
+      const Parser = (await import("node-sql-parser")).Parser;
+      const originalAstify = Parser.prototype.astify;
+      Parser.prototype.astify = vi.fn().mockImplementation(() => {
+        const error: any = new Error("Only a single SELECT query is allowed");
+        throw error;
+      });
+
+      await expect(rovo.dynamicIsolatedQuery("SELECT * FROM test_users", settings)).rejects.toThrow(
+        "Only a single SELECT query is allowed",
+      );
+
+      // Restore original
+      Parser.prototype.astify = originalAstify;
+    });
+  });
 });

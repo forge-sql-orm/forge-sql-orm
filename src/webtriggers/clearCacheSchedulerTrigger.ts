@@ -7,6 +7,8 @@ import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
  * This trigger should be configured as a Forge scheduler to automatically
  * clean up expired cache entries based on their TTL (Time To Live).
  *
+ * @note This function is automatically disabled in production environments and will return a 500 error if called.
+ *
  * @param options - Optional ForgeSQL ORM configuration. If not provided,
  *                  uses default cache settings with cacheEntityName: "cache"
  * @returns Promise that resolves to HTTP response object
