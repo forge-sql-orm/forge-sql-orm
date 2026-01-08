@@ -30,13 +30,16 @@ import {
 } from "./entities";
 import kvs from "@forge/kvs";
 import { MIGRATION_VERSION } from "./migration/migrationCount";
+import { ColumnDataType } from "drizzle-orm/column-builder";
+import type { ColumnBaseConfig } from "drizzle-orm/column";
+import { AnyMySqlColumn } from "drizzle-orm/mysql-core/columns/common";
 
 const DEGRADATION_QUEUE = "degradationQueue";
 const MIGRATION_QUEUE = "migrationQueue";
 const migrationQueue = new Queue({ key: MIGRATION_QUEUE });
 
 //const USER_ID = "fce59721-2149-46da-ac36-ad9aede46235";
-const USER_ID = "ef758625-1f8d-461b-ac5c-e43444b94273";
+const USER_ID = "7e212a62-f6de-4715-8a86-2406c29c42e3";
 
 const query1 =
   "SELECT d.id, d.owner_user_id as userId, d.created_at as createdAt, d.id as documentId , d.title, d.body \n" +
@@ -52,7 +55,7 @@ const query1 =
   ") x ON x.id = d.id\n" +
   "ORDER BY d.created_at DESC;";
 const query =
-  "SELECT d.id, d.owner_user_id, d.created_at, d.title, d.body\n" +
+  "SELECT /*+ MEMORY_QUOTA(1024 MB) */ d.id, d.owner_user_id, d.created_at, d.title, d.body\n" +
   "FROM document d\n" +
   "WHERE d.id IN (\n" +
   "    SELECT a.document_id\n" +
@@ -61,7 +64,7 @@ const query =
   "        SELECT rp.permission_id\n" +
   "        FROM user_role ur\n" +
   "        JOIN role_permission rp ON ur.role_id = rp.role_id\n" +
-  "        WHERE ur.user_id = 'ef758625-1f8d-461b-ac5c-e43444b94273'\n" +
+  "        WHERE ur.user_id = '7e212a62-f6de-4715-8a86-2406c29c42e3'\n" +
   "    )\n" +
   ")\n" +
   "ORDER BY d.created_at DESC\n" +
@@ -96,7 +99,14 @@ const query =
 // })
 //   .from(demoUsers)
 //   .innerJoin(demoOrders, eq(demoOrders.userId, demoUsers.id));
-
+export function withTidbHint<
+  TDataType extends ColumnDataType,
+  TPartial extends Partial<ColumnBaseConfig<TDataType, string>>,
+>(column: AnyMySqlColumn<TPartial>): AnyMySqlColumn<TPartial> {
+  // We lie a bit to TypeScript here: at runtime this is a new SQL fragment,
+  // but returning TExpr keeps the column type info in downstream inference.
+  return sql`/*+ MEMORY_QUOTA(1024 MB) */ ${column}` as unknown as AnyMySqlColumn<TPartial>;
+}
 const resolver = new Resolver();
 //
 export const handler = resolver.getDefinitions();
@@ -105,8 +115,6 @@ resolver.define("getTimeOutError", async () => {
   try {
     await FORGE_SQL_ORM.select({
       ...getTableColumns(document),
-      timeout: sql<number>`SLEEP
-            (10)`,
     })
       .from(document)
       .where(eq(document.ownerUserId, USER_ID));
@@ -206,24 +214,13 @@ resolver.define("getQueryResult", async () => {
     totalResponseSize: number,
     printQueriesWithPlan: () => Promise<void>,
   ) => {
-    // Skip logging for fast queries (< 500ms)
-    if (totalDbExecutionTime < 500) {
-      return;
-    }
-
-    // Log warning and print query plan for slow queries (>= 1000ms)
-    if (totalDbExecutionTime >= 1000) {
+    if (totalDbExecutionTime >= 500) {
       console.warn(
         `Resolver getQueryResult has high database execution time: ${totalDbExecutionTime}ms`,
       );
       await printQueriesWithPlan();
       return;
     }
-
-    // Log debug for moderately slow queries (500-999ms)
-    console.debug(
-      `Resolver getQueryResult has high database execution time: ${totalDbExecutionTime}ms`,
-    );
   };
 
   const result = await FORGE_SQL_ORM.executeWithMetadata(
