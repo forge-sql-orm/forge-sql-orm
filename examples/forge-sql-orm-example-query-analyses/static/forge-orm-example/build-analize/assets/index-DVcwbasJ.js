@@ -1,4 +1,4 @@
-import { a as ut } from "./client-core-vendor-Dxn4qry8.js";
+import { a as ut } from "./client-core-vendor-BfVyBnXv.js";
 function ct($, M) {
   for (var W = 0; W < M.length; W++) {
     const D = M[W];

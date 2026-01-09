@@ -3,17 +3,17 @@ const __vite__mapDeps = (
   m = __vite__mapDeps,
   d = m.f ||
     (m.f = [
-      "./index-Ds7nV9OR.js",
-      "./client-core-vendor-Dxn4qry8.js",
-      "./body-IDtLYh6Q.js",
+      "./index-DVcwbasJ.js",
+      "./client-core-vendor-BfVyBnXv.js",
+      "./body-DPRLmHKH.js",
       "./react-dom-vendor--YlRhZCI.js",
-      "./lodash-vendor-BPQ1tp_f.js",
+      "./lodash-vendor-C9xwAKY2.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
 import { r as yr, a as Fa, c as ug } from "./react-dom-vendor--YlRhZCI.js";
-import { g as Xf, r as Yt, a as Xt, b as kt, s as Ve } from "./client-core-vendor-Dxn4qry8.js";
-import { r as cg } from "./lodash-vendor-BPQ1tp_f.js";
+import { g as Xf, r as Yt, a as Xt, b as kt, s as Ve } from "./client-core-vendor-BfVyBnXv.js";
+import { r as cg } from "./lodash-vendor-C9xwAKY2.js";
 function lg(e, t) {
   for (var r = 0; r < t.length; r++) {
     const n = t[r];
@@ -2203,7 +2203,7 @@ function Jg() {
   const e = Yg(),
     t = async (r, n) => {
       const i = await Iv(
-          () => import("./index-Ds7nV9OR.js").then((l) => l.i),
+          () => import("./index-DVcwbasJ.js").then((l) => l.i),
           __vite__mapDeps([0, 1]),
           import.meta.url,
         ),
@@ -11109,8 +11109,9 @@ function _w() {
     t = hw(),
     r = gw();
   let n = class {
-    constructor(a) {
+    constructor(a, o) {
       ((this._sdkKey = a),
+        (this._options = o),
         (this._valuesForExternalUse = null),
         (this._values = null),
         (this._source = "Uninitialized"),
@@ -11201,23 +11202,31 @@ function _w() {
       return { result: a, details: this._getDetails(a == null) };
     }
     _setWarningState(a, o) {
-      var u, s;
-      const c = e.StableID.get(this._sdkKey);
+      var u, s, c;
+      const l = e.StableID.get(this._sdkKey);
       if (
-        ((u = a.customIDs) === null || u === void 0 ? void 0 : u.stableID) !== c &&
-        ((!((s = a.customIDs) === null || s === void 0) && s.stableID) || c)
+        ((u = a.customIDs) === null || u === void 0 ? void 0 : u.stableID) !== l &&
+        ((!((s = a.customIDs) === null || s === void 0) && s.stableID) || l)
       ) {
         this._warnings.add("StableIDMismatch");
         return;
       }
       if ("user" in o) {
-        const l = o.user,
-          d = Object.assign(Object.assign({}, a), {
+        let d = o.user,
+          p = Object.assign(Object.assign({}, a), {
             analyticsOnlyMetadata: void 0,
             privateAttributes: void 0,
           });
-        (0, e._getFullUserHash)(d) !== (0, e._getFullUserHash)(l) &&
-          this._warnings.add("PartialUserMatch");
+        (!((c = this._options) === null || c === void 0) &&
+          c.disableStableID &&
+          ((p = Object.assign(Object.assign({}, p), {
+            customIDs: Object.assign(Object.assign({}, p.customIDs), { stableID: void 0 }),
+          })),
+          (d = Object.assign(Object.assign({}, d), {
+            customIDs: Object.assign(Object.assign({}, d.customIDs), { stableID: void 0 }),
+          }))),
+          (0, e._getFullUserHash)(p) !== (0, e._getFullUserHash)(d) &&
+            this._warnings.add("PartialUserMatch"));
       }
     }
     getCurrentSourceDetails() {
@@ -11662,10 +11671,18 @@ function ww() {
           t.MemoPrefix._paramStore,
           this._getParameterStoreImpl.bind(this),
         )),
-        (this._store = new r.default(s)),
+        (this._store = new r.default(s, l ?? null)),
         (this._network = v),
         (this._user = this._configureUser(c, l)),
-        (this._sdkInstanceID = (0, t.getUUID)()));
+        (this._sdkInstanceID = (0, t.getUUID)()),
+        (this._contextHandle = new t.PrecomputedEvaluationsContextHandle(
+          s,
+          () => this._options,
+          () => this._errorBoundary,
+          () => this._store.getValues(),
+          () => this._user,
+          () => this._sdkInstanceID,
+        )));
       const h = (p = l?.plugins) !== null && p !== void 0 ? p : [];
       for (const f of h) f.bind(this);
     }
@@ -11800,6 +11817,9 @@ function ww() {
         }
       );
     }
+    getContextHandle() {
+      return this._contextHandle;
+    }
     checkGate(s, c) {
       return this.getFeatureGate(s, c).value;
     }
@@ -11881,8 +11901,10 @@ function ww() {
     }
     _getFeatureGateImpl(s, c) {
       var l, d;
-      const { result: p, details: v } = this._store.getGate(s),
-        h = (0, t._makeFeatureGate)(s, v, p),
+      const { result: p, details: v } = this._store.getGate(s);
+      (this._checkUserHasIdForEvaluation(p?.id_type, s, "Gate"),
+        this._checkInitializationStatus(v.reason));
+      const h = (0, t._makeFeatureGate)(s, v, p),
         f =
           (d = (l = this.overrideAdapter) === null || l === void 0 ? void 0 : l.getGateOverride) ===
             null || d === void 0
@@ -11901,8 +11923,10 @@ function ww() {
     }
     _getDynamicConfigImpl(s, c) {
       var l, d;
-      const { result: p, details: v } = this._store.getConfig(s),
-        h = (0, t._makeDynamicConfig)(s, v, p),
+      const { result: p, details: v } = this._store.getConfig(s);
+      (this._checkUserHasIdForEvaluation(p?.id_type, s, "Dynamic config"),
+        this._checkInitializationStatus(v.reason));
+      const h = (0, t._makeDynamicConfig)(s, v, p),
         f =
           (d =
             (l = this.overrideAdapter) === null || l === void 0
@@ -11923,8 +11947,10 @@ function ww() {
     }
     _getExperimentImpl(s, c) {
       var l, d, p, v;
-      const { result: h, details: f } = this._store.getConfig(s),
-        g = (0, t._makeExperiment)(s, f, h);
+      const { result: h, details: f } = this._store.getConfig(s);
+      (this._checkUserHasIdForEvaluation(h?.id_type, s, "Experiment"),
+        this._checkInitializationStatus(f.reason));
+      const g = (0, t._makeExperiment)(s, f, h);
       g.__evaluation != null &&
         (g.__evaluation.secondary_exposures = (0, t._mapExposures)(
           (d = (l = g.__evaluation) === null || l === void 0 ? void 0 : l.secondary_exposures) !==
@@ -12009,6 +12035,15 @@ function ww() {
           (h.get = (0, i._makeParamStoreGetter)(this, f.config, c))),
         h
       );
+    }
+    _checkUserHasIdForEvaluation(s, c, l) {
+      s &&
+        ((0, t._getUnitIDFromUser)(this._user, s) ||
+          t.Log.warn(`The user does not have the required id_type "${s}" for ${l} "${c}"`));
+    }
+    _checkInitializationStatus(s) {
+      (s === "Uninitialized" || s.startsWith("Loading")) &&
+        t.Log.warn(`SDK initialization has not completed. Reason: ${s}`);
     }
   };
   return ((Ar.default = o), Ar);
@@ -20728,7 +20763,7 @@ var Xk = function (t) {
   },
   Qk = m.lazy(function () {
     return Iv(
-      () => import("./body-IDtLYh6Q.js"),
+      () => import("./body-DPRLmHKH.js"),
       __vite__mapDeps([2, 3, 1, 4, 5]),
       import.meta.url,
     );
