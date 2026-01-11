@@ -12,7 +12,6 @@
 [![forge-sql-orm CI](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml)
 [![DeepScan grade](https://deepscan.io/api/teams/26652/projects/30920/branches/997203/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=26652&pid=30920&bid=997203)
 [![Snyk Vulnerabilities](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm/badge.svg)](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm)
-
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
