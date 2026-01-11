@@ -12,10 +12,12 @@
 [![Snyk Vulnerabilities](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm/badge.svg)](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm)
 
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=coverage)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=bugs)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 
 **Forge-SQL-ORM** is an ORM designed for working with [@forge/sql](https://developer.atlassian.com/platform/forge/storage-reference/sql-tutorial/) in **Atlassian Forge**. It is built on top of [Drizzle ORM](https://orm.drizzle.team) and provides advanced capabilities for working with relational databases inside Forge.
 
