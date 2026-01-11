@@ -8,7 +8,7 @@
     "@forge/resolver": "1.7.1",
     "@forge/sql": "^3.0.15",
     "drizzle-orm": "^0.45.1",
-    "forge-sql-orm": "2.1.21"
+    "forge-sql-orm": "2.1.22"
   },
   "scripts": {
     "models:create": "forge-sql-orm-cli generate:model --output src/entities",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.0.6",
-    "forge-sql-orm-cli": "^2.1.21",
+    "forge-sql-orm-cli": "^2.1.22",
     "knip": "^5.80.2",
     "typescript": "^5.9.3"
   },
