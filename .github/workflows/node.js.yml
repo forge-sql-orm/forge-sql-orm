@@ -42,12 +42,11 @@ jobs:
     - run: npm run format:check
     - run: npm run test:coverage
       if: github.actor != 'dependabot[bot]'
-    - name: Upload to Coveralls
+    - name: SonarQube Scan
       if: github.actor != 'dependabot[bot]'
-      uses: coverallsapp/github-action@v2
-      with:
-        github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        path-to-lcov: ./coverage/lcov.info
+      uses: SonarSource/sonarqube-scan-action@v7
+      env:
+        SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
     - name: Upload to Qlty
       if: github.actor != 'dependabot[bot]'
       uses: qltysh/qlty-action/coverage@main
