@@ -3,13 +3,13 @@
   "version": "2.1.21",
   "description": "Drizzle ORM integration for Atlassian @forge/sql. Provides a custom driver, schema migration, two levels of caching (local and global via @forge/kvs), optimistic locking, and query analysis.",
   "main": "dist/index.js",
-  "homepage": "https://github.com/vzakharchenko/forge-sql-orm#readme",
+  "homepage": "https://github.com/forge-sql-orm/forge-sql-orm#readme",
   "bugs": {
-    "url": "https://github.com/vzakharchenko/forge-sql-orm/issues"
+    "url": "https://github.com/forge-sql-orm/forge-sql-orm/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vzakharchenko/forge-sql-orm.git"
+    "url": "git+https://github.com/forge-sql-orm/forge-sql-orm.git"
   },
   "keywords": [
     "atlassian-forge",

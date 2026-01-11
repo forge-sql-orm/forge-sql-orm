@@ -5,12 +5,12 @@
 [![npm version (CLI)](https://img.shields.io/npm/v/forge-sql-orm-cli?label=cli)](https://www.npmjs.com/package/forge-sql-orm-cli)
 [![npm downloads (CLI)](https://img.shields.io/npm/dm/forge-sql-orm-cli?label=cli%20downloads)](https://www.npmjs.com/package/forge-sql-orm-cli)
 
-[![License](https://img.shields.io/github/license/vzakharchenko/forge-sql-orm)](https://github.com/vzakharchenko/forge-sql-orm/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/forge-sql-orm/forge-sql-orm)](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/LICENSE)
 
-[![forge-sql-orm CI](https://github.com/vzakharchenko/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/vzakharchenko/forge-sql-orm/actions/workflows/node.js.yml)
-[![Coverage Status](https://coveralls.io/repos/github/vzakharchenko/forge-sql-orm/badge.svg?branch=master)](https://coveralls.io/github/vzakharchenko/forge-sql-orm?branch=master)
-[![DeepScan grade](https://deepscan.io/api/teams/26652/projects/29272/branches/940614/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=26652&pid=29272&bid=940614)
-[![Snyk Vulnerabilities](https://snyk.io/test/github/vzakharchenko/forge-sql-orm/badge.svg)](https://snyk.io/test/github/vzakharchenko/forge-sql-orm)
+[![forge-sql-orm CI](.https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml)
+[![Coverage Status](https://coveralls.io/repos/github/forge-sql-orm/forge-sql-orm/badge.svg?branch=master)](https://coveralls.io/github/forge-sql-orm/forge-sql-orm?branch=master)
+[![DeepScan grade](https://deepscan.io/api/teams/26652/projects/30920/branches/997203/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=26652&pid=30920&bid=997203)
+[![Snyk Vulnerabilities](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm/badge.svg)](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vzakharchenko_forge-sql-orm&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=vzakharchenko_forge-sql-orm)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=vzakharchenko_forge-sql-orm&metric=bugs)](https://sonarcloud.io/summary/new_code?id=vzakharchenko_forge-sql-orm)

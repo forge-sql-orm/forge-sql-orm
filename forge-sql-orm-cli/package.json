@@ -74,5 +74,12 @@
     "hooks": {
       "pre-commit": "cd .husky && ./pre-commit"
     }
+  },
+  "bugs": {
+    "url": "https://github.com/forge-sql-orm/forge-sql-orm/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forge-sql-orm/forge-sql-orm.git"
   }
 }
