@@ -144,10 +144,10 @@ async function processAllMethod(
   query: string,
   params: unknown[] | undefined,
 ): Promise<ForgeDriverResult> {
-  const sqlStatement = await sql.prepare<unknown>(query);
+  const sqlStatement = sql.prepare<unknown>(query);
 
   if (params) {
-    await sqlStatement.bindParams(...params);
+    sqlStatement.bindParams(...params);
   }
 
   const result = await withTimeout(sqlStatement.execute(), timeoutMessage, timeoutMs);

@@ -79,7 +79,7 @@ describe("forgeDriver", () => {
       }
       // Check if it's a SELECT query (all method) - return promise
       if (query.trim().toUpperCase().startsWith("SELECT")) {
-        return Promise.resolve(createMockSqlStatement());
+        return createMockSqlStatement();
       }
       // For execute method (UPDATE/INSERT/DELETE) - return synchronously
       return createMockSqlStatement();

@@ -14,7 +14,7 @@ import {
   sql,
   StringChunk,
 } from "drizzle-orm";
-import { AnyMySqlTable, MySqlCustomColumn } from "drizzle-orm/mysql-core/index";
+import { AnyMySqlTable, MySqlCustomColumn, MySqlTable } from "drizzle-orm/mysql-core";
 import { DateTime } from "luxon";
 import { PrimaryKeyBuilder } from "drizzle-orm/mysql-core/primary-keys";
 import { AnyIndexBuilder } from "drizzle-orm/mysql-core/indexes";
@@ -22,10 +22,8 @@ import { CheckBuilder } from "drizzle-orm/mysql-core/checks";
 import { ForeignKeyBuilder } from "drizzle-orm/mysql-core/foreign-keys";
 import { UniqueConstraintBuilder } from "drizzle-orm/mysql-core/unique-constraint";
 import { SelectedFields } from "drizzle-orm/mysql-core/query-builders/select.types";
-import { MySqlTable } from "drizzle-orm/mysql-core";
 import { isSQLWrapper } from "drizzle-orm/sql/sql";
-import { clusterStatementsSummary, slowQuery } from "../core/SystemTables";
-import { ForgeSqlOperation } from "../core/ForgeSQLQueryBuilder";
+import { clusterStatementsSummary, slowQuery, ForgeSqlOperation } from "../core";
 import { ColumnDataType } from "drizzle-orm/column-builder";
 import { AnyMySqlColumn } from "drizzle-orm/mysql-core/columns/common";
 import type { ColumnBaseConfig } from "drizzle-orm/column";

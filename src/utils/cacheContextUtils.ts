@@ -161,7 +161,7 @@ export async function getQueryLocalCacheQuery<
     }
     const toSQL = sql.toSQL();
     const key = hashKey(toSQL);
-    if (context.cache[key] && context.cache[key].sql === toSQL.sql.toLowerCase()) {
+    if (context?.cache[key]?.sql === toSQL.sql.toLowerCase()) {
       if (options.logCache) {
         const q = toSQL;
         // eslint-disable-next-line no-console
