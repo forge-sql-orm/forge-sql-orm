@@ -5,10 +5,10 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-DteJbfF-.js",
       "./client-core-vendor-DRqApKWs.js",
-      "./custom-theme-Co73qomc.js",
+      "./custom-theme-DJOE3RS7.js",
       "./react-dom-vendor--YlRhZCI.js",
       "./lodash-vendor-ChTj_7HQ.js",
-      "./body-B6l3sWqa.js",
+      "./body-Btx83xGB.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
@@ -16482,7 +16482,7 @@ var uO = (function () {
                                       return (
                                         (le.next = 2),
                                         Re(
-                                          () => import("./custom-theme-Co73qomc.js"),
+                                          () => import("./custom-theme-DJOE3RS7.js"),
                                           __vite__mapDeps([2, 3, 1, 4]),
                                           import.meta.url,
                                         )
@@ -22676,7 +22676,7 @@ var oP = function (t) {
   },
   iP = m.lazy(function () {
     return Re(
-      () => import("./body-B6l3sWqa.js"),
+      () => import("./body-Btx83xGB.js"),
       __vite__mapDeps([5, 3, 1, 4, 6]),
       import.meta.url,
     );
@@ -23475,7 +23475,11 @@ function EP(e) {
   }
   return e;
 }
-var xP = { componentName: "tabs", packageName: "@atlaskit/tabs", packageVersion: "18.3.0" },
+var xP = {
+    componentName: "tabs",
+    packageName: "@atlaskit/tabs",
+    packageVersion: "0.0.0-development",
+  },
   Wp = function (t) {
     var r = t.tabPanel,
       n = t.index,
@@ -23695,14 +23699,19 @@ var xP = { componentName: "tabs", packageName: "@atlaskit/tabs", packageVersion:
         ref: c,
         className: A([
           "_1e0c1txw _kqswh2mm _85i5ze3t _1q51ze3t _y4tize3t _bozgze3t",
-          "_k48p1wq8 _ahbqx0bf _gpbcidpf _10vzidpf _1mmwidpf _15plidpf _qwyt1qi0 _7hip15vq _1fud15vq _bb0mh2mm _1quz1425 _rzxytlke _1ofh12x7 _pryi12x7 _1a85u2gc _rmpau2gc _1dze1l2s _1tms1q9c _fiizidpf _1xrmidpf _xyihidpf _166qidpf _1lzu1mrt _24g71kw7 _140sidpf _lycustnw _15d8b3bt _1fztidpf _wd7eu2gc _1olcu2gc _1oaz1fgx _w9ewidpf _170tidpf _y1g1idpf _1nvfidpf _1b8d1mrt _1n121kw7 _7p9oidpf _o2e1stnw _16u6b3bt _1yk1idpf _1lbou2gc _1c9uu2gc _1i2072d1 _bppridpf _1mbxidpf _kn0bidpf _wsgdidpf _rsmz12s7 _1m0e1kw7 _93pdidpf _1sglstnw _1ksob3bt _1p9sidpf _1qa1u2gc _1jjcu2gc _fiemln51 _pascidpf _eid3idpf _zr3eidpf _fntnidpf _1mp41kw7 _kfgte4h9 _1cs8stnw _1russudh _1kt9b3bt _1fkridpf _1enwidpf _z5wtu2gc",
+          "_k48p1wq8 _ahbqx0bf _gpbcidpf _10vzidpf _1mmwidpf _15plidpf _qwyt1qi0 _7hip15vq _1fud15vq _bb0mh2mm _1quz1425 _rzxytlke _1ofh12x7 _pryi12x7 _1a85u2gc _rmpau2gc _1dze1l2s _1tms1q9c _fiizidpf _1xrmidpf _xyihidpf _166qidpf _1lzuokkv _24g71kw7 _140sidpf _lycustnw _15d8b3bt _1fztidpf _wd7eu2gc _1olcu2gc _1oaz1fgx _w9ewidpf _170tidpf _y1g1idpf _1nvfidpf _1b8dokkv _1n121kw7 _7p9oidpf _o2e1stnw _16u6b3bt _1yk1idpf _1lbou2gc _1c9uu2gc _1i2072d1 _bppridpf _1mbxidpf _kn0bidpf _wsgdidpf _rsmz73hj _1m0e1kw7 _93pdidpf _1sglstnw _1ksob3bt _1p9sidpf _1qa1u2gc _1jjcu2gc _fiemln51 _pascidpf _eid3idpf _zr3eidpf _fntnidpf _1mp41kw7 _kfgte4h9 _1cs8stnw _1russudh _1kt9b3bt _1fkridpf _1enwidpf _z5wtu2gc",
         ]),
         style: {
           "--_13a5t4u": ar("var(--ds-text-subtle, ".concat(ni, ")")),
           "--_kkbq40": ar("var(--ds-text-subtle, ".concat(Os, ")")),
           "--_71dbsd": ar("var(--ds-text, ".concat(ww, ")")),
           "--_1hfkvbo": ar("var(--ds-text-selected, ".concat(Os, ")")),
-          "--_1c11uqn": ar("3px solid ".concat("var(--ds-border-selected, ".concat(Os, ")"))),
+          "--_1q7mpl4": ar(
+            "var(--ds-border-width-selected, 2px)".concat(
+              " solid ",
+              "var(--ds-border-selected, ".concat(Os, ")"),
+            ),
+          ),
           "--_lvpq93": ar("var(--ds-border, ".concat(Ow, ")")),
         },
       },

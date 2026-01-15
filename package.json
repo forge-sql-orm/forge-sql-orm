@@ -27,7 +27,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^25.0.8",
+    "@types/node": "^25.0.9",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
     "@typescript-eslint/parser": "^8.53.0",
     "@vitest/coverage-v8": "^4.0.17",
@@ -39,7 +39,7 @@
     "husky": "^9.1.7",
     "knip": "^5.81.0",
     "patch-package": "^8.0.1",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "uuid": "^13.0.0",

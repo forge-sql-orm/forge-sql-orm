@@ -2811,14 +2811,14 @@ button {
 ._qwyt1qi0 [role="tab"] {
   border-radius: var(--ds-radius-medium, 6px);
 }
-._1b8d1mrt [role="tab"]:active:after {
-  border-block-end: 3px solid var(--ds-border, transparent);
+._1b8dokkv [role="tab"]:active:after {
+  border-block-end: var(--ds-border-width-selected, 2px) solid var(--ds-border, transparent);
 }
-._1lzu1mrt [role="tab"]:hover:after {
-  border-block-end: 3px solid var(--ds-border, transparent);
+._1lzuokkv [role="tab"]:hover:after {
+  border-block-end: var(--ds-border-width-selected, 2px) solid var(--ds-border, transparent);
 }
-._rsmz12s7 [role="tab"][aria-selected="true"]:after {
-  border-block-end: var(--_1c11uqn);
+._rsmz73hj [role="tab"][aria-selected="true"]:after {
+  border-block-end: var(--_1q7mpl4);
 }
 ._10vzidpf [role="tab"] {
   margin-right: 0;
