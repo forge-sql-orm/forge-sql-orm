@@ -78,7 +78,7 @@
     "@forge/kvs": "^1.2.5"
   },
   "dependencies": {
-    "@forge/api": "^6.4.3",
+    "@forge/api": "^7.0.0",
     "@forge/events": "^2.0.15",
     "luxon": "^3.7.2",
     "node-sql-parser": "^5.4.0"
