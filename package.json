@@ -28,8 +28,8 @@
     "@eslint/js": "^9.39.2",
     "@types/luxon": "^3.7.1",
     "@types/node": "^25.0.9",
-    "@typescript-eslint/eslint-plugin": "^8.53.0",
-    "@typescript-eslint/parser": "^8.53.0",
+    "@typescript-eslint/eslint-plugin": "^8.53.1",
+    "@typescript-eslint/parser": "^8.53.1",
     "@vitest/coverage-v8": "^4.0.17",
     "@vitest/ui": "^4.0.17",
     "eslint": "^9.39.2",
@@ -37,7 +37,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-vitest": "^0.5.4",
     "husky": "^9.1.7",
-    "knip": "^5.81.0",
+    "knip": "^5.82.1",
     "patch-package": "^8.0.1",
     "prettier": "^3.8.0",
     "ts-node": "^10.9.2",
@@ -71,15 +71,15 @@
     "README.md"
   ],
   "peerDependencies": {
-    "@forge/sql": "^3.0.15",
+    "@forge/sql": "^3.0.16",
     "drizzle-orm": "^0.45.1"
   },
   "optionalDependencies": {
     "@forge/kvs": "^1.2.5"
   },
   "dependencies": {
-    "@forge/api": "^6.4.3",
-    "@forge/events": "^2.0.15",
+    "@forge/api": "^7.0.0",
+    "@forge/events": "^2.0.16",
     "luxon": "^3.7.2",
     "node-sql-parser": "^5.4.0"
   },

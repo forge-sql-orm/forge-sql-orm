@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@forge/resolver": "1.7.1",
-    "@forge/sql": "^3.0.15",
+    "@forge/sql": "^3.0.16",
     "drizzle-orm": "^0.45.1",
     "forge-sql-orm": "2.1.22"
   },
@@ -13,7 +13,7 @@
     "@types/node": "^25.0.9",
     "drizzle-kit": "^0.31.8",
     "forge-sql-orm-cli": "file:../../forge-sql-orm-cli",
-    "knip": "^5.81.0",
+    "knip": "^5.82.1",
     "mysql2": "^3.16.1",
     "typescript": "^5.9.3"
   },
