@@ -947,28 +947,22 @@ function setupCacheAwareModifyMethods(
   newOptions: ForgeSqlOrmOptions,
 ): void {
   // Insert operations
-  db.insertWithCacheContext = function <TTable extends MySqlTable>(table: TTable) {
-    return insertAndEvictCacheBuilder(db, table, newOptions, false);
-  };
-  db.insertAndEvictCache = function <TTable extends MySqlTable>(table: TTable) {
-    return insertAndEvictCacheBuilder(db, table, newOptions, true);
-  };
+  db.insertWithCacheContext = <TTable extends MySqlTable>(table: TTable) =>
+    insertAndEvictCacheBuilder(db, table, newOptions, false);
+  db.insertAndEvictCache = <TTable extends MySqlTable>(table: TTable) =>
+    insertAndEvictCacheBuilder(db, table, newOptions, true);
 
   // Update operations
-  db.updateWithCacheContext = function <TTable extends MySqlTable>(table: TTable) {
-    return updateAndEvictCacheBuilder(db, table, newOptions, false);
-  };
-  db.updateAndEvictCache = function <TTable extends MySqlTable>(table: TTable) {
-    return updateAndEvictCacheBuilder(db, table, newOptions, true);
-  };
+  db.updateWithCacheContext = <TTable extends MySqlTable>(table: TTable) =>
+    updateAndEvictCacheBuilder(db, table, newOptions, false);
+  db.updateAndEvictCache = <TTable extends MySqlTable>(table: TTable) =>
+    updateAndEvictCacheBuilder(db, table, newOptions, true);
 
   // Delete operations
-  db.deleteWithCacheContext = function <TTable extends MySqlTable>(table: TTable) {
-    return deleteAndEvictCacheBuilder(db, table, newOptions, false);
-  };
-  db.deleteAndEvictCache = function <TTable extends MySqlTable>(table: TTable) {
-    return deleteAndEvictCacheBuilder(db, table, newOptions, true);
-  };
+  db.deleteWithCacheContext = <TTable extends MySqlTable>(table: TTable) =>
+    deleteAndEvictCacheBuilder(db, table, newOptions, false);
+  db.deleteAndEvictCache = <TTable extends MySqlTable>(table: TTable) =>
+    deleteAndEvictCacheBuilder(db, table, newOptions, true);
 }
 
 /**
