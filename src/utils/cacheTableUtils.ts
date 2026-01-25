@@ -1,3 +1,4 @@
+// qlty-ignore: +qlty:file-complexity
 import { Parser } from "node-sql-parser";
 import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
 
@@ -215,6 +216,30 @@ function processFromAndJoin(node: any, tables: Set<string>): void {
 }
 
 /**
+ * Processes a single column for table extraction.
+ */
+function processSingleColumn(col: any, tables: Set<string>): void {
+  if (!col) {
+    return;
+  }
+
+  // If the column itself is a subquery
+  if (col.type === "subquery" || col.type === "select") {
+    extractTablesFromNode(col, tables);
+  }
+
+  // Process expression (may contain subqueries)
+  if (col.expr) {
+    extractTablesFromNode(col.expr, tables);
+  }
+
+  // Process AST (alternative structure for subqueries)
+  if (col.ast) {
+    extractTablesFromNode(col.ast, tables);
+  }
+}
+
+/**
  * Processes SELECT columns that may contain subqueries.
  */
 function processSelectColumns(node: any, tables: Set<string>): void {
@@ -224,24 +249,7 @@ function processSelectColumns(node: any, tables: Set<string>): void {
   }
 
   if (Array.isArray(columns)) {
-    columns.forEach((col: any) => {
-      if (!col) return;
-
-      // If the column itself is a subquery
-      if (col.type === "subquery" || col.type === "select") {
-        extractTablesFromNode(col, tables);
-      }
-
-      // Process expression (may contain subqueries)
-      if (col.expr) {
-        extractTablesFromNode(col.expr, tables);
-      }
-
-      // Process AST (alternative structure for subqueries)
-      if (col.ast) {
-        extractTablesFromNode(col.ast, tables);
-      }
-    });
+    columns.forEach((col: any) => processSingleColumn(col, tables));
   } else if (typeof columns === "object") {
     extractTablesFromNode(columns, tables);
   }
@@ -355,6 +363,32 @@ function processNext(node: any, tables: Set<string>): void {
 /**
  * Recursively processes all object properties for any remaining nested structures.
  */
+/**
+ * Processes array values recursively.
+ */
+function processArrayValues(values: any[], tables: Set<string>): void {
+  values.forEach((item: any) => {
+    if (item && typeof item === "object") {
+      extractTablesFromNode(item, tables);
+    }
+  });
+}
+
+/**
+ * Processes object values recursively.
+ */
+function processObjectValues(node: any, tables: Set<string>): void {
+  Object.values(node).forEach((value) => {
+    if (value && typeof value === "object") {
+      if (Array.isArray(value)) {
+        processArrayValues(value, tables);
+      } else {
+        extractTablesFromNode(value, tables);
+      }
+    }
+  });
+}
+
 function processRecursively(node: any, tables: Set<string>): void {
   const isColumnRefAlias = node.type === "column_ref" && !node.table;
   const hasName = Boolean(node.name);
@@ -368,19 +402,7 @@ function processRecursively(node: any, tables: Set<string>): void {
     return;
   }
 
-  Object.values(node).forEach((value) => {
-    if (value && typeof value === "object") {
-      if (Array.isArray(value)) {
-        value.forEach((item: any) => {
-          if (item && typeof item === "object") {
-            extractTablesFromNode(item, tables);
-          }
-        });
-      } else {
-        extractTablesFromNode(value, tables);
-      }
-    }
-  });
+  processObjectValues(node, tables);
 }
 
 /**

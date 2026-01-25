@@ -17,6 +17,42 @@ const QUERY_ERROR_CODES = {
 const STATEMENTS_SUMMARY_DELAY_MS = 200;
 
 /**
+ * Checks if error is a timeout or out-of-memory error.
+ */
+function isQueryError(error: any): { isTimeout: boolean; isOutOfMemory: boolean } {
+  const isTimeout = error?.code === QUERY_ERROR_CODES.TIMEOUT;
+  const isOutOfMemory = error?.context?.debug?.errno === QUERY_ERROR_CODES.OUT_OF_MEMORY_ERRNO;
+  return { isTimeout, isOutOfMemory };
+}
+
+/**
+ * Handles timeout or out-of-memory errors by analyzing the query.
+ */
+async function handleQueryError(
+  queryStartTime: number,
+  forgeSqlOperation: ForgeSqlOperation,
+  isTimeout: boolean,
+): Promise<void> {
+  // Wait for CLUSTER_STATEMENTS_SUMMARY to be populated with our failed query data
+  await new Promise((resolve) => setTimeout(resolve, STATEMENTS_SUMMARY_DELAY_MS));
+
+  const queryEndTime = Date.now();
+  const queryDuration = queryEndTime - queryStartTime;
+  const errorType: "OOM" | "TIMEOUT" = isTimeout ? "TIMEOUT" : "OOM";
+
+  if (isTimeout) {
+    // eslint-disable-next-line no-console
+    console.error(` TIMEOUT detected - Query exceeded time limit`);
+  } else {
+    // eslint-disable-next-line no-console
+    console.error(`OUT OF MEMORY detected - Query exceeded memory limit`);
+  }
+
+  // Analyze the failed query using CLUSTER_STATEMENTS_SUMMARY
+  await handleErrorsWithPlan(forgeSqlOperation, queryDuration, errorType);
+}
+
+/**
  * Creates a proxy for the forgeDriver that injects SQL hints and handles query analysis
  * @param forgeSqlOperation - The ForgeSQL operation instance
  * @param options - SQL hints to inject
@@ -51,28 +87,10 @@ export function createForgeDriverProxy(
       // Execute the query with injected hints
       return await forgeDriver(modifiedQuery, params, method);
     } catch (error: any) {
-      // Check if this is a timeout or out-of-memory error that we want to analyze
-      const isTimeoutError = error.code === QUERY_ERROR_CODES.TIMEOUT;
-      const isOutOfMemoryError =
-        error?.context?.debug?.errno === QUERY_ERROR_CODES.OUT_OF_MEMORY_ERRNO;
+      const { isTimeout, isOutOfMemory } = isQueryError(error);
 
-      if (isTimeoutError || isOutOfMemoryError) {
-        // Wait for CLUSTER_STATEMENTS_SUMMARY to be populated with our failed query data
-        await new Promise((resolve) => setTimeout(resolve, STATEMENTS_SUMMARY_DELAY_MS));
-
-        const queryEndTime = Date.now();
-        const queryDuration = queryEndTime - queryStartTime;
-        let errorType: "OOM" | "TIMEOUT" = "TIMEOUT";
-        if (isTimeoutError) {
-          // eslint-disable-next-line no-console
-          console.error(` TIMEOUT detected - Query exceeded time limit`);
-        } else {
-          // eslint-disable-next-line no-console
-          console.error(`OUT OF MEMORY detected - Query exceeded memory limit`);
-          errorType = "OOM";
-        }
-        // Analyze the failed query using CLUSTER_STATEMENTS_SUMMARY
-        await handleErrorsWithPlan(forgeSqlOperation, queryDuration, errorType);
+      if (isTimeout || isOutOfMemory) {
+        await handleQueryError(queryStartTime, forgeSqlOperation, isTimeout);
       }
 
       // Log SQL error details if requested

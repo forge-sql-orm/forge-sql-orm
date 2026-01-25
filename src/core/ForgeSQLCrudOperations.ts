@@ -299,12 +299,8 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
     fieldType: string,
     tableName: string,
   ): boolean {
-    const isSupportedType =
-      fieldType === "datetime" ||
-      fieldType === "timestamp" ||
-      fieldType === "int" ||
-      fieldType === "number" ||
-      fieldType === "decimal";
+    const supportedTypes = ["datetime", "timestamp", "int", "number", "decimal"];
+    const isSupportedType = supportedTypes.includes(fieldType);
 
     if (!isSupportedType) {
       // eslint-disable-next-line no-console
