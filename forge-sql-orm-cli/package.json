@@ -39,7 +39,7 @@
     "sql",
     "cli"
   ],
-  "author": "",
+  "author": "Vasyl Zakharchenko",
   "license": "MIT",
   "dependencies": {
     "commander": "^14.0.2",

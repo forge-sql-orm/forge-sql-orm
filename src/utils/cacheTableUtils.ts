@@ -2,6 +2,16 @@ import { Parser } from "node-sql-parser";
 import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
 
 /**
+ * Extracts table name from backticks_quote_string type.
+ */
+function extractTableNameFromBackticks(value: any): string | null {
+  if (value.type === "backticks_quote_string" && typeof value.value === "string") {
+    return value.value === "dual" ? null : value.value.toLowerCase();
+  }
+  return null;
+}
+
+/**
  * Extracts table name from object value.
  */
 function extractTableNameFromObject(value: any, context?: string): string | null {
@@ -9,22 +19,25 @@ function extractTableNameFromObject(value: any, context?: string): string | null
   if (Array.isArray(value)) {
     return null;
   }
+
   // Handle backticks_quote_string type only for node.table context
-  if (
-    context?.includes("node.table") &&
-    value.type === "backticks_quote_string" &&
-    typeof value.value === "string"
-  ) {
-    return value.value === "dual" ? null : value.value.toLowerCase();
+  if (context?.includes("node.table")) {
+    const fromBackticks = extractTableNameFromBackticks(value);
+    if (fromBackticks !== null) {
+      return fromBackticks;
+    }
   }
+
   // Try value.name first (most common)
   if (typeof value.name === "string") {
     return value.name === "dual" ? null : value.name.toLowerCase();
   }
+
   // Try value.table if it's a nested structure
   if (value.table) {
     return normalizeTableName(value.table, context);
   }
+
   // Log when we encounter an object that we can't extract table name from
   // eslint-disable-next-line no-console
   console.warn(
@@ -94,44 +107,40 @@ function isLikelyAlias(node: any): boolean {
 }
 
 /**
+ * Extracts table name from table/dual node.
+ */
+function extractTableNameFromTableNode(node: any): string | null {
+  const fromTable = node.table
+    ? normalizeTableName(node.table, `node.type=${node.type}, node.table`)
+    : null;
+  if (fromTable) {
+    return fromTable;
+  }
+  const fromName = node.name
+    ? normalizeTableName(node.name, `node.type=${node.type}, node.name`)
+    : null;
+  return fromName;
+}
+
+/**
  * Extracts table name from table node.
  *
  * @param node - AST node with table information
  * @returns Table name in lowercase or null if not applicable
  */
 function extractTableName(node: any): string | null {
-  if (!node) {
-    return null;
-  }
-
-  // Early return for likely aliases
-  if (isLikelyAlias(node)) {
+  if (!node || isLikelyAlias(node)) {
     return null;
   }
 
   // Handle table node directly
   if (node.type === "table" || node.type === "dual") {
-    const fromTable = node.table
-      ? normalizeTableName(node.table, `node.type=${node.type}, node.table`)
-      : null;
-    if (fromTable) {
-      return fromTable;
-    }
-    const fromName = node.name
-      ? normalizeTableName(node.name, `node.type=${node.type}, node.name`)
-      : null;
-    if (fromName) {
-      return fromName;
-    }
-    return null;
+    return extractTableNameFromTableNode(node);
   }
 
   // Handle table reference in different formats
   if (node.table) {
-    const tableName = normalizeTableName(node.table, `node.table (type: ${node.type})`);
-    if (tableName) {
-      return tableName;
-    }
+    return normalizeTableName(node.table, `node.table (type: ${node.type})`);
   }
 
   return null;
@@ -265,14 +274,16 @@ function processUnionNode(unionNode: any, tables: Set<string>): void {
     return;
   }
 
-  const isUnionType =
-    unionNode.type === "select" ||
-    unionNode.type === "union" ||
-    unionNode.type === "union_all" ||
-    unionNode.type === "union_distinct" ||
-    unionNode.type === "intersect" ||
-    unionNode.type === "except" ||
-    unionNode.type === "minus";
+  const unionTypes = [
+    "select",
+    "union",
+    "union_all",
+    "union_distinct",
+    "intersect",
+    "except",
+    "minus",
+  ];
+  const isUnionType = unionTypes.includes(unionNode.type);
 
   if (isUnionType) {
     extractTablesFromNode(unionNode, tables);
@@ -304,13 +315,15 @@ function processUnion(node: any, tables: Set<string>): void {
  * Processes UNION/INTERSECT/EXCEPT operation nodes.
  */
 function processUnionOperation(node: any, tables: Set<string>): void {
-  const isUnionOperation =
-    node.type === "union" ||
-    node.type === "union_all" ||
-    node.type === "union_distinct" ||
-    node.type === "intersect" ||
-    node.type === "except" ||
-    node.type === "minus";
+  const unionOperationTypes = [
+    "union",
+    "union_all",
+    "union_distinct",
+    "intersect",
+    "except",
+    "minus",
+  ];
+  const isUnionOperation = unionOperationTypes.includes(node.type);
 
   if (!isUnionOperation) {
     return;
@@ -343,13 +356,13 @@ function processNext(node: any, tables: Set<string>): void {
  * Recursively processes all object properties for any remaining nested structures.
  */
 function processRecursively(node: any, tables: Set<string>): void {
-  const isLikelyAlias =
-    (node.type === "column_ref" && !node.table) ||
-    (node.name &&
-      !node.table &&
-      node.type !== "table" &&
-      node.type !== "dual" &&
-      node.name.length <= 2);
+  const isColumnRefAlias = node.type === "column_ref" && !node.table;
+  const hasName = Boolean(node.name);
+  const hasNoTable = !node.table;
+  const isNotTableType = node.type !== "table" && node.type !== "dual";
+  const isShortName = hasName && node.name.length <= 2;
+  const isShortNameAlias = hasName && hasNoTable && isNotTableType && isShortName;
+  const isLikelyAlias = isColumnRefAlias || isShortNameAlias;
 
   if (isLikelyAlias || Array.isArray(node)) {
     return;
@@ -368,6 +381,56 @@ function processRecursively(node: any, tables: Set<string>): void {
       }
     }
   });
+}
+
+/**
+ * Processes DML statement types (UPDATE, INSERT, DELETE).
+ */
+function processDmlStatements(node: any, tables: Set<string>): void {
+  if (node.type === "update" && node.table) {
+    extractTablesFromNode(node.table, tables);
+  } else if (node.type === "insert" && node.table) {
+    extractTablesFromNode(node.table, tables);
+  } else if (node.type === "delete" && node.from) {
+    extractTablesFromNode(node.from, tables);
+  }
+}
+
+/**
+ * Processes SELECT-specific clauses (WHERE, HAVING, ORDER BY, GROUP BY).
+ */
+function processSelectClauses(node: any, tables: Set<string>): void {
+  if (node.where) {
+    extractTablesFromNode(node.where, tables);
+  }
+  if (node.having) {
+    extractTablesFromNode(node.having, tables);
+  }
+  processOrderByOrGroupBy(node.orderby || node.order_by, tables);
+  processOrderByOrGroupBy(node.groupby || node.group_by, tables);
+}
+
+/**
+ * Processes subquery and SELECT statement types.
+ */
+function processSubqueryAndSelect(node: any, tables: Set<string>): void {
+  if (node.type === "subquery" || node.type === "select") {
+    if (node.ast) {
+      extractTablesFromNode(node.ast, tables);
+    }
+    if (node.from) {
+      extractTablesFromNode(node.from, tables);
+    }
+  }
+}
+
+/**
+ * Processes set operations (UNION, INTERSECT, EXCEPT).
+ */
+function processSetOperations(node: any, tables: Set<string>): void {
+  processUnion(node, tables);
+  processUnionOperation(node, tables);
+  processNext(node, tables);
 }
 
 /**
@@ -391,58 +454,20 @@ function extractTablesFromNode(node: any, tables: Set<string>): void {
   // Extract tables from FROM and JOIN clauses
   processFromAndJoin(node, tables);
 
-  // Handle subqueries explicitly
-  if (node.type === "subquery" || node.type === "select") {
-    if (node.ast) {
-      extractTablesFromNode(node.ast, tables);
-    }
-    if (node.from) {
-      extractTablesFromNode(node.from, tables);
-    }
-  }
+  // Handle subqueries and SELECT statements
+  processSubqueryAndSelect(node, tables);
 
-  // Extract tables from WHERE clause (may contain subqueries)
-  if (node.where) {
-    extractTablesFromNode(node.where, tables);
-  }
+  // Process SELECT-specific clauses
+  processSelectClauses(node, tables);
 
   // Extract tables from SELECT columns (may contain subqueries)
   processSelectColumns(node, tables);
 
-  // Extract tables from HAVING clause (may contain subqueries)
-  if (node.having) {
-    extractTablesFromNode(node.having, tables);
-  }
+  // Process DML statements (UPDATE, INSERT, DELETE)
+  processDmlStatements(node, tables);
 
-  // Extract tables from ORDER BY clause (may contain subqueries)
-  processOrderByOrGroupBy(node.orderby || node.order_by, tables);
-
-  // Extract tables from GROUP BY clause (may contain subqueries)
-  processOrderByOrGroupBy(node.groupby || node.group_by, tables);
-
-  // Extract tables from UPDATE statement
-  if (node.type === "update" && node.table) {
-    extractTablesFromNode(node.table, tables);
-  }
-
-  // Extract tables from INSERT statement
-  if (node.type === "insert" && node.table) {
-    extractTablesFromNode(node.table, tables);
-  }
-
-  // Extract tables from DELETE statement
-  if (node.type === "delete" && node.from) {
-    extractTablesFromNode(node.from, tables);
-  }
-
-  // Extract tables from UNION operations
-  processUnion(node, tables);
-
-  // Handle node types for UNION/INTERSECT/EXCEPT operations
-  processUnionOperation(node, tables);
-
-  // Handle _next property (alternative UNION structure)
-  processNext(node, tables);
+  // Process set operations (UNION, INTERSECT, EXCEPT)
+  processSetOperations(node, tables);
 
   // Recursively process all object properties
   processRecursively(node, tables);
@@ -456,6 +481,33 @@ function extractTablesFromNode(node: any, tables: Set<string>): void {
  * @param options - ForgeSQL ORM options for logging
  * @returns Comma-separated string of unique table names in backticks
  */
+/**
+ * Formats table names as backticked comma-separated string.
+ */
+function formatBacktickedValues(tables: Set<string>): string {
+  return Array.from(tables)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base", numeric: true }))
+    .map((table) => `\`${table}\``)
+    .join(",");
+}
+
+/**
+ * Extracts table names using regex fallback.
+ */
+function extractTablesWithRegex(sql: string): Set<string> {
+  const regex = /`([^`]+)`/g;
+  const matches = new Set<string>();
+  let match;
+
+  while ((match = regex.exec(sql.toLowerCase())) !== null) {
+    if (!match[1].startsWith("a_")) {
+      matches.add(match[1]);
+    }
+  }
+
+  return matches;
+}
+
 export function extractBacktickedValues(sql: string, options: ForgeSqlOrmOptions): string {
   // Try to use node-sql-parser first
   try {
@@ -471,11 +523,7 @@ export function extractBacktickedValues(sql: string, options: ForgeSqlOrmOptions
     });
 
     if (tables.size > 0) {
-      // Sort to ensure consistent order for the same input
-      const backtickedValues = Array.from(tables)
-        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base", numeric: true }))
-        .map((table) => `\`${table}\``)
-        .join(",");
+      const backtickedValues = formatBacktickedValues(tables);
       if (options.logCache) {
         // eslint-disable-next-line no-console
         console.warn(`Extracted backticked values: ${backtickedValues}`);
@@ -494,18 +542,6 @@ export function extractBacktickedValues(sql: string, options: ForgeSqlOrmOptions
   }
 
   // Fallback to regex-based extraction (original logic)
-  const regex = /`([^`]+)`/g;
-  const matches = new Set<string>();
-  let match;
-
-  while ((match = regex.exec(sql.toLowerCase())) !== null) {
-    if (!match[1].startsWith("a_")) {
-      matches.add(`\`${match[1]}\``);
-    }
-  }
-
-  // Sort to ensure consistent order for the same input
-  return Array.from(matches)
-    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base", numeric: true }))
-    .join(",");
+  const matches = extractTablesWithRegex(sql);
+  return formatBacktickedValues(matches);
 }

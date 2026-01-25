@@ -54,6 +54,28 @@ import {
   SelectResultField,
 } from "drizzle-orm/query-builders/select.types";
 import { SQLWrapper } from "drizzle-orm/sql/sql";
+
+/**
+ * Type alias for MySqlSelectBase return type used in selectFrom methods.
+ * Reduces code duplication in type definitions.
+ */
+export type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
+  GetSelectTableName<T>,
+  GetSelectTableSelection<T>,
+  "single",
+  MySqlRemotePreparedQueryHKT,
+  GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
+  false,
+  never,
+  {
+    [K in keyof {
+      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
+    }]: {
+      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
+    }[K];
+  }[],
+  any
+>;
 import type { MySqlQueryResultKind } from "drizzle-orm/mysql-core/session";
 import type { WithBuilder } from "drizzle-orm/mysql-core/subquery";
 import { WithSubquery } from "drizzle-orm/subquery";
@@ -216,29 +238,7 @@ export interface QueryBuilderForgeSql {
    * const users = await forgeSQL.selectFrom(userTable).where(eq(userTable.id, 1));
    * ```
    */
-  selectFrom<T extends MySqlTable>(
-    table: T,
-  ): MySqlSelectBase<
-    GetSelectTableName<T>,
-    GetSelectTableSelection<T>,
-    "single",
-    MySqlRemotePreparedQueryHKT,
-    GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-    false,
-    never,
-    {
-      [K in keyof {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }]: {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }[K];
-    }[],
-    any
-  >;
+  selectFrom<T extends MySqlTable>(table: T): SelectFromReturnType<T>;
 
   /**
    * Creates a distinct select query with unique field aliases to prevent field name collisions in joins.
@@ -271,29 +271,7 @@ export interface QueryBuilderForgeSql {
    * const uniqueUsers = await forgeSQL.selectDistinctFrom(userTable).where(eq(userTable.status, 'active'));
    * ```
    */
-  selectDistinctFrom<T extends MySqlTable>(
-    table: T,
-  ): MySqlSelectBase<
-    GetSelectTableName<T>,
-    GetSelectTableSelection<T>,
-    "single",
-    MySqlRemotePreparedQueryHKT,
-    GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-    false,
-    never,
-    {
-      [K in keyof {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }]: {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }[K];
-    }[],
-    any
-  >;
+  selectDistinctFrom<T extends MySqlTable>(table: T): SelectFromReturnType<T>;
 
   /**
    * Creates a cacheable select query with unique field aliases to prevent field name collisions in joins.
@@ -330,30 +308,7 @@ export interface QueryBuilderForgeSql {
    * const users = await forgeSQL.selectCacheableFrom(userTable, 300).where(eq(userTable.id, 1));
    * ```
    */
-  selectCacheableFrom<T extends MySqlTable>(
-    table: T,
-    cacheTTL?: number,
-  ): MySqlSelectBase<
-    GetSelectTableName<T>,
-    GetSelectTableSelection<T>,
-    "single",
-    MySqlRemotePreparedQueryHKT,
-    GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-    false,
-    never,
-    {
-      [K in keyof {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }]: {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }[K];
-    }[],
-    any
-  >;
+  selectCacheableFrom<T extends MySqlTable>(table: T, cacheTTL?: number): SelectFromReturnType<T>;
 
   /**
    * Creates a cacheable distinct select query with unique field aliases to prevent field name collisions in joins.
@@ -393,27 +348,7 @@ export interface QueryBuilderForgeSql {
   selectDistinctCacheableFrom<T extends MySqlTable>(
     table: T,
     cacheTTL?: number,
-  ): MySqlSelectBase<
-    GetSelectTableName<T>,
-    GetSelectTableSelection<T>,
-    "single",
-    MySqlRemotePreparedQueryHKT,
-    GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-    false,
-    never,
-    {
-      [K in keyof {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }]: {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }[K];
-    }[],
-    any
-  >;
+  ): SelectFromReturnType<T>;
 
   /**
    * Creates an insert query builder.
@@ -1345,27 +1280,37 @@ export interface ForgeSqlOrmOptions {
 }
 
 /**
+ * Creates a custom type for date/time fields with specified format and timestamp validation.
+ */
+function createDateCustomType(dataType: string, format: string, isTimeStamp: boolean) {
+  return customType<{
+    data: Date;
+    driver: string;
+    config: { format?: string };
+  }>({
+    dataType() {
+      return dataType;
+    },
+    toDriver(value: Date) {
+      return formatDateTime(value, format, isTimeStamp);
+    },
+    fromDriver(value: unknown) {
+      return parseDateTime(value as string, format);
+    },
+  });
+}
+
+/**
  * Custom type for MySQL datetime fields.
  * Handles conversion between JavaScript Date objects and MySQL datetime strings.
  *
  * @type {CustomType}
  */
-export const forgeDateTimeString = customType<{
-  data: Date;
-  driver: string;
-  config: { format?: string };
-}>({
-  dataType() {
-    return "datetime";
-  },
-  toDriver(value: Date) {
-    return formatDateTime(value, "yyyy-MM-dd' 'HH:mm:ss.SSS", false);
-  },
-  fromDriver(value: unknown) {
-    const format = "yyyy-MM-dd' 'HH:mm:ss.SSS";
-    return parseDateTime(value as string, format);
-  },
-});
+export const forgeDateTimeString = createDateCustomType(
+  "datetime",
+  "yyyy-MM-dd' 'HH:mm:ss.SSS",
+  false,
+);
 
 /**
  * Custom type for MySQL timestamp fields.
@@ -1373,22 +1318,11 @@ export const forgeDateTimeString = customType<{
  *
  * @type {CustomType}
  */
-export const forgeTimestampString = customType<{
-  data: Date;
-  driver: string;
-  config: { format?: string };
-}>({
-  dataType() {
-    return "timestamp";
-  },
-  toDriver(value: Date) {
-    return formatDateTime(value, "yyyy-MM-dd' 'HH:mm:ss.SSS", true);
-  },
-  fromDriver(value: unknown) {
-    const format = "yyyy-MM-dd' 'HH:mm:ss.SSS";
-    return parseDateTime(value as string, format);
-  },
-});
+export const forgeTimestampString = createDateCustomType(
+  "timestamp",
+  "yyyy-MM-dd' 'HH:mm:ss.SSS",
+  true,
+);
 
 /**
  * Custom type for MySQL date fields.
@@ -1396,22 +1330,7 @@ export const forgeTimestampString = customType<{
  *
  * @type {CustomType}
  */
-export const forgeDateString = customType<{
-  data: Date;
-  driver: string;
-  config: { format?: string };
-}>({
-  dataType() {
-    return "date";
-  },
-  toDriver(value: Date) {
-    return formatDateTime(value, "yyyy-MM-dd", false);
-  },
-  fromDriver(value: unknown) {
-    const format = "yyyy-MM-dd";
-    return parseDateTime(value as string, format);
-  },
-});
+export const forgeDateString = createDateCustomType("date", "yyyy-MM-dd", false);
 
 /**
  * Custom type for MySQL time fields.
@@ -1419,18 +1338,4 @@ export const forgeDateString = customType<{
  *
  * @type {CustomType}
  */
-export const forgeTimeString = customType<{
-  data: Date;
-  driver: string;
-  config: { format?: string };
-}>({
-  dataType() {
-    return "time";
-  },
-  toDriver(value: Date) {
-    return formatDateTime(value, "HH:mm:ss.SSS", false);
-  },
-  fromDriver(value: unknown) {
-    return parseDateTime(value as string, "HH:mm:ss.SSS");
-  },
-});
+export const forgeTimeString = createDateCustomType("time", "HH:mm:ss.SSS", false);
