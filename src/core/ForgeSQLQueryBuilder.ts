@@ -59,7 +59,7 @@ import { SQLWrapper } from "drizzle-orm/sql/sql";
  * Type alias for MySqlSelectBase return type used in selectFrom methods.
  * Reduces code duplication in type definitions.
  */
-type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
+export type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
   GetSelectTableName<T>,
   GetSelectTableSelection<T>,
   "single",

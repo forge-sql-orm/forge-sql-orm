@@ -357,12 +357,11 @@ function processNext(node: any, tables: Set<string>): void {
  */
 function processRecursively(node: any, tables: Set<string>): void {
   const isColumnRefAlias = node.type === "column_ref" && !node.table;
-  const isShortNameAlias =
-    node.name &&
-    !node.table &&
-    node.type !== "table" &&
-    node.type !== "dual" &&
-    node.name.length <= 2;
+  const hasName = Boolean(node.name);
+  const hasNoTable = !node.table;
+  const isNotTableType = node.type !== "table" && node.type !== "dual";
+  const isShortName = hasName && node.name.length <= 2;
+  const isShortNameAlias = hasName && hasNoTable && isNotTableType && isShortName;
   const isLikelyAlias = isColumnRefAlias || isShortNameAlias;
 
   if (isLikelyAlias || Array.isArray(node)) {

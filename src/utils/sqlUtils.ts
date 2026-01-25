@@ -767,7 +767,7 @@ function formatAndLogQueryResult(result: {
 
   // eslint-disable-next-line no-console
   console.warn(
-    `SQL: ${result.digestText} | Memory: ${avgMemMB.toFixed(2)} MB | Time: ${avgTimeMs.toFixed(2)} ms | stmtType: ${result.stmtType} | Executions: ${result.execCount}\n Plan:${result.plan}`,
+    `SQL: ${result.digestText} | Memory: ${avgMemMB.toFixed(2)} MB | Time: ${avgTimeMs.toFixed(2)} ms | stmtType: ${result.stmtType} | Executions: ${Number(result.execCount)}\n Plan:${result.plan}`,
   );
 }
 

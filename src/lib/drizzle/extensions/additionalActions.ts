@@ -6,7 +6,12 @@ import {
 } from "drizzle-orm/mysql-proxy";
 
 import { SelectedFields } from "drizzle-orm/mysql-core/query-builders/select.types";
-import { applyFromDriverTransform, ForgeSqlOrmOptions, mapSelectFieldsWithAlias } from "../../..";
+import {
+  applyFromDriverTransform,
+  ForgeSqlOrmOptions,
+  mapSelectFieldsWithAlias,
+  SelectFromReturnType,
+} from "../../..";
 import { MySqlSelectBase, MySqlSelectBuilder } from "drizzle-orm/mysql-core";
 import { MySqlTable } from "drizzle-orm/mysql-core/table";
 import {
@@ -31,28 +36,6 @@ import {
   GetSelectTableSelection,
   SelectResultField,
 } from "drizzle-orm/query-builders/select.types";
-
-/**
- * Type alias for MySqlSelectBase return type used in selectFrom methods.
- * Reduces code duplication in type definitions.
- */
-type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
-  GetSelectTableName<T>,
-  GetSelectTableSelection<T>,
-  "single",
-  MySqlRemotePreparedQueryHKT,
-  GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-  false,
-  never,
-  {
-    [K in keyof {
-      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
-    }]: {
-      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
-    }[K];
-  }[],
-  any
->;
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -659,16 +642,22 @@ function createFunctionCallHandler(
  * @returns Select query builder with aliasing and optional caching
  */
 /**
+ * Configuration for aliased select proxy handler.
+ */
+interface AliasedSelectProxyConfig {
+  selections: any;
+  aliasMap: any;
+  useCache: boolean;
+  options: ForgeSqlOrmOptions;
+  cacheTtl: number | undefined;
+  wrapBuilder: (rawBuilder: any) => any;
+}
+
+/**
  * Creates a Proxy handler for aliased select builders.
  */
-function createAliasedSelectProxyHandler(
-  selections: any,
-  aliasMap: any,
-  useCache: boolean,
-  options: ForgeSqlOrmOptions,
-  cacheTtl: number | undefined,
-  wrapBuilder: (rawBuilder: any) => any,
-) {
+function createAliasedSelectProxyHandler(config: AliasedSelectProxyConfig) {
+  const { selections, aliasMap, useCache, options, cacheTtl, wrapBuilder } = config;
   return {
     get(target: any, prop: string | symbol, receiver: any) {
       // Handle 'then' separately to avoid thenable object issues
@@ -712,14 +701,14 @@ function createAliasedSelectBuilder<TSelection extends SelectedFields>(
   const builder = selectFn(selections);
 
   const wrapBuilder = (rawBuilder: any): any => {
-    const handler = createAliasedSelectProxyHandler(
+    const handler = createAliasedSelectProxyHandler({
       selections,
       aliasMap,
       useCache,
       options,
       cacheTtl,
       wrapBuilder,
-    );
+    });
     return new Proxy(rawBuilder, handler);
   };
 
@@ -957,32 +946,26 @@ function setupCacheAwareModifyMethods(
   db: MySqlRemoteDatabase<any>,
   newOptions: ForgeSqlOrmOptions,
 ): void {
-  // Insert with cache context support (participates in cache clearing when used within cache context)
+  // Insert operations
   db.insertWithCacheContext = function <TTable extends MySqlTable>(table: TTable) {
     return insertAndEvictCacheBuilder(db, table, newOptions, false);
   };
-
-  // Insert with cache eviction
   db.insertAndEvictCache = function <TTable extends MySqlTable>(table: TTable) {
     return insertAndEvictCacheBuilder(db, table, newOptions, true);
   };
 
-  // Update with cache context support (participates in cache clearing when used within cache context)
+  // Update operations
   db.updateWithCacheContext = function <TTable extends MySqlTable>(table: TTable) {
     return updateAndEvictCacheBuilder(db, table, newOptions, false);
   };
-
-  // Update with cache eviction
   db.updateAndEvictCache = function <TTable extends MySqlTable>(table: TTable) {
     return updateAndEvictCacheBuilder(db, table, newOptions, true);
   };
 
-  // Delete with cache context support (participates in cache clearing when used within cache context)
+  // Delete operations
   db.deleteWithCacheContext = function <TTable extends MySqlTable>(table: TTable) {
     return deleteAndEvictCacheBuilder(db, table, newOptions, false);
   };
-
-  // Delete with cache eviction
   db.deleteAndEvictCache = function <TTable extends MySqlTable>(table: TTable) {
     return deleteAndEvictCacheBuilder(db, table, newOptions, true);
   };
