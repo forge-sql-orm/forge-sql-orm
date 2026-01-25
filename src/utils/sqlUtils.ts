@@ -673,38 +673,61 @@ export function applyFromDriverTransform<T, TSelection>(
   });
 }
 
+/**
+ * Checks if an object is a plain object (not Date, Array, etc.).
+ */
+function isPlainObject(obj: unknown): boolean {
+  return (
+    obj !== null &&
+    typeof obj === "object" &&
+    (!obj.constructor || obj.constructor.name === "Object")
+  );
+}
+
+/**
+ * Processes a single value in the null branches processing.
+ */
+function processValueEntry(
+  key: string,
+  value: unknown,
+  result: Record<string, unknown>,
+  allNull: { value: boolean },
+): void {
+  if (value === null || value === undefined) {
+    result[key] = null;
+    return;
+  }
+
+  if (typeof value === "object" && isPlainObject(value)) {
+    const processed = processNullBranches(value as Record<string, unknown>);
+    result[key] = processed;
+    if (processed !== null) {
+      allNull.value = false;
+    }
+  } else {
+    result[key] = value;
+    allNull.value = false;
+  }
+}
+
 function processNullBranches(obj: Record<string, unknown>): Record<string, unknown> | null {
   if (obj === null || typeof obj !== "object") {
     return obj;
   }
 
   // Skip built-in objects like Date, Array, etc.
-  if (obj.constructor && obj.constructor.name !== "Object") {
+  if (!isPlainObject(obj)) {
     return obj;
   }
 
   const result: Record<string, unknown> = {};
-  let allNull = true;
+  const allNull = { value: true };
 
   for (const [key, value] of Object.entries(obj)) {
-    if (value === null || value === undefined) {
-      result[key] = null;
-      continue;
-    }
-
-    if (typeof value === "object") {
-      const processed = processNullBranches(value as Record<string, unknown>);
-      result[key] = processed;
-      if (processed !== null) {
-        allNull = false;
-      }
-    } else {
-      result[key] = value;
-      allNull = false;
-    }
+    processValueEntry(key, value, result, allNull);
   }
 
-  return allNull ? null : result;
+  return allNull.value ? null : result;
 }
 
 export function formatLimitOffset(limitOrOffset: number): number {

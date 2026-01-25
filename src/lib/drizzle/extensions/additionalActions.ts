@@ -314,24 +314,25 @@ async function handleSuccessfulExecution(
 }
 
 /**
+ * Configuration for function call handling.
+ */
+interface FunctionCallConfig {
+  value: Function;
+  target: any;
+  args: any[];
+  table: MySqlTable;
+  options: ForgeSqlOrmOptions;
+  isCached: boolean;
+}
+
+/**
  * Handles function calls on the wrapped builder.
  *
- * @param value - The function to call
- * @param target - The target object
- * @param args - Function arguments
- * @param table - The table being modified
- * @param options - ForgeSQL ORM options
- * @param isCached - Whether to clear cache immediately
+ * @param config - Configuration for function call handling
  * @returns Function result or wrapped builder
  */
-function handleFunctionCall(
-  value: Function,
-  target: any,
-  args: any[],
-  table: MySqlTable,
-  options: ForgeSqlOrmOptions,
-  isCached: boolean,
-): any {
+function handleFunctionCall(config: FunctionCallConfig): any {
+  const { value, target, args, table, options, isCached } = config;
   const result = value.apply(target, args);
   if (typeof result === "object" && result !== null && "execute" in result) {
     return wrapCacheEvictBuilder(result as QueryBuilder, table, options, isCached);
@@ -372,7 +373,14 @@ const wrapCacheEvictBuilder = <TTable extends MySqlTable>(
 
       if (typeof value === "function") {
         return (...args: any[]) =>
-          handleFunctionCall(value, target, args, table, options, isCached);
+          handleFunctionCall({
+            value,
+            target,
+            args,
+            table,
+            options,
+            isCached,
+          });
       }
 
       return value;
@@ -457,26 +465,26 @@ function deleteAndEvictCacheBuilder<TTable extends MySqlTable>(
 }
 
 /**
+ * Configuration for cached query handling.
+ */
+interface CachedQueryConfig {
+  target: any;
+  options: ForgeSqlOrmOptions;
+  cacheTtl: number;
+  selections: any;
+  aliasMap: any;
+  onfulfilled?: any;
+  onrejected?: any;
+}
+
+/**
  * Handles cached query execution with proper error handling.
  *
- * @param target - The query target
- * @param options - ForgeSQL ORM options
- * @param cacheTtl - Cache TTL
- * @param selections - Field selections
- * @param aliasMap - Field alias mapping
- * @param onfulfilled - Success callback
- * @param onrejected - Error callback
+ * @param config - Configuration for cached query handling
  * @returns Promise with cached result
  */
-async function handleCachedQuery(
-  target: any,
-  options: ForgeSqlOrmOptions,
-  cacheTtl: number,
-  selections: any,
-  aliasMap: any,
-  onfulfilled?: any,
-  onrejected?: any,
-): Promise<any> {
+async function handleCachedQuery(config: CachedQueryConfig): Promise<any> {
+  const { target, options, cacheTtl, selections, aliasMap, onfulfilled, onrejected } = config;
   try {
     const localCached = await getQueryLocalCacheQuery(target, options);
     if (localCached) {
@@ -505,24 +513,25 @@ async function handleCachedQuery(
 }
 
 /**
+ * Configuration for non-cached query handling.
+ */
+interface NonCachedQueryConfig {
+  target: any;
+  options: any;
+  selections: any;
+  aliasMap: any;
+  onfulfilled?: any;
+  onrejected?: any;
+}
+
+/**
  * Handles non-cached query execution.
  *
- * @param target - The query target
- * @param options - ForgeSQL ORM options
- * @param selections - Field selections
- * @param aliasMap - Field alias mapping
- * @param onfulfilled - Success callback
- * @param onrejected - Error callback
+ * @param config - Configuration for non-cached query handling
  * @returns Promise with transformed result
  */
-async function handleNonCachedQuery(
-  target: any,
-  options: any,
-  selections: any,
-  aliasMap: any,
-  onfulfilled?: any,
-  onrejected?: any,
-): Promise<any> {
+async function handleNonCachedQuery(config: NonCachedQueryConfig): Promise<any> {
+  const { target, options, selections, aliasMap, onfulfilled, onrejected } = config;
   try {
     const localCached = await getQueryLocalCacheQuery(target, options);
     if (localCached) {
@@ -581,7 +590,15 @@ function createCachedThenHandler(
 ): (onfulfilled?: any, onrejected?: any) => Promise<any> {
   return (onfulfilled?: any, onrejected?: any) => {
     const ttl = cacheTtl ?? options.cacheTTL ?? 120;
-    return handleCachedQuery(target, options, ttl, selections, aliasMap, onfulfilled, onrejected);
+    return handleCachedQuery({
+      target,
+      options,
+      cacheTtl: ttl,
+      selections,
+      aliasMap,
+      onfulfilled,
+      onrejected,
+    });
   };
 }
 
@@ -595,7 +612,14 @@ function createNonCachedThenHandler(
   aliasMap: any,
 ): (onfulfilled?: any, onrejected?: any) => Promise<any> {
   return (onfulfilled?: any, onrejected?: any) => {
-    return handleNonCachedQuery(target, options, selections, aliasMap, onfulfilled, onrejected);
+    return handleNonCachedQuery({
+      target,
+      options,
+      selections,
+      aliasMap,
+      onfulfilled,
+      onrejected,
+    });
   };
 }
 
@@ -689,14 +713,22 @@ function createAliasedSelectProxyHandler(config: AliasedSelectProxyConfig) {
   };
 }
 
+/**
+ * Configuration for creating aliased select builder.
+ */
+interface AliasedSelectBuilderConfig<TSelection extends SelectedFields> {
+  db: MySqlRemoteDatabase<any>;
+  fields: TSelection;
+  selectFn: (selections: any) => MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+  useCache: boolean;
+  options: ForgeSqlOrmOptions;
+  cacheTtl?: number;
+}
+
 function createAliasedSelectBuilder<TSelection extends SelectedFields>(
-  db: MySqlRemoteDatabase<any>,
-  fields: TSelection,
-  selectFn: (selections: any) => MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>,
-  useCache: boolean,
-  options: ForgeSqlOrmOptions,
-  cacheTtl?: number,
+  config: AliasedSelectBuilderConfig<TSelection>,
 ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  const { fields, selectFn, useCache, options, cacheTtl } = config;
   const { selections, aliasMap } = mapSelectFieldsWithAlias(fields);
   const builder = selectFn(selections);
 
@@ -807,13 +839,13 @@ function setupSelectAliasedMethods(
 ): void {
   // Select aliased without cache
   db.selectAliased = function <TSelection extends SelectedFields>(fields: TSelection) {
-    return createAliasedSelectBuilder(
+    return createAliasedSelectBuilder({
       db,
       fields,
-      (selections) => db.select(selections),
-      false,
-      newOptions,
-    );
+      selectFn: (selections) => db.select(selections),
+      useCache: false,
+      options: newOptions,
+    });
   };
 
   // Select aliased with cache
@@ -821,25 +853,25 @@ function setupSelectAliasedMethods(
     fields: TSelection,
     cacheTtl?: number,
   ) {
-    return createAliasedSelectBuilder(
+    return createAliasedSelectBuilder({
       db,
       fields,
-      (selections) => db.select(selections),
-      true,
-      newOptions,
+      selectFn: (selections) => db.select(selections),
+      useCache: true,
+      options: newOptions,
       cacheTtl,
-    );
+    });
   };
 
   // Select aliased distinct without cache
   db.selectAliasedDistinct = function <TSelection extends SelectedFields>(fields: TSelection) {
-    return createAliasedSelectBuilder(
+    return createAliasedSelectBuilder({
       db,
       fields,
-      (selections) => db.selectDistinct(selections),
-      false,
-      newOptions,
-    );
+      selectFn: (selections) => db.selectDistinct(selections),
+      useCache: false,
+      options: newOptions,
+    });
   };
 
   // Select aliased distinct with cache
@@ -847,14 +879,14 @@ function setupSelectAliasedMethods(
     fields: TSelection,
     cacheTtl?: number,
   ) {
-    return createAliasedSelectBuilder(
+    return createAliasedSelectBuilder({
       db,
       fields,
-      (selections) => db.selectDistinct(selections),
-      true,
-      newOptions,
+      selectFn: (selections) => db.selectDistinct(selections),
+      useCache: true,
+      options: newOptions,
       cacheTtl,
-    );
+    });
   };
 }
 

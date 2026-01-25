@@ -12,6 +12,18 @@ import { AnyMySqlTable, MySqlColumn } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
 
 /**
+ * Configuration for RovoIntegrationSettingImpl.
+ */
+interface RovoIntegrationSettingConfig {
+  accountId: string;
+  tableName: string;
+  contextParam: Record<string, string>;
+  rls: boolean;
+  rlsFields: string[];
+  rlsWherePart: (alias: string) => string;
+}
+
+/**
  * Implementation of RovoIntegrationSetting interface.
  * Stores configuration for Rovo query execution including user context, table name, and RLS settings.
  *
@@ -29,27 +41,15 @@ class RovoIntegrationSettingImpl implements RovoIntegrationSetting {
   /**
    * Creates a new RovoIntegrationSettingImpl instance.
    *
-   * @param {string} accountId - The account ID of the active user
-   * @param {string} tableName - The name of the table to query
-   * @param {Record<string, string>} contextParam - Context parameters for query substitution (parameter name -> value mapping)
-   * @param {boolean} rls - Whether Row-Level Security is enabled
-   * @param {string[]} rlsFields - Array of field names required for RLS validation
-   * @param {(alias: string) => string} rlsWherePart - Function that generates WHERE clause for RLS filtering
+   * @param config - Configuration object for the setting
    */
-  constructor(
-    accountId: string,
-    tableName: string,
-    contextParam: Record<string, string>,
-    rls: boolean,
-    rlsFields: string[],
-    rlsWherePart: (alias: string) => string,
-  ) {
-    this.accountId = accountId;
-    this.tableName = tableName;
-    this.contextParam = contextParam;
-    this.rls = rls;
-    this.rlsFields = rlsFields;
-    this.rlsWherePart = rlsWherePart;
+  constructor(config: RovoIntegrationSettingConfig) {
+    this.accountId = config.accountId;
+    this.tableName = config.tableName;
+    this.contextParam = config.contextParam;
+    this.rls = config.rls;
+    this.rlsFields = config.rlsFields;
+    this.rlsWherePart = config.rlsWherePart;
   }
 
   /**
@@ -350,14 +350,14 @@ class RovoIntegrationSettingCreatorImpl implements RovoIntegrationSettingCreator
    */
   async build(): Promise<RovoIntegrationSetting> {
     const useRls = this.isUseRls ? await this.isUseRlsConditional() : false;
-    return new RovoIntegrationSettingImpl(
-      this.accountId,
-      this.tableName,
-      this.contextParam,
-      useRls,
-      this.rlsFields,
-      this.wherePart,
-    );
+    return new RovoIntegrationSettingImpl({
+      accountId: this.accountId,
+      tableName: this.tableName,
+      contextParam: this.contextParam,
+      rls: useRls,
+      rlsFields: this.rlsFields,
+      rlsWherePart: this.wherePart,
+    });
   }
 }
 

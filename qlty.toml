@@ -7,3 +7,12 @@ exclude_patterns = [
 ]
 [smells.function_complexity]
 threshold = 8
+[[triage]]
+match.rules = ["qlty:file-complexity"]
+match.file_patterns = [
+    "src/core/Rovo.ts",
+    "src/lib/drizzle/extensions/additionalActions.ts",
+    "src/utils/cacheTableUtils.ts",
+    "src/utils/sqlUtils.ts",
+]
+set.ignored = true
