@@ -20,7 +20,7 @@ const STATEMENTS_SUMMARY_DELAY_MS = 200;
  * Checks if error is a timeout or out-of-memory error.
  */
 function isQueryError(error: any): { isTimeout: boolean; isOutOfMemory: boolean } {
-  const isTimeout = error.code === QUERY_ERROR_CODES.TIMEOUT;
+  const isTimeout = error?.code === QUERY_ERROR_CODES.TIMEOUT;
   const isOutOfMemory = error?.context?.debug?.errno === QUERY_ERROR_CODES.OUT_OF_MEMORY_ERRNO;
   return { isTimeout, isOutOfMemory };
 }

@@ -1,3 +1,4 @@
+// qlty-ignore: +qlty:file-complexity
 import {
   ForgeSqlOperation,
   ForgeSqlOrmOptions,

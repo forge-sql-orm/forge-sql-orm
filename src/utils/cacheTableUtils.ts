@@ -1,3 +1,4 @@
+// qlty-ignore: +qlty:file-complexity
 import { Parser } from "node-sql-parser";
 import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
 
