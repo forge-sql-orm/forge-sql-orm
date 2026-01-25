@@ -61,39 +61,45 @@ interface ConfigBuilderData {
 }
 
 /**
+ * Parses a string value using multiple DateTime parsers.
+ */
+function parseStringToDate(value: string, format: string): Date {
+  // 1. Try to parse using the provided format (strict mode)
+  const dt = DateTime.fromFormat(value, format);
+  if (dt.isValid) {
+    return dt.toJSDate();
+  }
+
+  // 2. Try to parse as SQL string
+  const sqlDt = DateTime.fromSQL(value);
+  if (sqlDt.isValid) {
+    return sqlDt.toJSDate();
+  }
+
+  // 3. Try to parse as RFC2822 string
+  const isoDt = DateTime.fromRFC2822(value);
+  if (isoDt.isValid) {
+    return isoDt.toJSDate();
+  }
+
+  // 4. Fallback: use native Date constructor
+  return new Date(value);
+}
+
+/**
  * Parses a date string into a Date object using the specified format
  * @param value - The date string to parse or Date
  * @param format - The format to use for parsing
  * @returns Date object
  */
-
 export const parseDateTime = (value: string | Date, format: string): Date => {
   let result: Date;
   if (value instanceof Date) {
     result = value;
   } else {
-    // 1. Try to parse using the provided format (strict mode)
-    const dt = DateTime.fromFormat(value, format);
-    if (dt.isValid) {
-      result = dt.toJSDate();
-    } else {
-      // 2. Try to parse as SQL string
-      const sqlDt = DateTime.fromSQL(value);
-      if (sqlDt.isValid) {
-        result = sqlDt.toJSDate();
-      } else {
-        // 3. Try to parse as RFC2822 string
-        const isoDt = DateTime.fromRFC2822(value);
-        if (isoDt.isValid) {
-          result = isoDt.toJSDate();
-        } else {
-          // 4. Fallback: use native Date constructor
-          result = new Date(value);
-        }
-      }
-    }
+    result = parseStringToDate(value, format);
   }
-  // 4. Ensure the result is a valid Date object
+  // Ensure the result is a valid Date object
   if (Number.isNaN(result.getTime())) {
     result = new Date(value);
   }
@@ -746,6 +752,37 @@ function buildClusterStatementsSummaryQuery(forgeSQLORM: ForgeSqlOperation, time
 }
 
 /**
+ * Formats and logs query performance result.
+ */
+function formatAndLogQueryResult(result: {
+  digestText: string;
+  avgLatency: number | bigint;
+  avgMem: number | bigint;
+  stmtType: string;
+  execCount: number | bigint;
+  plan: string | null;
+}): void {
+  const avgTimeMs = Number(result.avgLatency) / 1_000_000;
+  const avgMemMB = Number(result.avgMem) / 1_000_000;
+
+  // eslint-disable-next-line no-console
+  console.warn(
+    `SQL: ${result.digestText} | Memory: ${avgMemMB.toFixed(2)} MB | Time: ${avgTimeMs.toFixed(2)} ms | stmtType: ${result.stmtType} | Executions: ${result.execCount}\n Plan:${result.plan}`,
+  );
+}
+
+/**
+ * Handles errors in query execution plan retrieval.
+ */
+function handleQueryPlanError(error: unknown): void {
+  // eslint-disable-next-line no-console
+  console.debug(
+    `Error occurred while retrieving query execution plan: ${error instanceof Error ? error.message : "Unknown error"}. Try again after some time`,
+    error,
+  );
+}
+
+/**
  * Analyzes and prints query performance data from CLUSTER_STATEMENTS_SUMMARY table.
  *
  * This function queries the CLUSTER_STATEMENTS_SUMMARY table to find queries that were executed
@@ -785,22 +822,10 @@ export async function printQueriesWithPlan(
     );
 
     for (const result of results) {
-      // Average execution time (convert from nanoseconds to milliseconds)
-      const avgTimeMs = Number(result.avgLatency) / 1_000_000;
-      const avgMemMB = Number(result.avgMem) / 1_000_000;
-
-      // 1. Query info: SQL, memory, time, executions
-      // eslint-disable-next-line no-console
-      console.warn(
-        `SQL: ${result.digestText} | Memory: ${avgMemMB.toFixed(2)} MB | Time: ${avgTimeMs.toFixed(2)} ms | stmtType: ${result.stmtType} | Executions: ${result.execCount}\n Plan:${result.plan}`,
-      );
+      formatAndLogQueryResult(result);
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.debug(
-      `Error occurred while retrieving query execution plan: ${error instanceof Error ? error.message : "Unknown error"}. Try again after some time`,
-      error,
-    );
+    handleQueryPlanError(error);
   }
 }
 
@@ -823,22 +848,10 @@ export async function handleErrorsWithPlan(
     );
 
     for (const result of results) {
-      // Average execution time (convert from nanoseconds to milliseconds)
-      const avgTimeMs = Number(result.avgLatency) / 1_000_000;
-      const avgMemMB = Number(result.avgMem) / 1_000_000;
-
-      // 1. Query info: SQL, memory, time, executions
-      // eslint-disable-next-line no-console
-      console.warn(
-        `SQL: ${result.digestText} | Memory: ${avgMemMB.toFixed(2)} MB | Time: ${avgTimeMs.toFixed(2)} ms | stmtType: ${result.stmtType} | Executions: ${result.execCount}\n Plan:${result.plan}`,
-      );
+      formatAndLogQueryResult(result);
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.debug(
-      `Error occurred while retrieving query execution plan: ${error instanceof Error ? error.message : "Unknown error"}. Try again after some time`,
-      error,
-    );
+    handleQueryPlanError(error);
   }
 }
 
@@ -873,6 +886,48 @@ const SESSION_ALIAS_NAME_ORM = "orm";
  *
  * @throws Does not throw - errors are logged to console.debug instead
  */
+/**
+ * Builds slow query query for specified hours.
+ */
+function buildSlowQueryQuery(forgeSQLORM: ForgeSqlOperation, hours: number) {
+  return forgeSQLORM
+    .getDrizzleQueryBuilder()
+    .select({
+      query: withTidbHint(slowQuery.query),
+      queryTime: slowQuery.queryTime,
+      memMax: slowQuery.memMax,
+      plan: slowQuery.plan,
+    })
+    .from(slowQuery)
+    .where(
+      and(
+        isNotNull(slowQuery.digest),
+        ne(slowQuery.sessionAlias, SESSION_ALIAS_NAME_ORM),
+        gte(
+          slowQuery.time,
+          sql`DATE_SUB
+                            (NOW(), INTERVAL
+                            ${hours}
+                            HOUR
+                            )`,
+        ),
+      ),
+    );
+}
+
+/**
+ * Formats slow query result message.
+ */
+function formatSlowQueryMessage(result: {
+  query: string | null;
+  queryTime: number | null;
+  memMax: number | bigint | null;
+  plan: string | null;
+}): string {
+  const memMaxMB = result.memMax ? Number(result.memMax) / 1_000_000 : 0;
+  return `Found SlowQuery SQL: ${result.query} | Memory: ${memMaxMB.toFixed(2)} MB | Time: ${result.queryTime} ms\n Plan:${result.plan}`;
+}
+
 export async function slowQueryPerHours(
   forgeSQLORM: ForgeSqlOperation,
   hours: number,
@@ -880,51 +935,22 @@ export async function slowQueryPerHours(
 ) {
   try {
     const timeoutMs = timeout ?? 1500;
+    const query = buildSlowQueryQuery(forgeSQLORM, hours);
     const results = await withTimeout(
-      forgeSQLORM
-        .getDrizzleQueryBuilder()
-        .select({
-          query: withTidbHint(slowQuery.query),
-          queryTime: slowQuery.queryTime,
-          memMax: slowQuery.memMax,
-          plan: slowQuery.plan,
-        })
-        .from(slowQuery)
-        .where(
-          and(
-            isNotNull(slowQuery.digest),
-            ne(slowQuery.sessionAlias, SESSION_ALIAS_NAME_ORM),
-            gte(
-              slowQuery.time,
-              sql`DATE_SUB
-                            (NOW(), INTERVAL
-                            ${hours}
-                            HOUR
-                            )`,
-            ),
-          ),
-        ),
+      query,
       `Timeout ${timeoutMs}ms in slowQueryPerHours - transient timeouts are usually fine; repeated timeouts mean this diagnostic query is consistently slow and should be investigated`,
       timeoutMs,
     );
     const response: string[] = [];
     for (const result of results) {
-      // Convert memory from bytes to MB and handle null values
-      const memMaxMB = result.memMax ? Number(result.memMax) / 1_000_000 : 0;
-
-      const message = `Found SlowQuery SQL: ${result.query} | Memory: ${memMaxMB.toFixed(2)} MB | Time: ${result.queryTime} ms\n Plan:${result.plan}`;
+      const message = formatSlowQueryMessage(result);
       response.push(message);
-      // 1. Query info: SQL, memory, time, executions
       // eslint-disable-next-line no-console
       console.warn(message);
     }
     return response;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.debug(
-      `Error occurred while retrieving query execution plan: ${error instanceof Error ? error.message : "Unknown error"}. Try again after some time`,
-      error,
-    );
+    handleQueryPlanError(error);
     return [
       `Error occurred while retrieving query execution plan: ${error instanceof Error ? error.message : "Unknown error"}`,
     ];

@@ -26,38 +26,33 @@ export function injectSqlHints(query: string, hints?: SqlHints): string {
   // Normalize the query for easier matching
   const normalizedQuery = query.trim().toUpperCase();
 
-  // Get the appropriate hints based on query type
-  let queryHints: string[] | undefined;
+  // Map query types to their hints
+  const queryTypeMap: Record<string, string[] | undefined> = {
+    SELECT: hints.select,
+    INSERT: hints.insert,
+    UPDATE: hints.update,
+    DELETE: hints.delete,
+  };
 
-  if (normalizedQuery.startsWith("SELECT")) {
-    queryHints = hints.select;
-  } else if (normalizedQuery.startsWith("INSERT")) {
-    queryHints = hints.insert;
-  } else if (normalizedQuery.startsWith("UPDATE")) {
-    queryHints = hints.update;
-  } else if (normalizedQuery.startsWith("DELETE")) {
-    queryHints = hints.delete;
+  // Find matching query type and get hints
+  let queryHints: string[] | undefined;
+  let queryPrefix: string | null = null;
+
+  for (const [type, typeHints] of Object.entries(queryTypeMap)) {
+    if (normalizedQuery.startsWith(type)) {
+      queryPrefix = type;
+      queryHints = typeHints;
+      break;
+    }
   }
 
   // If no hints for this query type, return original query
-  if (!queryHints || queryHints.length === 0) {
+  if (!queryHints || queryHints.length === 0 || !queryPrefix) {
     return query;
   }
 
-  // Join all hints with spaces
+  // Join all hints with spaces and inject into query
   const hintsString = queryHints.join(" ");
-
-  // Inject hints into the query
-  if (normalizedQuery.startsWith("SELECT")) {
-    return `SELECT /*+ ${hintsString} */ ${query.substring(6)}`;
-  } else if (normalizedQuery.startsWith("INSERT")) {
-    return `INSERT /*+ ${hintsString} */ ${query.substring(6)}`;
-  } else if (normalizedQuery.startsWith("UPDATE")) {
-    return `UPDATE /*+ ${hintsString} */ ${query.substring(6)}`;
-  } else if (normalizedQuery.startsWith("DELETE")) {
-    return `DELETE /*+ ${hintsString} */ ${query.substring(6)}`;
-  }
-
-  // If no match found, return original query
-  return query;
+  const prefixLength = queryPrefix.length;
+  return `${queryPrefix} /*+ ${hintsString} */ ${query.substring(prefixLength)}`;
 }

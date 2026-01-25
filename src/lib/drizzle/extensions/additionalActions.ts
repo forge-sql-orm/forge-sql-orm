@@ -32,6 +32,28 @@ import {
   SelectResultField,
 } from "drizzle-orm/query-builders/select.types";
 
+/**
+ * Type alias for MySqlSelectBase return type used in selectFrom methods.
+ * Reduces code duplication in type definitions.
+ */
+type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
+  GetSelectTableName<T>,
+  GetSelectTableSelection<T>,
+  "single",
+  MySqlRemotePreparedQueryHKT,
+  GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
+  false,
+  never,
+  {
+    [K in keyof {
+      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
+    }]: {
+      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
+    }[K];
+  }[],
+  any
+>;
+
 // ============================================================================
 // TYPES AND INTERFACES
 // ============================================================================
@@ -376,6 +398,19 @@ const wrapCacheEvictBuilder = <TTable extends MySqlTable>(
 };
 
 /**
+ * Creates a query builder with cache eviction wrapper.
+ * Generic helper to reduce duplication between insert/update/delete builders.
+ */
+function createCacheEvictBuilder<TTable extends MySqlTable, TBuilder>(
+  builder: QueryBuilder,
+  table: TTable,
+  options: ForgeSqlOrmOptions,
+  isCached: boolean,
+): TBuilder {
+  return wrapCacheEvictBuilder(builder, table, options, isCached) as unknown as TBuilder;
+}
+
+/**
  * Creates an insert query builder that automatically evicts cache after execution.
  *
  * @param db - The database instance
@@ -390,16 +425,10 @@ function insertAndEvictCacheBuilder<TTable extends MySqlTable>(
   isCached: boolean,
 ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
   const builder = db.insert(table);
-  return wrapCacheEvictBuilder(
-    builder as unknown as QueryBuilder,
-    table,
-    options,
-    isCached,
-  ) as unknown as MySqlInsertBuilder<
+  return createCacheEvictBuilder<
     TTable,
-    MySqlRemoteQueryResultHKT,
-    MySqlRemotePreparedQueryHKT
-  >;
+    MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>
+  >(builder as unknown as QueryBuilder, table, options, isCached);
 }
 
 /**
@@ -417,16 +446,10 @@ function updateAndEvictCacheBuilder<TTable extends MySqlTable>(
   isCached: boolean,
 ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
   const builder = db.update(table);
-  return wrapCacheEvictBuilder(
-    builder as unknown as QueryBuilder,
-    table,
-    options,
-    isCached,
-  ) as unknown as MySqlUpdateBuilder<
+  return createCacheEvictBuilder<
     TTable,
-    MySqlRemoteQueryResultHKT,
-    MySqlRemotePreparedQueryHKT
-  >;
+    MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>
+  >(builder as unknown as QueryBuilder, table, options, isCached);
 }
 
 /**
@@ -444,12 +467,10 @@ function deleteAndEvictCacheBuilder<TTable extends MySqlTable>(
   isCached: boolean,
 ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
   const builder = db.delete(table);
-  return wrapCacheEvictBuilder(
-    builder as unknown as QueryBuilder,
-    table,
-    options,
-    isCached,
-  ) as unknown as MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+  return createCacheEvictBuilder<
+    TTable,
+    MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>
+  >(builder as unknown as QueryBuilder, table, options, isCached);
 }
 
 /**
@@ -637,6 +658,45 @@ function createFunctionCallHandler(
  * @param cacheTtl - Optional cache TTL override
  * @returns Select query builder with aliasing and optional caching
  */
+/**
+ * Creates a Proxy handler for aliased select builders.
+ */
+function createAliasedSelectProxyHandler(
+  selections: any,
+  aliasMap: any,
+  useCache: boolean,
+  options: ForgeSqlOrmOptions,
+  cacheTtl: number | undefined,
+  wrapBuilder: (rawBuilder: any) => any,
+) {
+  return {
+    get(target: any, prop: string | symbol, receiver: any) {
+      // Handle special properties with a map
+      const specialHandlers: Record<string | symbol, () => any> = {
+        execute: () => createExecuteHandler(target, selections, aliasMap),
+        then: () =>
+          useCache
+            ? createCachedThenHandler(target, options, cacheTtl, selections, aliasMap)
+            : createNonCachedThenHandler(target, options, selections, aliasMap),
+        catch: () => createCatchHandler(receiver),
+        finally: () => createFinallyHandler(receiver),
+      };
+
+      if (prop in specialHandlers) {
+        return specialHandlers[prop]();
+      }
+
+      const value = Reflect.get(target, prop, receiver);
+
+      if (typeof value === "function") {
+        return createFunctionCallHandler(value, target, wrapBuilder);
+      }
+
+      return value;
+    },
+  };
+}
+
 function createAliasedSelectBuilder<TSelection extends SelectedFields>(
   db: MySqlRemoteDatabase<any>,
   fields: TSelection,
@@ -649,35 +709,15 @@ function createAliasedSelectBuilder<TSelection extends SelectedFields>(
   const builder = selectFn(selections);
 
   const wrapBuilder = (rawBuilder: any): any => {
-    return new Proxy(rawBuilder, {
-      get(target, prop, receiver) {
-        if (prop === "execute") {
-          return createExecuteHandler(target, selections, aliasMap);
-        }
-
-        if (prop === "then") {
-          return useCache
-            ? createCachedThenHandler(target, options, cacheTtl, selections, aliasMap)
-            : createNonCachedThenHandler(target, options, selections, aliasMap);
-        }
-
-        if (prop === "catch") {
-          return createCatchHandler(receiver);
-        }
-
-        if (prop === "finally") {
-          return createFinallyHandler(receiver);
-        }
-
-        const value = Reflect.get(target, prop, receiver);
-
-        if (typeof value === "function") {
-          return createFunctionCallHandler(value, target, wrapBuilder);
-        }
-
-        return value;
-      },
-    });
+    const handler = createAliasedSelectProxyHandler(
+      selections,
+      aliasMap,
+      useCache,
+      options,
+      cacheTtl,
+      wrapBuilder,
+    );
+    return new Proxy(rawBuilder, handler);
   };
 
   return wrapBuilder(builder);
@@ -763,46 +803,16 @@ function createRawQueryExecutor(
 }
 
 // ============================================================================
-// MAIN PATCH FUNCTION
+// HELPER FUNCTIONS FOR PATCHING
 // ============================================================================
 
 /**
- * Patches a Drizzle database instance with additional methods for aliased selects and cache management.
- *
- * This function extends the database instance with:
- * - selectAliased: Select with field aliasing support
- * - selectAliasedDistinct: Select distinct with field aliasing support
- * - selectAliasedCacheable: Select with field aliasing and caching
- * - selectAliasedDistinctCacheable: Select distinct with field aliasing and caching
- * - insertAndEvictCache: Insert operations that automatically evict cache
- * - updateAndEvictCache: Update operations that automatically evict cache
- * - deleteAndEvictCache: Delete operations that automatically evict cache
- *
- * @param db - The Drizzle database instance to patch
- * @param options - Optional ForgeSQL ORM configuration
- * @returns The patched database instance with additional methods
+ * Sets up select methods with field aliasing.
  */
-export function patchDbWithSelectAliased(
+function setupSelectAliasedMethods(
   db: MySqlRemoteDatabase<any>,
-  options?: ForgeSqlOrmOptions,
-): MySqlRemoteDatabase<any> & {
-  selectAliased: SelectAliasedType;
-  selectAliasedDistinct: SelectAliasedDistinctType;
-  selectAliasedCacheable: SelectAliasedCacheableType;
-  selectAliasedDistinctCacheable: SelectAliasedDistinctCacheableType;
-  insertWithCacheContext: InsertAndEvictCacheType;
-  insertAndEvictCache: InsertAndEvictCacheType;
-  updateAndEvictCache: UpdateAndEvictCacheType;
-  updateWithCacheContext: UpdateAndEvictCacheType;
-  deleteAndEvictCache: DeleteAndEvictCacheType;
-  deleteWithCacheContext: DeleteAndEvictCacheType;
-} {
-  const newOptions = { ...DEFAULT_OPTIONS, ...options };
-
-  // ============================================================================
-  // SELECT METHODS WITH FIELD ALIASING
-  // ============================================================================
-
+  newOptions: ForgeSqlOrmOptions,
+): void {
   // Select aliased without cache
   db.selectAliased = function <TSelection extends SelectedFields>(fields: TSelection) {
     return createAliasedSelectBuilder(
@@ -854,11 +864,12 @@ export function patchDbWithSelectAliased(
       cacheTtl,
     );
   };
+}
 
-  // ============================================================================
-  // TABLE-BASED SELECT METHODS
-  // ============================================================================
-
+/**
+ * Sets up table-based select methods.
+ */
+function setupTableBasedSelectMethods(db: MySqlRemoteDatabase<any>): void {
   /**
    * Creates a select query builder for all columns from a table with field aliasing support.
    * This is a convenience method that automatically selects all columns from the specified table.
@@ -870,52 +881,10 @@ export function patchDbWithSelectAliased(
    * const users = await db.selectFrom(userTable).where(eq(userTable.id, 1));
    * ```
    */
-  db.selectFrom = function <T extends MySqlTable>(
-    table: T,
-  ): MySqlSelectBase<
-    GetSelectTableName<T>,
-    GetSelectTableSelection<T>,
-    "single",
-    MySqlRemotePreparedQueryHKT,
-    GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-    false,
-    never,
-    {
-      [K in keyof {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }]: {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }[K];
-    }[],
-    any
-  > {
-    return db.selectAliased(getTableColumns(table)).from(table) as unknown as MySqlSelectBase<
-      GetSelectTableName<T>,
-      GetSelectTableSelection<T>,
-      "single",
-      MySqlRemotePreparedQueryHKT,
-      GetSelectTableName<T> extends string
-        ? Record<string & GetSelectTableName<T>, "not-null">
-        : {},
-      false,
-      never,
-      {
-        [K in keyof {
-          [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-            GetSelectTableSelection<T>[Key]
-          >;
-        }]: {
-          [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-            GetSelectTableSelection<T>[Key]
-          >;
-        }[K];
-      }[],
-      any
-    >;
+  db.selectFrom = function <T extends MySqlTable>(table: T): SelectFromReturnType<T> {
+    return db
+      .selectAliased(getTableColumns(table))
+      .from(table) as unknown as SelectFromReturnType<T>;
   };
 
   /**
@@ -933,52 +902,10 @@ export function patchDbWithSelectAliased(
   db.selectFromCacheable = function <T extends MySqlTable>(
     table: T,
     cacheTtl?: number,
-  ): MySqlSelectBase<
-    GetSelectTableName<T>,
-    GetSelectTableSelection<T>,
-    "single",
-    MySqlRemotePreparedQueryHKT,
-    GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-    false,
-    never,
-    {
-      [K in keyof {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }]: {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }[K];
-    }[],
-    any
-  > {
+  ): SelectFromReturnType<T> {
     return db
       .selectAliasedCacheable(getTableColumns(table), cacheTtl)
-      .from(table) as unknown as MySqlSelectBase<
-      GetSelectTableName<T>,
-      GetSelectTableSelection<T>,
-      "single",
-      MySqlRemotePreparedQueryHKT,
-      GetSelectTableName<T> extends string
-        ? Record<string & GetSelectTableName<T>, "not-null">
-        : {},
-      false,
-      never,
-      {
-        [K in keyof {
-          [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-            GetSelectTableSelection<T>[Key]
-          >;
-        }]: {
-          [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-            GetSelectTableSelection<T>[Key]
-          >;
-        }[K];
-      }[],
-      any
-    >;
+      .from(table) as unknown as SelectFromReturnType<T>;
   };
 
   /**
@@ -992,54 +919,10 @@ export function patchDbWithSelectAliased(
    * const uniqueUsers = await db.selectDistinctFrom(userTable).where(eq(userTable.status, 'active'));
    * ```
    */
-  db.selectDistinctFrom = function <T extends MySqlTable>(
-    table: T,
-  ): MySqlSelectBase<
-    GetSelectTableName<T>,
-    GetSelectTableSelection<T>,
-    "single",
-    MySqlRemotePreparedQueryHKT,
-    GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-    false,
-    never,
-    {
-      [K in keyof {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }]: {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }[K];
-    }[],
-    any
-  > {
+  db.selectDistinctFrom = function <T extends MySqlTable>(table: T): SelectFromReturnType<T> {
     return db
       .selectAliasedDistinct(getTableColumns(table))
-      .from(table) as unknown as MySqlSelectBase<
-      GetSelectTableName<T>,
-      GetSelectTableSelection<T>,
-      "single",
-      MySqlRemotePreparedQueryHKT,
-      GetSelectTableName<T> extends string
-        ? Record<string & GetSelectTableName<T>, "not-null">
-        : {},
-      false,
-      never,
-      {
-        [K in keyof {
-          [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-            GetSelectTableSelection<T>[Key]
-          >;
-        }]: {
-          [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-            GetSelectTableSelection<T>[Key]
-          >;
-        }[K];
-      }[],
-      any
-    >;
+      .from(table) as unknown as SelectFromReturnType<T>;
   };
 
   /**
@@ -1057,58 +940,20 @@ export function patchDbWithSelectAliased(
   db.selectDistinctFromCacheable = function <T extends MySqlTable>(
     table: T,
     cacheTtl?: number,
-  ): MySqlSelectBase<
-    GetSelectTableName<T>,
-    GetSelectTableSelection<T>,
-    "single",
-    MySqlRemotePreparedQueryHKT,
-    GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
-    false,
-    never,
-    {
-      [K in keyof {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }]: {
-        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-          GetSelectTableSelection<T>[Key]
-        >;
-      }[K];
-    }[],
-    any
-  > {
+  ): SelectFromReturnType<T> {
     return db
       .selectAliasedDistinctCacheable(getTableColumns(table), cacheTtl)
-      .from(table) as unknown as MySqlSelectBase<
-      GetSelectTableName<T>,
-      GetSelectTableSelection<T>,
-      "single",
-      MySqlRemotePreparedQueryHKT,
-      GetSelectTableName<T> extends string
-        ? Record<string & GetSelectTableName<T>, "not-null">
-        : {},
-      false,
-      never,
-      {
-        [K in keyof {
-          [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-            GetSelectTableSelection<T>[Key]
-          >;
-        }]: {
-          [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
-            GetSelectTableSelection<T>[Key]
-          >;
-        }[K];
-      }[],
-      any
-    >;
+      .from(table) as unknown as SelectFromReturnType<T>;
   };
+}
 
-  // ============================================================================
-  // CACHE-AWARE MODIFY OPERATIONS
-  // ============================================================================
-
+/**
+ * Sets up cache-aware modify operations.
+ */
+function setupCacheAwareModifyMethods(
+  db: MySqlRemoteDatabase<any>,
+  newOptions: ForgeSqlOrmOptions,
+): void {
   // Insert with cache context support (participates in cache clearing when used within cache context)
   db.insertWithCacheContext = function <TTable extends MySqlTable>(table: TTable) {
     return insertAndEvictCacheBuilder(db, table, newOptions, false);
@@ -1138,11 +983,15 @@ export function patchDbWithSelectAliased(
   db.deleteAndEvictCache = function <TTable extends MySqlTable>(table: TTable) {
     return deleteAndEvictCacheBuilder(db, table, newOptions, true);
   };
+}
 
-  // ============================================================================
-  // RAW SQL QUERY EXECUTORS
-  // ============================================================================
-
+/**
+ * Sets up raw SQL query executors.
+ */
+function setupRawQueryExecutors(
+  db: MySqlRemoteDatabase<any>,
+  newOptions: ForgeSqlOrmOptions,
+): void {
   /**
    * Executes a raw SQL query with local cache support.
    * This method provides local caching for raw SQL queries within the current invocation context.
@@ -1180,6 +1029,49 @@ export function patchDbWithSelectAliased(
    * ```
    */
   db.executeQueryCacheable = createRawQueryExecutor(db, newOptions, true);
+}
+
+// ============================================================================
+// MAIN PATCH FUNCTION
+// ============================================================================
+
+/**
+ * Patches a Drizzle database instance with additional methods for aliased selects and cache management.
+ *
+ * This function extends the database instance with:
+ * - selectAliased: Select with field aliasing support
+ * - selectAliasedDistinct: Select distinct with field aliasing support
+ * - selectAliasedCacheable: Select with field aliasing and caching
+ * - selectAliasedDistinctCacheable: Select distinct with field aliasing and caching
+ * - insertAndEvictCache: Insert operations that automatically evict cache
+ * - updateAndEvictCache: Update operations that automatically evict cache
+ * - deleteAndEvictCache: Delete operations that automatically evict cache
+ *
+ * @param db - The Drizzle database instance to patch
+ * @param options - Optional ForgeSQL ORM configuration
+ * @returns The patched database instance with additional methods
+ */
+export function patchDbWithSelectAliased(
+  db: MySqlRemoteDatabase<any>,
+  options?: ForgeSqlOrmOptions,
+): MySqlRemoteDatabase<any> & {
+  selectAliased: SelectAliasedType;
+  selectAliasedDistinct: SelectAliasedDistinctType;
+  selectAliasedCacheable: SelectAliasedCacheableType;
+  selectAliasedDistinctCacheable: SelectAliasedDistinctCacheableType;
+  insertWithCacheContext: InsertAndEvictCacheType;
+  insertAndEvictCache: InsertAndEvictCacheType;
+  updateAndEvictCache: UpdateAndEvictCacheType;
+  updateWithCacheContext: UpdateAndEvictCacheType;
+  deleteAndEvictCache: DeleteAndEvictCacheType;
+  deleteWithCacheContext: DeleteAndEvictCacheType;
+} {
+  const newOptions = { ...DEFAULT_OPTIONS, ...options };
+
+  setupSelectAliasedMethods(db, newOptions);
+  setupTableBasedSelectMethods(db);
+  setupCacheAwareModifyMethods(db, newOptions);
+  setupRawQueryExecutors(db, newOptions);
 
   return db;
 }

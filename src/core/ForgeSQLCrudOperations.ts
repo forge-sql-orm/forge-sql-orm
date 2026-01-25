@@ -253,23 +253,15 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
   }
 
   /**
-   * Validates and retrieves version field metadata.
-   * @param {string} tableName - The name of the table
-   * @param {Record<string, AnyColumn>} columns - The table columns
-   * @returns {Object | undefined} Version field metadata if valid, undefined otherwise
+   * Finds version field in columns by name.
    */
-  private validateVersionField(
-    tableName: string,
+  private findVersionField(
+    versionMetadata: { fieldName: string },
     columns: Record<string, AnyColumn>,
-  ): { fieldName: string; type: string } | undefined {
-    if (this.options.disableOptimisticLocking) {
-      return undefined;
-    }
-    const versionMetadata = this.options.additionalMetadata?.[tableName]?.versionField;
-    if (!versionMetadata) return undefined;
+  ): { fieldName: string; field: AnyColumn } | null {
     let fieldName = versionMetadata.fieldName;
-
     let versionField = columns[versionMetadata.fieldName];
+
     if (!versionField) {
       const find = Object.entries(columns).find(([, c]) => c.name === versionMetadata.fieldName);
       if (find) {
@@ -277,23 +269,36 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
         versionField = find[1];
       }
     }
-    if (!versionField) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Version field "${versionMetadata.fieldName}" not found in table ${tableName}. Versioning will be skipped.`,
-      );
-      return undefined;
-    }
 
+    return versionField ? { fieldName, field: versionField } : null;
+  }
+
+  /**
+   * Validates that version field is not nullable.
+   */
+  private validateVersionFieldNotNull(
+    versionMetadata: { fieldName: string },
+    versionField: AnyColumn,
+    tableName: string,
+  ): boolean {
     if (!versionField.notNull) {
       // eslint-disable-next-line no-console
       console.warn(
         `Version field "${versionMetadata.fieldName}" in table ${tableName} is nullable. Versioning may not work correctly.`,
       );
-      return undefined;
+      return false;
     }
+    return true;
+  }
 
-    const fieldType = versionField.getSQLType();
+  /**
+   * Validates that version field type is supported.
+   */
+  private validateVersionFieldType(
+    versionMetadata: { fieldName: string },
+    fieldType: string,
+    tableName: string,
+  ): boolean {
     const isSupportedType =
       fieldType === "datetime" ||
       fieldType === "timestamp" ||
@@ -307,10 +312,50 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
         `Version field "${versionMetadata.fieldName}" in table ${tableName} has unsupported type "${fieldType}". ` +
           `Only datetime, timestamp, int, and decimal types are supported for versioning. Versioning will be skipped.`,
       );
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Validates and retrieves version field metadata.
+   * @param {string} tableName - The name of the table
+   * @param {Record<string, AnyColumn>} columns - The table columns
+   * @returns {Object | undefined} Version field metadata if valid, undefined otherwise
+   */
+  private validateVersionField(
+    tableName: string,
+    columns: Record<string, AnyColumn>,
+  ): { fieldName: string; type: string } | undefined {
+    // Early exit conditions
+    if (this.options.disableOptimisticLocking) {
+      return undefined;
+    }
+    const versionMetadata = this.options.additionalMetadata?.[tableName]?.versionField;
+    if (!versionMetadata) {
       return undefined;
     }
 
-    return { fieldName, type: fieldType };
+    // Find and validate version field
+    const found = this.findVersionField(versionMetadata, columns);
+    if (!found) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Version field "${versionMetadata.fieldName}" not found in table ${tableName}. Versioning will be skipped.`,
+      );
+      return undefined;
+    }
+
+    // Validate field properties
+    const isValid =
+      this.validateVersionFieldNotNull(versionMetadata, found.field, tableName) &&
+      this.validateVersionFieldType(versionMetadata, found.field.getSQLType(), tableName);
+
+    if (!isValid) {
+      return undefined;
+    }
+
+    return { fieldName: found.fieldName, type: found.field.getSQLType() };
   }
 
   /**
@@ -376,10 +421,21 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
 
     const modelWithVersion = { ...model };
     const fieldType = versionField.getSQLType();
-    const versionValue = fieldType === "datetime" || fieldType === "timestamp" ? new Date() : 1;
+    const dateTimeTypes = ["datetime", "timestamp"];
+    const versionValue = dateTimeTypes.includes(fieldType) ? new Date() : 1;
     modelWithVersion[fieldName as keyof typeof modelWithVersion] = versionValue as any;
 
     return modelWithVersion as InferInsertModel<T>;
+  }
+
+  /**
+   * Calculates new version value based on field type.
+   */
+  private calculateNewVersionValue(fieldType: string, currentVersion: unknown): any {
+    const dateTimeTypes = ["datetime", "timestamp"];
+    return dateTimeTypes.includes(fieldType)
+      ? new Date()
+      : (((currentVersion as number) + 1) as any);
   }
 
   /**
@@ -404,9 +460,7 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
       if (versionField) {
         const fieldType = versionField.getSQLType();
         updateData[versionMetadata.fieldName as keyof typeof updateData] =
-          fieldType === "datetime" || fieldType === "timestamp"
-            ? new Date()
-            : (((currentVersion as number) + 1) as any);
+          this.calculateNewVersionValue(fieldType, currentVersion);
       }
     }
 

@@ -1,0 +1,9 @@
+exclude_patterns = [
+    "**/node_modules/**",
+    "**/dist/**",
+    "examples/**",
+    "__tests__/**",
+    "forge-sql-orm-cli/**"
+]
+[smells.function_complexity]
+threshold = 8

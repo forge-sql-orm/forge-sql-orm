@@ -200,16 +200,10 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
   }
 
   /**
-   * Executes EXPLAIN on a raw SQL query.
-   * @param {string} query - The SQL query to analyze
-   * @param {unknown[]} bindParams - The query parameters
-   * @returns {Promise<ExplainAnalyzeRow[]>} The execution plan analysis results
+   * Maps decoded plan row to ExplainAnalyzeRow format.
    */
-  async explainRaw(query: string, bindParams: unknown[]): Promise<ExplainAnalyzeRow[]> {
-    const results = await this.forgeOperations
-      .fetch()
-      .executeRawSQL<DecodedPlanRow>(`EXPLAIN ${query}`, bindParams as SqlParameters);
-    return results.map((row) => ({
+  private mapDecodedPlanRow(row: DecodedPlanRow): ExplainAnalyzeRow {
+    return {
       id: row.id,
       estRows: row.estRows,
       actRows: row.actRows,
@@ -219,7 +213,20 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
       operatorInfo: row["operator info"],
       memory: row.memory,
       disk: row.disk,
-    }));
+    };
+  }
+
+  /**
+   * Executes EXPLAIN on a raw SQL query.
+   * @param {string} query - The SQL query to analyze
+   * @param {unknown[]} bindParams - The query parameters
+   * @returns {Promise<ExplainAnalyzeRow[]>} The execution plan analysis results
+   */
+  async explainRaw(query: string, bindParams: unknown[]): Promise<ExplainAnalyzeRow[]> {
+    const results = await this.forgeOperations
+      .fetch()
+      .executeRawSQL<DecodedPlanRow>(`EXPLAIN ${query}`, bindParams as SqlParameters);
+    return results.map((row) => this.mapDecodedPlanRow(row));
   }
 
   /**
@@ -242,17 +249,7 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
     const results = await this.forgeOperations
       .fetch()
       .executeRawSQL<DecodedPlanRow>(`EXPLAIN ANALYZE ${query}`, bindParams as SqlParameters);
-    return results.map((row) => ({
-      id: row.id,
-      estRows: row.estRows,
-      actRows: row.actRows,
-      task: row.task,
-      accessObject: row["access object"],
-      executionInfo: row["execution info"],
-      operatorInfo: row["operator info"],
-      memory: row.memory,
-      disk: row.disk,
-    }));
+    return results.map((row) => this.mapDecodedPlanRow(row));
   }
 
   /**
