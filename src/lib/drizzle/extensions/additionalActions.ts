@@ -671,13 +671,16 @@ function createAliasedSelectProxyHandler(
 ) {
   return {
     get(target: any, prop: string | symbol, receiver: any) {
-      // Handle special properties with a map
+      // Handle 'then' separately to avoid thenable object issues
+      if (prop === "then") {
+        return useCache
+          ? createCachedThenHandler(target, options, cacheTtl, selections, aliasMap)
+          : createNonCachedThenHandler(target, options, selections, aliasMap);
+      }
+
+      // Handle other special properties with a map
       const specialHandlers: Record<string | symbol, () => any> = {
         execute: () => createExecuteHandler(target, selections, aliasMap),
-        then: () =>
-          useCache
-            ? createCachedThenHandler(target, options, cacheTtl, selections, aliasMap)
-            : createNonCachedThenHandler(target, options, selections, aliasMap),
         catch: () => createCatchHandler(receiver),
         finally: () => createFinallyHandler(receiver),
       };
