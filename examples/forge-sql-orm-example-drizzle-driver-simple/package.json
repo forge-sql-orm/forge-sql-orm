@@ -14,7 +14,7 @@
     "drizzle-kit": "^0.31.8",
     "forge-sql-orm-cli": "file:../../forge-sql-orm-cli",
     "knip": "^5.82.1",
-    "mysql2": "^3.16.1",
+    "mysql2": "^3.16.2",
     "typescript": "^5.9.3"
   },
   "scripts": {
