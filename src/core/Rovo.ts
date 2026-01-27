@@ -959,17 +959,17 @@ export class Rovo implements RovoIntegration {
       );
     }
 
-    // Replace parameters in query
-    normalized = this.replaceQueryParameters(normalized, parameters);
-
     // Perform security validations
-    await this.performSecurityValidations(normalized, tableName);
-
     // Apply RLS filtering if needed
     const isUseRLSFiltering = settings.isUseRLS();
     if (isUseRLSFiltering) {
-      normalized = this.applyRLSFiltering(normalized, settings);
+      normalized = this.applyRLSFiltering(normalized, settings) ?? normalized;
     }
+
+    // Replace parameters in query
+    normalized = this.replaceQueryParameters(normalized, parameters);
+
+    await this.performSecurityValidations(normalized, tableName);
 
     if (this.options.logRawSqlQuery) {
       // eslint-disable-next-line no-console
