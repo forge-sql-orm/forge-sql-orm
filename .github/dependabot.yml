@@ -109,3 +109,37 @@ updates:
     labels:
       - dependencies
       - npm
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-cache"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-cache/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-ui-kit"
+    ignore:
+      - dependency-name: "react"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm

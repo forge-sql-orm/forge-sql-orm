@@ -1,0 +1,30 @@
+{
+  "name": "jira-global-page-ui-kit",
+  "version": "1.1.33",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "eslint src",
+    "knip": "knip",
+    "models:create": "forge-sql-orm-cli generate:model --output src/database/entities --saveEnv",
+    "migration:create": "forge-sql-orm-cli migrations:create --force --output src/database/migration",
+    "migration:update": "forge-sql-orm-cli migrations:update --entitiesPath src/database/entities --output src/migration",
+    "build:ci": "tsc --target esnext --project tsconfig.json  --outDir dist && rm -rf dist"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "forge-sql-orm-cli": "^2.1.23",
+    "knip": "^5.83.0"
+  },
+  "dependencies": {
+    "@forge/bridge": "5.12.0",
+    "@forge/react": "11.11.0",
+    "@forge/resolver": "1.7.1",
+    "@forge/sql": "^3.0.17",
+    "drizzle-orm": "^0.45.1",
+    "forge-sql-orm": "^2.1.23",
+    "react": "^18.2.0"
+  }
+}

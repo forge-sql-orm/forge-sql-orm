@@ -22,6 +22,15 @@ Basic example demonstrating core Forge SQL ORM features. Good starting point for
 - Query builder usage
 - Simple database operations
 
+### [forge-sql-orm-example-ui-kit](forge-sql-orm-example-ui-kit)
+
+Jira global page example using **Forge UI Kit** (`@forge/react`) with Forge SQL ORM and Drizzle. Demonstrates CRUD on a `users` table with native Forge components (no Custom UI).
+
+- Forge UI Kit only (Form, DynamicTable, Textfield, Button, etc.)
+- Create, list, and update users via resolvers
+- Drizzle schema and migrations (apply on install and hourly)
+- Resolvers: `createUser`, `fetchUsers`, `updateUsers`
+
 ### [forge-sql-orm-example-optimistic-locking](forge-sql-orm-example-optimistic-locking)
 
 Demonstrates how to use optimistic locking to prevent data conflicts in concurrent operations.
