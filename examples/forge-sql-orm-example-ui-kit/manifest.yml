@@ -1,0 +1,51 @@
+modules:
+  jira:globalPage:
+    - key: forge-test-ui-kit-hello-world-global-page
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Forge SQL ORM example UI-KIT
+  scheduledTrigger:
+    - key: scheduled-schema-migration
+      function: runSchemaMigration
+      interval: hour
+  #  webtrigger:
+  #    - key: invoke-schema-migration
+  #      function: runSchemaMigration
+  #      security:
+  #        egress:
+  #          allowDataEgress: false
+  #          allowedResponses:
+  #            - statusCode: 200
+  #              body: '{"body": "Migrations successfully executed"}'
+  #    - key: drop-schema-migration
+  #      function: dropMigrations
+  #    - key: fetch-schema
+  #      function: fetchSchema
+  trigger:
+    - key: post-install-schema-migration
+      function: runSchemaMigration
+      events:
+        - avi:forge:installed:app
+  sql:
+    - key: main
+      engine: mysql
+  function:
+    - key: resolver
+      handler: index.handler
+    - key: runSchemaMigration
+      handler: index.handlerMigration
+    - key: dropMigrations
+      handler: index.dropMigrations
+    - key: fetchSchema
+      handler: index.fetchMigrations
+resources:
+  - key: main
+    path: src/frontend/index.tsx
+app:
+  runtime:
+    name: nodejs24.x
+    memoryMB: 256
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/c5060800-9185-49a4-9be3-272ee375d383
