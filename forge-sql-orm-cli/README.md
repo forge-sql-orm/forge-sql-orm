@@ -40,7 +40,7 @@ Add the following scripts to your `package.json`:
 
 ```bash
 npm pkg set scripts.models:create="forge-sql-orm-cli generate:model --output src/entities --saveEnv"
-npm pkg set scripts.migration:create="forge-sql-orm-cli migrations:create --force --output src/migration --entitiesPath src/entities"
+npm pkg set scripts.migration:create="forge-sql-orm-cli migrations:create --force --output src/migration"
 npm pkg set scripts.migration:update="forge-sql-orm-cli migrations:update --entitiesPath src/entities --output src/migration"
 ```
 

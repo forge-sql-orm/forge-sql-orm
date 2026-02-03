@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "@atlaskit/css-reset": "^7.3.11",
-    "@forge/bridge": "^5.11.0",
+    "@atlaskit/css-reset": "^7.3.12",
+    "@forge/bridge": "^5.12.0",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.1.0",
+    "@types/node": "^25.2.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@vitejs/plugin-react": "^5.1.3",
     "dotenv": "17.2.3",
-    "knip": "^5.82.1",
+    "knip": "^5.83.0",
     "prettier": "^3.8.1",
     "prettier-plugin-pkg": "^0.21.2",
     "rollup-plugin-visualizer": "^6.0.5",
