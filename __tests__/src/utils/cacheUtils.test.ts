@@ -27,6 +27,7 @@ const mockKvs = {
     })),
   })),
   transact: vi.fn(() => ({
+    set: vi.fn().mockReturnThis(),
     delete: vi.fn().mockReturnThis(),
     execute: vi.fn(),
   })),
@@ -199,9 +200,51 @@ describe("cacheUtils", () => {
         query: vi.fn(),
       });
 
+      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+
       const result = await getFromCache(mockQuery, defaultOptions);
 
       expect(result).toBeUndefined();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(
+          /Expired cache entry still exists \(will be automatically removed within 48 hours per Forge KVS TTL documentation\), cacheKey: CachedQuery_/,
+        ),
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should return undefined and log when SQL does not match (even if expiration is valid)", async () => {
+      const { getFromCache } = await import("../../../src/utils/cacheUtils");
+      const { isTableContainsTableInCacheContext } =
+        await import("../../../src/utils/cacheContextUtils");
+      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
+
+      // Cache has different SQL than the query
+      const mockCacheData = {
+        sql: "`orders`", // Different table than query's `users`
+        expiration: Math.floor(DateTime.now().plus({ hours: 1 }).toSeconds()), // Valid expiration
+        data: JSON.stringify({ id: 1, name: "John" }),
+      };
+
+      mockKvs.entity.mockReturnValue({
+        get: vi.fn().mockResolvedValue(mockCacheData),
+        set: vi.fn(),
+        query: vi.fn(),
+      });
+
+      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+
+      const result = await getFromCache(mockQuery, defaultOptions);
+
+      expect(result).toBeUndefined();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(
+          /Expired cache entry still exists \(will be automatically removed within 48 hours per Forge KVS TTL documentation\), cacheKey: CachedQuery_/,
+        ),
+      );
+
+      consoleSpy.mockRestore();
     });
 
     it("should return undefined when cache get fails", async () => {
@@ -251,6 +294,7 @@ describe("cacheUtils", () => {
           sql: "`users`",
         }),
         { entityName: "cache" },
+        { ttl: { value: 300, unit: "SECONDS" } },
       );
     });
 
@@ -282,6 +326,7 @@ describe("cacheUtils", () => {
           sql: "`test1`,`test2`", // Sorted and deduplicated
         }),
         { entityName: "cache" },
+        { ttl: { value: 300, unit: "SECONDS" } },
       );
     });
 
@@ -314,6 +359,7 @@ describe("cacheUtils", () => {
           sql: "`orders`,`users`", // a_temp_table is filtered out in fallback mode, sorted
         }),
         { entityName: "cache" },
+        { ttl: { value: 300, unit: "SECONDS" } },
       );
     });
 
@@ -346,6 +392,7 @@ describe("cacheUtils", () => {
           sql: "`orders`,`users`", // A_TEMP_TABLE is filtered out in fallback mode (case-insensitive)
         }),
         { entityName: "cache" },
+        { ttl: { value: 300, unit: "SECONDS" } },
       );
     });
 
@@ -377,6 +424,7 @@ describe("cacheUtils", () => {
           sql: "`users`", // Parser extracts table name even without backticks
         }),
         { entityName: "cache" },
+        { ttl: { value: 300, unit: "SECONDS" } },
       );
     });
 
@@ -405,6 +453,7 @@ describe("cacheUtils", () => {
       // When parser finds no tables, it returns empty string, fallback also returns empty
       const setCall = mockTransact.set.mock.calls[0];
       expect(setCall[1].sql).toBe("");
+      expect(setCall[3]).toEqual({ ttl: { value: 300, unit: "SECONDS" } });
     });
 
     it("should match extracted values in getFromCache", async () => {
@@ -487,6 +536,7 @@ describe("cacheUtils", () => {
           data: JSON.stringify(testData),
         }),
         { entityName: "cache" },
+        { ttl: { value: 300, unit: "SECONDS" } },
       );
       expect(mockTransact.execute).toHaveBeenCalled();
     });
@@ -543,6 +593,7 @@ describe("cacheUtils", () => {
           result: JSON.stringify(testData),
         }),
         { entityName: "cache" },
+        { ttl: { value: 300, unit: "SECONDS" } },
       );
     });
   });
@@ -708,11 +759,11 @@ describe("cacheUtils", () => {
       expect(mockKvs.transact).toHaveBeenCalledTimes(2);
     });
 
-    it("should log performance metrics when logRawSqlQuery is enabled", async () => {
+    it("should log performance metrics when logCache is enabled", async () => {
       const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
-      const consoleSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
 
-      const options = { ...defaultOptions, logRawSqlQuery: true };
+      const options = { ...defaultOptions, logCache: true };
 
       const mockQueryBuilder = {
         index: vi.fn().mockReturnThis(),

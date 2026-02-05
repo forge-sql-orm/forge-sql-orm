@@ -4,7 +4,6 @@ import { AsyncEvent } from "@forge/events";
 import { printDegradationQueriesConsumer } from "forge-sql-orm";
 import {
   applySchemaMigrations,
-  clearCacheSchedulerTrigger,
   dropSchemaMigrations,
   fetchSchemaWebTrigger,
   getHttpResponse,
@@ -259,10 +258,6 @@ export const runSlowQuery = async () => {
 export const runPerformanceAnalyze = async () => {
   await printQueriesWithPlan(FORGE_SQL_ORM, 15000);
   return getHttpResponse(200, "Look into development console log");
-};
-
-export const clearCache = () => {
-  return clearCacheSchedulerTrigger({ cacheEntityName: "cache", logRawSqlQuery: true });
 };
 
 export const handlerAsyncDegradation = (event: AsyncEvent) => {

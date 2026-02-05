@@ -49,6 +49,19 @@ function nowPlusSeconds(secondsToAdd: number): number {
 }
 
 /**
+ * Logs a message to console.debug when options.logCache is enabled.
+ *
+ * @param message - Message to log
+ * @param options - ForgeSQL ORM options (optional)
+ */
+function debugLog(message: string, options?: ForgeSqlOrmOptions): void {
+  if (options?.logCache) {
+    // eslint-disable-next-line no-console
+    console.debug(message);
+  }
+}
+
+/**
  * Generates a hash key for a query based on its SQL and parameters.
  *
  * @param query - The Drizzle query object
@@ -124,10 +137,7 @@ async function clearCursorCache(
 
   const listResult = await entityQueryBuilder.limit(100).getMany();
 
-  if (options.logCache) {
-    // eslint-disable-next-line no-console
-    console.warn(`clear cache Records: ${JSON.stringify(listResult.results.map((r) => r.key))}`);
-  }
+  debugLog(`clear cache Records: ${JSON.stringify(listResult.results.map((r) => r.key))}`, options);
 
   await deleteCacheEntriesInBatches(listResult.results, cacheEntityName);
 
@@ -172,10 +182,10 @@ async function clearExpirationCursorCache(
 
   const listResult = await entityQueryBuilder.limit(100).getMany();
 
-  if (options.logCache) {
-    // eslint-disable-next-line no-console
-    console.warn(`clear expired Records: ${JSON.stringify(listResult.results.map((r) => r.key))}`);
-  }
+  debugLog(
+    `clear expired Records: ${JSON.stringify(listResult.results.map((r) => r.key))}`,
+    options,
+  );
 
   await deleteCacheEntriesInBatches(listResult.results, cacheEntityName);
 
@@ -265,14 +275,12 @@ export async function clearTablesCache(
       "clearing cache",
     );
   } finally {
-    if (options.logCache) {
-      const duration = DateTime.now().toSeconds() - startTime.toSeconds();
-      // eslint-disable-next-line no-console
-      console.info(`Cleared ${totalRecords} cache records in ${duration} seconds`);
-    }
+    const duration = DateTime.now().toSeconds() - startTime.toSeconds();
+    debugLog(`Cleared ${totalRecords} cache records in ${duration} seconds`, options);
   }
 }
 /**
+ * since https://developer.atlassian.com/platform/forge/changelog/#CHANGE-3038
  * Clears expired cache entries with retry logic and performance logging.
  *
  * @param options - ForgeSQL ORM options
@@ -293,15 +301,16 @@ export async function clearExpiredCache(options: ForgeSqlOrmOptions): Promise<vo
     );
   } finally {
     const duration = DateTime.now().toSeconds() - startTime.toSeconds();
-    if (options?.logCache) {
-      // eslint-disable-next-line no-console
-      console.debug(`Cleared ${totalRecords} expired cache records in ${duration} seconds`);
-    }
+    debugLog(`Cleared ${totalRecords} expired cache records in ${duration} seconds`, options);
   }
 }
 
 /**
  * Retrieves data from cache if it exists and is not expired.
+ *
+ * Note: Due to Forge KVS asynchronous deletion (up to 48 hours), expired entries may still
+ * be returned. This function checks the expiration timestamp to filter out expired entries.
+ * If cache growth impacts performance, use the Clear Cache Scheduler Trigger.
  *
  * @param query - Query object with toSQL method
  * @param options - ForgeSQL ORM options
@@ -325,27 +334,27 @@ export async function getFromCache<T>(
 
   // Skip cache if table is in cache context (will be cleared)
   if (await isTableContainsTableInCacheContext(sqlQuery.sql, options)) {
-    if (options.logCache) {
-      // eslint-disable-next-line no-console
-      console.warn(`Context contains value to clear. Skip getting from cache`);
-    }
+    debugLog("Context contains value to clear. Skip getting from cache", options);
     return undefined;
   }
 
   try {
     const cacheResult = await kvs.entity<CacheEntity>(options.cacheEntityName).get(key);
 
-    if (
-      cacheResult &&
-      (cacheResult[expirationName] as number) >= getCurrentTime() &&
-      extractBacktickedValues(sqlQuery.sql, options) === cacheResult[entityQueryName]
-    ) {
-      if (options.logCache) {
-        // eslint-disable-next-line no-console
-        console.warn(`Get value from cache, cacheKey: ${key}`);
+    if (cacheResult) {
+      if (
+        (cacheResult[expirationName] as number) >= getCurrentTime() &&
+        extractBacktickedValues(sqlQuery.sql, options) === cacheResult[entityQueryName]
+      ) {
+        debugLog(`Get value from cache, cacheKey: ${key}`, options);
+        const results = cacheResult[dataName];
+        return JSON.parse(results as string);
+      } else {
+        debugLog(
+          `Expired cache entry still exists (will be automatically removed within 48 hours per Forge KVS TTL documentation), cacheKey: ${key}`,
+          options,
+        );
       }
-      const results = cacheResult[dataName];
-      return JSON.parse(results as string);
     }
   } catch (error: any) {
     // eslint-disable-next-line no-console
@@ -358,11 +367,18 @@ export async function getFromCache<T>(
 /**
  * Stores query results in cache with specified TTL.
  *
+ * Uses Forge KVS TTL feature to set expiration. Note that expired data deletion is asynchronous:
+ * expired data is not removed immediately upon expiry. Deletion may take up to 48 hours.
+ * During this window, read operations may still return expired results. If your app requires
+ * strict expiry semantics, consider using the Clear Cache Scheduler Trigger to proactively
+ * clean up expired entries, especially if cache growth impacts INSERT/UPDATE performance.
+ *
  * @param query - Query object with toSQL method
  * @param options - ForgeSQL ORM options
  * @param results - Data to cache
- * @param cacheTtl - Time to live in seconds
+ * @param cacheTtl - Time to live in seconds (maximum TTL is 1 year from write time)
  * @returns Promise that resolves when data is stored in cache
+ * @see https://developer.atlassian.com/platform/forge/runtime-reference/storage-api-basic-api/#ttl
  */
 export async function setCacheResult(
   query: { toSQL: () => Query },
@@ -385,10 +401,7 @@ export async function setCacheResult(
 
     // Skip cache if table is in cache context (will be cleared)
     if (await isTableContainsTableInCacheContext(sqlQuery.sql, options)) {
-      if (options.logCache) {
-        // eslint-disable-next-line no-console
-        console.warn(`Context contains value to clear. Skip setting from cache`);
-      }
+      debugLog("Context contains value to clear. Skip setting from cache", options);
       return;
     }
 
@@ -400,17 +413,15 @@ export async function setCacheResult(
         key,
         {
           [entityQueryName]: extractBacktickedValues(sqlQuery.sql, options),
-          [expirationName]: nowPlusSeconds(cacheTtl),
+          [expirationName]: nowPlusSeconds(cacheTtl + 2),
           [dataName]: JSON.stringify(results),
         },
         { entityName: options.cacheEntityName },
+        { ttl: { value: cacheTtl, unit: "SECONDS" } },
       )
       .execute();
 
-    if (options.logCache) {
-      // eslint-disable-next-line no-console
-      console.warn(`Store value to cache, cacheKey: ${key}`);
-    }
+    debugLog(`Store value to cache, cacheKey: ${key}`, options);
   } catch (error: any) {
     // eslint-disable-next-line no-console
     console.error(`Error setting cache: ${error.message}`, error);

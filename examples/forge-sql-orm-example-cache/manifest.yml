@@ -12,9 +12,6 @@ modules:
     - key: runSlowQuery
       function: runSlowQueryFunc
       interval: hour
-    - key: clear-cache-trigger
-      function: clearCache
-      interval: fiveMinute
   trigger:
     - key: post-install-schema-migration
       function: runSchemaMigration
@@ -59,8 +56,6 @@ modules:
       handler: index.runSlowQuery
     - key: runPerformanceAnalyze
       handler: index.runPerformanceAnalyze
-    - key: clearCache
-      handler: index.clearCache
     - key: handlerAsyncDegradation
       handler: index.handlerAsyncDegradation
 resources:
