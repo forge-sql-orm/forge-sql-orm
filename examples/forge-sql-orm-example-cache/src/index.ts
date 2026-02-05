@@ -4,7 +4,6 @@ import { AsyncEvent } from "@forge/events";
 import { printDegradationQueriesConsumer } from "forge-sql-orm";
 import {
   applySchemaMigrations,
-  clearCacheSchedulerTrigger,
   dropSchemaMigrations,
   fetchSchemaWebTrigger,
   getHttpResponse,

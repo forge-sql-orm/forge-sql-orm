@@ -341,16 +341,15 @@ export async function getFromCache<T>(
   try {
     const cacheResult = await kvs.entity<CacheEntity>(options.cacheEntityName).get(key);
 
-    if (
-      cacheResult &&
-      (cacheResult[expirationName] as number) >= getCurrentTime() &&
-      extractBacktickedValues(sqlQuery.sql, options) === cacheResult[entityQueryName]
-    ) {
-      debugLog(`Get value from cache, cacheKey: ${key}`, options);
-      const results = cacheResult[dataName];
-      return JSON.parse(results as string);
-    } else {
-      if (cacheResult) {
+    if (cacheResult) {
+      if (
+        (cacheResult[expirationName] as number) >= getCurrentTime() &&
+        extractBacktickedValues(sqlQuery.sql, options) === cacheResult[entityQueryName]
+      ) {
+        debugLog(`Get value from cache, cacheKey: ${key}`, options);
+        const results = cacheResult[dataName];
+        return JSON.parse(results as string);
+      } else {
         debugLog(
           `Expired cache entry still exists (will be automatically removed within 48 hours per Forge KVS TTL documentation), cacheKey: ${key}`,
           options,

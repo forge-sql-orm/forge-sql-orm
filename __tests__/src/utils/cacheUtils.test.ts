@@ -214,6 +214,39 @@ describe("cacheUtils", () => {
       consoleSpy.mockRestore();
     });
 
+    it("should return undefined and log when SQL does not match (even if expiration is valid)", async () => {
+      const { getFromCache } = await import("../../../src/utils/cacheUtils");
+      const { isTableContainsTableInCacheContext } =
+        await import("../../../src/utils/cacheContextUtils");
+      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
+
+      // Cache has different SQL than the query
+      const mockCacheData = {
+        sql: "`orders`", // Different table than query's `users`
+        expiration: Math.floor(DateTime.now().plus({ hours: 1 }).toSeconds()), // Valid expiration
+        data: JSON.stringify({ id: 1, name: "John" }),
+      };
+
+      mockKvs.entity.mockReturnValue({
+        get: vi.fn().mockResolvedValue(mockCacheData),
+        set: vi.fn(),
+        query: vi.fn(),
+      });
+
+      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
+
+      const result = await getFromCache(mockQuery, defaultOptions);
+
+      expect(result).toBeUndefined();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(
+          /Expired cache entry still exists \(will be automatically removed within 48 hours per Forge KVS TTL documentation\), cacheKey: CachedQuery_/,
+        ),
+      );
+
+      consoleSpy.mockRestore();
+    });
+
     it("should return undefined when cache get fails", async () => {
       const { getFromCache } = await import("../../../src/utils/cacheUtils");
       const { isTableContainsTableInCacheContext } =
