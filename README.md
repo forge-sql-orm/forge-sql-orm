@@ -708,10 +708,12 @@ The diagram below shows how Evict Cache works in Forge-SQL-ORM:
 
 The diagram below shows how Scheduled Expiration Cleanup works:
 
+**Note:** forge-sql-orm uses Forge KVS TTL feature (`{ ttl: { unit: "SECONDS", value: number } }`) to mark entries as expired. However, **actual deletion is asynchronous and may take up to 48 hours**. During this window, read operations may still return expired results. The scheduler trigger proactively cleans up expired entries to prevent cache growth from impacting INSERT/UPDATE performance.
+
 1. A periodic scheduler (Forge trigger) runs cache cleanup independently of data modifications.
 2. forge-sql-orm queries the cache entity by the expiration index to find entries with expiration < now.
 3. Entries are deleted in batches (up to 25 per transaction) until the page is empty; pagination is done with a cursor (e.g., 100 per page).
-4. This keeps the cache footprint small and prevents stale data accumulation.
+4. This keeps the cache footprint small and prevents stale data accumulation, especially important when cache size impacts data modification performance.
 
 ![img.png](img/umlCacheEvictScheduler1.png)
 
@@ -734,6 +736,12 @@ The diagram below shows how Cache Context works:
 **@forge/kvs Limits:**
 Please review the [official @forge/kvs quotas and limits](https://developer.atlassian.com/platform/forge/platform-quotas-and-limits/#kvs-and-custom-entity-store-quotas) before implementing caching.
 
+**TTL Limitations:**
+
+- **Maximum TTL**: The maximum supported TTL is 1 year from the time the expiry is set.
+- **Asynchronous deletion**: Expired data is not removed immediately upon expiry. Deletion may take up to 48 hours. During this window, read operations may still return expired results.
+- **Performance impact**: If cache grows large, expired entries can impact INSERT/UPDATE performance. Use the Clear Cache Scheduler Trigger to proactively clean up expired entries.
+
 **Caching Guidelines:**
 
 - Don't cache everything - be selective about what to cache
@@ -741,6 +749,7 @@ Please review the [official @forge/kvs quotas and limits](https://developer.atla
 - Consider data size and frequency of changes
 - Monitor cache usage to stay within quotas
 - Use appropriate TTL values
+- If cache growth impacts performance, configure the Clear Cache Scheduler Trigger
 
 **⚠️ Important Cache Limitations:**
 
@@ -754,10 +763,11 @@ npm install @forge/kvs -S
 
 ### Step 2: Configure Manifest
 
-Add the storage entity configuration and scheduler trigger to your `manifest.yml`:
+Add the storage entity configuration to your `manifest.yml`. The `scheduledTrigger` is **optional** - only configure it if your cache grows large and impacts INSERT/UPDATE performance:
 
 ```yaml
 modules:
+  # Optional: Only needed if cache growth impacts INSERT/UPDATE performance
   scheduledTrigger:
     - key: clear-cache-trigger
       function: clearCache
@@ -814,7 +824,7 @@ const forgeSQL = new ForgeSQL(options);
 - The `cacheEntityName` must exactly match the `name` in your manifest storage entities
 - The entity attributes (`sql`, `expiration`, `data`) are required for proper cache functionality
 - Indexes on `sql` and `expiration` improve cache lookup performance
-- Cache data is automatically cleaned up based on TTL settings
+- Cache data uses Forge KVS TTL for expiration (deletion is asynchronous, may take up to 48 hours)
 - No additional permissions are required beyond standard Forge app permissions
 
 ### Complete Setup Examples
@@ -862,6 +872,7 @@ npm install forge-sql-orm @forge/sql @forge/kvs drizzle-orm -S
 
 ```yaml
 modules:
+  # Optional: Only needed if cache growth impacts INSERT/UPDATE performance
   scheduledTrigger:
     - key: clear-cache-trigger
       function: clearCache
@@ -1681,7 +1692,7 @@ This multi-level approach provides optimal performance by checking the fastest c
 
 ### Cache Configuration
 
-The caching system uses Atlassian Forge's Custom entity store to persist cache data. Each cache entry is stored as a custom entity with automatic TTL management and efficient key-based retrieval.
+The caching system uses Atlassian Forge's Custom entity store to persist cache data. Each cache entry is stored as a custom entity with TTL management via Forge KVS. Note that expired data deletion is asynchronous and may take up to 48 hours. If cache growth impacts INSERT/UPDATE performance, use the Clear Cache Scheduler Trigger for proactive cleanup.
 
 ```typescript
 const options = {
@@ -1706,7 +1717,7 @@ const forgeSQL = new ForgeSQL(options);
 The caching system leverages Forge's Custom entity store to provide:
 
 - **Persistent Storage**: Cache data survives app restarts and deployments
-- **Automatic TTL**: Built-in expiration handling through Forge's entity lifecycle
+- **TTL Support**: Uses Forge KVS TTL feature for expiration (deletion is asynchronous, may take up to 48 hours)
 - **Efficient Retrieval**: Fast key-based lookups using Forge's optimized storage
 - **Data Serialization**: Automatic handling of complex objects and query results
 - **Batch Operations**: Efficient bulk cache operations for better performance
@@ -1905,18 +1916,18 @@ const userResolver = async (req) => {
 
 #### Local Cache (Level 1) vs Global Cache (Level 2)
 
-| Feature            | Local Cache (Level 1)                 | Global Cache (Level 2)                      |
-| ------------------ | ------------------------------------- | ------------------------------------------- |
-| **Storage**        | In-memory (Node.js process)           | Persistent (KVS Custom Entities)            |
-| **Scope**          | Single forge invocation               | Cross-invocation (between calls)            |
-| **Persistence**    | No (cleared on invocation end)        | Yes (survives app redeploy)                 |
-| **Performance**    | Very fast (memory access)             | Fast (KVS optimized storage)                |
-| **Memory Usage**   | Low (invocation-scoped)               | Higher (persistent storage)                 |
-| **Use Case**       | Invocation optimization               | Cross-invocation data sharing               |
-| **Configuration**  | None required                         | Requires KVS setup                          |
-| **TTL Support**    | No (invocation-scoped)                | Yes (automatic expiration)                  |
-| **Cache Eviction** | Automatic on DML operations           | Manual or scheduled cleanup                 |
-| **Best For**       | Repeated queries in single invocation | Frequently accessed data across invocations |
+| Feature            | Local Cache (Level 1)                 | Global Cache (Level 2)                                              |
+| ------------------ | ------------------------------------- | ------------------------------------------------------------------- |
+| **Storage**        | In-memory (Node.js process)           | Persistent (KVS Custom Entities)                                    |
+| **Scope**          | Single forge invocation               | Cross-invocation (between calls)                                    |
+| **Persistence**    | No (cleared on invocation end)        | Yes (survives app redeploy)                                         |
+| **Performance**    | Very fast (memory access)             | Fast (KVS optimized storage)                                        |
+| **Memory Usage**   | Low (invocation-scoped)               | Higher (persistent storage)                                         |
+| **Use Case**       | Invocation optimization               | Cross-invocation data sharing                                       |
+| **Configuration**  | None required                         | Requires KVS setup                                                  |
+| **TTL Support**    | No (invocation-scoped)                | Yes (TTL via Forge KVS, async deletion up to 48h)                   |
+| **Cache Eviction** | Automatic on DML operations           | Manual or scheduled cleanup (optional if cache impacts performance) |
+| **Best For**       | Repeated queries in single invocation | Frequently accessed data across invocations                         |
 
 #### Integration with Global Cache (Level 2)
 
@@ -2519,12 +2530,22 @@ SET foreign_key_checks = 1;
 
 ### 4. Clear Cache Scheduler Trigger
 
-This trigger automatically cleans up expired cache entries based on their TTL (Time To Live). It's useful for:
+This trigger automatically cleans up expired cache entries based on their TTL (Time To Live).
 
-- Automatic cache maintenance
-- Preventing cache storage from growing indefinitely
-- Ensuring optimal cache performance
-- Reducing storage costs
+**⚠️ Important:** While Forge KVS uses TTL to mark entries as expired, **actual deletion is asynchronous and may take up to 48 hours**. During this window, read operations may still return expired results. If your cache grows large and impacts INSERT/UPDATE performance, you should use this scheduler trigger to proactively clean up expired entries.
+
+**When to use:**
+
+- Your cache grows large over time
+- INSERT/UPDATE operations are slowing down due to cache size
+- You need strict expiry semantics (immediate cleanup)
+- You want to reduce storage costs proactively
+
+**When optional:**
+
+- Small cache footprint
+- No performance impact on data modifications
+- You can tolerate expired entries being returned for up to 48 hours
 
 ```typescript
 // Example usage in your Forge app
@@ -2537,9 +2558,10 @@ export const clearCache = () => {
 };
 ```
 
-Configure in `manifest.yml`:
+Configure in `manifest.yml` (optional - only if cache growth impacts INSERT/UPDATE performance):
 
 ```yaml
+# Optional: Only needed if cache growth impacts INSERT/UPDATE performance
 scheduledTrigger:
   - key: clear-cache-trigger
     function: clearCache

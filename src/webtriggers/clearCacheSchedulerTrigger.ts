@@ -2,10 +2,28 @@ import { clearExpiredCache } from "../utils/cacheUtils";
 import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
 
 /**
- * Scheduler trigger for clearing expired cache entries.
+ * Scheduler trigger for proactively clearing expired cache entries.
  *
- * This trigger should be configured as a Forge scheduler to automatically
- * clean up expired cache entries based on their TTL (Time To Live).
+ * **Why this trigger is needed:**
+ *
+ * While forge-sql-orm uses Forge KVS TTL feature to mark entries as expired, **actual deletion
+ * is asynchronous and may take up to 48 hours**. During this window, expired entries remain in
+ * storage and can impact INSERT/UPDATE performance if the cache grows large.
+ *
+ * This scheduler trigger proactively cleans up expired entries by querying the expiration index
+ * and deleting entries where expiration < now, preventing cache growth from impacting data
+ * modification operations.
+ *
+ * **When to use:**
+ * - Your cache grows large over time
+ * - INSERT/UPDATE operations are slowing down due to cache size
+ * - You need strict expiry semantics (immediate cleanup)
+ * - You want to reduce storage costs proactively
+ *
+ * **When optional:**
+ * - Small cache footprint
+ * - No performance impact on data modifications
+ * - You can tolerate expired entries being returned for up to 48 hours
  *
  * @note This function is automatically disabled in production environments and will return a 500 error if called.
  *
@@ -28,7 +46,7 @@ import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
  *
  * @example
  * ```yaml
- * # In manifest.yml
+ * # In manifest.yml (optional - only if cache growth impacts INSERT/UPDATE performance)
  * scheduledTrigger:
  *   - key: clear-cache-trigger
  *     function: clearCache
@@ -38,6 +56,8 @@ import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
  *   - key: clearCache
  *     handler: index.clearCache
  * ```
+ *
+ * @see https://developer.atlassian.com/platform/forge/runtime-reference/storage-api-basic-api/#ttl
  */
 export const clearCacheSchedulerTrigger = async (options?: ForgeSqlOrmOptions) => {
   try {

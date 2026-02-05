@@ -261,10 +261,6 @@ export const runPerformanceAnalyze = async () => {
   return getHttpResponse(200, "Look into development console log");
 };
 
-export const clearCache = () => {
-  return clearCacheSchedulerTrigger({ cacheEntityName: "cache", logRawSqlQuery: true });
-};
-
 export const handlerAsyncDegradation = (event: AsyncEvent) => {
   return printDegradationQueriesConsumer(FORGE_SQL_ORM, event);
 };
