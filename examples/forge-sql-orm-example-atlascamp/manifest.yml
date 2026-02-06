@@ -27,11 +27,11 @@ modules:
     - key: runSchemaMigrationQueue
       queue: migrationQueue
       function: handlerAsyncMigration
-  webtrigger:
-    - key: invoke-schema-migration
-      function: runSchemaMigration
-    - key: fetch-schema
-      function: fetchSchema
+#  webtrigger:
+#    - key: invoke-schema-migration
+#      function: runSchemaMigration
+#    - key: fetch-schema
+#      function: fetchSchema
   sql:
     - key: main
       engine: mysql
