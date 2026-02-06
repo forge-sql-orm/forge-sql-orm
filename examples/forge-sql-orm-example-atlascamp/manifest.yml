@@ -30,8 +30,8 @@ modules:
   webtrigger:
     - key: invoke-schema-migration
       function: runSchemaMigration
-#    - key: fetch-schema
-#      function: fetchSchema
+    - key: fetch-schema
+      function: fetchSchema
   sql:
     - key: main
       engine: mysql
@@ -42,8 +42,8 @@ modules:
       handler: index.handlerMigration
     - key: dropMigrations
       handler: index.dropMigrations
-#    - key: fetchSchema
-#      handler: index.fetchMigrations
+    - key: fetchSchema
+      handler: index.fetchMigrations
     - key: runSlowQueryFunc
       handler: index.runSlowQuery
     - key: clearCache

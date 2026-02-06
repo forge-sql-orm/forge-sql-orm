@@ -93,4 +93,20 @@ Advanced example demonstrating comprehensive caching capabilities and performanc
 - Optional ID fields with auto-generation
 - Modern React UI with detailed analytics
 
+### [forge-sql-orm-example-atlascamp](forge-sql-orm-example-atlascamp)
+
+**Atlas Camp 2026 - February 9, 2026**
+
+Demonstration application showcasing advanced Forge SQL ORM capabilities for Atlas Camp presentation. Features complex ACL (Access Control List) system, query caching, performance optimization, error handling, and large-scale data operations.
+
+- Complex ACL system with 12 interconnected tables (users, roles, permissions, documents, ACL)
+- Query caching with `selectDistinctCacheable()` for permission lookups
+- Performance monitoring with automatic slow query detection (>500ms)
+- Error handling for timeout and Out of Memory scenarios
+- Automatic schema migrations with async queue processing
+- Database seeding (300 users, 30,000 documents, 300,000 ACL entries)
+- Scheduled triggers for migrations, slow query analysis, and cache cleanup
+- Async queues for degradation monitoring and long-running migrations
+- React-based frontend with interactive query execution
+
 Each example includes its own README with detailed setup instructions and usage examples.
