@@ -394,6 +394,40 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-cache && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
+    - run: cd examples/forge-sql-orm-example-atlascamp && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-atlascamp && npm run knip
+    - run: cd examples/forge-sql-orm-example-atlascamp && npm run build:ci
+    - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm run knip
+    - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm run build
+    - name: Forge Deploy (Production)
+      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
+      env:
+        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+      run: cd examples/forge-sql-orm-example-atlascamp && forge deploy --non-interactive -e production
+    - name: Forge Deploy (Development)
+      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+      env:
+        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+      run: cd examples/forge-sql-orm-example-atlascamp && forge deploy --non-interactive -e development
+    - name: Forge Install (Production)
+      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
+      env:
+        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
+      run: cd examples/forge-sql-orm-example-atlascamp && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+    - name: Forge Install (Development)
+      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+      env:
+        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
+      run: cd examples/forge-sql-orm-example-atlascamp && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+
+
     - run: cd examples/forge-sql-orm-example-ui-kit && npm i --ignore-scripts
     - run: cd examples/forge-sql-orm-example-ui-kit && npm run knip
     - run: cd examples/forge-sql-orm-example-ui-kit && npm run build:ci
