@@ -1,4 +1,4 @@
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+// import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 // export type DemoUser = InferSelectModel<typeof demoUsers>;
 // export type NewDemoUser = InferInsertModel<typeof demoUsers>;

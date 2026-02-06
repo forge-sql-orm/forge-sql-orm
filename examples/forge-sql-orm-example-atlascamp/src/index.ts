@@ -11,7 +11,7 @@ import {
 } from "forge-sql-orm";
 import migration from "./migration";
 import { FORGE_SQL_ORM } from "./utils/forgeSqlOrmUtils";
-import { and, desc, eq, getTableColumns, inArray, or, sql } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, inArray, sql } from "drizzle-orm";
 // import { NewUserOrder, UserOrderRow } from "./utils/Constants";
 import { MigrationRunner } from "@forge/sql/out/migration";
 import {
@@ -41,21 +41,21 @@ const migrationQueue = new Queue({ key: MIGRATION_QUEUE });
 //const USER_ID = "fce59721-2149-46da-ac36-ad9aede46235";
 const USER_ID = "7e212a62-f6de-4715-8a86-2406c29c42e3";
 
-const query1 =
-  "SELECT d.id, d.owner_user_id as userId, d.created_at as createdAt, d.id as documentId , d.title, d.body \n" +
-  "FROM document d\n" +
-  "JOIN (\n" +
-  "  SELECT d2.id\n" +
-  "  FROM document d2\n" +
-  "  WHERE\n" +
-  "    d2.owner_user_id = 'ef758625-1f8d-461b-ac5c-e43444b94273'\n" +
-  "    \n" +
-  "  ORDER BY d2.created_at DESC\n" +
-  "  LIMIT 10 OFFSET 0\n" +
-  ") x ON x.id = d.id\n" +
-  "ORDER BY d.created_at DESC;";
+// const query1 =
+//   "SELECT d.id, d.owner_user_id as userId, d.created_at as createdAt, d.id as documentId , d.title, d.body \n" +
+//   "FROM document d\n" +
+//   "JOIN (\n" +
+//   "  SELECT d2.id\n" +
+//   "  FROM document d2\n" +
+//   "  WHERE\n" +
+//   "    d2.owner_user_id = 'ef758625-1f8d-461b-ac5c-e43444b94273'\n" +
+//   "    \n" +
+//   "  ORDER BY d2.created_at DESC\n" +
+//   "  LIMIT 10 OFFSET 0\n" +
+//   ") x ON x.id = d.id\n" +
+//   "ORDER BY d.created_at DESC;";
 const query =
-  "SELECT /*+ MEMORY_QUOTA(1024 MB) */ d.id, d.owner_user_id, d.created_at, d.title, d.body\n" +
+  "SELECT d.id, d.owner_user_id, d.created_at, d.title, d.body\n" +
   "FROM document d\n" +
   "WHERE d.id IN (\n" +
   "    SELECT a.document_id\n" +
@@ -342,7 +342,7 @@ export const handlerMigration = async () => {
   console.debug("prepare job");
   const jobId = await kvs.get<string>("MIGRATION_STATUS");
   if (jobId) {
-    const jobProgress = migrationQueue.getJob(jobId || "");
+    const jobProgress = migrationQueue.getJob(jobId);
     const jobStats = await jobProgress.getStats();
     if (jobStats.inProgress) {
       console.log("Migration In Progress");
