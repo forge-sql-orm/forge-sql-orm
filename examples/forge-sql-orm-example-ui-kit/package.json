@@ -13,10 +13,9 @@
     "build:ci": "tsc --target esnext --project tsconfig.json  --outDir dist && rm -rf dist"
   },
   "devDependencies": {
-    "eslint": "^9.39.2",
     "eslint-plugin-react-hooks": "^7.0.1",
     "forge-sql-orm-cli": "^2.1.24",
-    "knip": "^5.83.0"
+    "knip": "^5.83.1"
   },
   "dependencies": {
     "@forge/bridge": "5.12.0",
