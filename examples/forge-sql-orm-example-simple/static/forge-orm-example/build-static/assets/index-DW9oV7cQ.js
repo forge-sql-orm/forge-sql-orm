@@ -5,10 +5,10 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-BCqYYRNo.js",
       "./lodash-vendor-Dv-o4pqD.js",
-      "./custom-theme-B9bVFVmY.js",
+      "./custom-theme-ywjK3W_3.js",
       "./react-dom-vendor--YlRhZCI.js",
       "./client-core-vendor-DqdHMQxw.js",
-      "./body-BiFfTgiR.js",
+      "./body-Bxzf_-CF.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
@@ -723,7 +723,7 @@ var Di = {},
   fn = {},
   vn = {},
   lu;
-function be() {
+function me() {
   if (lu) return vn;
   ((lu = 1), Object.defineProperty(vn, "__esModule", { value: !0 }), (vn.BridgeAPIError = void 0));
   class e extends Error {}
@@ -733,7 +733,7 @@ var du;
 function ce() {
   if (du) return fn;
   ((du = 1), Object.defineProperty(fn, "__esModule", { value: !0 }), (fn.getCallBridge = void 0));
-  const e = be();
+  const e = me();
   function t(n) {
     return !!n?.callBridge;
   }
@@ -752,7 +752,7 @@ var pn = {},
 function ei() {
   if (fu) return pn;
   ((fu = 1), Object.defineProperty(pn, "__esModule", { value: !0 }), (pn.withRateLimiter = void 0));
-  const e = be(),
+  const e = me(),
     t = (r, n, a, o) => {
       let i = Date.now(),
         c = 0;
@@ -773,7 +773,7 @@ function Cb() {
       (function (e) {
         (Object.defineProperty(e, "__esModule", { value: !0 }), (e.makeInvoke = e.invoke = void 0));
         const t = ce(),
-          r = be(),
+          r = me(),
           n = ei(),
           a = (0, t.getCallBridge)(),
           o = (s) => {
@@ -823,7 +823,7 @@ function vp() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e._invokeEndpointFn = e.InvokeType = void 0));
         const t = ce(),
-          r = be(),
+          r = me(),
           n = ei(),
           a = 500,
           o = 25,
@@ -901,7 +901,7 @@ function Ib() {
   if (mu) return _n;
   ((mu = 1), Object.defineProperty(_n, "__esModule", { value: !0 }), (_n.submit = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = (0, e.getCallBridge)(),
     n = async (a) => {
       if ((await r("submit", a)) === !1)
@@ -915,7 +915,7 @@ function jb() {
   if (yu) return mn;
   ((yu = 1), Object.defineProperty(mn, "__esModule", { value: !0 }), (mn.close = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = (0, e.getCallBridge)(),
     n = async (a) => {
       try {
@@ -933,7 +933,7 @@ function Db() {
   if (wu) return yn;
   ((wu = 1), Object.defineProperty(yn, "__esModule", { value: !0 }), (yn.open = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = (0, e.getCallBridge)(),
     n = async () => {
       try {
@@ -951,7 +951,7 @@ function Mb() {
   if (ku) return wn;
   ((ku = 1), Object.defineProperty(wn, "__esModule", { value: !0 }), (wn.refresh = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = (0, e.getCallBridge)(),
     n = async (a) => {
       if ((await r("refresh", a)) === !1)
@@ -1328,7 +1328,7 @@ function $b() {
     Object.defineProperty(xn, "__esModule", { value: !0 }),
     (xn.changeWindowTitle = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = (0, e.getCallBridge)(),
     n = async (a) => {
       try {
@@ -1468,25 +1468,27 @@ function _p() {
   const e = ce(),
     t = Vb(),
     r = (0, e.getCallBridge)(),
-    n = async (o, i) => {
-      let c = i;
+    n = (s) => (u) => {
+      let l = u;
+      return ((0, t.containsSerialisedBlobs)(u) && (l = (0, t.deserialiseBlobsInPayload)(u)), s(l));
+    },
+    a = async (s, u) => {
+      let l = u;
       return (
-        (0, t.containsBlobs)(i) && (c = await (0, t.serialiseBlobsInPayload)(i)),
-        r("emit", { event: o, payload: c })
+        (0, t.containsBlobs)(u) && (l = await (0, t.serialiseBlobsInPayload)(u)),
+        r("emit", { event: s, payload: l })
       );
     },
-    a = (o, i) =>
-      r("on", {
-        event: o,
-        callback: (s) => {
-          let u = s;
-          return (
-            (0, t.containsSerialisedBlobs)(s) && (u = (0, t.deserialiseBlobsInPayload)(s)),
-            i(u)
-          );
-        },
-      });
-  return ((Rn.events = { emit: n, on: a }), Rn);
+    o = (s, u) => r("on", { event: s, callback: n(u) }),
+    i = async (s, u) => {
+      let l = u;
+      return (
+        (0, t.containsBlobs)(u) && (l = await (0, t.serialiseBlobsInPayload)(u)),
+        r("emitPublic", { event: s, payload: l })
+      );
+    },
+    c = (s, u) => r("onPublic", { event: s, callback: n(u) });
+  return ((Rn.events = { emit: a, on: o, emitPublic: i, onPublic: c }), Rn);
 }
 var Uu;
 function Gb() {
@@ -1494,21 +1496,16 @@ function Gb() {
   ((Uu = 1), Object.defineProperty(Pn, "__esModule", { value: !0 }), (Pn.emitReadyEvent = void 0));
   const e = _p(),
     t = kp(),
-    r = ce(),
-    n = be(),
-    a = (0, r.getCallBridge)(),
-    o = "EXTENSION_READY",
-    i = async () => {
-      const c = await t.view.getContext();
-      await e.events.emit(o, { localId: c.localId });
+    n = (0, ce().getCallBridge)(),
+    a = "EXTENSION_READY",
+    o = async () => {
+      const i = await t.view.getContext();
+      await e.events.emit(a, { localId: i.localId });
       try {
-        if ((await a("emitReadyEvent")) === !1)
-          throw new n.BridgeAPIError("Unable to emit ready event.");
-      } catch {
-        throw new n.BridgeAPIError("Unable to emit ready event.");
-      }
+        await n("emitReadyEvent");
+      } catch {}
     };
-  return ((Pn.emitReadyEvent = i), Pn);
+  return ((Pn.emitReadyEvent = o), Pn);
 }
 const Hb = "modulepreload",
   Wb = function (e, t) {
@@ -2216,9 +2213,9 @@ function o_() {
         c = `${i}/forge-apps/adf-renderer`,
         s = n || `forge-adf-renderer-iframe-${(0, e.v4)()}`,
         u = () => {
-          var l, d, p, v;
-          const g = document.getElementById(s),
-            f = {
+          var l, d, p, v, g, f, h;
+          const b = document.getElementById(s),
+            _ = {
               type: "adf-document",
               document: (l = r.extension.macro) === null || l === void 0 ? void 0 : l.body,
               timestamp: Date.now(),
@@ -2229,19 +2226,27 @@ function o_() {
                 p !== void 0
                   ? p
                   : !1,
+              contentId:
+                (f =
+                  (g = (v = r.extension) === null || v === void 0 ? void 0 : v.macro) === null ||
+                  g === void 0
+                    ? void 0
+                    : g.content) === null || f === void 0
+                  ? void 0
+                  : f.id,
             };
           (o.iframeResizer(
             {
               heightCalculationMethod: "taggedElement",
               widthCalculationMethod: "bodyScroll",
-              initCallback: (h) => {
-                var b;
-                (b = h?.iFrameResizer) === null || b === void 0 || b.resize();
+              initCallback: (m) => {
+                var k;
+                (k = m?.iFrameResizer) === null || k === void 0 || k.resize();
               },
             },
-            g || "",
+            b || "",
           ),
-            (v = g?.contentWindow) === null || v === void 0 || v.postMessage(f, i));
+            (h = b?.contentWindow) === null || h === void 0 || h.postMessage(_, i));
         };
       return (
         setTimeout(() => {
@@ -2258,7 +2263,7 @@ function i_() {
   if (nl) return zn;
   ((nl = 1), Object.defineProperty(zn, "__esModule", { value: !0 }), (zn.onClose = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = (0, e.getCallBridge)(),
     n = async (a) => {
       try {
@@ -2363,7 +2368,7 @@ function u_() {
   if (cl) return Gn;
   ((cl = 1), Object.defineProperty(Gn, "__esModule", { value: !0 }), (Gn.Modal = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = (0, e.getCallBridge)(),
     n = () => {};
   class a {
@@ -2420,15 +2425,15 @@ function d_() {
     Object.defineProperty(ir, "__esModule", { value: !0 }),
     (ir.productFetchApi = ir.remoteFetchApi = void 0));
   const e = bp(),
-    t = async (i) => {
-      const c = {};
-      for (const [s, u] of i.entries())
-        if (s === "file") {
-          const l = u.name,
-            d = u.type;
-          ((c.file = await (0, e.blobToBase64)(u)), (c.__fileName = l), (c.__fileType = d));
-        } else c[s] = u;
-      return JSON.stringify(c);
+    t = async (i, c = !1) => {
+      const s = {};
+      for (const [u, l] of i.entries())
+        if (c ? u.startsWith("file") : u === "file") {
+          const p = l.name,
+            v = l.type;
+          ((s[u] = await (0, e.blobToBase64)(l)), (s[`__${u}Name`] = p), (s[`__${u}Type`] = v));
+        } else s[u] = l;
+      return JSON.stringify(s);
     },
     r = (i) => {
       if (!i) return i;
@@ -2443,21 +2448,21 @@ function d_() {
       }
       return i;
     },
-    n = async (i) => {
-      const c = i?.body instanceof FormData,
-        s = c ? await t(i?.body) : i?.body,
-        u = new Request("", { body: s, method: i?.method, headers: i?.headers }),
-        l = Object.fromEntries(u.headers.entries());
+    n = async (i, c) => {
+      const s = c?.body instanceof FormData,
+        u = s ? await t(c?.body, i === "remote") : c?.body,
+        l = new Request("", { body: u, method: c?.method, headers: c?.headers }),
+        d = Object.fromEntries(l.headers.entries());
       return {
-        body: u.method !== "GET" ? await u.text() : null,
-        headers: new Headers(l),
-        isMultipartFormData: c,
+        body: l.method !== "GET" ? await l.text() : null,
+        headers: new Headers(d),
+        isMultipartFormData: s,
       };
     },
     a = (i) => {
       const c = async (s, u) => {
         const l = r(u),
-          { body: d, headers: p, isMultipartFormData: v } = await n(l),
+          { body: d, headers: p, isMultipartFormData: v } = await n("remote", l),
           g = {
             remoteKey: s,
             fetchRequestInit: { ...l, body: d, headers: [...p.entries()] },
@@ -2479,7 +2484,7 @@ function d_() {
   const o = (i) => {
     const c = async (s, u, l) => {
       const d = r(l),
-        { body: p, headers: v, isMultipartFormData: g } = await n(d);
+        { body: p, headers: v, isMultipartFormData: g } = await n("product", d);
       v.has("X-Atlassian-Token") || v.set("X-Atlassian-Token", "no-check");
       const f = {
           product: s,
@@ -2530,7 +2535,7 @@ function v_() {
   if (fl) return Hn;
   ((fl = 1), Object.defineProperty(Hn, "__esModule", { value: !0 }), (Hn.showFlag = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = (0, e.getCallBridge)(),
     n = (a) => {
       var o;
@@ -2657,7 +2662,7 @@ function m_() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e.open = e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE = void 0));
         const t = ce(),
-          r = be(),
+          r = me(),
           n = 30,
           a = (0, t.getCallBridge)();
         e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE =
@@ -3108,7 +3113,7 @@ function ai() {
   ((jl = 1),
     Object.defineProperty(Qn, "__esModule", { value: !0 }),
     (Qn.checkRestrictedEnvironment = void 0));
-  const e = be(),
+  const e = me(),
     t = ni(),
     r = Ep(),
     n = async () => {
@@ -3127,7 +3132,7 @@ function A_() {
         (Object.defineProperty(e, "__esModule", { value: !0 }),
           (e.upload = e.createUploadPromises = void 0));
         const t = Ya(),
-          r = be(),
+          r = me(),
           n = ai(),
           o = (0, ce().getCallBridge)(),
           i = (l, d) => {
@@ -3250,7 +3255,7 @@ function I_() {
   if (Ml) return ta;
   ((Ml = 1), Object.defineProperty(ta, "__esModule", { value: !0 }), (ta.deleteObjects = void 0));
   const e = Ya(),
-    t = be(),
+    t = me(),
     r = ai(),
     a = (0, ce().getCallBridge)(),
     o = async ({ functionKey: i, keys: c }) => {
@@ -3276,7 +3281,7 @@ function j_() {
   if (Tl) return ra;
   ((Tl = 1), Object.defineProperty(ra, "__esModule", { value: !0 }), (ra.download = void 0));
   const e = Ya(),
-    t = be(),
+    t = me(),
     r = ai(),
     a = (0, ce().getCallBridge)(),
     o = async ({ functionKey: i, keys: c }) => {
@@ -3322,7 +3327,7 @@ function D_() {
   if (Fl) return na;
   ((Fl = 1), Object.defineProperty(na, "__esModule", { value: !0 }), (na.getMetadata = void 0));
   const e = Ya(),
-    t = be(),
+    t = me(),
     r = ai(),
     a = (0, ce().getCallBridge)(),
     o = async ({ functionKey: i, keys: c }) => {
@@ -4318,7 +4323,7 @@ function $_() {
     Object.defineProperty(ca, "__esModule", { value: !0 }),
     (ca.initFeatureFlags = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = ei(),
     n = 500,
     a = 1e3 * 25,
@@ -4418,7 +4423,7 @@ function V_() {
     Object.defineProperty(ua, "__esModule", { value: !0 }),
     (ua.trackFeatureFlagEvent = void 0));
   const e = ce(),
-    t = be(),
+    t = me(),
     r = xp(),
     n = ei(),
     a = 500,
@@ -11627,7 +11632,7 @@ var kr = ow(),
       attributes: { type: "shape" },
     },
   },
-  _e = {
+  be = {
     colorMode: "auto",
     contrastMode: "auto",
     dark: "dark",
@@ -12407,21 +12412,21 @@ var gw = "light",
   lh = function () {
     var t = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {},
       r = t.colorMode,
-      n = r === void 0 ? _e.colorMode : r,
+      n = r === void 0 ? be.colorMode : r,
       a = t.dark,
-      o = a === void 0 ? _e.dark : a,
+      o = a === void 0 ? be.dark : a,
       i = t.light,
-      c = i === void 0 ? _e.light : i,
+      c = i === void 0 ? be.light : i,
       s = t.contrastMode,
-      u = s === void 0 ? _e.contrastMode : s,
+      u = s === void 0 ? be.contrastMode : s,
       l = t.shape,
-      d = l === void 0 ? _e.shape() : l,
+      d = l === void 0 ? be.shape() : l,
       p = t.spacing,
-      v = p === void 0 ? _e.spacing : p,
+      v = p === void 0 ? be.spacing : p,
       g = t.typography,
-      f = g === void 0 ? _e.typography : g,
+      f = g === void 0 ? be.typography : g,
       h = t.UNSAFE_themeOptions,
-      b = h === void 0 ? _e.UNSAFE_themeOptions : h,
+      b = h === void 0 ? be.UNSAFE_themeOptions : h,
       _ = vw({ dark: o, light: c, shape: d, spacing: v, typography: f }),
       m = S(S({}, Or, _), si, n === "auto" ? gw : n);
     if (
@@ -12845,29 +12850,29 @@ var Mw = (function () {
                       typeof r == "function"
                         ? r(
                             pf(
-                              pf({}, _e),
+                              pf({}, be),
                               {},
-                              { typography: _e.typography, shape: _e.shape() },
+                              { typography: be.typography, shape: be.shape() },
                               Cc(),
                             ),
                           )
                         : r),
                     (o = a.colorMode),
-                    (i = o === void 0 ? _e.colorMode : o),
+                    (i = o === void 0 ? be.colorMode : o),
                     (c = a.contrastMode),
-                    (s = c === void 0 ? _e.contrastMode : c),
+                    (s = c === void 0 ? be.contrastMode : c),
                     (u = a.dark),
-                    (l = u === void 0 ? _e.dark : u),
+                    (l = u === void 0 ? be.dark : u),
                     (d = a.light),
-                    (p = d === void 0 ? _e.light : d),
+                    (p = d === void 0 ? be.light : d),
                     (v = a.shape),
-                    (g = v === void 0 ? _e.shape() : v),
+                    (g = v === void 0 ? be.shape() : v),
                     (f = a.spacing),
-                    (h = f === void 0 ? _e.spacing : f),
+                    (h = f === void 0 ? be.spacing : f),
                     (b = a.typography),
-                    (_ = b === void 0 ? _e.typography : b),
+                    (_ = b === void 0 ? be.typography : b),
                     (m = a.UNSAFE_themeOptions),
-                    (k = m === void 0 ? _e.UNSAFE_themeOptions : m),
+                    (k = m === void 0 ? be.UNSAFE_themeOptions : m),
                     de("platform_increased-contrast-themes") ||
                       (p === "light-increased-contrast" && (p = "light"),
                       l === "dark-increased-contrast" && (l = "dark")),
@@ -12909,7 +12914,7 @@ var Mw = (function () {
                     !n &&
                       k &&
                       ch(k?.brandColor) &&
-                      ((A = i || _e.colorMode),
+                      ((A = i || be.colorMode),
                       (C = Rw(k, A)),
                       C.length > 0 &&
                         I.push(
@@ -12923,7 +12928,7 @@ var Mw = (function () {
                                       return (
                                         (ue.next = 2),
                                         Ye(
-                                          () => import("./custom-theme-B9bVFVmY.js"),
+                                          () => import("./custom-theme-ywjK3W_3.js"),
                                           __vite__mapDeps([2, 3, 1, 4]),
                                           import.meta.url,
                                         )
@@ -13611,7 +13616,7 @@ var li = 1,
   Jr = 1,
   Oh = 0,
   Fe = 0,
-  me = 0,
+  _e = 0,
   rn = "";
 function di(e, t, r, n, a, o, i) {
   return {
@@ -13631,13 +13636,13 @@ function ma(e, t) {
   return v1(di("", null, null, "", null, null, 0), e, { length: -e.length }, t);
 }
 function b1() {
-  return me;
+  return _e;
 }
 function _1() {
-  return ((me = Fe > 0 ? ke(rn, --Fe) : 0), Jr--, me === 10 && ((Jr = 1), li--), me);
+  return ((_e = Fe > 0 ? ke(rn, --Fe) : 0), Jr--, _e === 10 && ((Jr = 1), li--), _e);
 }
 function ze() {
-  return ((me = Fe < Oh ? ke(rn, Fe++) : 0), Jr++, me === 10 && ((Jr = 1), li++), me);
+  return ((_e = Fe < Oh ? ke(rn, Fe++) : 0), Jr++, _e === 10 && ((Jr = 1), li++), _e);
 }
 function Ot() {
   return ke(rn, Fe);
@@ -13690,21 +13695,21 @@ function Co(e) {
   return kh(Xa(Fe - 1, Zs(e === 91 ? e + 2 : e === 40 ? e + 1 : e)));
 }
 function m1(e) {
-  for (; (me = Ot()) && me < 33; ) ze();
-  return $a(e) > 2 || $a(me) > 3 ? "" : " ";
+  for (; (_e = Ot()) && _e < 33; ) ze();
+  return $a(e) > 2 || $a(_e) > 3 ? "" : " ";
 }
 function y1(e, t) {
-  for (; --t && ze() && !(me < 48 || me > 102 || (me > 57 && me < 65) || (me > 70 && me < 97)); );
+  for (; --t && ze() && !(_e < 48 || _e > 102 || (_e > 57 && _e < 65) || (_e > 70 && _e < 97)); );
   return Xa(e, xo() + (t < 6 && Ot() == 32 && ze() == 32));
 }
 function Zs(e) {
   for (; ze(); )
-    switch (me) {
+    switch (_e) {
       case e:
         return Fe;
       case 34:
       case 39:
-        e !== 34 && e !== 39 && Zs(me);
+        e !== 34 && e !== 39 && Zs(_e);
         break;
       case 40:
         e === 41 && Zs(e);
@@ -13716,7 +13721,7 @@ function Zs(e) {
   return Fe;
 }
 function w1(e, t) {
-  for (; ze() && e + me !== 57; ) if (e + me === 84 && Ot() === 47) break;
+  for (; ze() && e + _e !== 57; ) if (e + _e === 84 && Ot() === 47) break;
   return "/*" + Xa(t, Fe - 1) + "*" + ui(e === 47 ? e : ze());
 }
 function k1(e) {
@@ -19123,7 +19128,7 @@ var jS = function (t) {
   },
   DS = y.lazy(function () {
     return Ye(
-      () => import("./body-BiFfTgiR.js"),
+      () => import("./body-Bxzf_-CF.js"),
       __vite__mapDeps([5, 3, 1, 4, 6]),
       import.meta.url,
     );
@@ -23338,7 +23343,7 @@ Bt.view.theme
   });
 export {
   sf as A,
-  _e as B,
+  be as B,
   uh as C,
   ci as D,
   si as E,

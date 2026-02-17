@@ -4,9 +4,9 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@forge/events": "^2.0.17",
+    "@forge/events": "^2.0.18",
     "@forge/resolver": "1.7.1",
-    "@forge/sql": "^3.0.17",
+    "@forge/sql": "^3.0.18",
     "drizzle-orm": "^0.45.1",
     "forge-sql-orm": "2.1.24",
     "uuid": "^13.0.0"
