@@ -15,7 +15,7 @@
   "devDependencies": {
     "eslint-plugin-react-hooks": "^7.0.1",
     "forge-sql-orm-cli": "^2.1.24",
-    "knip": "^5.83.1"
+    "knip": "^5.84.1"
   },
   "dependencies": {
     "@forge/bridge": "5.13.0",
