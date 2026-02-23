@@ -13,8 +13,8 @@
     "@types/node": "^25.3.0",
     "drizzle-kit": "^0.31.9",
     "forge-sql-orm-cli": "file:../../forge-sql-orm-cli",
-    "knip": "^5.84.1",
-    "mysql2": "^3.17.2",
+    "knip": "^5.85.0",
+    "mysql2": "^3.17.5",
     "typescript": "^5.9.3"
   },
   "scripts": {

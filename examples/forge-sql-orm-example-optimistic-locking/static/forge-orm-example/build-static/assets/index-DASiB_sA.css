@@ -1457,9 +1457,6 @@ button {
 ._4cvrv2br {
   align-items: start;
 }
-._gy1p12x7 {
-  column-gap: var(--ds-space-075, 6px);
-}
 ._gy1p1ejb {
   column-gap: var(--ds-space-300, 24px);
 }
@@ -2519,6 +2516,9 @@ button {
 }
 ._bozgutpp {
   padding-inline-start: var(--ds-space-150, 9pt);
+}
+._gy1p12x7 {
+  column-gap: var(--ds-space-075, 6px);
 }
 ._gy1p1b66 {
   column-gap: var(--ds-space-050, 4px);

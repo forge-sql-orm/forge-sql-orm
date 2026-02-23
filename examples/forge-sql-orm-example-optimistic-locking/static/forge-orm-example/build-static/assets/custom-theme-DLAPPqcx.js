@@ -18,7 +18,7 @@ import {
   E as l0,
   F as v0,
   G as j0,
-} from "./index-DW9oV7cQ.js";
+} from "./index-CEdHizTK.js";
 import "./react-dom-vendor--YlRhZCI.js";
 import "./lodash-vendor-Dv-o4pqD.js";
 import "./client-core-vendor-DqdHMQxw.js";

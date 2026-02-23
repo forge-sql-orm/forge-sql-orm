@@ -2,7 +2,6 @@ import { ConfigEnv, defineConfig, UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { config } from "dotenv";
 import { resolve } from "path";
-import { visualizer } from "rollup-plugin-visualizer";
 
 const manualChunks = (id: string) => {
   if (id.includes("node_modules")) {
@@ -37,13 +36,7 @@ export default defineConfig(async (env: ConfigEnv): Promise<UserConfig> => {
   return {
     define: envKeys,
     base: "./",
-    plugins: [
-      react(),
-      visualizer({
-        open: false,
-        filename: `dependency-chunks.html`,
-      }),
-    ],
+    plugins: [react()],
     server: {
       port: 3099,
     },

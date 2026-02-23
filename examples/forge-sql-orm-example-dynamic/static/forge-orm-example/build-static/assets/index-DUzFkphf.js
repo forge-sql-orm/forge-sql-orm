@@ -5,10 +5,10 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-BCqYYRNo.js",
       "./lodash-vendor-Dv-o4pqD.js",
-      "./custom-theme-BURcWWtR.js",
+      "./custom-theme-BFOTVwCf.js",
       "./react-dom-vendor--YlRhZCI.js",
       "./client-core-vendor-DqdHMQxw.js",
-      "./body-1ZncdVqI.js",
+      "./body-Cit7mNR7.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
@@ -12928,7 +12928,7 @@ var Fw = (function () {
                                       return (
                                         (ue.next = 2),
                                         Xe(
-                                          () => import("./custom-theme-BURcWWtR.js"),
+                                          () => import("./custom-theme-BFOTVwCf.js"),
                                           __vite__mapDeps([2, 3, 1, 4]),
                                           import.meta.url,
                                         )
@@ -15143,7 +15143,7 @@ var Ck = {
         action: "clicked",
         componentName: "button",
         packageName: "@atlaskit/button",
-        packageVersion: "0.0.0-development",
+        packageVersion: "23.9.7",
         analyticsData: n,
       }),
       T = y.useCallback(
@@ -19128,7 +19128,7 @@ var MS = function (t) {
   },
   TS = y.lazy(function () {
     return Xe(
-      () => import("./body-1ZncdVqI.js"),
+      () => import("./body-Cit7mNR7.js"),
       __vite__mapDeps([5, 3, 1, 4, 6]),
       import.meta.url,
     );

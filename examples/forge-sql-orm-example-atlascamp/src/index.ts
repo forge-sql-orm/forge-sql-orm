@@ -115,6 +115,7 @@ resolver.define("getTimeOutError", async () => {
   try {
     await FORGE_SQL_ORM.select({
       ...getTableColumns(document),
+      timeout: sql<number>`SLEEP(10)`,
     })
       .from(document)
       .where(eq(document.ownerUserId, USER_ID));
