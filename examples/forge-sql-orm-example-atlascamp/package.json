@@ -26,7 +26,7 @@
     "@types/node": "^25.3.0",
     "forge-sql-orm-cli": "^2.1.24",
     "knip": "^5.85.0",
-    "mysql2": "^3.17.5",
+    "mysql2": "^3.18.0",
     "typescript": "^5.9.3"
   },
   "overrides": {

@@ -48,15 +48,15 @@
     "drizzle-orm": "^0.45.1",
     "forge-sql-orm": "^2.1.24",
     "inquirer": "^13.3.0",
-    "mysql2": "^3.17.5",
+    "mysql2": "^3.18.0",
     "reflect-metadata": "^0.2.2",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.3.0",
-    "@typescript-eslint/eslint-plugin": "^8.56.0",
-    "@typescript-eslint/parser": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "knip": "^5.85.0",
