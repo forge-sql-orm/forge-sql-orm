@@ -18,10 +18,10 @@ import {
   E as l0,
   F as v0,
   G as j0,
-} from "./index-DUzFkphf.js";
+} from "./index-Bes21f2W.js";
 import "./react-dom-vendor--YlRhZCI.js";
 import "./lodash-vendor-Dv-o4pqD.js";
-import "./client-core-vendor-DqdHMQxw.js";
+import "./client-core-vendor-ByVIiDxb.js";
 var g0 = {
     "color.text.brand": "#669DF1",
     "elevation.surface.overlay": "#2B2C2F",

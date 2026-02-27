@@ -5,16 +5,16 @@ const __vite__mapDeps = (
     (m.f = [
       "./index-BCqYYRNo.js",
       "./lodash-vendor-Dv-o4pqD.js",
-      "./custom-theme-BdGAWGEO.js",
+      "./custom-theme-BFgurdio.js",
       "./react-dom-vendor--YlRhZCI.js",
-      "./client-core-vendor-DqdHMQxw.js",
-      "./body-CAMr3hYh.js",
+      "./client-core-vendor-ByVIiDxb.js",
+      "./body-Dz-CixUz.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
 import { r as wr, a as Zo, c as bb } from "./react-dom-vendor--YlRhZCI.js";
 import { g as Qt, a as Nv, r as _b } from "./lodash-vendor-Dv-o4pqD.js";
-import { r as Xt, a as Pt, s as Ke } from "./client-core-vendor-DqdHMQxw.js";
+import { r as Xt, a as Pt, s as Ke } from "./client-core-vendor-ByVIiDxb.js";
 function mb(e, t) {
   for (var r = 0; r < t.length; r++) {
     const n = t[r];
@@ -11442,7 +11442,7 @@ var K0 = ["as", "children", "isInset", "testId", "style", "xcss"],
         action: "clicked",
         componentName: u || "Pressable",
         packageName: "@atlaskit/primitives",
-        packageVersion: "17.1.1",
+        packageVersion: "0.0.0-development",
         analyticsData: l,
         actionSubject: "button",
       });
@@ -12928,7 +12928,7 @@ var Mw = (function () {
                                       return (
                                         (ue.next = 2),
                                         Ye(
-                                          () => import("./custom-theme-BdGAWGEO.js"),
+                                          () => import("./custom-theme-BFgurdio.js"),
                                           __vite__mapDeps([2, 3, 1, 4]),
                                           import.meta.url,
                                         )
@@ -15143,7 +15143,7 @@ var Sk = {
         action: "clicked",
         componentName: "button",
         packageName: "@atlaskit/button",
-        packageVersion: "23.9.7",
+        packageVersion: "0.0.0-development",
         analyticsData: n,
       }),
       T = y.useCallback(
@@ -19003,14 +19003,14 @@ var jS = function (t) {
         action: "sorted",
         componentName: "dynamicTable",
         packageName: "@atlaskit/dynamic-table",
-        packageVersion: "0.0.0-development",
+        packageVersion: "18.3.18",
       }),
       Ue = Na({
         fn: K,
         action: "ranked",
         componentName: "dynamicTable",
         packageName: "@atlaskit/dynamic-table",
-        packageVersion: "0.0.0-development",
+        packageVersion: "18.3.18",
       });
     y.useEffect(
       function () {
@@ -19128,7 +19128,7 @@ var jS = function (t) {
   },
   DS = y.lazy(function () {
     return Ye(
-      () => import("./body-CAMr3hYh.js"),
+      () => import("./body-Dz-CixUz.js"),
       __vite__mapDeps([5, 3, 1, 4, 6]),
       import.meta.url,
     );
