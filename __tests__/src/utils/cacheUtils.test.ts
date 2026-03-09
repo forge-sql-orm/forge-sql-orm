@@ -31,6 +31,7 @@ const mockKvs = {
     delete: vi.fn().mockReturnThis(),
     execute: vi.fn(),
   })),
+  batchDelete: vi.fn().mockResolvedValue({ failedKeys: [] }),
 };
 
 vi.mock("@forge/kvs", () => {
@@ -109,6 +110,7 @@ describe("cacheUtils", () => {
     vi.clearAllMocks();
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-01T00:00:00Z"));
+    mockKvs.batchDelete.mockResolvedValue({ failedKeys: [] });
   });
 
   afterEach(() => {
@@ -703,17 +705,11 @@ describe("cacheUtils", () => {
         query: vi.fn().mockReturnValue(mockQueryBuilder),
       });
 
-      const mockTransact = {
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
       await clearTablesCache(["users", "orders"], defaultOptions);
 
       expect(mockKvs.entity).toHaveBeenCalledWith("cache");
       expect(mockQueryBuilder.getMany).toHaveBeenCalled();
-      expect(mockKvs.transact).toHaveBeenCalled();
+      expect(mockKvs.batchDelete).toHaveBeenCalled();
     });
 
     it("should handle pagination with cursor", async () => {
@@ -747,16 +743,10 @@ describe("cacheUtils", () => {
         query: vi.fn().mockReturnValue(mockQueryBuilder),
       });
 
-      const mockTransact = {
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
       await clearTablesCache(["users"], defaultOptions);
 
       expect(mockQueryBuilder.getMany).toHaveBeenCalledTimes(2);
-      expect(mockKvs.transact).toHaveBeenCalledTimes(2);
+      expect(mockKvs.batchDelete).toHaveBeenCalledTimes(2);
     });
 
     it("should log performance metrics when logCache is enabled", async () => {
@@ -781,12 +771,6 @@ describe("cacheUtils", () => {
         set: vi.fn(),
         query: vi.fn().mockReturnValue(mockQueryBuilder),
       });
-
-      const mockTransact = {
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
 
       await clearTablesCache(["users"], options);
 
@@ -826,17 +810,11 @@ describe("cacheUtils", () => {
         query: vi.fn().mockReturnValue(mockQueryBuilder),
       });
 
-      const mockTransact = {
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
       await clearExpiredCache(defaultOptions);
 
       expect(mockKvs.entity).toHaveBeenCalledWith("cache");
       expect(mockQueryBuilder.getMany).toHaveBeenCalled();
-      expect(mockKvs.transact).toHaveBeenCalled();
+      expect(mockKvs.batchDelete).toHaveBeenCalled();
     });
 
     it("should handle pagination with cursor for expired cache", async () => {
@@ -870,16 +848,10 @@ describe("cacheUtils", () => {
         query: vi.fn().mockReturnValue(mockQueryBuilder),
       });
 
-      const mockTransact = {
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
       await clearExpiredCache(defaultOptions);
 
       expect(mockQueryBuilder.getMany).toHaveBeenCalledTimes(2);
-      expect(mockKvs.transact).toHaveBeenCalledTimes(2);
+      expect(mockKvs.batchDelete).toHaveBeenCalledTimes(2);
     });
 
     it("should log performance metrics", async () => {
@@ -902,12 +874,6 @@ describe("cacheUtils", () => {
         set: vi.fn(),
         query: vi.fn().mockReturnValue(mockQueryBuilder),
       });
-
-      const mockTransact = {
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
 
       await clearExpiredCache(defaultOptions);
 
@@ -992,12 +958,6 @@ describe("cacheUtils", () => {
         set: vi.fn(),
         query: vi.fn().mockReturnValue(mockQueryBuilder),
       });
-
-      const mockTransact = {
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
 
       await clearTablesCache(["users"], defaultOptions);
 

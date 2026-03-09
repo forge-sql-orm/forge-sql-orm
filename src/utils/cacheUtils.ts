@@ -59,6 +59,17 @@ function debugLog(message: string, options?: ForgeSqlOrmOptions): void {
     // eslint-disable-next-line no-console
     console.debug(message);
   }
+} /**
+ * Logs a message to console.debug when options.logCache is enabled.
+ *
+ * @param message - Message to log
+ * @param options - ForgeSQL ORM options (optional)
+ */
+function warnLog(message: string, options?: ForgeSqlOrmOptions): void {
+  if (options?.logCache) {
+    // eslint-disable-next-line no-console
+    console.warn(message);
+  }
 }
 
 /**
@@ -79,19 +90,20 @@ export function hashKey(query: Query): string {
  *
  * @param results - Array of cache entries to delete
  * @param cacheEntityName - Name of the cache entity
+ * @param options - Forge SQL ORM properties
  * @returns Promise that resolves when all deletions are complete
  */
 async function deleteCacheEntriesInBatches(
   results: Array<{ key: string }>,
   cacheEntityName: string,
+  options?: ForgeSqlOrmOptions,
 ): Promise<void> {
   for (let i = 0; i < results.length; i += CACHE_CONSTANTS.BATCH_SIZE) {
     const batch = results.slice(i, i + CACHE_CONSTANTS.BATCH_SIZE);
-    let transactionBuilder = kvs.transact();
-    for (const result of batch) {
-      transactionBuilder = transactionBuilder.delete(result.key, { entityName: cacheEntityName });
-    }
-    await transactionBuilder.execute();
+    const batchResult = await kvs.batchDelete(
+      batch.map((result) => ({ key: result.key, entityName: cacheEntityName })),
+    );
+    batchResult.failedKeys.forEach((failedKey) => warnLog(JSON.stringify(failedKey), options));
   }
 }
 
@@ -139,7 +151,7 @@ async function clearCursorCache(
 
   debugLog(`clear cache Records: ${JSON.stringify(listResult.results.map((r) => r.key))}`, options);
 
-  await deleteCacheEntriesInBatches(listResult.results, cacheEntityName);
+  await deleteCacheEntriesInBatches(listResult.results, cacheEntityName, options);
 
   if (listResult.nextCursor) {
     return (
