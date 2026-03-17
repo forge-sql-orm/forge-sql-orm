@@ -1,5 +1,5 @@
 import { a as e, d as t, i as n, l as r, n as i } from "./wrapNativeSuper-CMD0Ca0W.js";
-import "./client-core-vendor-a_wnDTFA.js";
+import "./client-core-vendor-DolUFhPG.js";
 import {
   _ as a,
   a as o,
@@ -15,7 +15,7 @@ import {
   p as g,
   s as _,
   u as v,
-} from "./index-DnK-aXWi.js";
+} from "./index-BxVQpS67.js";
 var y = {
     "color.text.brand": `#669DF1`,
     "elevation.surface.overlay": `#2B2C2F`,

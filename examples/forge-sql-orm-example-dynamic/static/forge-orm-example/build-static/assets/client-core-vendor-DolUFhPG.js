@@ -1045,7 +1045,7 @@ var t = e((e) => {
   T = e((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.StatsigMetadataProvider = e.SDK_VERSION = void 0),
-      (e.SDK_VERSION = `3.32.0`));
+      (e.SDK_VERSION = `3.32.1`));
     var t = { sdkVersion: e.SDK_VERSION, sdkType: `js-mono` };
     e.StatsigMetadataProvider = {
       get: () => t,

@@ -71,15 +71,15 @@
     "README.md"
   ],
   "peerDependencies": {
-    "@forge/sql": "^3.0.19",
+    "@forge/sql": "^3.0.20",
     "drizzle-orm": "^0.45.1"
   },
   "optionalDependencies": {
     "@forge/kvs": "^1.4.0"
   },
   "dependencies": {
-    "@forge/api": "^7.1.0",
-    "@forge/events": "^2.1.0",
+    "@forge/api": "^7.1.1",
+    "@forge/events": "^2.1.1",
     "luxon": "^3.7.2",
     "node-sql-parser": "^5.4.0"
   },
