@@ -37,44 +37,44 @@ import { t as s } from "./lodash-vendor-DTP5bTCx.js";
 })();
 var c = e(a()),
   l = r({
-    __addDisposableResource: () => ce,
-    __assign: () => j,
-    __asyncDelegator: () => ee,
-    __asyncGenerator: () => O,
-    __asyncValues: () => te,
-    __await: () => D,
+    __addDisposableResource: () => le,
+    __assign: () => A,
+    __asyncDelegator: () => te,
+    __asyncGenerator: () => D,
+    __asyncValues: () => ne,
+    __await: () => E,
     __awaiter: () => y,
-    __classPrivateFieldGet: () => ae,
-    __classPrivateFieldIn: () => se,
-    __classPrivateFieldSet: () => oe,
-    __createBinding: () => M,
+    __classPrivateFieldGet: () => oe,
+    __classPrivateFieldIn: () => ce,
+    __classPrivateFieldSet: () => se,
+    __createBinding: () => j,
     __decorate: () => f,
-    __disposeResources: () => le,
+    __disposeResources: () => ue,
     __esDecorate: () => m,
-    __exportStar: () => x,
+    __exportStar: () => b,
     __extends: () => u,
-    __generator: () => b,
-    __importDefault: () => ie,
-    __importStar: () => re,
-    __makeTemplateObject: () => ne,
+    __generator: () => ee,
+    __importDefault: () => ae,
+    __importStar: () => ie,
+    __makeTemplateObject: () => re,
     __metadata: () => v,
     __param: () => p,
     __propKey: () => g,
-    __read: () => C,
+    __read: () => S,
     __rest: () => d,
-    __rewriteRelativeImportExtension: () => k,
+    __rewriteRelativeImportExtension: () => O,
     __runInitializers: () => h,
     __setFunctionName: () => _,
-    __spread: () => w,
-    __spreadArray: () => E,
-    __spreadArrays: () => T,
-    __values: () => S,
+    __spread: () => C,
+    __spreadArray: () => T,
+    __spreadArrays: () => w,
+    __values: () => x,
     default: () => F,
   });
 function u(e, t) {
   if (typeof t != `function` && t !== null)
     throw TypeError(`Class extends value ` + String(t) + ` is not a constructor or null`);
-  A(e, t);
+  k(e, t);
   function n() {
     this.constructor = e;
   }
@@ -187,7 +187,7 @@ function y(e, t, n, r) {
     c((r = r.apply(e, t || [])).next());
   });
 }
-function b(e, t) {
+function ee(e, t) {
   var n = {
       label: 0,
       sent: function () {
@@ -274,10 +274,10 @@ function b(e, t) {
     return { value: s[0] ? s[1] : void 0, done: !0 };
   }
 }
-function x(e, t) {
-  for (var n in e) n !== `default` && !Object.prototype.hasOwnProperty.call(t, n) && M(t, e, n);
+function b(e, t) {
+  for (var n in e) n !== `default` && !Object.prototype.hasOwnProperty.call(t, n) && j(t, e, n);
 }
-function S(e) {
+function x(e) {
   var t = typeof Symbol == `function` && Symbol.iterator,
     n = t && e[t],
     r = 0;
@@ -290,7 +290,7 @@ function S(e) {
     };
   throw TypeError(t ? `Object is not iterable.` : `Symbol.iterator is not defined.`);
 }
-function C(e, t) {
+function S(e, t) {
   var n = typeof Symbol == `function` && e[Symbol.iterator];
   if (!n) return e;
   var r = n.call(e),
@@ -310,26 +310,26 @@ function C(e, t) {
   }
   return a;
 }
-function w() {
-  for (var e = [], t = 0; t < arguments.length; t++) e = e.concat(C(arguments[t]));
+function C() {
+  for (var e = [], t = 0; t < arguments.length; t++) e = e.concat(S(arguments[t]));
   return e;
 }
-function T() {
+function w() {
   for (var e = 0, t = 0, n = arguments.length; t < n; t++) e += arguments[t].length;
   for (var r = Array(e), i = 0, t = 0; t < n; t++)
     for (var a = arguments[t], o = 0, s = a.length; o < s; o++, i++) r[i] = a[o];
   return r;
 }
-function E(e, t, n) {
+function T(e, t, n) {
   if (n || arguments.length === 2)
     for (var r = 0, i = t.length, a; r < i; r++)
       (a || !(r in t)) && ((a ||= Array.prototype.slice.call(t, 0, r)), (a[r] = t[r]));
   return e.concat(a || Array.prototype.slice.call(t));
 }
-function D(e) {
-  return this instanceof D ? ((this.v = e), this) : new D(e);
+function E(e) {
+  return this instanceof E ? ((this.v = e), this) : new E(e);
 }
-function O(e, t, n) {
+function D(e, t, n) {
   if (!Symbol.asyncIterator) throw TypeError(`Symbol.asyncIterator is not defined.`);
   var r = n.apply(e, t || []),
     i,
@@ -366,7 +366,7 @@ function O(e, t, n) {
     }
   }
   function l(e) {
-    e.value instanceof D ? Promise.resolve(e.value.v).then(u, d) : f(a[0][2], e);
+    e.value instanceof E ? Promise.resolve(e.value.v).then(u, d) : f(a[0][2], e);
   }
   function u(e) {
     c(`next`, e);
@@ -378,7 +378,7 @@ function O(e, t, n) {
     (e(t), a.shift(), a.length && c(a[0][0], a[0][1]));
   }
 }
-function ee(e) {
+function te(e) {
   var t, n;
   return (
     (t = {}),
@@ -395,18 +395,18 @@ function ee(e) {
   function r(r, i) {
     t[r] = e[r]
       ? function (t) {
-          return (n = !n) ? { value: D(e[r](t)), done: !1 } : i ? i(t) : t;
+          return (n = !n) ? { value: E(e[r](t)), done: !1 } : i ? i(t) : t;
         }
       : i;
   }
 }
-function te(e) {
+function ne(e) {
   if (!Symbol.asyncIterator) throw TypeError(`Symbol.asyncIterator is not defined.`);
   var t = e[Symbol.asyncIterator],
     n;
   return t
     ? t.call(e)
-    : ((e = typeof S == `function` ? S(e) : e[Symbol.iterator]()),
+    : ((e = typeof x == `function` ? x(e) : e[Symbol.iterator]()),
       (n = {}),
       r(`next`),
       r(`throw`),
@@ -430,37 +430,37 @@ function te(e) {
     }, t);
   }
 }
-function ne(e, t) {
+function re(e, t) {
   return (Object.defineProperty ? Object.defineProperty(e, `raw`, { value: t }) : (e.raw = t), e);
 }
-function re(e) {
+function ie(e) {
   if (e && e.__esModule) return e;
   var t = {};
-  if (e != null) for (var n = N(e), r = 0; r < n.length; r++) n[r] !== `default` && M(t, e, n[r]);
-  return (ue(t, e), t);
+  if (e != null) for (var n = N(e), r = 0; r < n.length; r++) n[r] !== `default` && j(t, e, n[r]);
+  return (M(t, e), t);
 }
-function ie(e) {
+function ae(e) {
   return e && e.__esModule ? e : { default: e };
 }
-function ae(e, t, n, r) {
+function oe(e, t, n, r) {
   if (n === `a` && !r) throw TypeError(`Private accessor was defined without a getter`);
   if (typeof t == `function` ? e !== t || !r : !t.has(e))
     throw TypeError(`Cannot read private member from an object whose class did not declare it`);
   return n === `m` ? r : n === `a` ? r.call(e) : r ? r.value : t.get(e);
 }
-function oe(e, t, n, r, i) {
+function se(e, t, n, r, i) {
   if (r === `m`) throw TypeError(`Private method is not writable`);
   if (r === `a` && !i) throw TypeError(`Private accessor was defined without a setter`);
   if (typeof t == `function` ? e !== t || !i : !t.has(e))
     throw TypeError(`Cannot write private member to an object whose class did not declare it`);
   return (r === `a` ? i.call(e, n) : i ? (i.value = n) : t.set(e, n), n);
 }
-function se(e, t) {
+function ce(e, t) {
   if (t === null || (typeof t != `object` && typeof t != `function`))
     throw TypeError(`Cannot use 'in' operator on non-object`);
   return typeof e == `function` ? t === e : e.has(t);
 }
-function ce(e, t, n) {
+function le(e, t, n) {
   if (t != null) {
     if (typeof t != `object` && typeof t != `function`) throw TypeError(`Object expected.`);
     var r, i;
@@ -485,7 +485,7 @@ function ce(e, t, n) {
   } else n && e.stack.push({ async: !0 });
   return t;
 }
-function le(e) {
+function ue(e) {
   function t(t) {
     ((e.error = e.hasError ? new P(t, e.error, `An error was suppressed during disposal.`) : t),
       (e.hasError = !0));
@@ -514,7 +514,7 @@ function le(e) {
   }
   return i();
 }
-function k(e, t) {
+function O(e, t) {
   return typeof e == `string` && /^\.\.?\//.test(e)
     ? e.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function (e, n, r, i, a) {
         return n
@@ -527,17 +527,17 @@ function k(e, t) {
       })
     : e;
 }
-var A,
+var k,
+  A,
   j,
   M,
-  ue,
   N,
   P,
   F,
   I = n(() => {
-    ((A = function (e, t) {
+    ((k = function (e, t) {
       return (
-        (A =
+        (k =
           Object.setPrototypeOf ||
           ({ __proto__: [] } instanceof Array &&
             function (e, t) {
@@ -546,12 +546,12 @@ var A,
           function (e, t) {
             for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n]);
           }),
-        A(e, t)
+        k(e, t)
       );
     }),
-      (j = function () {
+      (A = function () {
         return (
-          (j =
+          (A =
             Object.assign ||
             function (e) {
               for (var t, n = 1, r = arguments.length; n < r; n++)
@@ -559,10 +559,10 @@ var A,
                   Object.prototype.hasOwnProperty.call(t, i) && (e[i] = t[i]);
               return e;
             }),
-          j.apply(this, arguments)
+          A.apply(this, arguments)
         );
       }),
-      (M = Object.create
+      (j = Object.create
         ? function (e, t, n, r) {
             r === void 0 && (r = n);
             var i = Object.getOwnPropertyDescriptor(t, n);
@@ -578,7 +578,7 @@ var A,
         : function (e, t, n, r) {
             (r === void 0 && (r = n), (e[r] = t[n]));
           }),
-      (ue = Object.create
+      (M = Object.create
         ? function (e, t) {
             Object.defineProperty(e, `default`, { enumerable: !0, value: t });
           }
@@ -606,7 +606,7 @@ var A,
             }),
       (F = {
         __extends: u,
-        __assign: j,
+        __assign: A,
         __rest: d,
         __decorate: f,
         __param: p,
@@ -616,27 +616,27 @@ var A,
         __setFunctionName: _,
         __metadata: v,
         __awaiter: y,
-        __generator: b,
-        __createBinding: M,
-        __exportStar: x,
-        __values: S,
-        __read: C,
-        __spread: w,
-        __spreadArrays: T,
-        __spreadArray: E,
-        __await: D,
-        __asyncGenerator: O,
-        __asyncDelegator: ee,
-        __asyncValues: te,
-        __makeTemplateObject: ne,
-        __importStar: re,
-        __importDefault: ie,
-        __classPrivateFieldGet: ae,
-        __classPrivateFieldSet: oe,
-        __classPrivateFieldIn: se,
-        __addDisposableResource: ce,
-        __disposeResources: le,
-        __rewriteRelativeImportExtension: k,
+        __generator: ee,
+        __createBinding: j,
+        __exportStar: b,
+        __values: x,
+        __read: S,
+        __spread: C,
+        __spreadArrays: w,
+        __spreadArray: T,
+        __await: E,
+        __asyncGenerator: D,
+        __asyncDelegator: te,
+        __asyncValues: ne,
+        __makeTemplateObject: re,
+        __importStar: ie,
+        __importDefault: ae,
+        __classPrivateFieldGet: oe,
+        __classPrivateFieldSet: se,
+        __classPrivateFieldIn: ce,
+        __addDisposableResource: le,
+        __disposeResources: ue,
+        __rewriteRelativeImportExtension: O,
       }));
   }),
   de = i((e) => {
@@ -1114,8 +1114,7 @@ var A,
           r = atob(n),
           i = Array(r.length);
         for (let e = 0; e < r.length; e++) i[e] = r.charCodeAt(e);
-        let a = new Uint8Array(i);
-        return new Blob([a], { type: t });
+        return new Blob([new Uint8Array(i)], { type: t });
       }),
       (e.blobToBase64 = (e) =>
         new Promise((t, n) => {
@@ -2580,8 +2579,7 @@ var A,
         let n = atob(e),
           r = Array(n.length);
         for (let e = 0; e < n.length; e++) r[e] = n.charCodeAt(e);
-        let i = new Uint8Array(r);
-        return new Blob([i], { type: t || `application/octet-stream` });
+        return new Blob([new Uint8Array(r)], { type: t || `application/octet-stream` });
       },
       o = async (e) => {
         let t = e.size,
@@ -2971,341 +2969,802 @@ var A,
   Lt = i((e) => {
     var t = a(),
       n = Symbol.for(`react.element`),
-      r = Symbol.for(`react.fragment`),
-      i = Object.prototype.hasOwnProperty,
-      o = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
-      s = { key: !0, ref: !0, __self: !0, __source: !0 };
-    function c(e, t, r) {
-      var a,
+      r = Object.prototype.hasOwnProperty,
+      i = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
+      o = { key: !0, ref: !0, __self: !0, __source: !0 };
+    function s(e, t, a) {
+      var s,
         c = {},
         l = null,
         u = null;
-      for (a in (r !== void 0 && (l = `` + r),
+      for (s in (a !== void 0 && (l = `` + a),
       t.key !== void 0 && (l = `` + t.key),
       t.ref !== void 0 && (u = t.ref),
       t))
-        i.call(t, a) && !s.hasOwnProperty(a) && (c[a] = t[a]);
+        r.call(t, s) && !o.hasOwnProperty(s) && (c[s] = t[s]);
       if (e && e.defaultProps)
-        for (a in ((t = e.defaultProps), t)) c[a] === void 0 && (c[a] = t[a]);
-      return { $$typeof: n, type: e, key: l, ref: u, props: c, _owner: o.current };
+        for (s in ((t = e.defaultProps), t)) c[s] === void 0 && (c[s] = t[s]);
+      return { $$typeof: n, type: e, key: l, ref: u, props: c, _owner: i.current };
     }
-    ((e.Fragment = r), (e.jsx = c), (e.jsxs = c));
+    ((e.jsx = s), (e.jsxs = s));
   }),
   Rt = i((e, t) => {
     t.exports = Lt();
   }),
   Q = It(),
-  $ = Rt();
-function zt() {
-  let [e, t] = (0, c.useState)(``),
-    [n, r] = (0, c.useState)(``),
-    [i, a] = (0, c.useState)(``),
-    [o, s] = (0, c.useState)(!1),
-    [l, u] = (0, c.useState)(!1),
-    [d, f] = (0, c.useState)(!1),
-    [p, m] = (0, c.useState)([]),
-    h = (e, t, n) => {
-      m((r) => [{ id: Date.now(), query: e, result: t, timestamp: new Date(), type: n }, ...r]);
-    },
-    g = async () => {
-      try {
-        (a(``), s(!0));
-        let t = await (0, Q.invoke)(`execute`, { query: e });
-        (r(t), h(e, t, `SQL`));
-      } catch (e) {
-        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
-      } finally {
-        s(!1);
-      }
-    },
-    _ = async () => {
-      try {
-        (a(``), u(!0));
-        let t = await (0, Q.invoke)(`executeDDL`, { query: e });
-        (r(t), h(e, t, `DDL`));
-      } catch (e) {
-        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
-      } finally {
-        u(!1);
-      }
-    },
-    v = async () => {
-      try {
-        (a(``), f(!0));
-        let t = await (0, Q.invoke)(`executeCommand`, { command: e });
-        (r(t), h(e, t, `COMMAND`));
-      } catch (e) {
-        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
-      } finally {
-        f(!1);
-      }
-    },
-    y = (e) =>
-      new Intl.DateTimeFormat(`en-US`, {
-        hour: `2-digit`,
-        minute: `2-digit`,
-        second: `2-digit`,
-        hour12: !1,
-      }).format(e),
-    b = (e) => {
-      switch (e) {
-        case `SQL`:
-          return `#0052CC`;
-        case `DDL`:
-          return `#36B37E`;
-        case `COMMAND`:
-          return `#FF5630`;
-        default:
-          return `#0052CC`;
-      }
-    };
-  return (0, $.jsxs)(`div`, {
-    style: { padding: `20px`, maxWidth: `800px`, margin: `0 auto` },
-    children: [
-      (0, $.jsx)(`h1`, { children: `SQL Query Executor` }),
-      (0, $.jsxs)(`div`, {
-        style: { marginBottom: `20px` },
-        children: [
-          (0, $.jsx)(`textarea`, {
-            value: e,
-            onChange: (e) => t(e.target.value),
-            placeholder: `Enter your SQL query here...`,
-            style: {
-              width: `100%`,
-              minHeight: `150px`,
-              padding: `10px`,
-              marginBottom: `10px`,
-              fontFamily: `monospace`,
-              fontSize: `14px`,
-            },
-          }),
-          (0, $.jsxs)(`div`, {
-            style: { display: `flex`, gap: `10px` },
-            children: [
-              (0, $.jsx)(`button`, {
-                onClick: g,
-                disabled: o || l || d,
-                style: {
-                  padding: `10px 20px`,
-                  backgroundColor: o ? `#0052CC80` : `#0052CC`,
-                  color: `white`,
-                  border: `none`,
-                  borderRadius: `3px`,
-                  cursor: o ? `not-allowed` : `pointer`,
-                  display: `flex`,
-                  alignItems: `center`,
-                  gap: `8px`,
-                },
-                children: o
-                  ? (0, $.jsxs)($.Fragment, {
-                      children: [
-                        (0, $.jsx)(`div`, {
-                          style: {
-                            width: `16px`,
-                            height: `16px`,
-                            border: `2px solid #ffffff`,
-                            borderTop: `2px solid transparent`,
-                            borderRadius: `50%`,
-                            animation: `spin 1s linear infinite`,
-                          },
-                        }),
-                        `Executing...`,
-                      ],
-                    })
-                  : `Execute Query`,
-              }),
-              (0, $.jsx)(`button`, {
-                onClick: _,
-                disabled: o || l || d,
-                style: {
-                  padding: `10px 20px`,
-                  backgroundColor: l ? `#36B37E80` : `#36B37E`,
-                  color: `white`,
-                  border: `none`,
-                  borderRadius: `3px`,
-                  cursor: l ? `not-allowed` : `pointer`,
-                  display: `flex`,
-                  alignItems: `center`,
-                  gap: `8px`,
-                },
-                children: l
-                  ? (0, $.jsxs)($.Fragment, {
-                      children: [
-                        (0, $.jsx)(`div`, {
-                          style: {
-                            width: `16px`,
-                            height: `16px`,
-                            border: `2px solid #ffffff`,
-                            borderTop: `2px solid transparent`,
-                            borderRadius: `50%`,
-                            animation: `spin 1s linear infinite`,
-                          },
-                        }),
-                        `Executing...`,
-                      ],
-                    })
-                  : `Execute DDL`,
-              }),
-              (0, $.jsx)(`button`, {
-                onClick: v,
-                disabled: o || l || d,
-                style: {
-                  padding: `10px 20px`,
-                  backgroundColor: d ? `#FF563080` : `#FF5630`,
-                  color: `white`,
-                  border: `none`,
-                  borderRadius: `3px`,
-                  cursor: d ? `not-allowed` : `pointer`,
-                  display: `flex`,
-                  alignItems: `center`,
-                  gap: `8px`,
-                },
-                children: d
-                  ? (0, $.jsxs)($.Fragment, {
-                      children: [
-                        (0, $.jsx)(`div`, {
-                          style: {
-                            width: `16px`,
-                            height: `16px`,
-                            border: `2px solid #ffffff`,
-                            borderTop: `2px solid transparent`,
-                            borderRadius: `50%`,
-                            animation: `spin 1s linear infinite`,
-                          },
-                        }),
-                        `Executing...`,
-                      ],
-                    })
-                  : `Execute Command`,
-              }),
-            ],
-          }),
-        ],
-      }),
-      i &&
-        (0, $.jsx)(`div`, {
-          style: {
-            padding: `10px`,
-            backgroundColor: `#FFEBE6`,
-            border: `1px solid #DE350B`,
-            borderRadius: `3px`,
-            marginBottom: `20px`,
-            color: `#DE350B`,
-          },
-          children: i,
+  $ = Rt(),
+  zt = () => {
+    let [e, t] = (0, c.useState)(null),
+      [n, r] = (0, c.useState)(null),
+      [i, a] = (0, c.useState)(!1),
+      [o, s] = (0, c.useState)(null),
+      [l, u] = (0, c.useState)(null),
+      [d, f] = (0, c.useState)(null),
+      [p, m] = (0, c.useState)(null),
+      [h, g] = (0, c.useState)({ userName: ``, product: `` }),
+      _ = async (e) => {
+        (a(!0), s(null));
+        try {
+          t(await (0, Q.invoke)(`fetch`, { action: e }));
+        } catch (e) {
+          s(e instanceof Error ? e.message : `Unknown error occurred`);
+        } finally {
+          a(!1);
+        }
+      };
+    return (0, $.jsxs)(`div`, {
+      style: {
+        padding: `20px`,
+        fontFamily: `Arial, sans-serif`,
+        maxWidth: `1200px`,
+        margin: `0 auto`,
+      },
+      children: [
+        (0, $.jsx)(`h1`, {
+          style: { color: `#0052CC`, marginBottom: `30px` },
+          children: `🚀 Forge SQL ORM Cache Demo`,
         }),
-      n &&
         (0, $.jsxs)(`div`, {
+          style: {
+            padding: `20px`,
+            backgroundColor: `#F4F5F7`,
+            borderRadius: `8px`,
+            marginBottom: `30px`,
+          },
           children: [
-            (0, $.jsx)(`h3`, { children: `Result:` }),
-            (0, $.jsx)(`pre`, {
-              style: {
-                backgroundColor: `#F4F5F7`,
-                padding: `15px`,
-                borderRadius: `3px`,
-                overflow: `auto`,
-                maxHeight: `400px`,
-              },
-              children: n,
+            (0, $.jsx)(`h3`, {
+              style: { color: `#172B4D`, marginBottom: `15px` },
+              children: `How it works:`,
+            }),
+            (0, $.jsxs)(`ul`, {
+              style: { color: `#6B778C`, lineHeight: `1.6` },
+              children: [
+                (0, $.jsxs)(`li`, {
+                  children: [
+                    (0, $.jsx)(`strong`, { children: `Non-Cached Query:` }),
+                    ` Executes a fresh query with 1-second sleep every time`,
+                  ],
+                }),
+                (0, $.jsxs)(`li`, {
+                  children: [
+                    (0, $.jsx)(`strong`, { children: `Cached Query:` }),
+                    ` Uses global cache - first execution takes time, subsequent calls are instant`,
+                  ],
+                }),
+                (0, $.jsxs)(`li`, {
+                  children: [
+                    (0, $.jsx)(`strong`, { children: `Timeout:` }),
+                    ` Tests query timeout behavior with 10-second sleep`,
+                  ],
+                }),
+                (0, $.jsxs)(`li`, {
+                  children: [
+                    (0, $.jsx)(`strong`, { children: `Out of Memory:` }),
+                    ` Tests memory limit with large data operations`,
+                  ],
+                }),
+                (0, $.jsxs)(`li`, {
+                  children: [
+                    (0, $.jsx)(`strong`, { children: `Add User & Order:` }),
+                    ` Uses `,
+                    (0, $.jsx)(`code`, { children: `executeWithCacheContext` }),
+                    ` to automatically clear cache after operations`,
+                  ],
+                }),
+                (0, $.jsxs)(`li`, {
+                  children: [
+                    (0, $.jsx)(`strong`, { children: `Cache Management:` }),
+                    ` Clear cache manually or run performance analysis`,
+                  ],
+                }),
+              ],
             }),
           ],
         }),
-      p.length > 0 &&
         (0, $.jsxs)(`div`, {
-          style: { marginTop: `30px` },
+          style: {
+            marginBottom: `40px`,
+            padding: `20px`,
+            border: `1px solid #ddd`,
+            borderRadius: `8px`,
+          },
           children: [
-            (0, $.jsx)(`h2`, { children: `Query History` }),
-            (0, $.jsx)(`div`, {
-              style: { display: `flex`, flexDirection: `column`, gap: `20px` },
-              children: p.map((e) =>
-                (0, $.jsxs)(
-                  `div`,
-                  {
-                    style: { border: `1px solid #DFE1E6`, borderRadius: `3px`, overflow: `hidden` },
+            (0, $.jsx)(`h2`, {
+              style: { color: `#172B4D`, marginBottom: `20px` },
+              children: `Query Performance Test`,
+            }),
+            (0, $.jsx)(`p`, {
+              style: { color: `#6B778C`, marginBottom: `20px` },
+              children: `Test the difference between cached and non-cached queries. Both queries include a 1-second sleep to demonstrate the performance difference.`,
+            }),
+            (0, $.jsxs)(`div`, {
+              style: {
+                display: `grid`,
+                gridTemplateColumns: `repeat(auto-fit, minmax(160px, 1fr))`,
+                gap: `10px`,
+                marginBottom: `20px`,
+              },
+              children: [
+                (0, $.jsx)(`button`, {
+                  onClick: () => _(`slow`),
+                  disabled: i,
+                  style: {
+                    padding: `10px 20px`,
+                    backgroundColor: `#FF5630`,
+                    color: `white`,
+                    border: `none`,
+                    borderRadius: `4px`,
+                    cursor: i ? `not-allowed` : `pointer`,
+                    opacity: i ? 0.6 : 1,
+                  },
+                  children: i ? `Loading...` : `🚫 Non-Cached`,
+                }),
+                (0, $.jsx)(`button`, {
+                  onClick: () => _(`cacheable`),
+                  disabled: i,
+                  style: {
+                    padding: `10px 20px`,
+                    backgroundColor: `#36B37E`,
+                    color: `white`,
+                    border: `none`,
+                    borderRadius: `4px`,
+                    cursor: i ? `not-allowed` : `pointer`,
+                    opacity: i ? 0.6 : 1,
+                  },
+                  children: i ? `Loading...` : `✅ Cached`,
+                }),
+                (0, $.jsx)(`button`, {
+                  onClick: () => _(`timeout`),
+                  disabled: i,
+                  style: {
+                    padding: `10px 20px`,
+                    backgroundColor: `#FF8B00`,
+                    color: `white`,
+                    border: `none`,
+                    borderRadius: `4px`,
+                    cursor: i ? `not-allowed` : `pointer`,
+                    opacity: i ? 0.6 : 1,
+                  },
+                  children: i ? `Loading...` : `⏱️ Timeout`,
+                }),
+                (0, $.jsx)(`button`, {
+                  onClick: () => _(`outOfMemory`),
+                  disabled: i,
+                  style: {
+                    padding: `10px 20px`,
+                    backgroundColor: `#C43E37`,
+                    color: `white`,
+                    border: `none`,
+                    borderRadius: `4px`,
+                    cursor: i ? `not-allowed` : `pointer`,
+                    opacity: i ? 0.6 : 1,
+                  },
+                  children: i ? `Loading...` : `💥 Out of Memory`,
+                }),
+              ],
+            }),
+            o &&
+              (0, $.jsxs)(`div`, {
+                style: {
+                  padding: `15px`,
+                  backgroundColor: `#FFEBEE`,
+                  border: `1px solid #FFCDD2`,
+                  borderRadius: `4px`,
+                  color: `#C62828`,
+                  marginBottom: `20px`,
+                },
+                children: [(0, $.jsx)(`strong`, { children: `Error:` }), ` `, o],
+              }),
+            e &&
+              !o &&
+              (0, $.jsxs)(`div`, {
+                style: {
+                  padding: `15px`,
+                  backgroundColor: `#F4F5F7`,
+                  borderRadius: `4px`,
+                  marginTop: `10px`,
+                },
+                children: [
+                  (0, $.jsxs)(`h3`, {
+                    style: { margin: `0 0 10px 0`, color: `#172B4D` },
+                    children: [`Query Results (`, e.times, `ms)`],
+                  }),
+                  (0, $.jsxs)(`div`, {
+                    style: { fontSize: `14px`, color: `#6B778C`, marginBottom: `10px` },
+                    children: [`Found `, e.rows.length, ` records`],
+                  }),
+                  (0, $.jsx)(`div`, {
+                    style: { maxHeight: `200px`, overflowY: `auto` },
+                    children: (0, $.jsxs)(`table`, {
+                      style: { width: `100%`, borderCollapse: `collapse` },
+                      children: [
+                        (0, $.jsx)(`thead`, {
+                          children: (0, $.jsxs)(`tr`, {
+                            style: { backgroundColor: `#E9ECF0` },
+                            children: [
+                              (0, $.jsx)(`th`, {
+                                style: {
+                                  padding: `8px`,
+                                  textAlign: `left`,
+                                  border: `1px solid #ddd`,
+                                },
+                                children: `User ID`,
+                              }),
+                              (0, $.jsx)(`th`, {
+                                style: {
+                                  padding: `8px`,
+                                  textAlign: `left`,
+                                  border: `1px solid #ddd`,
+                                },
+                                children: `User Name`,
+                              }),
+                              (0, $.jsx)(`th`, {
+                                style: {
+                                  padding: `8px`,
+                                  textAlign: `left`,
+                                  border: `1px solid #ddd`,
+                                },
+                                children: `Product`,
+                              }),
+                              (0, $.jsx)(`th`, {
+                                style: {
+                                  padding: `8px`,
+                                  textAlign: `left`,
+                                  border: `1px solid #ddd`,
+                                },
+                                children: `Product ID`,
+                              }),
+                            ],
+                          }),
+                        }),
+                        (0, $.jsx)(`tbody`, {
+                          children: e.rows.map((e, t) =>
+                            (0, $.jsxs)(
+                              `tr`,
+                              {
+                                children: [
+                                  (0, $.jsx)(`td`, {
+                                    style: { padding: `8px`, border: `1px solid #ddd` },
+                                    children: e.userId,
+                                  }),
+                                  (0, $.jsx)(`td`, {
+                                    style: { padding: `8px`, border: `1px solid #ddd` },
+                                    children: e.userName,
+                                  }),
+                                  (0, $.jsx)(`td`, {
+                                    style: { padding: `8px`, border: `1px solid #ddd` },
+                                    children: e.product || `N/A`,
+                                  }),
+                                  (0, $.jsx)(`td`, {
+                                    style: { padding: `8px`, border: `1px solid #ddd` },
+                                    children: e.productId || `N/A`,
+                                  }),
+                                ],
+                              },
+                              t,
+                            ),
+                          ),
+                        }),
+                      ],
+                    }),
+                  }),
+                ],
+              }),
+          ],
+        }),
+        (0, $.jsxs)(`div`, {
+          style: {
+            marginBottom: `40px`,
+            padding: `20px`,
+            border: `1px solid #ddd`,
+            borderRadius: `8px`,
+          },
+          children: [
+            (0, $.jsx)(`h2`, {
+              style: { color: `#172B4D`, marginBottom: `20px` },
+              children: `Add User & Order`,
+            }),
+            (0, $.jsx)(`p`, {
+              style: { color: `#6B778C`, marginBottom: `20px` },
+              children: `Add a new user and order. User ID and Product ID are optional - they will be auto-generated if not provided. The system will automatically match existing users and clear cache after operations.`,
+            }),
+            (0, $.jsxs)(`div`, {
+              style: {
+                display: `grid`,
+                gridTemplateColumns: `1fr 1fr`,
+                gap: `15px`,
+                marginBottom: `20px`,
+              },
+              children: [
+                (0, $.jsxs)(`div`, {
+                  children: [
+                    (0, $.jsx)(`label`, {
+                      style: {
+                        display: `block`,
+                        marginBottom: `5px`,
+                        fontWeight: `bold`,
+                        color: `#172B4D`,
+                      },
+                      children: `User ID (optional):`,
+                    }),
+                    (0, $.jsx)(`input`, {
+                      type: `number`,
+                      value: h.userId || ``,
+                      onChange: (e) =>
+                        g({ ...h, userId: e.target.value ? parseInt(e.target.value) : void 0 }),
+                      placeholder: `Leave empty for auto-generated`,
+                      style: {
+                        width: `100%`,
+                        padding: `8px`,
+                        border: `1px solid #ddd`,
+                        borderRadius: `4px`,
+                        fontSize: `14px`,
+                      },
+                    }),
+                  ],
+                }),
+                (0, $.jsxs)(`div`, {
+                  children: [
+                    (0, $.jsx)(`label`, {
+                      style: {
+                        display: `block`,
+                        marginBottom: `5px`,
+                        fontWeight: `bold`,
+                        color: `#172B4D`,
+                      },
+                      children: `User Name:`,
+                    }),
+                    (0, $.jsx)(`input`, {
+                      type: `text`,
+                      value: h.userName,
+                      onChange: (e) => g({ ...h, userName: e.target.value }),
+                      placeholder: `Enter user name`,
+                      style: {
+                        width: `100%`,
+                        padding: `8px`,
+                        border: `1px solid #ddd`,
+                        borderRadius: `4px`,
+                        fontSize: `14px`,
+                      },
+                    }),
+                  ],
+                }),
+                (0, $.jsxs)(`div`, {
+                  children: [
+                    (0, $.jsx)(`label`, {
+                      style: {
+                        display: `block`,
+                        marginBottom: `5px`,
+                        fontWeight: `bold`,
+                        color: `#172B4D`,
+                      },
+                      children: `Product ID (optional):`,
+                    }),
+                    (0, $.jsx)(`input`, {
+                      type: `number`,
+                      value: h.productId || ``,
+                      onChange: (e) =>
+                        g({ ...h, productId: e.target.value ? parseInt(e.target.value) : void 0 }),
+                      placeholder: `Leave empty for auto-generated`,
+                      style: {
+                        width: `100%`,
+                        padding: `8px`,
+                        border: `1px solid #ddd`,
+                        borderRadius: `4px`,
+                        fontSize: `14px`,
+                      },
+                    }),
+                  ],
+                }),
+                (0, $.jsxs)(`div`, {
+                  children: [
+                    (0, $.jsx)(`label`, {
+                      style: {
+                        display: `block`,
+                        marginBottom: `5px`,
+                        fontWeight: `bold`,
+                        color: `#172B4D`,
+                      },
+                      children: `Product:`,
+                    }),
+                    (0, $.jsx)(`input`, {
+                      type: `text`,
+                      value: h.product,
+                      onChange: (e) => g({ ...h, product: e.target.value }),
+                      placeholder: `Enter product name`,
+                      style: {
+                        width: `100%`,
+                        padding: `8px`,
+                        border: `1px solid #ddd`,
+                        borderRadius: `4px`,
+                        fontSize: `14px`,
+                      },
+                    }),
+                  ],
+                }),
+              ],
+            }),
+            (0, $.jsx)(`button`, {
+              onClick: async () => {
+                if (!h.userName.trim() || !h.product.trim()) {
+                  u(`Please fill in all fields`);
+                  return;
+                }
+                (a(!0), u(null));
+                try {
+                  (await (0, Q.invoke)(`insertUserOrOrder`, h),
+                    u(null),
+                    g({ userName: ``, product: `` }));
+                } catch (e) {
+                  u(e instanceof Error ? e.message : `Failed to insert user/order`);
+                } finally {
+                  a(!1);
+                }
+              },
+              disabled: i,
+              style: {
+                padding: `12px 24px`,
+                backgroundColor: `#0052CC`,
+                color: `white`,
+                border: `none`,
+                borderRadius: `4px`,
+                cursor: i ? `not-allowed` : `pointer`,
+                opacity: i ? 0.6 : 1,
+                fontSize: `16px`,
+                fontWeight: `bold`,
+              },
+              children: i ? `Processing...` : `➕ Add User & Order`,
+            }),
+            l &&
+              (0, $.jsxs)(`div`, {
+                style: {
+                  padding: `15px`,
+                  backgroundColor: `#FFEBEE`,
+                  border: `1px solid #FFCDD2`,
+                  borderRadius: `4px`,
+                  color: `#C62828`,
+                  marginTop: `15px`,
+                },
+                children: [(0, $.jsx)(`strong`, { children: `Error:` }), ` `, l],
+              }),
+          ],
+        }),
+        (0, $.jsxs)(`div`, {
+          style: {
+            marginBottom: `40px`,
+            padding: `20px`,
+            border: `1px solid #ddd`,
+            borderRadius: `8px`,
+          },
+          children: [
+            (0, $.jsx)(`h2`, {
+              style: { color: `#172B4D`, marginBottom: `20px` },
+              children: `Cache Management`,
+            }),
+            (0, $.jsx)(`p`, {
+              style: { color: `#6B778C`, marginBottom: `20px` },
+              children: `Manage the cache and run performance analysis.`,
+            }),
+            (0, $.jsxs)(`div`, {
+              style: { display: `flex`, gap: `10px`, marginBottom: `15px` },
+              children: [
+                (0, $.jsx)(`button`, {
+                  onClick: async () => {
+                    (a(!0), f(null));
+                    try {
+                      (await (0, Q.invoke)(`clearCache`), f(null));
+                    } catch (e) {
+                      f(e instanceof Error ? e.message : `Failed to clear cache`);
+                    } finally {
+                      a(!1);
+                    }
+                  },
+                  disabled: i,
+                  style: {
+                    padding: `10px 20px`,
+                    backgroundColor: `#FF5630`,
+                    color: `white`,
+                    border: `none`,
+                    borderRadius: `4px`,
+                    cursor: i ? `not-allowed` : `pointer`,
+                    opacity: i ? 0.6 : 1,
+                  },
+                  children: i ? `Loading...` : `🗑️ Clear Cache`,
+                }),
+                (0, $.jsx)(`button`, {
+                  onClick: async () => {
+                    (a(!0), m(null));
+                    try {
+                      (r((await (0, Q.invoke)(`runPerformanceAnalyze`))?.DML), m(null));
+                    } catch (e) {
+                      m(e instanceof Error ? e.message : `Failed to run performance analysis`);
+                    } finally {
+                      a(!1);
+                    }
+                  },
+                  disabled: i,
+                  style: {
+                    padding: `10px 20px`,
+                    backgroundColor: `#FF8B00`,
+                    color: `white`,
+                    border: `none`,
+                    borderRadius: `4px`,
+                    cursor: i ? `not-allowed` : `pointer`,
+                    opacity: i ? 0.6 : 1,
+                  },
+                  children: i ? `Loading...` : `📊 Run Performance Analysis`,
+                }),
+              ],
+            }),
+            d &&
+              (0, $.jsxs)(`div`, {
+                style: {
+                  padding: `15px`,
+                  backgroundColor: `#FFEBEE`,
+                  border: `1px solid #FFCDD2`,
+                  borderRadius: `4px`,
+                  color: `#C62828`,
+                  marginBottom: `15px`,
+                },
+                children: [(0, $.jsx)(`strong`, { children: `Error:` }), ` `, d],
+              }),
+            p &&
+              (0, $.jsxs)(`div`, {
+                style: {
+                  padding: `15px`,
+                  backgroundColor: `#FFEBEE`,
+                  border: `1px solid #FFCDD2`,
+                  borderRadius: `4px`,
+                  color: `#C62828`,
+                  marginBottom: `15px`,
+                },
+                children: [(0, $.jsx)(`strong`, { children: `Error:` }), ` `, p],
+              }),
+          ],
+        }),
+        n &&
+          !p &&
+          (0, $.jsxs)(`div`, {
+            style: {
+              marginBottom: `40px`,
+              padding: `20px`,
+              border: `1px solid #ddd`,
+              borderRadius: `8px`,
+            },
+            children: [
+              (0, $.jsx)(`h2`, {
+                style: { color: `#172B4D`, marginBottom: `20px` },
+                children: `Performance Analysis Results`,
+              }),
+              (0, $.jsxs)(`div`, {
+                style: {
+                  padding: `15px`,
+                  backgroundColor: `#F4F5F7`,
+                  borderRadius: `4px`,
+                  marginBottom: `20px`,
+                },
+                children: [
+                  (0, $.jsxs)(`div`, {
+                    style: {
+                      display: `grid`,
+                      gridTemplateColumns: `repeat(auto-fit, minmax(200px, 1fr))`,
+                      gap: `15px`,
+                      marginBottom: `20px`,
+                    },
                     children: [
                       (0, $.jsxs)(`div`, {
-                        style: {
-                          padding: `10px`,
-                          backgroundColor: b(e.type),
-                          color: `white`,
-                          display: `flex`,
-                          justifyContent: `space-between`,
-                          alignItems: `center`,
-                        },
+                        children: [(0, $.jsx)(`strong`, { children: `Window:` }), ` `, n.window],
+                      }),
+                      (0, $.jsxs)(`div`, {
+                        children: [(0, $.jsx)(`strong`, { children: `Top Queries:` }), ` `, n.top],
+                      }),
+                      (0, $.jsxs)(`div`, {
                         children: [
-                          (0, $.jsxs)(`span`, {
-                            style: { fontWeight: `bold` },
-                            children: [e.type, ` Query`],
-                          }),
-                          (0, $.jsx)(`span`, { children: y(e.timestamp) }),
+                          (0, $.jsx)(`strong`, { children: `Latency Threshold:` }),
+                          ` `,
+                          n.warnThresholdMs,
+                          `ms`,
                         ],
                       }),
                       (0, $.jsxs)(`div`, {
-                        style: { padding: `15px` },
                         children: [
-                          (0, $.jsxs)(`div`, {
-                            style: { marginBottom: `10px` },
-                            children: [
-                              (0, $.jsx)(`h4`, {
-                                style: { margin: `0 0 5px 0` },
-                                children: `Query:`,
-                              }),
-                              (0, $.jsx)(`pre`, {
-                                style: {
-                                  backgroundColor: `#F4F5F7`,
-                                  padding: `10px`,
-                                  borderRadius: `3px`,
-                                  margin: 0,
-                                  overflow: `auto`,
-                                  maxHeight: `200px`,
-                                },
-                                children: e.query,
-                              }),
-                            ],
-                          }),
-                          (0, $.jsxs)(`div`, {
-                            children: [
-                              (0, $.jsx)(`h4`, {
-                                style: { margin: `0 0 5px 0` },
-                                children: `Result:`,
-                              }),
-                              (0, $.jsx)(`pre`, {
-                                style: {
-                                  backgroundColor: `#F4F5F7`,
-                                  padding: `10px`,
-                                  borderRadius: `3px`,
-                                  margin: 0,
-                                  overflow: `auto`,
-                                  maxHeight: `200px`,
-                                },
-                                children: e.result,
-                              }),
-                            ],
-                          }),
+                          (0, $.jsx)(`strong`, { children: `Memory Threshold:` }),
+                          ` `,
+                          (n.memoryThresholdBytes / 1024 / 1024).toFixed(1),
+                          `MB`,
+                        ],
+                      }),
+                      (0, $.jsxs)(`div`, {
+                        children: [
+                          (0, $.jsx)(`strong`, { children: `Generated:` }),
+                          ` `,
+                          new Date(n.generatedAt).toLocaleString(),
                         ],
                       }),
                     ],
-                  },
-                  e.id,
-                ),
-              ),
-            }),
-          ],
-        }),
-      (0, $.jsx)(`style`, {
-        children: `
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `,
-      }),
-    ],
-  });
-}
-var Bt = (0, o().createRoot)(document.getElementById(`root`)),
+                  }),
+                  n.rows.length > 0
+                    ? (0, $.jsxs)(`div`, {
+                        children: [
+                          (0, $.jsxs)(`h3`, {
+                            style: { margin: `0 0 15px 0`, color: `#172B4D` },
+                            children: [`Slow Queries Found (`, n.rows.length, `)`],
+                          }),
+                          n.rows.map((e, t) =>
+                            (0, $.jsxs)(
+                              `div`,
+                              {
+                                style: {
+                                  marginBottom: `20px`,
+                                  padding: `15px`,
+                                  backgroundColor: `#FFF2CC`,
+                                  border: `1px solid #FFD700`,
+                                  borderRadius: `4px`,
+                                },
+                                children: [
+                                  (0, $.jsxs)(`div`, {
+                                    style: {
+                                      display: `grid`,
+                                      gridTemplateColumns: `repeat(auto-fit, minmax(150px, 1fr))`,
+                                      gap: `10px`,
+                                      marginBottom: `15px`,
+                                    },
+                                    children: [
+                                      (0, $.jsxs)(`div`, {
+                                        children: [
+                                          (0, $.jsx)(`strong`, { children: `Rank:` }),
+                                          ` `,
+                                          e.rank,
+                                        ],
+                                      }),
+                                      (0, $.jsxs)(`div`, {
+                                        children: [
+                                          (0, $.jsx)(`strong`, { children: `Type:` }),
+                                          ` `,
+                                          e.stmtType,
+                                        ],
+                                      }),
+                                      (0, $.jsxs)(`div`, {
+                                        children: [
+                                          (0, $.jsx)(`strong`, { children: `Executions:` }),
+                                          ` `,
+                                          e.execCount,
+                                        ],
+                                      }),
+                                      (0, $.jsxs)(`div`, {
+                                        children: [
+                                          (0, $.jsx)(`strong`, { children: `Avg Latency:` }),
+                                          ` `,
+                                          e.avgLatencyMs.toFixed(2),
+                                          `ms`,
+                                        ],
+                                      }),
+                                      (0, $.jsxs)(`div`, {
+                                        children: [
+                                          (0, $.jsx)(`strong`, { children: `Max Latency:` }),
+                                          ` `,
+                                          e.maxLatencyMs.toFixed(2),
+                                          `ms`,
+                                        ],
+                                      }),
+                                      (0, $.jsxs)(`div`, {
+                                        children: [
+                                          (0, $.jsx)(`strong`, { children: `Avg Memory:` }),
+                                          ` `,
+                                          e.avgMemMB.toFixed(2),
+                                          `MB`,
+                                        ],
+                                      }),
+                                      (0, $.jsxs)(`div`, {
+                                        children: [
+                                          (0, $.jsx)(`strong`, { children: `Max Memory:` }),
+                                          ` `,
+                                          e.maxMemMB.toFixed(2),
+                                          `MB`,
+                                        ],
+                                      }),
+                                      (0, $.jsxs)(`div`, {
+                                        children: [
+                                          (0, $.jsx)(`strong`, { children: `Plan Cache:` }),
+                                          ` `,
+                                          e.planInCache ? `Yes` : `No`,
+                                        ],
+                                      }),
+                                    ],
+                                  }),
+                                  (0, $.jsxs)(`div`, {
+                                    style: { marginBottom: `10px` },
+                                    children: [
+                                      (0, $.jsx)(`strong`, { children: `SQL Query:` }),
+                                      (0, $.jsx)(`pre`, {
+                                        style: {
+                                          backgroundColor: `#F8F9FA`,
+                                          padding: `10px`,
+                                          borderRadius: `4px`,
+                                          fontSize: `12px`,
+                                          overflow: `auto`,
+                                          marginTop: `5px`,
+                                        },
+                                        children: e.digestText,
+                                      }),
+                                    ],
+                                  }),
+                                  (0, $.jsxs)(`details`, {
+                                    style: { marginTop: `10px` },
+                                    children: [
+                                      (0, $.jsx)(`summary`, {
+                                        style: {
+                                          cursor: `pointer`,
+                                          fontWeight: `bold`,
+                                          color: `#0052CC`,
+                                        },
+                                        children: `View Execution Plan`,
+                                      }),
+                                      (0, $.jsx)(`pre`, {
+                                        style: {
+                                          backgroundColor: `#F8F9FA`,
+                                          padding: `10px`,
+                                          borderRadius: `4px`,
+                                          fontSize: `11px`,
+                                          overflow: `auto`,
+                                          marginTop: `10px`,
+                                          whiteSpace: `pre-wrap`,
+                                        },
+                                        children: e.plan,
+                                      }),
+                                    ],
+                                  }),
+                                ],
+                              },
+                              t,
+                            ),
+                          ),
+                        ],
+                      })
+                    : (0, $.jsxs)(`div`, {
+                        style: {
+                          padding: `20px`,
+                          textAlign: `center`,
+                          color: `#36B37E`,
+                          backgroundColor: `#E8F5E8`,
+                          borderRadius: `4px`,
+                        },
+                        children: [
+                          (0, $.jsx)(`strong`, { children: `✅ No slow queries found!` }),
+                          (0, $.jsx)(`br`, {}),
+                          `All queries are performing within the specified thresholds.`,
+                        ],
+                      }),
+                ],
+              }),
+            ],
+          }),
+      ],
+    });
+  },
+  Bt = (0, o().createRoot)(document.getElementById(`root`)),
   Vt = () => {
-    Bt.render((0, $.jsx)(zt, {}));
+    Bt.render((0, $.jsx)(c.StrictMode, { children: (0, $.jsx)(zt, {}) }));
   };
 Q.view.theme
   .enable()

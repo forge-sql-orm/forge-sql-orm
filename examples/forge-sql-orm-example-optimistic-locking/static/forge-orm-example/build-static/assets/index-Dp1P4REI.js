@@ -5,10 +5,10 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-DBsnqs9N.js",
       "./rolldown-runtime-COnpUsM8.js",
-      "./custom-theme-CD_MNKQ3.js",
+      "./custom-theme-CtseM2jg.js",
       "./wrapNativeSuper-DbbKRv4Y.js",
-      "./client-core-vendor-DolUFhPG.js",
-      "./body-YuoHHnpx.js",
+      "./client-core-vendor-Dwy05fxb.js",
+      "./body-D3H2nddS.js",
       "./react-dom-vendor-CmKAYmuF.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -33,7 +33,7 @@ import {
   t as S,
   u as C,
 } from "./wrapNativeSuper-DbbKRv4Y.js";
-import { t as w } from "./client-core-vendor-DolUFhPG.js";
+import { t as w } from "./client-core-vendor-Dwy05fxb.js";
 (function () {
   let e = document.createElement(`link`).relList;
   if (e && e.supports && e.supports(`modulepreload`)) return;
@@ -1142,8 +1142,7 @@ var we,
           r = atob(n),
           i = Array(r.length);
         for (let e = 0; e < r.length; e++) i[e] = r.charCodeAt(e);
-        let a = new Uint8Array(i);
-        return new Blob([a], { type: t });
+        return new Blob([new Uint8Array(i)], { type: t });
       }),
       (e.blobToBase64 = (e) =>
         new Promise((t, n) => {
@@ -2608,8 +2607,7 @@ var we,
         let n = atob(e),
           r = Array(n.length);
         for (let e = 0; e < n.length; e++) r[e] = n.charCodeAt(e);
-        let i = new Uint8Array(r);
-        return new Blob([i], { type: t || `application/octet-stream` });
+        return new Blob([new Uint8Array(r)], { type: t || `application/octet-stream` });
       },
       o = async (e) => {
         let t = e.size,
@@ -3084,9 +3082,7 @@ function Rn(e) {
   return e != null && Object.prototype.toString.call(e) === `[object Map]`;
 }
 function zn(e) {
-  var t = Object.getPrototypeOf(e),
-    n = Object.getPrototypeOf(t);
-  return Object.getPrototypeOf(n) === null;
+  return Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(e))) === null;
 }
 function Bn(e) {
   return e != null && Object.prototype.toString.call(e) === `[object Set]`;
@@ -6660,7 +6656,7 @@ function Zs(e) {
     i = T.useRef(qs({}, r, n)).current;
   return T.createElement(Xs.Provider, { value: i }, t);
 }
-if (((Zs.displayName = `MobXProvider`), Number.parseInt(`18.3.1`.split(`.`)[0]), !T.Component))
+if (((Zs.displayName = `MobXProvider`), `18.3.1`.split(`.`)[0], !T.Component))
   throw Error(`mobx-react requires React to be available`);
 if (!R) throw Error(`mobx-react requires mobx to be available`);
 function Qs(e, t, n, r) {
@@ -14475,7 +14471,7 @@ var Cm = (function () {
                                       return (
                                         (e.next = 2),
                                         ct(
-                                          () => import(`./custom-theme-CD_MNKQ3.js`),
+                                          () => import(`./custom-theme-CtseM2jg.js`),
                                           __vite__mapDeps([2, 3, 4, 1]),
                                           import.meta.url,
                                         )
@@ -16049,7 +16045,7 @@ var Fg = function (e) {
       )
     );
   });
-e(dg());
+dg();
 var Hg = function (e, t) {
   var n = arguments;
   if (t == null || !Lg.call(t, `css`)) return T.createElement.apply(void 0, n);
@@ -16540,7 +16536,7 @@ var j_ = {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `23.10.2`,
         analyticsData: n,
       }),
       le = (0, T.useCallback)(
@@ -20429,7 +20425,7 @@ var ES = function (e) {
   },
   DS = (0, T.lazy)(function () {
     return ct(
-      () => import(`./body-YuoHHnpx.js`),
+      () => import(`./body-D3H2nddS.js`),
       __vite__mapDeps([5, 1, 3, 6, 7]),
       import.meta.url,
     );
@@ -20722,8 +20718,6 @@ var WS =
     loading: `_80om15jw`,
     iconButton: `_4t3iviql _1bsbviql _y4tize3t _bozgze3t`,
     iconButtonCompact: `_4t3i1k8s _1bsb1k8s`,
-    buttonIconBeforeWithHack: `_bozgu2gc`,
-    buttonIconAfterWithHack: `_y4tiu2gc`,
     buttonIconBefore: `_bozgutpp _gy1p12x7`,
     buttonIconAfter: `_y4tiutpp _gy1p12x7`,
     splitButton: `_g0pbb4wl`,
@@ -20871,10 +20865,8 @@ var WS =
             Ae === `compact` && qS.spacingCompact,
             Ae === `compact` && q(`platform-dst-shape-theme-default`) && qS.spacingCompactT26Shape,
             x && qS.fullWidth,
-            _ && !q(`platform-button-icon-spacing-cleanup`) && qS.buttonIconBeforeWithHack,
-            y && !q(`platform-button-icon-spacing-cleanup`) && qS.buttonIconAfterWithHack,
-            _ && q(`platform-button-icon-spacing-cleanup`) && qS.buttonIconBefore,
-            y && q(`platform-button-icon-spacing-cleanup`) && qS.buttonIconAfter,
+            _ && qS.buttonIconBefore,
+            y && qS.buttonIconAfter,
             f && qS.iconButton,
             f && Ae === `compact` && qS.iconButtonCompact,
             c && qS.loading,
@@ -20940,27 +20932,15 @@ var nC = {
     icon: `_1e0c1txw _16jlidpf _1o9zidpf _1wpz1h6o _1wybidpf _vwz4idpf _uiztglyw`,
     common: `_v564g17y`,
     fade: `_tzy4idpf`,
-    beforeIcon: `_1he91b66 _w795v77o`,
-    afterIcon: `_1he9v77o _w7951b66`,
   },
   rC = function (e) {
     var t = e.children,
       n = e.type,
       r = n === void 0 ? `text` : n,
-      i = e.isLoading,
-      a = e.position;
+      i = e.isLoading;
     return T.createElement(
       `span`,
-      {
-        className: J([
-          nC.common,
-          r === `text` && nC.text,
-          r === `icon` && nC.icon,
-          i && nC.fade,
-          !q(`platform-button-icon-spacing-cleanup`) && a === `before` && nC.beforeIcon,
-          !q(`platform-button-icon-spacing-cleanup`) && a === `after` && nC.afterIcon,
-        ]),
-      },
+      { className: J([nC.common, r === `text` && nC.text, r === `icon` && nC.icon, i && nC.fade]) },
       t,
     );
   };
@@ -21450,17 +21430,18 @@ var bC = {
       }),
     );
   },
-  kC = (function (e) {
-    return (
-      (e[(e.WITHOUT_VERSIONING = 0)] = `WITHOUT_VERSIONING`),
-      (e[(e.OPTIMISTIC_NUMBER = 1)] = `OPTIMISTIC_NUMBER`),
-      (e[(e.OPTIMISTIC_DATE = 2)] = `OPTIMISTIC_DATE`),
-      (e[(e.OPTIMISTIC_TIMESTAMP = 3)] = `OPTIMISTIC_TIMESTAMP`),
-      e
-    );
-  })({}),
-  AC = Object.keys(kC).filter((e) => isNaN(Number(e))),
-  jC = ({ children: e, testId: t }) =>
+  kC = Object.keys(
+    (function (e) {
+      return (
+        (e[(e.WITHOUT_VERSIONING = 0)] = `WITHOUT_VERSIONING`),
+        (e[(e.OPTIMISTIC_NUMBER = 1)] = `OPTIMISTIC_NUMBER`),
+        (e[(e.OPTIMISTIC_DATE = 2)] = `OPTIMISTIC_DATE`),
+        (e[(e.OPTIMISTIC_TIMESTAMP = 3)] = `OPTIMISTIC_TIMESTAMP`),
+        e
+      );
+    })({}),
+  ).filter((e) => isNaN(Number(e))),
+  AC = ({ children: e, testId: t }) =>
     (0, $.jsx)(`div`, {
       style: {
         display: `flex`,
@@ -21482,7 +21463,7 @@ var bC = {
       "data-testid": t,
       children: e,
     });
-function MC() {
+function jC() {
   let { stateStore: e } = ic();
   return e.isLoading
     ? `loading....`
@@ -21529,7 +21510,7 @@ function MC() {
               (0, $.jsxs)(OC, {
                 children: [
                   ` `,
-                  AC.map((e) => {
+                  kC.map((e) => {
                     switch (e) {
                       case `WITHOUT_VERSIONING`:
                         return (0, $.jsx)(
@@ -21561,7 +21542,7 @@ function MC() {
               }),
               (0, $.jsx)(EC, { children: (0, $.jsx)($.Fragment, {}) }),
               (0, $.jsx)(EC, {
-                children: (0, $.jsx)(jC, {
+                children: (0, $.jsx)(AC, {
                   children: (0, $.jsxs)(`div`, {
                     children: [
                       (0, $.jsx)(`h2`, { children: `Entity Without Version Column (No Locking)` }),
@@ -21600,7 +21581,7 @@ function MC() {
                 }),
               }),
               (0, $.jsx)(EC, {
-                children: (0, $.jsx)(jC, {
+                children: (0, $.jsx)(AC, {
                   children: (0, $.jsxs)(`div`, {
                     className: `entity-section`,
                     children: [
@@ -21636,7 +21617,7 @@ function MC() {
                 }),
               }),
               (0, $.jsx)(EC, {
-                children: (0, $.jsx)(jC, {
+                children: (0, $.jsx)(AC, {
                   children: (0, $.jsxs)(`div`, {
                     className: `entity-section`,
                     children: [
@@ -21672,7 +21653,7 @@ function MC() {
                 }),
               }),
               (0, $.jsx)(EC, {
-                children: (0, $.jsx)(jC, {
+                children: (0, $.jsx)(AC, {
                   children: (0, $.jsxs)(`div`, {
                     className: `entity-section`,
                     children: [
@@ -21712,8 +21693,8 @@ function MC() {
         ],
       });
 }
-var NC = Ks(MC),
-  PC = Ks((e) => {
+var MC = Ks(jC),
+  NC = Ks((e) => {
     let { stateStore: t } = ic(),
       [n, r] = (0, T.useState)(``),
       [i, a] = (0, T.useState)({}),
@@ -21823,7 +21804,7 @@ var NC = Ks(MC),
       ],
     });
   });
-function FC() {
+function PC() {
   let { stateStore: e } = ic();
   if (
     ((0, T.useEffect)(() => {
@@ -21842,28 +21823,28 @@ function FC() {
     return e.message;
   switch (e.state) {
     case `ROOT`:
-      return (0, $.jsx)(NC, {});
+      return (0, $.jsx)(MC, {});
     case `WITHOUT_VERSIONING`:
     case `OPTIMISTIC_TIMESTAMP`:
     case `OPTIMISTIC_DATE`:
     case `OPTIMISTIC_NUMBER`:
-      return (0, $.jsx)(PC, { type: e.state });
+      return (0, $.jsx)(NC, { type: e.state });
     default:
       return (0, $.jsxs)(`div`, { children: [`ERROR: unsupprted state $`, e.state] });
   }
 }
-var IC = Ks(FC),
-  LC = (0, s().createRoot)(document.getElementById(`root`)),
-  RC = () => {
-    LC.render((0, $.jsx)(Zs, { ...nc, children: (0, $.jsx)(IC, {}) }));
+var FC = Ks(PC),
+  IC = (0, s().createRoot)(document.getElementById(`root`)),
+  LC = () => {
+    IC.render((0, $.jsx)(Zs, { ...nc, children: (0, $.jsx)(FC, {}) }));
   };
 gn.view.theme
   .enable()
   .then(() => {
-    RC();
+    LC();
   })
   .catch((e) => {
-    (console.error(e.message), RC());
+    (console.error(e.message), LC());
   });
 export {
   Y as C,

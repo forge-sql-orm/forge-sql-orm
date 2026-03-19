@@ -1758,6 +1758,9 @@ button {
 ._1s37ze3t:first-of-type {
   padding-inline-start: var(--ds-space-0, 0);
 }
+._bozgu2gc {
+  padding-inline-start: var(--ds-space-100, 8px);
+}
 ._syaz12fi {
   color: var(--_17ckjys);
 }
@@ -1766,6 +1769,9 @@ button {
 }
 ._y3gn1e5h {
   text-align: left;
+}
+._y4tiu2gc {
+  padding-inline-end: var(--ds-space-100, 8px);
 }
 ._1ygbd0i9:focus-visible {
   outline: solid var(--ds-border-width-focused, 2px) var(--ds-border-focused, #4688ec);
@@ -2513,9 +2519,6 @@ button {
 ._bozg12x7 {
   padding-inline-start: var(--ds-space-075, 6px);
 }
-._bozgu2gc {
-  padding-inline-start: var(--ds-space-100, 8px);
-}
 ._bozgutpp {
   padding-inline-start: var(--ds-space-150, 9pt);
 }
@@ -2566,9 +2569,6 @@ button {
 }
 ._y4ti12x7 {
   padding-inline-end: var(--ds-space-075, 6px);
-}
-._y4tiu2gc {
-  padding-inline-end: var(--ds-space-100, 8px);
 }
 ._y4tiutpp {
   padding-inline-end: var(--ds-space-150, 9pt);
@@ -2747,12 +2747,6 @@ button {
 ._1bto1l2s {
   text-overflow: ellipsis;
 }
-._1he91b66 {
-  --ds--button--new-icon-padding-start: var(--ds-space-050, 4px);
-}
-._1he9v77o {
-  --ds--button--new-icon-padding-start: var(--ds-space-025, 2px);
-}
 ._1o9zidpf {
   flex-shrink: 0;
 }
@@ -2780,12 +2774,6 @@ button {
 }
 ._vwz4idpf {
   line-height: 0;
-}
-._w7951b66 {
-  --ds--button--new-icon-padding-end: var(--ds-space-050, 4px);
-}
-._w795v77o {
-  --ds--button--new-icon-padding-end: var(--ds-space-025, 2px);
 }
 ._16jlkb7n {
   flex-grow: 1;

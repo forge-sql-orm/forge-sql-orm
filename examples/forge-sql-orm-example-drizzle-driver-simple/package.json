@@ -11,9 +11,9 @@
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
-    "drizzle-kit": "^0.31.9",
+    "drizzle-kit": "^0.31.10",
     "forge-sql-orm-cli": "file:../../forge-sql-orm-cli",
-    "knip": "^5.87.0",
+    "knip": "^5.88.1",
     "mysql2": "^3.20.0",
     "typescript": "^5.9.3"
   },

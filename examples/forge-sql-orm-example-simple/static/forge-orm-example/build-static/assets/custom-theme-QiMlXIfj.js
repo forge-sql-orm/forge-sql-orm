@@ -1,5 +1,5 @@
 import { a as e, d as t, i as n, l as r, n as i } from "./wrapNativeSuper-CMD0Ca0W.js";
-import "./client-core-vendor-DolUFhPG.js";
+import "./client-core-vendor-Dwy05fxb.js";
 import {
   _ as a,
   a as o,
@@ -15,7 +15,7 @@ import {
   p as g,
   s as _,
   u as v,
-} from "./index-Dpxut7zd.js";
+} from "./index-BQPYTBpm.js";
 var y = {
     "color.text.brand": `#669DF1`,
     "elevation.surface.overlay": `#2B2C2F`,
@@ -499,7 +499,7 @@ var J,
               o = r,
               s = Math.sqrt(a * a + o * o),
               c = (Math.exp(s * 0.0228) - 1) / 0.0228 / i.fLRoot,
-              l = Math.atan2(o, a) * (180 / Math.PI);
+              l = (180 / Math.PI) * Math.atan2(o, a);
             l < 0 && (l += 360);
             var u = t / (1 - (t - 100) * 0.007);
             return e.fromJchInViewingConditions(u, c, l, i);

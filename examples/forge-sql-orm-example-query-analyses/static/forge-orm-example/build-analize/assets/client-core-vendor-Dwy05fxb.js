@@ -407,19 +407,15 @@ var t = e((e) => {
       i = u(),
       a = f();
     e.EventSender = class {
-      constructor(e, t, n, r, i, a) {
+      constructor(e, t, n, r, i) {
         ((this._sdkKey = e),
           (this._network = t),
           (this._emitter = n),
           (this._options = i),
-          (this._logEventUrlConfig = r),
-          (this._loggingEnabled = a));
+          (this._logEventUrlConfig = r));
       }
       setLogEventCompressionMode(e) {
         this._network.setLogEventCompressionMode(e);
-      }
-      setLoggingEnabled(e) {
-        this._loggingEnabled = e;
       }
       sendBatch(e) {
         return n(this, void 0, void 0, function* () {
@@ -454,6 +450,7 @@ var t = e((e) => {
           data: { events: e.events },
           urlConfig: this._logEventUrlConfig,
           retries: 3,
+          preserveFailedStatusCode: !0,
           isCompressable: !0,
           params: { [i.NetworkParam.EventCount]: String(e.events.length) },
           headers: {
@@ -1045,7 +1042,7 @@ var t = e((e) => {
   T = e((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.StatsigMetadataProvider = e.SDK_VERSION = void 0),
-      (e.SDK_VERSION = `3.32.1`));
+      (e.SDK_VERSION = `3.32.2`));
     var t = { sdkVersion: e.SDK_VERSION, sdkType: `js-mono` };
     e.StatsigMetadataProvider = {
       get: () => t,
@@ -1248,7 +1245,7 @@ var t = e((e) => {
                 return (
                   s.Log.error(e, c, a),
                   (r = this._errorBoundary) == null || r.attachErrorIfNoneExists(e),
-                  null
+                  t.preserveFailedStatusCode && p != null ? { body: null, code: p.status } : null
                 );
               }
               return (
@@ -1457,9 +1454,11 @@ var t = e((e) => {
       s = h(),
       l = c(),
       u = t(),
-      d = D(),
-      f = S(),
-      g = _();
+      f = D(),
+      g = d(),
+      v = S(),
+      y = E(),
+      b = _();
     e.FlushCoordinator = class {
       constructor(e, t, n, r, a, s, c, l, u, d) {
         ((this._cooldownTimer = null),
@@ -1475,10 +1474,11 @@ var t = e((e) => {
           (this._onPrepareFlush = n),
           (this._errorBoundary = d),
           (this._sdkKey = r),
-          (this._eventSender = new i.EventSender(r, a, s, c, l, u)));
+          (this._loggingEnabled = u),
+          (this._eventSender = new i.EventSender(r, a, s, c, l)));
       }
       setLoggingEnabled(e) {
-        this._eventSender.setLoggingEnabled(e);
+        this._loggingEnabled = e;
       }
       setLogEventCompressionMode(e) {
         this._eventSender.setLogEventCompressionMode(e);
@@ -1595,13 +1595,13 @@ var t = e((e) => {
         let e = Math.max(0, this._flushInterval.getTimeUntilNextFlush());
         this._cooldownTimer = setTimeout(() => {
           ((this._cooldownTimer = null),
-            f.StatsigSession.checkForIdleSession(this._sdkKey),
+            v.StatsigSession.checkForIdleSession(this._sdkKey),
             this._attemptScheduledFlush());
         }, e);
         let t = Math.max(0, this._flushInterval.getTimeTillMaxInterval());
         this._maxIntervalTimer = setTimeout(() => {
           ((this._maxIntervalTimer = null),
-            f.StatsigSession.checkForIdleSession(this._sdkKey),
+            v.StatsigSession.checkForIdleSession(this._sdkKey),
             this._attemptScheduledFlush());
         }, t);
       }
@@ -1615,13 +1615,13 @@ var t = e((e) => {
         if ((this._clearAllTimers(), this._isShuttingDown)) return;
         this._cooldownTimer = setTimeout(() => {
           ((this._cooldownTimer = null),
-            f.StatsigSession.checkForIdleSession(this._sdkKey),
+            v.StatsigSession.checkForIdleSession(this._sdkKey),
             this._attemptScheduledFlush());
         }, r.EventRetryConstants.TICK_INTERVAL_MS);
         let e = Math.max(0, this._flushInterval.getTimeTillMaxInterval());
         this._maxIntervalTimer = setTimeout(() => {
           ((this._maxIntervalTimer = null),
-            f.StatsigSession.checkForIdleSession(this._sdkKey),
+            v.StatsigSession.checkForIdleSession(this._sdkKey),
             this._attemptScheduledFlush());
         }, e);
       }
@@ -1634,6 +1634,8 @@ var t = e((e) => {
       }
       _processOneBatch(e, t) {
         return n(this, void 0, void 0, function* () {
+          if (this._loggingEnabled !== y.LoggingEnabledOption.always && (0, g._isServerEnv)())
+            return (this._flushInterval.adjustForSuccess(), !0);
           let n = yield this._eventSender.sendBatch(e);
           return n.success
             ? (this._flushInterval.adjustForSuccess(), !0)
@@ -1645,7 +1647,7 @@ var t = e((e) => {
         let t = this.convertPendingEventsToBatches();
         t > 0 &&
           (u.Log.warn(`Dropped ${t} events`),
-          this._errorBoundary.logDroppedEvents(t, `Batch queue limit reached`, {
+          this._errorBoundary.logDroppedEvents(t, `Batch queue limit reached during batching`, {
             loggingInterval: this._flushInterval.getCurrentIntervalMs(),
             batchSize: this._batchQueue.batchSize(),
             maxPendingBatches: r.EventRetryConstants.MAX_PENDING_BATCHES,
@@ -1669,7 +1671,7 @@ var t = e((e) => {
             this._saveShutdownFailedEventsToStorage(e.events));
           return;
         }
-        if (!d.RETRYABLE_CODES.has(n)) {
+        if (!f.RETRYABLE_CODES.has(n)) {
           (u.Log.warn(
             `${t} flush failed after ${e.attempts} attempt(s). ${e.events.length} event(s) will be dropped. Non-retryable error: ${n}`,
           ),
@@ -1699,7 +1701,7 @@ var t = e((e) => {
         let i = this._batchQueue.requeueBatch(e);
         i > 0 &&
           (u.Log.warn(`Failed to requeue batch : dropped ${i} events due to full queue`),
-          this._errorBoundary.logDroppedEvents(i, `Batch queue limit reached`, {
+          this._errorBoundary.logDroppedEvents(i, `Batch queue limit reached during requeue`, {
             loggingInterval: this._flushInterval.getCurrentIntervalMs(),
             batchSize: this._batchQueue.batchSize(),
             maxPendingBatches: r.EventRetryConstants.MAX_PENDING_BATCHES,
@@ -1711,11 +1713,11 @@ var t = e((e) => {
         return n(this, void 0, void 0, function* () {
           let e = this._getStorageKey();
           try {
-            g.Storage.isReady() || (yield g.Storage.isReadyResolver());
+            b.Storage.isReady() || (yield b.Storage.isReadyResolver());
             let t = this._getShutdownFailedEventsFromStorage(e);
             if (t.length === 0) return;
             (u.Log.debug(`Loading ${t.length} failed shutdown event(s) from storage for retry`),
-              g.Storage.removeItem(e),
+              b.Storage.removeItem(e),
               t.forEach((e) => {
                 this.addEvent(e);
               }),
@@ -1737,7 +1739,7 @@ var t = e((e) => {
           let n = [...this._getShutdownFailedEventsFromStorage(t), ...e];
           (n.length > r.EventRetryConstants.MAX_LOCAL_STORAGE &&
             (n = n.slice(-r.EventRetryConstants.MAX_LOCAL_STORAGE)),
-            (0, g._setObjectInStorage)(t, n),
+            (0, b._setObjectInStorage)(t, n),
             u.Log.debug(
               `Saved ${e.length} failed shutdown event(s) to storage (total stored: ${n.length})`,
             ));
@@ -1747,7 +1749,7 @@ var t = e((e) => {
       }
       _getShutdownFailedEventsFromStorage(e) {
         try {
-          let t = (0, g._getObjectFromStorage)(e);
+          let t = (0, b._getObjectFromStorage)(e);
           return Array.isArray(t) ? t : [];
         } catch {
           return [];
@@ -2508,7 +2510,7 @@ var t = e((e) => {
         this._onError(e, t);
       }
       logDroppedEvents(e, t, n) {
-        let r = { eventCount: String(e) };
+        let r = { eventCount: String(e), reason: t };
         (n &&
           Object.keys(n).forEach((e) => {
             r[e] = String(n[e]);
@@ -2586,9 +2588,7 @@ var t = e((e) => {
     function s(e) {
       return e instanceof Error
         ? e
-        : typeof e == `string`
-          ? Error(e)
-          : Error(`An unknown error occurred.`);
+        : Error(typeof e == `string` ? e : `An unknown error occurred.`);
     }
     function c(e) {
       try {
