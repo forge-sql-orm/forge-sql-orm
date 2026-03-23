@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "@atlaskit/css-reset": "^7.3.13",
-    "@atlaskit/dynamic-table": "^18.3.21",
+    "@atlaskit/css-reset": "^7.4.0",
+    "@atlaskit/dynamic-table": "^18.3.22",
     "@forge/bridge": "^5.14.1",
     "forge-sql-orm": "^2.1.25",
     "mobx": "6.15.0",
@@ -19,11 +19,11 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^6.0.1",
     "dotenv": "17.3.1",
-    "knip": "^6.0.0",
+    "knip": "^6.0.3",
     "prettier": "^3.8.1",
     "prettier-plugin-pkg": "^0.22.0",
-    "typescript": "^5.9.3",
-    "vite": "^8.0.1"
+    "typescript": "^6.0.2",
+    "vite": "^8.0.2"
   },
   "scripts": {
     "build": "vite build",

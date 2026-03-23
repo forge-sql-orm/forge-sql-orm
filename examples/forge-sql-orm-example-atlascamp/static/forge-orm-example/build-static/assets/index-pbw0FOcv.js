@@ -1114,7 +1114,8 @@ var j,
           r = atob(n),
           i = Array(r.length);
         for (let e = 0; e < r.length; e++) i[e] = r.charCodeAt(e);
-        return new Blob([new Uint8Array(i)], { type: t });
+        let a = new Uint8Array(i);
+        return new Blob([a], { type: t });
       }),
       (e.blobToBase64 = (e) =>
         new Promise((t, n) => {
@@ -2579,7 +2580,8 @@ var j,
         let n = atob(e),
           r = Array(n.length);
         for (let e = 0; e < n.length; e++) r[e] = n.charCodeAt(e);
-        return new Blob([new Uint8Array(r)], { type: t || `application/octet-stream` });
+        let i = new Uint8Array(r);
+        return new Blob([i], { type: t || `application/octet-stream` });
       },
       o = async (e) => {
         let t = e.size,

@@ -5,10 +5,9 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-DBsnqs9N.js",
       "./rolldown-runtime-COnpUsM8.js",
-      "./custom-theme-CtseM2jg.js",
+      "./custom-theme-XZz7xQhA.js",
       "./wrapNativeSuper-DbbKRv4Y.js",
-      "./client-core-vendor-Dwy05fxb.js",
-      "./body-D3H2nddS.js",
+      "./body-C8RcGEvz.js",
       "./react-dom-vendor-CmKAYmuF.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -1142,7 +1141,8 @@ var we,
           r = atob(n),
           i = Array(r.length);
         for (let e = 0; e < r.length; e++) i[e] = r.charCodeAt(e);
-        return new Blob([new Uint8Array(i)], { type: t });
+        let a = new Uint8Array(i);
+        return new Blob([a], { type: t });
       }),
       (e.blobToBase64 = (e) =>
         new Promise((t, n) => {
@@ -2607,7 +2607,8 @@ var we,
         let n = atob(e),
           r = Array(n.length);
         for (let e = 0; e < n.length; e++) r[e] = n.charCodeAt(e);
-        return new Blob([new Uint8Array(r)], { type: t || `application/octet-stream` });
+        let i = new Uint8Array(r);
+        return new Blob([i], { type: t || `application/octet-stream` });
       },
       o = async (e) => {
         let t = e.size,
@@ -14471,8 +14472,8 @@ var Cm = (function () {
                                       return (
                                         (e.next = 2),
                                         ct(
-                                          () => import(`./custom-theme-CtseM2jg.js`),
-                                          __vite__mapDeps([2, 3, 4, 1]),
+                                          () => import(`./custom-theme-XZz7xQhA.js`),
+                                          __vite__mapDeps([2, 3]),
                                           import.meta.url,
                                         )
                                       );
@@ -16536,7 +16537,7 @@ var j_ = {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `23.10.2`,
+        packageVersion: `0.0.0-development`,
         analyticsData: n,
       }),
       le = (0, T.useCallback)(
@@ -19366,24 +19367,58 @@ function Vx(e) {
     }
   );
 }
-var Hx = null;
-function Ux() {
-  Hx != null && (window.clearTimeout(Hx), (Hx = null));
+function Hx(e) {
+  var t = e || { top: 0, left: 0 };
+  return {
+    getBoundingClientRect: function () {
+      return { top: t.top, left: t.left, bottom: t.top, right: t.left, width: 0, height: 0 };
+    },
+    clientWidth: 0,
+    clientHeight: 0,
+  };
 }
-function Wx(e, t) {
-  (Ux(),
-    (Hx = window.setTimeout(function () {
-      ((Hx = null), e());
+function Ux(e, t) {
+  var n = t.targetElement,
+    r = t.tooltipPosition;
+  if (r === `mouse`)
+    return {
+      getBoundingClientRect: function () {
+        return DOMRect.fromRect({ x: e.clientX, y: e.clientY, width: 0, height: 0 });
+      },
+    };
+  var i = n.getBoundingClientRect();
+  if (r === `mouse-x`)
+    return {
+      getBoundingClientRect: function () {
+        return DOMRect.fromRect({ x: e.clientX, y: i.top, width: 0, height: i.height });
+      },
+    };
+  if (r === `mouse-y`)
+    return {
+      getBoundingClientRect: function () {
+        return DOMRect.fromRect({ x: i.left, y: e.clientY, width: i.width, height: 0 });
+      },
+    };
+  throw Error(`Invalid tooltip position for virtual element: ${r}`);
+}
+var Wx = null;
+function Gx() {
+  Wx != null && (window.clearTimeout(Wx), (Wx = null));
+}
+function Kx(e, t) {
+  (Gx(),
+    (Wx = window.setTimeout(function () {
+      ((Wx = null), e());
     }, t)));
 }
-var Gx = null;
-function Kx(e) {
+var qx = null;
+function Jx(e) {
   var t = `waiting-to-show`;
   function n() {
-    return !!(Gx && Gx.entry === e);
+    return !!(qx && qx.entry === e);
   }
   function r() {
-    n() && (Ux(), (Gx = null));
+    n() && (Gx(), (qx = null));
   }
   function i() {
     (n() && e.done(), (t = `done`), r());
@@ -19394,11 +19429,11 @@ function Kx(e) {
   function o() {
     if (n()) {
       if (t === `waiting-to-hide`) {
-        ((t = `shown`), Ux());
+        ((t = `shown`), Gx());
         return;
       }
       if (t === `hide-animating`) {
-        ((t = `shown`), Ux(), e.show({ isImmediate: !1 }));
+        ((t = `shown`), Gx(), e.show({ isImmediate: !1 }));
         return;
       }
     }
@@ -19416,7 +19451,7 @@ function Kx(e) {
           return;
         }
         ((t = `waiting-to-hide`),
-          Wx(function () {
+          Kx(function () {
             ((t = `hide-animating`), e.hide({ isImmediate: !1 }));
           }, e.delay));
       }
@@ -19433,9 +19468,9 @@ function Kx(e) {
   }
   function d() {
     var n = q(`platform_dst_nav4_side_nav_resize_tooltip_feedback`) ? e.shouldAlwaysFadeIn : !1,
-      r = !!(Gx && Gx.isVisible()) && !n;
-    ((Gx &&= (Ux(), Gx.entry.hide({ isImmediate: !0 }), Gx.entry.done(), null)),
-      (Gx = { entry: e, isVisible: l }));
+      r = !!(qx && qx.isVisible()) && !n;
+    ((qx &&= (Gx(), qx.entry.hide({ isImmediate: !0 }), qx.entry.done(), null)),
+      (qx = { entry: e, isVisible: l }));
     function i() {
       ((t = `shown`), e.show({ isImmediate: r }));
     }
@@ -19443,7 +19478,7 @@ function Kx(e) {
       i();
       return;
     }
-    ((t = `waiting-to-show`), Wx(i, e.delay));
+    ((t = `waiting-to-show`), Kx(i, e.delay));
   }
   return (
     d(),
@@ -19461,27 +19496,27 @@ function Kx(e) {
     }
   );
 }
-function qx(e, t) {
+function Yx(e, t) {
   var n = Km();
   return t ? `${n(e)}` : void 0;
 }
 Y();
-var Jx = {
+var Xx = {
     shortcutSegmentsContainer: `_zulpv77o _1e0c1txw _1q511b66 _85i5v77o`,
     shortcutSegment: `_11c8wadc _2rkolb4i _1dqonqa1 _189ee4h9 _1h6d1ihb _1e0c1txw _4cvr1h6o _4t3i1k92 _vchhusvi _1q51v77o _85i5v77o _bozg12x7 _y4ti12x7 _16qsn7od _1254n7od _cgnln7od _syazn7od _ahbqn7od _12l2n7od _1pfhn7od _6rthn7od _1ul9n7od _w19jn7od _bfhk261p`,
   },
-  Yx = function (e) {
+  Zx = function (e) {
     var t = e.shortcut;
     return T.createElement(
       `div`,
-      { className: J([Jx.shortcutSegmentsContainer]) },
+      { className: J([Xx.shortcutSegmentsContainer]) },
       t.map(function (e, t) {
-        return T.createElement(`kbd`, { key: `${e}-${t}`, className: J([Jx.shortcutSegment]) }, e);
+        return T.createElement(`kbd`, { key: `${e}-${t}`, className: J([Xx.shortcutSegment]) }, e);
       }),
     );
   };
 Y();
-var Xx = (0, T.forwardRef)(function (e, t) {
+var Qx = (0, T.forwardRef)(function (e, t) {
   var n = e.style,
     r = e.className,
     i = e.children,
@@ -19506,16 +19541,16 @@ var Xx = (0, T.forwardRef)(function (e, t) {
         id: l,
       },
       i,
-      u && T.createElement(Yx, { shortcut: u }),
+      u && T.createElement(Zx, { shortcut: u }),
     ),
   );
 });
-((Xx.displayName = `TooltipPrimitive`), Y());
-var Zx = {
+((Qx.displayName = `TooltipPrimitive`), Y());
+var $x = {
     base: `_2rkofajl _11c8wadc _vchhusvi _p12fp3fh _bfhkgkf6 _syaz15cr _152tze3t _1e02ze3t _1i4q1hna _1q511b66 _85i51b66 _y4ti12x7 _bozg12x7 _slp31hna`,
     truncate: `_1reo15vq _18m915vq _p12f1pna _1bto1l2s _o5721q9c`,
   },
-  Qx = (0, T.forwardRef)(function (e, t) {
+  eS = (0, T.forwardRef)(function (e, t) {
     var n = e.style,
       r = e.className,
       i = e.children,
@@ -19527,11 +19562,11 @@ var Zx = {
       u = e.id,
       d = e.shortcut;
     return T.createElement(
-      Xx,
+      Qx,
       {
         ref: t,
         style: n,
-        className: J([Zx.base, a && Zx.truncate, r]),
+        className: J([$x.base, a && $x.truncate, r]),
         placement: o,
         testId: s,
         id: u,
@@ -19542,41 +19577,7 @@ var Zx = {
       i,
     );
   });
-Qx.displayName = `TooltipContainer`;
-function $x(e) {
-  var t = e || { top: 0, left: 0 };
-  return {
-    getBoundingClientRect: function () {
-      return { top: t.top, left: t.left, bottom: t.top, right: t.left, width: 0, height: 0 };
-    },
-    clientWidth: 0,
-    clientHeight: 0,
-  };
-}
-function eS(e, t) {
-  var n = t.targetElement,
-    r = t.tooltipPosition;
-  if (r === `mouse`)
-    return {
-      getBoundingClientRect: function () {
-        return DOMRect.fromRect({ x: e.clientX, y: e.clientY, width: 0, height: 0 });
-      },
-    };
-  var i = n.getBoundingClientRect();
-  if (r === `mouse-x`)
-    return {
-      getBoundingClientRect: function () {
-        return DOMRect.fromRect({ x: e.clientX, y: i.top, width: 0, height: i.height });
-      },
-    };
-  if (r === `mouse-y`)
-    return {
-      getBoundingClientRect: function () {
-        return DOMRect.fromRect({ x: i.left, y: e.clientY, width: i.width, height: 0 });
-      },
-    };
-  throw Error(`Invalid tooltip position for virtual element: ${r}`);
-}
+eS.displayName = `TooltipContainer`;
 function tS(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -19624,7 +19625,7 @@ function sS(e) {
     s = e.truncate,
     c = s === void 0 ? !1 : s,
     u = e.component,
-    d = u === void 0 ? Qx : u,
+    d = u === void 0 ? eS : u,
     f = e.tag,
     p = f === void 0 ? `div` : f,
     m = e.testId,
@@ -19723,7 +19724,7 @@ function sS(e) {
         }
         (Se.current && !((t = Se.current) != null && t.call(Se))) ||
           Te(
-            Kx({
+            Jx({
               source: e,
               delay: xe.current,
               show: function (e) {
@@ -19792,7 +19793,7 @@ function sS(e) {
                   type: `mouse`,
                   mouse: q(`platform_dst_nav4_side_nav_resize_tooltip_feedback`)
                     ? void 0
-                    : $x({ left: e.clientX, top: e.clientY }),
+                    : Hx({ left: e.clientX, top: e.clientY }),
                   clientX: e.clientX,
                   clientY: e.clientY,
                 }
@@ -19812,7 +19813,7 @@ function sS(e) {
           (t = M.current) != null &&
             t.isActive() &&
             (q(`platform_dst_nav4_side_nav_resize_tooltip_feedback`) ||
-              (M.current.mousePosition = $x({ left: e.clientX, top: e.clientY })),
+              (M.current.mousePosition = Hx({ left: e.clientX, top: e.clientY })),
             (M.current.mousePos = { clientX: e.clientX, clientY: e.clientY }));
         }
       : void 0,
@@ -19859,7 +19860,7 @@ function sS(e) {
         e.mousePos &&
         me.current &&
         q(`platform_dst_nav4_side_nav_resize_tooltip_feedback`)
-        ? eS(M.current.mousePos, { targetElement: me.current, tooltipPosition: r })
+        ? Ux(M.current.mousePos, { targetElement: me.current, tooltipPosition: r })
         : se &&
             (t = M.current) != null &&
             t.mousePosition &&
@@ -19867,7 +19868,7 @@ function sS(e) {
           ? M.current?.mousePosition
           : me.current || void 0;
     },
-    He = qx(`tooltip`, Re),
+    He = Yx(`tooltip`, Re),
     Ue = {
       onMouseOver: je,
       onMouseOut: P,
@@ -20425,8 +20426,8 @@ var ES = function (e) {
   },
   DS = (0, T.lazy)(function () {
     return ct(
-      () => import(`./body-D3H2nddS.js`),
-      __vite__mapDeps([5, 1, 3, 6, 7]),
+      () => import(`./body-C8RcGEvz.js`),
+      __vite__mapDeps([4, 1, 3, 5, 6]),
       import.meta.url,
     );
   }),
@@ -21137,30 +21138,10 @@ var lC = i((e) => {
 function dC(e) {
   return u(e) || b(e) || x(e) || v();
 }
-var fC = 5;
-function pC(e) {
-  if (!e.length) return;
-  if (e.length === 1 && e[0] && !e[0].includes(` `)) return e[0];
-  let t = {};
-  for (let n of e) {
-    if (!n) continue;
-    let e = n.split(` `);
-    for (let n of e) {
-      let e = n.startsWith(`_`) ? n.slice(0, fC) : n;
-      t[e] = n;
-    }
-  }
-  let n = ``;
-  for (let e in t) n += t[e] + ` `;
-  if (n) return n.trimEnd();
-}
-function mC(e, t, n) {
-  return e == null ? `var(--c-, )` : t ? (n ? n + e + t : e + t) : e;
-}
-var hC = (0, T.createContext)(null),
-  gC = (0, T.createContext)(null),
-  _C = (0, T.createContext)(null);
-function vC(e, t) {
+var fC = (0, T.createContext)(null),
+  pC = (0, T.createContext)(null);
+Y();
+function mC(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var r = Object.getOwnPropertySymbols(e);
@@ -21172,27 +21153,27 @@ function vC(e, t) {
   }
   return n;
 }
-function yC(e) {
+function hC(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? vC(Object(n), !0).forEach(function (t) {
+      ? mC(Object(n), !0).forEach(function (t) {
           h(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : vC(Object(n)).forEach(function (t) {
+        : mC(Object(n)).forEach(function (t) {
             Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
           });
   }
   return e;
 }
-var bC = {
+var gC = {
     componentName: `tabs`,
     packageName: `@atlaskit/tabs`,
     packageVersion: `0.0.0-development`,
   },
-  xC = function (e) {
+  _C = function (e) {
     var t = e.tabPanel,
       n = e.index,
       r = e.isSelected,
@@ -21200,7 +21181,7 @@ var bC = {
     return (
       t &&
       T.createElement(
-        _C.Provider,
+        pC.Provider,
         {
           value: {
             role: `tabpanel`,
@@ -21215,7 +21196,7 @@ var bC = {
       )
     );
   },
-  SC = function (e) {
+  vC = function (e) {
     var t = e.shouldUnmountTabPanelOnChange,
       n = t === void 0 ? !1 : t,
       r = e.selected,
@@ -21239,7 +21220,7 @@ var bC = {
       v = (0, T.useRef)(new Set([m]));
     v.current.has(m) || v.current.add(m);
     var y = Du(
-        yC(
+        hC(
           {
             fn: (0, T.useCallback)(
               function (e, t) {
@@ -21250,46 +21231,36 @@ var bC = {
             action: `clicked`,
             analyticsData: s,
           },
-          bC,
+          gC,
         ),
       ),
       b = n
-        ? xC({ tabPanel: _[m], index: m, isSelected: !0, tabsId: o })
+        ? _C({ tabPanel: _[m], index: m, isSelected: !0, tabsId: o })
         : Array.from(v.current).map(function (e) {
-            return xC({ tabPanel: _[e], index: e, isSelected: e === m, tabsId: o });
+            return _C({ tabPanel: _[e], index: e, isSelected: e === m, tabsId: o });
           });
     return T.createElement(
       `div`,
       {
         "data-testid": u,
-        className: pC([
+        className: J([
           `_1e0c1txw _p12f1osq _1tkeidpf _i0dl1osq _2lx21bp4 _16jlkb7n`,
           `_1c3y1txw _ftfaidpf _18i0kb7n _185bglyw`,
         ]),
       },
-      T.createElement(gC.Provider, { value: { selected: m, onChange: y, tabsId: o } }, g),
+      T.createElement(fC.Provider, { value: { selected: m, onChange: y, tabsId: o } }, g),
       T.createElement(T.Fragment, null, b),
     );
-  },
-  CC = function () {
-    var e = (0, T.useContext)(hC);
-    if (e == null || e === void 0) throw Error(`@atlaskit/tabs: A Tab must have a TabList parent.`);
-    return e;
-  },
-  wC = function () {
-    var e = (0, T.useContext)(gC);
-    if (e == null) throw Error(`@atlaskit/tabs: A TabList must have a Tabs parent.`);
-    return e;
-  },
-  TC = function () {
-    var e = (0, T.useContext)(_C);
-    if (e == null) throw Error(`@atlaskit/tabs:  A TabPanel must have a Tabs parent.`);
-    return e;
-  },
-  EC = function (e) {
+  };
+function yC() {
+  var e = (0, T.useContext)(pC);
+  if (e == null) throw Error(`@atlaskit/tabs:  A TabPanel must have a Tabs parent.`);
+  return e;
+}
+var bC = function (e) {
     var t = e.children,
       n = e.testId,
-      r = TC(),
+      r = yC(),
       i = r.role,
       a = r.id,
       o = r.hidden,
@@ -21310,40 +21281,52 @@ var bC = {
       T.createElement(T.Fragment, null, t),
     );
   },
-  DC = (0, T.forwardRef)(function (e, t) {
-    var n = e.children,
-      r = e.testId,
-      i = CC(),
-      a = i.onClick,
-      o = i.id,
-      s = i[`aria-controls`],
-      c = i[`aria-posinset`],
-      l = i[`aria-selected`],
-      u = i[`aria-setsize`],
-      d = i.onKeyDown,
-      f = i.role,
-      p = i.tabIndex;
-    return T.createElement(
-      tp,
-      {
-        as: `div`,
-        isInset: !0,
-        testId: r,
-        onClick: a,
-        id: o,
-        "aria-controls": s,
-        "aria-posinset": c,
-        "aria-selected": l,
-        "aria-setsize": u,
-        onKeyDown: d,
-        role: f,
-        tabIndex: p,
-        ref: t,
-      },
-      T.createElement(Xf, { weight: `medium`, color: `inherit`, maxLines: 1 }, n),
-    );
-  }),
-  OC = function (e) {
+  xC = (0, T.createContext)(null);
+function SC() {
+  var e = (0, T.useContext)(xC);
+  if (e == null || e === void 0) throw Error(`@atlaskit/tabs: A Tab must have a TabList parent.`);
+  return e;
+}
+var CC = (0, T.forwardRef)(function (e, t) {
+  var n = e.children,
+    r = e.testId,
+    i = SC(),
+    a = i.onClick,
+    o = i.id,
+    s = i[`aria-controls`],
+    c = i[`aria-posinset`],
+    l = i[`aria-selected`],
+    u = i[`aria-setsize`],
+    d = i.onKeyDown,
+    f = i.role,
+    p = i.tabIndex;
+  return T.createElement(
+    tp,
+    {
+      as: `div`,
+      isInset: !0,
+      testId: r,
+      onClick: a,
+      id: o,
+      "aria-controls": s,
+      "aria-posinset": c,
+      "aria-selected": l,
+      "aria-setsize": u,
+      onKeyDown: d,
+      role: f,
+      tabIndex: p,
+      ref: t,
+    },
+    T.createElement(Xf, { weight: `medium`, color: `inherit`, maxLines: 1 }, n),
+  );
+});
+function wC() {
+  var e = (0, T.useContext)(fC);
+  if (e == null) throw Error(`@atlaskit/tabs: A TabList must have a Tabs parent.`);
+  return e;
+}
+Y();
+var TC = function (e) {
     var t = e.children,
       n = wC(),
       r = n.tabsId,
@@ -21383,7 +21366,7 @@ var bC = {
             n = e.isSelected,
             i = e.index;
           return T.createElement(
-            hC.Provider,
+            xC.Provider,
             {
               value: {
                 onClick: function () {
@@ -21410,19 +21393,19 @@ var bC = {
       {
         role: `tablist`,
         ref: o,
-        className: pC([
+        className: J([
           `_1e0c1txw _kqswh2mm _85i5ze3t _1q51ze3t _y4tize3t _bozgze3t`,
           `_k48p1wq8 _ahbqx0bf _gpbcidpf _10vzidpf _1mmwidpf _15plidpf _qwyt1qi0 _7hip15vq _1fud15vq _bb0mh2mm _1quz1425 _rzxytlke _1ofh12x7 _pryi12x7 _1a85u2gc _rmpau2gc _1dze1l2s _1tms1q9c _fiizidpf _1xrmidpf _xyihidpf _166qidpf _1lzuokkv _24g71kw7 _140sidpf _lycustnw _15d8b3bt _1fztidpf _wd7eu2gc _1olcu2gc _1oaz1fgx _w9ewidpf _170tidpf _y1g1idpf _1nvfidpf _1b8dokkv _1n121kw7 _7p9oidpf _o2e1stnw _16u6b3bt _1yk1idpf _1lbou2gc _1c9uu2gc _1i2072d1 _bppridpf _1mbxidpf _kn0bidpf _wsgdidpf _rsmz73hj _1m0e1kw7 _93pdidpf _1sglstnw _1ksob3bt _1p9sidpf _1qa1u2gc _1jjcu2gc _fiemln51 _pascidpf _eid3idpf _zr3eidpf _fntnidpf _1mp41kw7 _kfgte4h9 _1cs8stnw _1russudh _1kt9b3bt _1fkridpf _1enwidpf _z5wtu2gc`,
         ]),
         style: {
-          "--_13a5t4u": mC(`var(--ds-text-subtle, ${Cd})`),
-          "--_kkbq40": mC(`var(--ds-text-subtle, ${yd})`),
-          "--_71dbsd": mC(`var(--ds-text, ${bd})`),
-          "--_1hfkvbo": mC(`var(--ds-text-selected, ${yd})`),
-          "--_1q7mpl4": mC(
+          "--_13a5t4u": Lu(`var(--ds-text-subtle, ${Cd})`),
+          "--_kkbq40": Lu(`var(--ds-text-subtle, ${yd})`),
+          "--_71dbsd": Lu(`var(--ds-text, ${bd})`),
+          "--_1hfkvbo": Lu(`var(--ds-text-selected, ${yd})`),
+          "--_1q7mpl4": Lu(
             `var(--ds-border-width-selected, 2px) solid ${`var(--ds-border-selected, ${yd})`}`,
           ),
-          "--_lvpq93": mC(`var(--ds-border, ${Sd})`),
+          "--_lvpq93": Lu(`var(--ds-border, ${Sd})`),
         },
       },
       s.map(function (e, t) {
@@ -21430,7 +21413,7 @@ var bC = {
       }),
     );
   },
-  kC = Object.keys(
+  EC = Object.keys(
     (function (e) {
       return (
         (e[(e.WITHOUT_VERSIONING = 0)] = `WITHOUT_VERSIONING`),
@@ -21441,7 +21424,7 @@ var bC = {
       );
     })({}),
   ).filter((e) => isNaN(Number(e))),
-  AC = ({ children: e, testId: t }) =>
+  DC = ({ children: e, testId: t }) =>
     (0, $.jsx)(`div`, {
       style: {
         display: `flex`,
@@ -21463,7 +21446,7 @@ var bC = {
       "data-testid": t,
       children: e,
     });
-function jC() {
+function OC() {
   let { stateStore: e } = ic();
   return e.isLoading
     ? `loading....`
@@ -21502,37 +21485,37 @@ function jC() {
             children: `Use the tabs below to navigate between different examples of optimistic locking. Each tab demonstrates a different versioning approach, along with instructions on how to test the locking behavior.`,
           }),
           (0, $.jsx)(`br`, {}),
-          (0, $.jsxs)(SC, {
+          (0, $.jsxs)(vC, {
             onChange: (e) => console.log(`Selected Tab`, e + 1),
             defaultSelected: 1,
             id: `default`,
             children: [
-              (0, $.jsxs)(OC, {
+              (0, $.jsxs)(TC, {
                 children: [
                   ` `,
-                  kC.map((e) => {
+                  EC.map((e) => {
                     switch (e) {
                       case `WITHOUT_VERSIONING`:
                         return (0, $.jsx)(
-                          DC,
+                          CC,
                           { children: `Entity Without Version Column (No Locking)` },
                           e,
                         );
                       case `OPTIMISTIC_NUMBER`:
                         return (0, $.jsx)(
-                          DC,
+                          CC,
                           { children: `Entity with Numeric Version Column` },
                           e,
                         );
                       case `OPTIMISTIC_DATE`:
                         return (0, $.jsx)(
-                          DC,
+                          CC,
                           { children: `Entity with Datetime-Based Version Column` },
                           e,
                         );
                       case `OPTIMISTIC_TIMESTAMP`:
                         return (0, $.jsx)(
-                          DC,
+                          CC,
                           { children: `Entity with Timestamp-BasedVersion Column` },
                           e,
                         );
@@ -21540,9 +21523,9 @@ function jC() {
                   }),
                 ],
               }),
-              (0, $.jsx)(EC, { children: (0, $.jsx)($.Fragment, {}) }),
-              (0, $.jsx)(EC, {
-                children: (0, $.jsx)(AC, {
+              (0, $.jsx)(bC, { children: (0, $.jsx)($.Fragment, {}) }),
+              (0, $.jsx)(bC, {
+                children: (0, $.jsx)(DC, {
                   children: (0, $.jsxs)(`div`, {
                     children: [
                       (0, $.jsx)(`h2`, { children: `Entity Without Version Column (No Locking)` }),
@@ -21580,8 +21563,8 @@ function jC() {
                   }),
                 }),
               }),
-              (0, $.jsx)(EC, {
-                children: (0, $.jsx)(AC, {
+              (0, $.jsx)(bC, {
+                children: (0, $.jsx)(DC, {
                   children: (0, $.jsxs)(`div`, {
                     className: `entity-section`,
                     children: [
@@ -21616,8 +21599,8 @@ function jC() {
                   }),
                 }),
               }),
-              (0, $.jsx)(EC, {
-                children: (0, $.jsx)(AC, {
+              (0, $.jsx)(bC, {
+                children: (0, $.jsx)(DC, {
                   children: (0, $.jsxs)(`div`, {
                     className: `entity-section`,
                     children: [
@@ -21652,8 +21635,8 @@ function jC() {
                   }),
                 }),
               }),
-              (0, $.jsx)(EC, {
-                children: (0, $.jsx)(AC, {
+              (0, $.jsx)(bC, {
+                children: (0, $.jsx)(DC, {
                   children: (0, $.jsxs)(`div`, {
                     className: `entity-section`,
                     children: [
@@ -21693,8 +21676,8 @@ function jC() {
         ],
       });
 }
-var MC = Ks(jC),
-  NC = Ks((e) => {
+var kC = Ks(OC),
+  AC = Ks((e) => {
     let { stateStore: t } = ic(),
       [n, r] = (0, T.useState)(``),
       [i, a] = (0, T.useState)({}),
@@ -21804,7 +21787,7 @@ var MC = Ks(jC),
       ],
     });
   });
-function PC() {
+function jC() {
   let { stateStore: e } = ic();
   if (
     ((0, T.useEffect)(() => {
@@ -21823,28 +21806,28 @@ function PC() {
     return e.message;
   switch (e.state) {
     case `ROOT`:
-      return (0, $.jsx)(MC, {});
+      return (0, $.jsx)(kC, {});
     case `WITHOUT_VERSIONING`:
     case `OPTIMISTIC_TIMESTAMP`:
     case `OPTIMISTIC_DATE`:
     case `OPTIMISTIC_NUMBER`:
-      return (0, $.jsx)(NC, { type: e.state });
+      return (0, $.jsx)(AC, { type: e.state });
     default:
       return (0, $.jsxs)(`div`, { children: [`ERROR: unsupprted state $`, e.state] });
   }
 }
-var FC = Ks(PC),
-  IC = (0, s().createRoot)(document.getElementById(`root`)),
-  LC = () => {
-    IC.render((0, $.jsx)(Zs, { ...nc, children: (0, $.jsx)(FC, {}) }));
+var MC = Ks(jC),
+  NC = (0, s().createRoot)(document.getElementById(`root`)),
+  PC = () => {
+    NC.render((0, $.jsx)(Zs, { ...nc, children: (0, $.jsx)(MC, {}) }));
   };
 gn.view.theme
   .enable()
   .then(() => {
-    LC();
+    PC();
   })
   .catch((e) => {
-    (console.error(e.message), LC());
+    (console.error(e.message), PC());
   });
 export {
   Y as C,

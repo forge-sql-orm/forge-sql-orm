@@ -5,10 +5,9 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-DBsnqs9N.js",
       "./rolldown-runtime-COnpUsM8.js",
-      "./custom-theme-Doa8JrSW.js",
+      "./custom-theme-3zcgB3Cl.js",
       "./wrapNativeSuper-CMD0Ca0W.js",
-      "./client-core-vendor-Dwy05fxb.js",
-      "./body-imGTqbw0.js",
+      "./body-DomhhnSc.js",
       "./react-dom-vendor-CmKAYmuF.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -1138,7 +1137,8 @@ var xe,
           r = atob(n),
           i = Array(r.length);
         for (let e = 0; e < r.length; e++) i[e] = r.charCodeAt(e);
-        return new Blob([new Uint8Array(i)], { type: t });
+        let a = new Uint8Array(i);
+        return new Blob([a], { type: t });
       }),
       (e.blobToBase64 = (e) =>
         new Promise((t, n) => {
@@ -2603,7 +2603,8 @@ var xe,
         let n = atob(e),
           r = Array(n.length);
         for (let e = 0; e < n.length; e++) r[e] = n.charCodeAt(e);
-        return new Blob([new Uint8Array(r)], { type: t || `application/octet-stream` });
+        let i = new Uint8Array(r);
+        return new Blob([i], { type: t || `application/octet-stream` });
       },
       o = async (e) => {
         let t = e.size,
@@ -14420,8 +14421,8 @@ var gm = (function () {
                                       return (
                                         (e.next = 2),
                                         at(
-                                          () => import(`./custom-theme-Doa8JrSW.js`),
-                                          __vite__mapDeps([2, 3, 4, 1]),
+                                          () => import(`./custom-theme-3zcgB3Cl.js`),
+                                          __vite__mapDeps([2, 3]),
                                           import.meta.url,
                                         )
                                       );
@@ -16485,7 +16486,7 @@ var C_ = {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `23.10.2`,
+        packageVersion: `0.0.0-development`,
         analyticsData: n,
       }),
       ue = (0, x.useCallback)(
@@ -19315,24 +19316,58 @@ function Nx(e) {
     }
   );
 }
-var Px = null;
-function Fx() {
-  Px != null && (window.clearTimeout(Px), (Px = null));
+function Px(e) {
+  var t = e || { top: 0, left: 0 };
+  return {
+    getBoundingClientRect: function () {
+      return { top: t.top, left: t.left, bottom: t.top, right: t.left, width: 0, height: 0 };
+    },
+    clientWidth: 0,
+    clientHeight: 0,
+  };
 }
-function Ix(e, t) {
-  (Fx(),
-    (Px = window.setTimeout(function () {
-      ((Px = null), e());
+function Fx(e, t) {
+  var n = t.targetElement,
+    r = t.tooltipPosition;
+  if (r === `mouse`)
+    return {
+      getBoundingClientRect: function () {
+        return DOMRect.fromRect({ x: e.clientX, y: e.clientY, width: 0, height: 0 });
+      },
+    };
+  var i = n.getBoundingClientRect();
+  if (r === `mouse-x`)
+    return {
+      getBoundingClientRect: function () {
+        return DOMRect.fromRect({ x: e.clientX, y: i.top, width: 0, height: i.height });
+      },
+    };
+  if (r === `mouse-y`)
+    return {
+      getBoundingClientRect: function () {
+        return DOMRect.fromRect({ x: i.left, y: e.clientY, width: i.width, height: 0 });
+      },
+    };
+  throw Error(`Invalid tooltip position for virtual element: ${r}`);
+}
+var Ix = null;
+function Lx() {
+  Ix != null && (window.clearTimeout(Ix), (Ix = null));
+}
+function Rx(e, t) {
+  (Lx(),
+    (Ix = window.setTimeout(function () {
+      ((Ix = null), e());
     }, t)));
 }
-var Lx = null;
-function Rx(e) {
+var zx = null;
+function Bx(e) {
   var t = `waiting-to-show`;
   function n() {
-    return !!(Lx && Lx.entry === e);
+    return !!(zx && zx.entry === e);
   }
   function r() {
-    n() && (Fx(), (Lx = null));
+    n() && (Lx(), (zx = null));
   }
   function i() {
     (n() && e.done(), (t = `done`), r());
@@ -19343,11 +19378,11 @@ function Rx(e) {
   function o() {
     if (n()) {
       if (t === `waiting-to-hide`) {
-        ((t = `shown`), Fx());
+        ((t = `shown`), Lx());
         return;
       }
       if (t === `hide-animating`) {
-        ((t = `shown`), Fx(), e.show({ isImmediate: !1 }));
+        ((t = `shown`), Lx(), e.show({ isImmediate: !1 }));
         return;
       }
     }
@@ -19365,7 +19400,7 @@ function Rx(e) {
           return;
         }
         ((t = `waiting-to-hide`),
-          Ix(function () {
+          Rx(function () {
             ((t = `hide-animating`), e.hide({ isImmediate: !1 }));
           }, e.delay));
       }
@@ -19382,9 +19417,9 @@ function Rx(e) {
   }
   function d() {
     var n = K(`platform_dst_nav4_side_nav_resize_tooltip_feedback`) ? e.shouldAlwaysFadeIn : !1,
-      r = !!(Lx && Lx.isVisible()) && !n;
-    ((Lx &&= (Fx(), Lx.entry.hide({ isImmediate: !0 }), Lx.entry.done(), null)),
-      (Lx = { entry: e, isVisible: l }));
+      r = !!(zx && zx.isVisible()) && !n;
+    ((zx &&= (Lx(), zx.entry.hide({ isImmediate: !0 }), zx.entry.done(), null)),
+      (zx = { entry: e, isVisible: l }));
     function i() {
       ((t = `shown`), e.show({ isImmediate: r }));
     }
@@ -19392,7 +19427,7 @@ function Rx(e) {
       i();
       return;
     }
-    ((t = `waiting-to-show`), Ix(i, e.delay));
+    ((t = `waiting-to-show`), Rx(i, e.delay));
   }
   return (
     d(),
@@ -19410,27 +19445,27 @@ function Rx(e) {
     }
   );
 }
-function zx(e, t) {
+function Vx(e, t) {
   var n = zm();
   return t ? `${n(e)}` : void 0;
 }
 J();
-var Bx = {
+var Hx = {
     shortcutSegmentsContainer: `_zulpv77o _1e0c1txw _1q511b66 _85i5v77o`,
     shortcutSegment: `_11c8wadc _2rkolb4i _1dqonqa1 _189ee4h9 _1h6d1ihb _1e0c1txw _4cvr1h6o _4t3i1k92 _vchhusvi _1q51v77o _85i5v77o _bozg12x7 _y4ti12x7 _16qsn7od _1254n7od _cgnln7od _syazn7od _ahbqn7od _12l2n7od _1pfhn7od _6rthn7od _1ul9n7od _w19jn7od _bfhk261p`,
   },
-  Vx = function (e) {
+  Ux = function (e) {
     var t = e.shortcut;
     return x.createElement(
       `div`,
-      { className: q([Bx.shortcutSegmentsContainer]) },
+      { className: q([Hx.shortcutSegmentsContainer]) },
       t.map(function (e, t) {
-        return x.createElement(`kbd`, { key: `${e}-${t}`, className: q([Bx.shortcutSegment]) }, e);
+        return x.createElement(`kbd`, { key: `${e}-${t}`, className: q([Hx.shortcutSegment]) }, e);
       }),
     );
   };
 J();
-var Hx = (0, x.forwardRef)(function (e, t) {
+var Wx = (0, x.forwardRef)(function (e, t) {
   var n = e.style,
     r = e.className,
     i = e.children,
@@ -19455,16 +19490,16 @@ var Hx = (0, x.forwardRef)(function (e, t) {
         id: l,
       },
       i,
-      u && x.createElement(Vx, { shortcut: u }),
+      u && x.createElement(Ux, { shortcut: u }),
     ),
   );
 });
-((Hx.displayName = `TooltipPrimitive`), J());
-var Ux = {
+((Wx.displayName = `TooltipPrimitive`), J());
+var Gx = {
     base: `_2rkofajl _11c8wadc _vchhusvi _p12fp3fh _bfhkgkf6 _syaz15cr _152tze3t _1e02ze3t _1i4q1hna _1q511b66 _85i51b66 _y4ti12x7 _bozg12x7 _slp31hna`,
     truncate: `_1reo15vq _18m915vq _p12f1pna _1bto1l2s _o5721q9c`,
   },
-  Wx = (0, x.forwardRef)(function (e, t) {
+  Kx = (0, x.forwardRef)(function (e, t) {
     var n = e.style,
       r = e.className,
       i = e.children,
@@ -19476,11 +19511,11 @@ var Ux = {
       u = e.id,
       d = e.shortcut;
     return x.createElement(
-      Hx,
+      Wx,
       {
         ref: t,
         style: n,
-        className: q([Ux.base, a && Ux.truncate, r]),
+        className: q([Gx.base, a && Gx.truncate, r]),
         placement: o,
         testId: s,
         id: u,
@@ -19491,41 +19526,7 @@ var Ux = {
       i,
     );
   });
-Wx.displayName = `TooltipContainer`;
-function Gx(e) {
-  var t = e || { top: 0, left: 0 };
-  return {
-    getBoundingClientRect: function () {
-      return { top: t.top, left: t.left, bottom: t.top, right: t.left, width: 0, height: 0 };
-    },
-    clientWidth: 0,
-    clientHeight: 0,
-  };
-}
-function Kx(e, t) {
-  var n = t.targetElement,
-    r = t.tooltipPosition;
-  if (r === `mouse`)
-    return {
-      getBoundingClientRect: function () {
-        return DOMRect.fromRect({ x: e.clientX, y: e.clientY, width: 0, height: 0 });
-      },
-    };
-  var i = n.getBoundingClientRect();
-  if (r === `mouse-x`)
-    return {
-      getBoundingClientRect: function () {
-        return DOMRect.fromRect({ x: e.clientX, y: i.top, width: 0, height: i.height });
-      },
-    };
-  if (r === `mouse-y`)
-    return {
-      getBoundingClientRect: function () {
-        return DOMRect.fromRect({ x: i.left, y: e.clientY, width: i.width, height: 0 });
-      },
-    };
-  throw Error(`Invalid tooltip position for virtual element: ${r}`);
-}
+Kx.displayName = `TooltipContainer`;
 function qx(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -19573,7 +19574,7 @@ function $x(e) {
     s = e.truncate,
     c = s === void 0 ? !1 : s,
     l = e.component,
-    u = l === void 0 ? Wx : l,
+    u = l === void 0 ? Kx : l,
     d = e.tag,
     p = d === void 0 ? `div` : d,
     m = e.testId,
@@ -19672,7 +19673,7 @@ function $x(e) {
         }
         (Ce.current && !((t = Ce.current) != null && t.call(Ce))) ||
           Ee(
-            Rx({
+            Bx({
               source: e,
               delay: Se.current,
               show: function (e) {
@@ -19741,7 +19742,7 @@ function $x(e) {
                   type: `mouse`,
                   mouse: K(`platform_dst_nav4_side_nav_resize_tooltip_feedback`)
                     ? void 0
-                    : Gx({ left: e.clientX, top: e.clientY }),
+                    : Px({ left: e.clientX, top: e.clientY }),
                   clientX: e.clientX,
                   clientY: e.clientY,
                 }
@@ -19761,7 +19762,7 @@ function $x(e) {
           (t = j.current) != null &&
             t.isActive() &&
             (K(`platform_dst_nav4_side_nav_resize_tooltip_feedback`) ||
-              (j.current.mousePosition = Gx({ left: e.clientX, top: e.clientY })),
+              (j.current.mousePosition = Px({ left: e.clientX, top: e.clientY })),
             (j.current.mousePos = { clientX: e.clientX, clientY: e.clientY }));
         }
       : void 0,
@@ -19808,7 +19809,7 @@ function $x(e) {
         e.mousePos &&
         he.current &&
         K(`platform_dst_nav4_side_nav_resize_tooltip_feedback`)
-        ? Kx(j.current.mousePos, { targetElement: he.current, tooltipPosition: r })
+        ? Fx(j.current.mousePos, { targetElement: he.current, tooltipPosition: r })
         : ce &&
             (t = j.current) != null &&
             t.mousePosition &&
@@ -19816,7 +19817,7 @@ function $x(e) {
           ? j.current?.mousePosition
           : he.current || void 0;
     },
-    Ue = zx(`tooltip`, ze),
+    Ue = Vx(`tooltip`, ze),
     We = {
       onMouseOver: Ae,
       onMouseOut: je,
@@ -20374,8 +20375,8 @@ var vS = function (e) {
   },
   yS = (0, x.lazy)(function () {
     return at(
-      () => import(`./body-imGTqbw0.js`),
-      __vite__mapDeps([5, 1, 3, 6, 7]),
+      () => import(`./body-DomhhnSc.js`),
+      __vite__mapDeps([4, 1, 3, 5, 6]),
       import.meta.url,
     );
   }),
