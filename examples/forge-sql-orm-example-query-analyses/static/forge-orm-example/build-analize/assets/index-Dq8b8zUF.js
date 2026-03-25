@@ -5,9 +5,9 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-DBsnqs9N.js",
       "./rolldown-runtime-COnpUsM8.js",
-      "./custom-theme-3zcgB3Cl.js",
+      "./custom-theme-xDioeD4M.js",
       "./wrapNativeSuper-CMD0Ca0W.js",
-      "./body-DomhhnSc.js",
+      "./body-otYe_tTe.js",
       "./react-dom-vendor-CmKAYmuF.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -13171,14 +13171,30 @@ var up = {
     UNSAFE_themeOptions: void 0,
   },
   dp = {
+    "motion.avatar.enter": `--ds-avatar-enter`,
+    "motion.avatar.exit": `--ds-avatar-exit`,
+    "motion.avatar.hovered": `--ds-avatar-hovered`,
     "motion.content.enter.long": `--ds-content-enter-long`,
     "motion.content.enter.medium": `--ds-content-enter-medium`,
     "motion.content.enter.short": `--ds-content-enter-short`,
     "motion.content.exit.long": `--ds-content-exit-long`,
     "motion.content.exit.medium": `--ds-content-exit-medium`,
     "motion.content.exit.short": `--ds-content-exit-short`,
-    "motion.dialog.enter": `--ds-dialog-enter`,
-    "motion.dialog.exit": `--ds-dialog-exit`,
+    "motion.flag.enter": `--ds-flag-enter`,
+    "motion.flag.exit": `--ds-flag-exit`,
+    "motion.flag.reposition": `--ds-flag-reposition`,
+    "motion.modal.enter": `--ds-modal-enter`,
+    "motion.modal.exit": `--ds-modal-exit`,
+    "motion.popup.enter.bottom": `--ds-popup-enter-bottom`,
+    "motion.popup.enter.left": `--ds-popup-enter-left`,
+    "motion.popup.enter.right": `--ds-popup-enter-right`,
+    "motion.popup.enter.top": `--ds-popup-enter-top`,
+    "motion.popup.exit.bottom": `--ds-popup-exit-bottom`,
+    "motion.popup.exit.left": `--ds-popup-exit-left`,
+    "motion.popup.exit.right": `--ds-popup-exit-right`,
+    "motion.popup.exit.top": `--ds-popup-exit-top`,
+    "motion.spotlight.enter": `--ds-spotlight-enter`,
+    "motion.spotlight.exit": `--ds-spotlight-exit`,
     "color.text": `--ds-text`,
     "color.text.accent.lime": `--ds-text-accent-lime`,
     "color.text.accent.lime.bolder": `--ds-text-accent-lime-bolder`,
@@ -13981,7 +13997,7 @@ var Kp = {
       return at(() => import(`./atlassian-shape-YciEaKQR.js`), [], import.meta.url);
     },
     motion: function () {
-      return at(() => import(`./atlassian-motion-9pPffLpq.js`), [], import.meta.url);
+      return at(() => import(`./atlassian-motion-DHnW4wja.js`), [], import.meta.url);
     },
   },
   qp = (function () {
@@ -14421,7 +14437,7 @@ var gm = (function () {
                                       return (
                                         (e.next = 2),
                                         at(
-                                          () => import(`./custom-theme-3zcgB3Cl.js`),
+                                          () => import(`./custom-theme-xDioeD4M.js`),
                                           __vite__mapDeps([2, 3]),
                                           import.meta.url,
                                         )
@@ -20375,7 +20391,7 @@ var vS = function (e) {
   },
   yS = (0, x.lazy)(function () {
     return at(
-      () => import(`./body-DomhhnSc.js`),
+      () => import(`./body-otYe_tTe.js`),
       __vite__mapDeps([4, 1, 3, 5, 6]),
       import.meta.url,
     );
