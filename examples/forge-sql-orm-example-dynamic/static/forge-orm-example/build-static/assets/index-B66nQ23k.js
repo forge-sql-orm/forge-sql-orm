@@ -5,9 +5,9 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-DBsnqs9N.js",
       "./rolldown-runtime-COnpUsM8.js",
-      "./custom-theme-6z54ceZR.js",
+      "./custom-theme-B3TBlWNh.js",
       "./wrapNativeSuper-CMD0Ca0W.js",
-      "./body-DXjtH5Hr.js",
+      "./body-DU92aj5_.js",
       "./react-dom-vendor-CmKAYmuF.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -10711,7 +10711,7 @@ var Dc = (function () {
                                       return (
                                         (e.next = 2),
                                         at(
-                                          () => import(`./custom-theme-6z54ceZR.js`),
+                                          () => import(`./custom-theme-B3TBlWNh.js`),
                                           __vite__mapDeps([2, 3]),
                                           import.meta.url,
                                         )
@@ -12776,7 +12776,7 @@ var Pd = {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `23.10.4`,
         analyticsData: n,
       }),
       ue = (0, x.useCallback)(
@@ -16665,7 +16665,7 @@ var Mg = function (e) {
   },
   Ng = (0, x.lazy)(function () {
     return at(
-      () => import(`./body-DXjtH5Hr.js`),
+      () => import(`./body-DU92aj5_.js`),
       __vite__mapDeps([4, 1, 3, 5, 6]),
       import.meta.url,
     );
@@ -16840,25 +16840,19 @@ l(Lg, `defaultProps`, {
   rowsPerPage: 1 / 0,
 });
 var Rg = pn(),
-  zg = (e, t, n) => {
-    let r = [];
-    switch (n) {
-      case `USER`:
-        (r.push({ key: `id`, content: `ID`, isSortable: !0, width: e ? 25 : void 0 }),
-          r.push({ key: `name`, content: `NAME`, isSortable: !0, width: e ? 25 : void 0 }),
-          r.push({ key: `email`, content: `EMAIL`, isSortable: !0, width: e ? 25 : void 0 }));
-        break;
-      case `DUPLICATE`:
-        (r.push({ key: `name`, content: `NAME`, isSortable: !0, width: e ? 25 : void 0 }),
-          r.push({ key: `email`, content: `EMAIL`, isSortable: !0, width: e ? 25 : void 0 }),
-          r.push({ key: `count`, content: `COUNT`, isSortable: !0, width: e ? 25 : void 0 }));
-    }
+  zg = (e, t, n, r) => {
+    let i = Object.keys(r).map((n) => ({
+      key: n,
+      content: n,
+      isSortable: t,
+      width: e ? 25 : void 0,
+    }));
     return (
-      t && r.push({ key: `delete`, content: `Delete`, isSortable: !1, width: e ? 25 : void 0 }),
-      r
+      n && i.push({ key: `delete`, content: `Delete`, isSortable: t, width: e ? 25 : void 0 }),
+      i
     );
   },
-  Bg = (e, t, n) => ({ cells: zg(e, t, n) });
+  Bg = (e, t, n, r) => ({ cells: zg(e, t, n, r) });
 function q(e) {
   var t = [...arguments].slice(1);
   throw Error(
@@ -20566,22 +20560,42 @@ var xS = class {
 var SS = new xS(),
   CS = class {
     constructor() {
+      ((this.isLoading = !0), jb(this));
+    }
+    saveMetadata(e) {
+      ((this.metadata = e), (this.isLoading = !1));
+    }
+    loading() {
+      this.isLoading = !0;
+    }
+    stopLoading() {
+      this.isLoading = !1;
+    }
+  };
+(bS([Y], CS.prototype, `isLoading`, void 0),
+  bS([Y], CS.prototype, `metadata`, void 0),
+  bS([qy.bound], CS.prototype, `saveMetadata`, null),
+  bS([qy], CS.prototype, `loading`, null),
+  bS([qy], CS.prototype, `stopLoading`, null));
+var wS = new CS(),
+  TS = class {
+    constructor() {
       ((this.state = `ROOT`), jb(this));
     }
     saveState(e) {
       this.state = e;
     }
   };
-(bS([Y], CS.prototype, `state`, void 0), bS([qy.bound], CS.prototype, `saveState`, null));
-var wS = new CS(),
-  TS = new (class {
+(bS([Y], TS.prototype, `state`, void 0), bS([qy.bound], TS.prototype, `saveState`, null));
+var ES = new TS(),
+  DS = new (class {
     constructor() {
-      ((this.usersStore = SS), (this.stateStore = wS));
+      ((this.usersStore = SS), (this.usersMetadata = wS), (this.stateStore = ES));
     }
   })(),
-  ES = (0, x.createContext)(TS),
-  DS = () => (0, x.useContext)(ES),
-  OS = i((e) => {
+  OS = (0, x.createContext)(DS),
+  kS = () => (0, x.useContext)(OS),
+  AS = i((e) => {
     var t = o(),
       n = Symbol.for(`react.element`),
       r = Object.prototype.hasOwnProperty,
@@ -20604,19 +20618,19 @@ var wS = new CS(),
     ((e.jsx = s), (e.jsxs = s));
   }),
   $ = i((e, t) => {
-    t.exports = OS();
+    t.exports = AS();
   })(),
-  kS = mS(() => {
-    let { usersStore: e, stateStore: t } = DS(),
-      n = Bg(!0, !0, `USER`),
-      r = e.users;
-    return !r || r.length === 0
+  jS = mS(() => {
+    let { usersStore: e, usersMetadata: t, stateStore: n } = kS(),
+      r = Bg(!0, !0, !0, t.metadata.user.properties),
+      i = e.users;
+    return !i || i.length === 0
       ? (0, $.jsx)(`div`, { children: `User Table is EMPTY` })
       : (0, $.jsx)(`div`, {
           children: (0, $.jsxs)(`div`, {
             children: [
               (0, $.jsx)(Lg, {
-                head: n,
+                head: r,
                 onSort: async (t) => {
                   let n = { name: t.key, sortType: t.sortOrder };
                   e.loading();
@@ -20627,12 +20641,10 @@ var wS = new CS(),
                     e.stopLoading();
                   }
                 },
-                rows: r.map((t, n) => {
-                  let r = [
-                    { key: `id`, content: t.id },
-                    { key: `name`, content: t.name },
-                    { key: `email`, content: t.email },
-                    {
+                rows: i.map((t, n) => {
+                  let r = Object.keys(t.fields).map((e) => ({ key: e, content: t.fields[e] }));
+                  return (
+                    r.push({
                       key: `delete`,
                       content: (0, $.jsx)(`div`, {
                         children: (0, $.jsx)(`button`, {
@@ -20648,9 +20660,9 @@ var wS = new CS(),
                           children: `delete`,
                         }),
                       }),
-                    },
-                  ];
-                  return { key: `row-${n}-${t.id}`, cells: r };
+                    }),
+                    { key: `row-${n}-${t.id}`, cells: r }
+                  );
                 }),
                 rowsPerPage: 5,
                 defaultPage: 1,
@@ -20664,8 +20676,8 @@ var wS = new CS(),
                 onClick: async () => {
                   e.loading();
                   try {
-                    let n = await (0, Rg.invoke)(`duplicate`, { sortType: e.sort });
-                    (e.saveDuplicates(n), t.saveState(`DUPLICATE`));
+                    let t = await (0, Rg.invoke)(`duplicate`);
+                    (e.saveDuplicates(t), n.saveState(`DUPLICATE`));
                   } finally {
                     e.stopLoading();
                   }
@@ -20676,81 +20688,66 @@ var wS = new CS(),
           }),
         });
   }),
-  AS = mS(() => {
-    let { usersStore: e, stateStore: t } = DS(),
-      [n, r] = (0, x.useState)({}),
-      i = (e) => {
-        let { name: t, value: n, type: i } = e.target;
-        r((e) => ({ ...e, [t]: i === `number` ? Number(n) : n }));
+  MS = mS(() => {
+    let { usersMetadata: e, usersStore: t, stateStore: n } = kS(),
+      [r, i] = (0, x.useState)({}),
+      a = (e) => {
+        let { name: t, value: n, type: r } = e.target;
+        i((e) => ({ ...e, [t]: r === `number` ? Number(n) : n }));
       };
     return (0, $.jsx)(`div`, {
       children: (0, $.jsxs)(`form`, {
-        onSubmit: async (r) => {
-          (r.preventDefault(), await (0, Rg.invoke)(`create`, { data: n }), e.loading());
+        onSubmit: async (e) => {
+          (e.preventDefault(),
+            console.log(`Form Data:`, r),
+            await (0, Rg.invoke)(`create`, { data: r }),
+            t.loading());
           try {
-            (e.saveUsers(await (0, Rg.invoke)(`fetch`, { sortType: e.sort })), t.saveState(`ROOT`));
+            (t.saveUsers(await (0, Rg.invoke)(`fetch`, { sortType: t.sort })), n.saveState(`ROOT`));
           } finally {
-            e.stopLoading();
+            t.stopLoading();
           }
         },
         children: [
-          (0, $.jsxs)(
-            `div`,
-            {
-              children: [
-                (0, $.jsx)(`label`, { htmlFor: `name`, children: `Name` }),
-                (0, $.jsx)(`br`, {}),
-                (0, $.jsx)(`input`, { type: `text`, id: `name`, name: `name`, onChange: i }),
-                (0, $.jsx)(`br`, {}),
-              ],
-            },
-            `name`,
-          ),
-          (0, $.jsxs)(
-            `div`,
-            {
-              children: [
-                (0, $.jsx)(`label`, { htmlFor: `email`, children: `Email` }),
-                (0, $.jsx)(`br`, {}),
-                (0, $.jsx)(`input`, { type: `text`, id: `email`, name: `email`, onChange: i }),
-                (0, $.jsx)(`br`, {}),
-              ],
-            },
-            `email`,
-          ),
+          Object.keys(e.metadata.user.properties).map((t) => {
+            let n = e.metadata.user.properties[t];
+            return (0, $.jsxs)(
+              `div`,
+              {
+                children: [
+                  (0, $.jsx)(`label`, { htmlFor: t, children: t }),
+                  (0, $.jsx)(`br`, {}),
+                  (0, $.jsx)(`input`, {
+                    type: n.type === `integer` || n.type === `smallint` ? `number` : `text`,
+                    id: t,
+                    name: t,
+                    onChange: a,
+                  }),
+                  (0, $.jsx)(`br`, {}),
+                ],
+              },
+              t,
+            );
+          }),
           (0, $.jsx)(`input`, { type: `submit`, value: `Submit` }),
         ],
       }),
     });
   }),
-  jS = mS(() => {
-    let { usersStore: e } = DS(),
-      t = Bg(!0, !1, `DUPLICATE`),
-      n = e.duplicates;
-    return !n || n.length === 0
+  NS = mS(() => {
+    let { usersStore: e, usersMetadata: t } = kS(),
+      n = Bg(!0, !1, !1, t.metadata.duplicate.properties),
+      r = e.duplicates;
+    return !r || r.length === 0
       ? (0, $.jsx)(`div`, { children: `Duplicate Table is EMPTY` })
       : (0, $.jsx)(`div`, {
           children: (0, $.jsxs)(`div`, {
             children: [
               (0, $.jsx)(Lg, {
-                head: t,
-                onSort: async (t) => {
-                  let n = { name: t.key, sortType: t.sortOrder };
-                  e.loading();
-                  try {
-                    let t = await (0, Rg.invoke)(`duplicate`, { sortType: n });
-                    e.saveDuplicates(t);
-                  } finally {
-                    e.stopLoading();
-                  }
-                },
-                rows: n.map((e, t) => {
-                  let n = [
-                    { key: `name`, content: e.name },
-                    { key: `email`, content: e.email },
-                    { key: `count`, content: e.count },
-                  ];
-                  return { key: `row-${t}`, cells: n };
+                head: n,
+                rows: r.map((e, t) => {
+                  let n = Object.keys(e.fields).map((t) => ({ key: t, content: e.fields[t] }));
+                  return { key: `row-${t}-1`, cells: n };
                 }),
                 rowsPerPage: 5,
                 defaultPage: 1,
@@ -20764,34 +20761,36 @@ var wS = new CS(),
           }),
         });
   });
-function MS() {
-  let { usersStore: e, stateStore: t } = DS();
+function PS() {
+  let { usersStore: e, usersMetadata: t, stateStore: n } = kS();
   if (
     ((0, x.useEffect)(() => {
       (async () => {
         try {
-          let t = await (0, Rg.invoke)(`fetch`, { type: `USER`, sortType: e.sort });
-          e.saveUsers(t);
+          t.saveMetadata(await (0, Rg.invoke)(`fetchMetadata`));
+          let n = await (0, Rg.invoke)(`fetch`, { type: `USER`, sortType: e.sort });
+          e.saveUsers(n);
         } finally {
-          e.stopLoading();
+          (t.stopLoading(), e.stopLoading());
         }
       })().catch(console.error);
     }, []),
-    e.isLoading)
+    e.isLoading || t.isLoading)
   )
     return `loading....`;
-  switch (t.state) {
+  if (!t.metadata) return (0, $.jsx)(`div`, { children: `Loading Error` });
+  switch (n.state) {
     case `ROOT`:
       return (0, $.jsx)(`div`, {
         children: (0, $.jsxs)(`div`, {
           children: [
             (0, $.jsx)(`button`, {
-              onClick: () => t.saveState(`ADD_USER`),
+              onClick: () => n.saveState(`ADD_USER`),
               children: `Add a new User`,
             }),
             (0, $.jsx)(`br`, {}),
             (0, $.jsx)(`br`, {}),
-            (0, $.jsx)(kS, {}),
+            (0, $.jsx)(jS, {}),
           ],
         }),
       });
@@ -20799,10 +20798,10 @@ function MS() {
       return (0, $.jsx)(`div`, {
         children: (0, $.jsxs)(`div`, {
           children: [
-            (0, $.jsx)(`button`, { onClick: () => t.saveState(`ROOT`), children: `back` }),
+            (0, $.jsx)(`button`, { onClick: () => n.saveState(`ROOT`), children: `back` }),
             (0, $.jsx)(`br`, {}),
             (0, $.jsx)(`br`, {}),
-            (0, $.jsx)(jS, {}),
+            (0, $.jsx)(NS, {}),
           ],
         }),
       });
@@ -20810,29 +20809,29 @@ function MS() {
       return (0, $.jsx)(`div`, {
         children: (0, $.jsxs)(`div`, {
           children: [
-            (0, $.jsx)(`button`, { onClick: () => t.saveState(`ROOT`), children: `back` }),
+            (0, $.jsx)(`button`, { onClick: () => n.saveState(`ROOT`), children: `back` }),
             (0, $.jsx)(`br`, {}),
             (0, $.jsx)(`br`, {}),
-            (0, $.jsx)(AS, {}),
+            (0, $.jsx)(MS, {}),
           ],
         }),
       });
     default:
-      return (0, $.jsxs)(`div`, { children: [`ERROR: unsupprted state $`, t.state] });
+      return (0, $.jsxs)(`div`, { children: [`ERROR: unsupprted state $`, n.state] });
   }
 }
-var NS = mS(MS),
-  PS = (0, s().createRoot)(document.getElementById(`root`)),
-  FS = () => {
-    PS.render((0, $.jsx)(yS, { ...TS, children: (0, $.jsx)(NS, {}) }));
+var FS = mS(PS),
+  IS = (0, s().createRoot)(document.getElementById(`root`)),
+  LS = () => {
+    IS.render((0, $.jsx)(yS, { ...DS, children: (0, $.jsx)(FS, {}) }));
   };
 Rg.view.theme
   .enable()
   .then(() => {
-    FS();
+    LS();
   })
   .catch((e) => {
-    (console.error(e.message), FS());
+    (console.error(e.message), LS());
   });
 export {
   H as C,
