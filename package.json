@@ -30,8 +30,8 @@
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.2",
     "@typescript-eslint/parser": "^8.57.2",
-    "@vitest/coverage-v8": "^4.1.1",
-    "@vitest/ui": "^4.1.1",
+    "@vitest/coverage-v8": "^4.1.2",
+    "@vitest/ui": "^4.1.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -43,7 +43,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "uuid": "^13.0.0",
-    "vitest": "^4.1.1"
+    "vitest": "^4.1.2"
   },
   "license": "MIT",
   "author": "Vasyl Zakharchenko",
