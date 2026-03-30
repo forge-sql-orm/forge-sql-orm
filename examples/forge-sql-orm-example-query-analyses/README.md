@@ -2,8 +2,6 @@
 
 This application demonstrates the query analysis capabilities of Forge SQL ORM, providing tools for analyzing and optimizing database queries. These features are designed for development and troubleshooting purposes only.
 
-⚠️ **Important Note**: The query analysis features shown in this example are experimental and should be used only for troubleshooting. They rely on TiDB's `information_schema` and `performance_schema` which may change in future updates. As of April 2025, these features are available but their future availability is not guaranteed.
-
 ## Features
 
 ### 1. Query Plan Analysis
