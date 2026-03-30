@@ -5,11 +5,11 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@forge/events": "^2.1.1",
-    "@forge/kvs": "^1.5.0",
+    "@forge/events": "^2.1.2",
+    "@forge/kvs": "^1.6.0",
     "@forge/resolver": "1.7.1",
-    "@forge/sql": "^3.0.20",
-    "drizzle-orm": "^0.45.1",
+    "@forge/sql": "^3.0.21",
+    "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "2.1.25"
   },
   "scripts": {
@@ -25,7 +25,7 @@
   "devDependencies": {
     "@types/node": "^25.5.0",
     "forge-sql-orm-cli": "^2.1.25",
-    "knip": "^6.0.6",
+    "knip": "^6.1.0",
     "mysql2": "^3.20.0",
     "typescript": "^5.9.3"
   },

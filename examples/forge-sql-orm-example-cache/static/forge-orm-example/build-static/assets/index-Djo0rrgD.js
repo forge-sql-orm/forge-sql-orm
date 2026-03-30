@@ -2340,7 +2340,6 @@ var k,
           (e.Frames = `FRAMES`),
           (e.Images = `IMAGES`),
           (e.Media = `MEDIA`),
-          (e.Navigation = `NAVIGATION`),
           (e.Scripts = `SCRIPTS`),
           (e.Styles = `STYLES`));
       })((e.EgressType ||= {})));
@@ -2879,6 +2878,13 @@ var k,
           throw new n.BridgeAPIError(
             `Missing required parameters. Parameter user is required in the payload.`,
           );
+        if (
+          !e.config.environment ||
+          ![`development`, `staging`, `production`].includes(e.config.environment)
+        )
+          throw new n.BridgeAPIError(
+            `Invalid environment. Valid environments are: development, staging, production`,
+          );
         if (Object.values(e).some((e) => typeof e == `function`))
           throw new n.BridgeAPIError(`Passing functions as part of the payload is not supported!`);
       };
@@ -2901,7 +2907,8 @@ var k,
       }
       async initialize(e, n = { environment: `development` }) {
         if (this.isInitialized()) return;
-        this.eventProps.environment = n.environment;
+        (n?.environment || (n.environment = `development`),
+          (this.eventProps.environment = n.environment));
         let i = await (0, r.initFeatureFlags)({ user: e, config: n });
         ((this.initialized = !0), (this.evaluator = new t.Evaluator(i)));
       }

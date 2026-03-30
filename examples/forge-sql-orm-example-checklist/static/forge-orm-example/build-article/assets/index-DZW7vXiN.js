@@ -37,44 +37,44 @@ import { t as s } from "./lodash-vendor-DTP5bTCx.js";
 })();
 var c = e(a()),
   l = r({
-    __addDisposableResource: () => oe,
-    __assign: () => M,
-    __asyncDelegator: () => E,
-    __asyncGenerator: () => ne,
-    __asyncValues: () => D,
-    __await: () => T,
+    __addDisposableResource: () => le,
+    __assign: () => k,
+    __asyncDelegator: () => te,
+    __asyncGenerator: () => D,
+    __asyncValues: () => ne,
+    __await: () => E,
     __awaiter: () => y,
-    __classPrivateFieldGet: () => re,
-    __classPrivateFieldIn: () => ae,
-    __classPrivateFieldSet: () => ie,
-    __createBinding: () => N,
+    __classPrivateFieldGet: () => oe,
+    __classPrivateFieldIn: () => ce,
+    __classPrivateFieldSet: () => se,
+    __createBinding: () => A,
     __decorate: () => f,
-    __disposeResources: () => se,
+    __disposeResources: () => ue,
     __esDecorate: () => m,
-    __exportStar: () => x,
+    __exportStar: () => ee,
     __extends: () => u,
     __generator: () => b,
-    __importDefault: () => A,
-    __importStar: () => k,
-    __makeTemplateObject: () => O,
+    __importDefault: () => ae,
+    __importStar: () => ie,
+    __makeTemplateObject: () => re,
     __metadata: () => v,
     __param: () => p,
     __propKey: () => g,
-    __read: () => C,
+    __read: () => S,
     __rest: () => d,
-    __rewriteRelativeImportExtension: () => ce,
+    __rewriteRelativeImportExtension: () => de,
     __runInitializers: () => h,
     __setFunctionName: () => _,
-    __spread: () => w,
-    __spreadArray: () => te,
-    __spreadArrays: () => ee,
-    __values: () => S,
-    default: () => de,
+    __spread: () => C,
+    __spreadArray: () => T,
+    __spreadArrays: () => w,
+    __values: () => x,
+    default: () => P,
   });
 function u(e, t) {
   if (typeof t != `function` && t !== null)
     throw TypeError(`Class extends value ` + String(t) + ` is not a constructor or null`);
-  j(e, t);
+  O(e, t);
   function n() {
     this.constructor = e;
   }
@@ -274,10 +274,10 @@ function b(e, t) {
     return { value: s[0] ? s[1] : void 0, done: !0 };
   }
 }
-function x(e, t) {
-  for (var n in e) n !== `default` && !Object.prototype.hasOwnProperty.call(t, n) && N(t, e, n);
+function ee(e, t) {
+  for (var n in e) n !== `default` && !Object.prototype.hasOwnProperty.call(t, n) && A(t, e, n);
 }
-function S(e) {
+function x(e) {
   var t = typeof Symbol == `function` && Symbol.iterator,
     n = t && e[t],
     r = 0;
@@ -290,7 +290,7 @@ function S(e) {
     };
   throw TypeError(t ? `Object is not iterable.` : `Symbol.iterator is not defined.`);
 }
-function C(e, t) {
+function S(e, t) {
   var n = typeof Symbol == `function` && e[Symbol.iterator];
   if (!n) return e;
   var r = n.call(e),
@@ -310,26 +310,26 @@ function C(e, t) {
   }
   return a;
 }
-function w() {
-  for (var e = [], t = 0; t < arguments.length; t++) e = e.concat(C(arguments[t]));
+function C() {
+  for (var e = [], t = 0; t < arguments.length; t++) e = e.concat(S(arguments[t]));
   return e;
 }
-function ee() {
+function w() {
   for (var e = 0, t = 0, n = arguments.length; t < n; t++) e += arguments[t].length;
   for (var r = Array(e), i = 0, t = 0; t < n; t++)
     for (var a = arguments[t], o = 0, s = a.length; o < s; o++, i++) r[i] = a[o];
   return r;
 }
-function te(e, t, n) {
+function T(e, t, n) {
   if (n || arguments.length === 2)
     for (var r = 0, i = t.length, a; r < i; r++)
       (a || !(r in t)) && ((a ||= Array.prototype.slice.call(t, 0, r)), (a[r] = t[r]));
   return e.concat(a || Array.prototype.slice.call(t));
 }
-function T(e) {
-  return this instanceof T ? ((this.v = e), this) : new T(e);
+function E(e) {
+  return this instanceof E ? ((this.v = e), this) : new E(e);
 }
-function ne(e, t, n) {
+function D(e, t, n) {
   if (!Symbol.asyncIterator) throw TypeError(`Symbol.asyncIterator is not defined.`);
   var r = n.apply(e, t || []),
     i,
@@ -366,7 +366,7 @@ function ne(e, t, n) {
     }
   }
   function l(e) {
-    e.value instanceof T ? Promise.resolve(e.value.v).then(u, d) : f(a[0][2], e);
+    e.value instanceof E ? Promise.resolve(e.value.v).then(u, d) : f(a[0][2], e);
   }
   function u(e) {
     c(`next`, e);
@@ -378,7 +378,7 @@ function ne(e, t, n) {
     (e(t), a.shift(), a.length && c(a[0][0], a[0][1]));
   }
 }
-function E(e) {
+function te(e) {
   var t, n;
   return (
     (t = {}),
@@ -395,18 +395,18 @@ function E(e) {
   function r(r, i) {
     t[r] = e[r]
       ? function (t) {
-          return (n = !n) ? { value: T(e[r](t)), done: !1 } : i ? i(t) : t;
+          return (n = !n) ? { value: E(e[r](t)), done: !1 } : i ? i(t) : t;
         }
       : i;
   }
 }
-function D(e) {
+function ne(e) {
   if (!Symbol.asyncIterator) throw TypeError(`Symbol.asyncIterator is not defined.`);
   var t = e[Symbol.asyncIterator],
     n;
   return t
     ? t.call(e)
-    : ((e = typeof S == `function` ? S(e) : e[Symbol.iterator]()),
+    : ((e = typeof x == `function` ? x(e) : e[Symbol.iterator]()),
       (n = {}),
       r(`next`),
       r(`throw`),
@@ -430,37 +430,37 @@ function D(e) {
     }, t);
   }
 }
-function O(e, t) {
+function re(e, t) {
   return (Object.defineProperty ? Object.defineProperty(e, `raw`, { value: t }) : (e.raw = t), e);
 }
-function k(e) {
+function ie(e) {
   if (e && e.__esModule) return e;
   var t = {};
-  if (e != null) for (var n = P(e), r = 0; r < n.length; r++) n[r] !== `default` && N(t, e, n[r]);
-  return (le(t, e), t);
+  if (e != null) for (var n = M(e), r = 0; r < n.length; r++) n[r] !== `default` && A(t, e, n[r]);
+  return (j(t, e), t);
 }
-function A(e) {
+function ae(e) {
   return e && e.__esModule ? e : { default: e };
 }
-function re(e, t, n, r) {
+function oe(e, t, n, r) {
   if (n === `a` && !r) throw TypeError(`Private accessor was defined without a getter`);
   if (typeof t == `function` ? e !== t || !r : !t.has(e))
     throw TypeError(`Cannot read private member from an object whose class did not declare it`);
   return n === `m` ? r : n === `a` ? r.call(e) : r ? r.value : t.get(e);
 }
-function ie(e, t, n, r, i) {
+function se(e, t, n, r, i) {
   if (r === `m`) throw TypeError(`Private method is not writable`);
   if (r === `a` && !i) throw TypeError(`Private accessor was defined without a setter`);
   if (typeof t == `function` ? e !== t || !i : !t.has(e))
     throw TypeError(`Cannot write private member to an object whose class did not declare it`);
   return (r === `a` ? i.call(e, n) : i ? (i.value = n) : t.set(e, n), n);
 }
-function ae(e, t) {
+function ce(e, t) {
   if (t === null || (typeof t != `object` && typeof t != `function`))
     throw TypeError(`Cannot use 'in' operator on non-object`);
   return typeof e == `function` ? t === e : e.has(t);
 }
-function oe(e, t, n) {
+function le(e, t, n) {
   if (t != null) {
     if (typeof t != `object` && typeof t != `function`) throw TypeError(`Object expected.`);
     var r, i;
@@ -485,9 +485,9 @@ function oe(e, t, n) {
   } else n && e.stack.push({ async: !0 });
   return t;
 }
-function se(e) {
+function ue(e) {
   function t(t) {
-    ((e.error = e.hasError ? new ue(t, e.error, `An error was suppressed during disposal.`) : t),
+    ((e.error = e.hasError ? new N(t, e.error, `An error was suppressed during disposal.`) : t),
       (e.hasError = !0));
   }
   var n,
@@ -514,7 +514,7 @@ function se(e) {
   }
   return i();
 }
-function ce(e, t) {
+function de(e, t) {
   return typeof e == `string` && /^\.\.?\//.test(e)
     ? e.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function (e, n, r, i, a) {
         return n
@@ -527,17 +527,17 @@ function ce(e, t) {
       })
     : e;
 }
-var j,
+var O,
+  k,
+  A,
+  j,
   M,
   N,
-  le,
   P,
-  ue,
-  de,
   F = n(() => {
-    ((j = function (e, t) {
+    ((O = function (e, t) {
       return (
-        (j =
+        (O =
           Object.setPrototypeOf ||
           ({ __proto__: [] } instanceof Array &&
             function (e, t) {
@@ -546,12 +546,12 @@ var j,
           function (e, t) {
             for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n]);
           }),
-        j(e, t)
+        O(e, t)
       );
     }),
-      (M = function () {
+      (k = function () {
         return (
-          (M =
+          (k =
             Object.assign ||
             function (e) {
               for (var t, n = 1, r = arguments.length; n < r; n++)
@@ -559,10 +559,10 @@ var j,
                   Object.prototype.hasOwnProperty.call(t, i) && (e[i] = t[i]);
               return e;
             }),
-          M.apply(this, arguments)
+          k.apply(this, arguments)
         );
       }),
-      (N = Object.create
+      (A = Object.create
         ? function (e, t, n, r) {
             r === void 0 && (r = n);
             var i = Object.getOwnPropertyDescriptor(t, n);
@@ -578,35 +578,35 @@ var j,
         : function (e, t, n, r) {
             (r === void 0 && (r = n), (e[r] = t[n]));
           }),
-      (le = Object.create
+      (j = Object.create
         ? function (e, t) {
             Object.defineProperty(e, `default`, { enumerable: !0, value: t });
           }
         : function (e, t) {
             e.default = t;
           }),
-      (P = function (e) {
+      (M = function (e) {
         return (
-          (P =
+          (M =
             Object.getOwnPropertyNames ||
             function (e) {
               var t = [];
               for (var n in e) Object.prototype.hasOwnProperty.call(e, n) && (t[t.length] = n);
               return t;
             }),
-          P(e)
+          M(e)
         );
       }),
-      (ue =
+      (N =
         typeof SuppressedError == `function`
           ? SuppressedError
           : function (e, t, n) {
               var r = Error(n);
               return ((r.name = `SuppressedError`), (r.error = e), (r.suppressed = t), r);
             }),
-      (de = {
+      (P = {
         __extends: u,
-        __assign: M,
+        __assign: k,
         __rest: d,
         __decorate: f,
         __param: p,
@@ -617,26 +617,26 @@ var j,
         __metadata: v,
         __awaiter: y,
         __generator: b,
-        __createBinding: N,
-        __exportStar: x,
-        __values: S,
-        __read: C,
-        __spread: w,
-        __spreadArrays: ee,
-        __spreadArray: te,
-        __await: T,
-        __asyncGenerator: ne,
-        __asyncDelegator: E,
-        __asyncValues: D,
-        __makeTemplateObject: O,
-        __importStar: k,
-        __importDefault: A,
-        __classPrivateFieldGet: re,
-        __classPrivateFieldSet: ie,
-        __classPrivateFieldIn: ae,
-        __addDisposableResource: oe,
-        __disposeResources: se,
-        __rewriteRelativeImportExtension: ce,
+        __createBinding: A,
+        __exportStar: ee,
+        __values: x,
+        __read: S,
+        __spread: C,
+        __spreadArrays: w,
+        __spreadArray: T,
+        __await: E,
+        __asyncGenerator: D,
+        __asyncDelegator: te,
+        __asyncValues: ne,
+        __makeTemplateObject: re,
+        __importStar: ie,
+        __importDefault: ae,
+        __classPrivateFieldGet: oe,
+        __classPrivateFieldSet: se,
+        __classPrivateFieldIn: ce,
+        __addDisposableResource: le,
+        __disposeResources: ue,
+        __rewriteRelativeImportExtension: de,
       }));
   }),
   fe = i((e) => {
@@ -1235,13 +1235,13 @@ var j,
       } catch {}
     };
   }),
-  Pe,
   W,
+  Pe,
   G,
   Fe,
   Ie = n(() => {
-    ((Pe = `modulepreload`),
-      (W = function (e, t) {
+    ((W = `modulepreload`),
+      (Pe = function (e, t) {
         return new URL(e, t).href;
       }),
       (G = {}),
@@ -1263,7 +1263,7 @@ var j,
           }
           r = o(
             t.map((t) => {
-              if (((t = W(t, n)), t in G)) return;
+              if (((t = Pe(t, n)), t in G)) return;
               G[t] = !0;
               let r = t.endsWith(`.css`),
                 i = r ? `[rel="stylesheet"]` : ``;
@@ -1275,7 +1275,7 @@ var j,
               else if (document.querySelector(`link[href="${t}"]${i}`)) return;
               let o = document.createElement(`link`);
               if (
-                ((o.rel = r ? `stylesheet` : Pe),
+                ((o.rel = r ? `stylesheet` : W),
                 r || (o.as = `script`),
                 (o.crossOrigin = ``),
                 (o.href = t),
@@ -2340,7 +2340,6 @@ var j,
           (e.Frames = `FRAMES`),
           (e.Images = `IMAGES`),
           (e.Media = `MEDIA`),
-          (e.Navigation = `NAVIGATION`),
           (e.Scripts = `SCRIPTS`),
           (e.Styles = `STYLES`));
       })((e.EgressType ||= {})));
@@ -2879,6 +2878,13 @@ var j,
           throw new n.BridgeAPIError(
             `Missing required parameters. Parameter user is required in the payload.`,
           );
+        if (
+          !e.config.environment ||
+          ![`development`, `staging`, `production`].includes(e.config.environment)
+        )
+          throw new n.BridgeAPIError(
+            `Invalid environment. Valid environments are: development, staging, production`,
+          );
         if (Object.values(e).some((e) => typeof e == `function`))
           throw new n.BridgeAPIError(`Passing functions as part of the payload is not supported!`);
       };
@@ -2901,7 +2907,8 @@ var j,
       }
       async initialize(e, n = { environment: `development` }) {
         if (this.isInitialized()) return;
-        this.eventProps.environment = n.environment;
+        (n?.environment || (n.environment = `development`),
+          (this.eventProps.environment = n.environment));
         let i = await (0, r.initFeatureFlags)({ user: e, config: n });
         ((this.initialized = !0), (this.evaluator = new t.Evaluator(i)));
       }
@@ -2968,261 +2975,171 @@ var j,
       n.__exportStar(At(), e),
       n.__exportStar(It(), e));
   })(),
-  Q = {
-    container: `_container_16ann_1`,
-    header: `_header_16ann_9`,
-    controls: `_controls_16ann_20`,
-    searchSection: `_searchSection_16ann_28`,
-    searchInput: `_searchInput_16ann_34`,
-    orgSelect: `_orgSelect_16ann_35`,
-    input: `_input_16ann_36`,
-    select: `_select_16ann_37`,
-    addButton: `_addButton_16ann_63`,
-    addForm: `_addForm_16ann_79`,
-    submitButton: `_submitButton_16ann_88`,
-    spinner: `_spinner_16ann_108`,
-    spinnerInner: `_spinnerInner_16ann_113`,
-    tableContainer: `_tableContainer_16ann_117`,
-    table: `_table_16ann_117`,
-    stats: `_stats_16ann_146`,
-    loadingContainer: `_loadingContainer_16ann_155`,
-    spin: `_spin_16ann_108`,
-  },
   Lt = i((e) => {
     var t = a(),
       n = Symbol.for(`react.element`),
-      r = Symbol.for(`react.fragment`),
-      i = Object.prototype.hasOwnProperty,
-      o = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
-      s = { key: !0, ref: !0, __self: !0, __source: !0 };
-    function c(e, t, r) {
-      var a,
+      r = Object.prototype.hasOwnProperty,
+      i = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
+      o = { key: !0, ref: !0, __self: !0, __source: !0 };
+    function s(e, t, a) {
+      var s,
         c = {},
         l = null,
         u = null;
-      for (a in (r !== void 0 && (l = `` + r),
+      for (s in (a !== void 0 && (l = `` + a),
       t.key !== void 0 && (l = `` + t.key),
       t.ref !== void 0 && (u = t.ref),
       t))
-        i.call(t, a) && !s.hasOwnProperty(a) && (c[a] = t[a]);
+        r.call(t, s) && !o.hasOwnProperty(s) && (c[s] = t[s]);
       if (e && e.defaultProps)
-        for (a in ((t = e.defaultProps), t)) c[a] === void 0 && (c[a] = t[a]);
-      return { $$typeof: n, type: e, key: l, ref: u, props: c, _owner: o.current };
+        for (s in ((t = e.defaultProps), t)) c[s] === void 0 && (c[s] = t[s]);
+      return { $$typeof: n, type: e, key: l, ref: u, props: c, _owner: i.current };
     }
-    ((e.Fragment = r), (e.jsx = c), (e.jsxs = c));
+    ((e.jsx = s), (e.jsxs = s));
   }),
-  $ = i((e, t) => {
+  Q = i((e, t) => {
     t.exports = Lt();
-  })(),
-  Rt = () =>
-    (0, $.jsx)(`div`, {
-      className: Q.spinner,
-      children: (0, $.jsx)(`div`, { className: Q.spinnerInner }),
-    });
-function zt() {
-  let [e, t] = (0, c.useState)([]),
-    [n, r] = (0, c.useState)([]),
-    [i, a] = (0, c.useState)(``),
-    [o, s] = (0, c.useState)(null),
-    [l, u] = (0, c.useState)(null),
-    [d, f] = (0, c.useState)(``),
-    [p, m] = (0, c.useState)(null),
-    [h, g] = (0, c.useState)(!1),
-    [_, v] = (0, c.useState)(!0),
-    [y, b] = (0, c.useState)(!1),
-    x = async () => {
-      try {
-        t(
-          await (0, Z.invoke)(`getUsers`, { searchTerm: i || void 0, organizationId: o || void 0 }),
-        );
-      } catch (e) {
-        console.error(`Error fetching users:`, e);
-      }
-    },
-    S = async () => {
-      try {
-        r(await (0, Z.invoke)(`getOrganizations`));
-      } catch (e) {
-        console.error(`Error fetching organizations:`, e);
-      }
-    },
-    C = async () => {
-      try {
-        u(await (0, Z.invoke)(`getUserStats`));
-      } catch (e) {
-        console.error(`Error fetching stats:`, e);
-      }
-    },
-    w = async () => {
-      v(!0);
-      try {
-        await Promise.all([x(), S(), C()]);
-      } finally {
-        v(!1);
-      }
-    };
-  return (
-    (0, c.useEffect)(() => {
-      w();
-    }, [i, o]),
-    _
-      ? (0, $.jsxs)(`div`, {
-          className: Q.loadingContainer,
-          children: [(0, $.jsx)(Rt, {}), (0, $.jsx)(`p`, { children: `Loading data...` })],
-        })
-      : (0, $.jsxs)(`div`, {
-          className: Q.container,
-          children: [
-            (0, $.jsx)(`header`, {
-              className: Q.header,
-              children: (0, $.jsx)(`h1`, { children: `OrgTracker` }),
-            }),
-            (0, $.jsxs)(`div`, {
-              className: Q.controls,
-              children: [
-                (0, $.jsxs)(`div`, {
-                  className: Q.searchSection,
-                  children: [
-                    (0, $.jsx)(`input`, {
-                      type: `text`,
-                      placeholder: `🔍 Search by name...`,
-                      value: i,
-                      onChange: (e) => a(e.target.value),
-                      className: Q.searchInput,
-                    }),
-                    (0, $.jsxs)(`select`, {
-                      value: o || ``,
-                      onChange: (e) => s(e.target.value ? Number(e.target.value) : null),
-                      className: Q.orgSelect,
-                      children: [
-                        (0, $.jsx)(`option`, { value: ``, children: `All Organizations` }),
-                        n.map((e) =>
-                          (0, $.jsxs)(
-                            `option`,
-                            {
-                              value: e.id,
-                              children: [e.name, ` (`, l?.orgBreakdown[e.id] || 0, `)`],
-                            },
-                            e.id,
-                          ),
-                        ),
-                      ],
-                    }),
-                  ],
-                }),
-                (0, $.jsx)(`button`, {
-                  className: Q.addButton,
-                  onClick: () => g(!h),
-                  children: h ? `Cancel` : `+ Add User`,
-                }),
-              ],
-            }),
-            h &&
-              (0, $.jsxs)(`div`, {
-                className: Q.addForm,
-                children: [
-                  (0, $.jsx)(`input`, {
-                    type: `text`,
-                    placeholder: `User Name`,
-                    value: d,
-                    onChange: (e) => f(e.target.value),
-                    className: Q.input,
-                    disabled: y,
-                  }),
-                  (0, $.jsxs)(`select`, {
-                    value: p || ``,
-                    onChange: (e) => m(Number(e.target.value)),
-                    className: Q.select,
-                    disabled: y,
-                    children: [
-                      (0, $.jsx)(`option`, { value: ``, children: `Select Organization` }),
-                      n.map((e) => (0, $.jsx)(`option`, { value: e.id, children: e.name }, e.id)),
-                    ],
-                  }),
-                  (0, $.jsx)(`button`, {
-                    onClick: async () => {
-                      if (!(!d || !p)) {
-                        b(!0);
-                        try {
-                          (await (0, Z.invoke)(`createUser`, { name: d, organizationId: p }),
-                            f(``),
-                            m(null),
-                            g(!1),
-                            await w());
-                        } catch (e) {
-                          console.error(`Error adding user:`, e);
-                        } finally {
-                          b(!1);
-                        }
-                      }
-                    },
-                    className: Q.submitButton,
-                    disabled: !d || !p || y,
-                    style: {
-                      opacity: !d || !p || y ? 0.5 : 1,
-                      cursor: !d || !p || y ? `not-allowed` : `pointer`,
-                    },
-                    children: y
-                      ? (0, $.jsxs)($.Fragment, {
-                          children: [
-                            (0, $.jsx)(Rt, {}),
-                            (0, $.jsx)(`span`, {
-                              style: { marginLeft: `8px` },
-                              children: `Adding...`,
-                            }),
-                          ],
-                        })
-                      : `Add User`,
-                  }),
-                ],
-              }),
-            (0, $.jsx)(`div`, {
-              className: Q.tableContainer,
-              children: (0, $.jsxs)(`table`, {
-                className: Q.table,
-                children: [
-                  (0, $.jsx)(`thead`, {
-                    children: (0, $.jsxs)(`tr`, {
-                      children: [
-                        (0, $.jsx)(`th`, { children: `👤 User Name` }),
-                        (0, $.jsx)(`th`, { children: `🏢 Organization` }),
-                      ],
-                    }),
-                  }),
-                  (0, $.jsx)(`tbody`, {
-                    children: e.map((e) =>
-                      (0, $.jsxs)(
-                        `tr`,
-                        {
-                          children: [
-                            (0, $.jsx)(`td`, { children: e.users.name }),
-                            (0, $.jsx)(`td`, { children: e.organization.name }),
-                          ],
-                        },
-                        e.users.id,
-                      ),
-                    ),
-                  }),
-                ],
-              }),
-            }),
-            (0, $.jsx)(`div`, {
-              className: Q.stats,
-              children: (0, $.jsxs)(`p`, { children: [`Total Users: `, l?.totalUsers || 0] }),
-            }),
-          ],
-        })
-  );
+  })();
+async function $(e, t, n) {
+  await (0, Z.showFlag)({
+    id: `checklist-${Date.now()}`,
+    title: e,
+    type: n,
+    description: t,
+    isAutoDismiss: !0,
+  });
 }
-var Bt = (0, o().createRoot)(document.getElementById(`root`)),
-  Vt = () => {
-    Bt.render((0, $.jsx)(zt, {}));
+function Rt(e) {
+  return new Date(e).toLocaleString(`en-GB`, {
+    day: `2-digit`,
+    month: `2-digit`,
+    year: `numeric`,
+    hour: `2-digit`,
+    minute: `2-digit`,
+    hour12: !1,
+  });
+}
+function zt() {
+  return (0, Q.jsx)(`div`, {
+    className: `loading-overlay`,
+    children: (0, Q.jsx)(`div`, { className: `loading-spinner` }),
+  });
+}
+function Bt() {
+  let [e, t] = (0, c.useState)({
+      checkList: `[]`,
+      issueId: ``,
+      updatedAt: new Date(),
+      updateDisplayName: ``,
+      updateId: ``,
+    }),
+    [n, r] = (0, c.useState)(!0),
+    [i, a] = (0, c.useState)(!1);
+  (0, c.useEffect)(() => {
+    o();
+  }, []);
+  let o = async () => {
+      try {
+        t(await (0, Z.invoke)(`getCheckList`));
+      } catch {
+        await $(
+          `Checklist Loading Error`,
+          `Unable to load the checklist. Please try again later.`,
+          `error`,
+        );
+      } finally {
+        r(!1);
+      }
+    },
+    s = async (n) => {
+      try {
+        a(!0);
+        let r = await (0, Z.invoke)(n ? `updateWithOptimisticLocking` : `update`, e);
+        r.error
+          ? r.concurrent
+            ? (await $(
+                `Concurrent Modification Detected`,
+                `User ${r.data?.updateDisplayName} has modified the checklist before you. Your changes could not be saved.`,
+                `error`,
+              ),
+              await o())
+            : await $(
+                `Update Failed`,
+                r.message || `Unable to update the checklist. Please try again later.`,
+                `error`,
+              )
+          : r.data &&
+            (t(r.data),
+            await $(`Update Successful`, `The checklist has been successfully updated`, `success`));
+      } catch {
+        await $(
+          `Update Error`,
+          `An error occurred while updating the checklist. Please try again later.`,
+          `error`,
+        );
+      } finally {
+        a(!1);
+      }
+    },
+    l = (n) => {
+      let r = [...JSON.parse(e.checkList)];
+      ((r[n] = { ...r[n], done: !r[n].done }), t({ ...e, checkList: JSON.stringify(r) }));
+    };
+  return n
+    ? (0, Q.jsx)(`div`, { className: `checklist-container`, children: (0, Q.jsx)(zt, {}) })
+    : (0, Q.jsxs)(`div`, {
+        className: `checklist-container`,
+        children: [
+          i && (0, Q.jsx)(zt, {}),
+          (0, Q.jsxs)(`div`, {
+            className: `checklist-header`,
+            children: [
+              (0, Q.jsx)(`h2`, { children: `Issue Checklist` }),
+              (0, Q.jsxs)(`div`, {
+                className: `last-update`,
+                children: [`Last updated by `, e.updateDisplayName, ` on `, Rt(e.updatedAt)],
+              }),
+            ],
+          }),
+          (0, Q.jsx)(`div`, {
+            className: `checklist`,
+            children: JSON.parse(e.checkList).map((e, t) =>
+              (0, Q.jsxs)(
+                `div`,
+                {
+                  className: `checklist-item`,
+                  children: [
+                    (0, Q.jsx)(`input`, {
+                      type: `checkbox`,
+                      checked: e.done,
+                      onChange: () => l(t),
+                    }),
+                    (0, Q.jsx)(`span`, { children: e.label }),
+                  ],
+                },
+                t,
+              ),
+            ),
+          }),
+          (0, Q.jsxs)(`div`, {
+            className: `buttons`,
+            children: [
+              (0, Q.jsx)(`button`, { onClick: () => s(!0), children: `Update with Locking` }),
+              (0, Q.jsx)(`button`, { onClick: () => s(!1), children: `Update without Locking` }),
+            ],
+          }),
+        ],
+      });
+}
+var Vt = (0, o().createRoot)(document.getElementById(`root`)),
+  Ht = () => {
+    Vt.render((0, Q.jsx)(Bt, {}));
   };
 Z.view.theme
   .enable()
   .then(() => {
-    Vt();
+    Ht();
   })
   .catch((e) => {
-    (console.error(e.message), Vt());
+    (console.error(e.message), Ht());
   });
