@@ -1,4 +1,4 @@
-import { a as e, d as t, i as n, l as r, n as i } from "./wrapNativeSuper-CMD0Ca0W.js";
+import { a as e, h as t, l as n, n as r, p as i } from "./wrapNativeSuper-DbbKRv4Y.js";
 import {
   _ as a,
   a as o,
@@ -14,7 +14,7 @@ import {
   p as g,
   s as _,
   u as v,
-} from "./index-CmJRZgcS.js";
+} from "./index-B5MP9AsF.js";
 var y = {
     "color.text.brand": `#669DF1`,
     "elevation.surface.overlay": `#2B2C2F`,
@@ -233,7 +233,7 @@ var J,
         (this.internalTone = V(n)),
         (this.argb = n));
     }
-    return r(
+    return i(
       e,
       [
         {
@@ -317,7 +317,7 @@ var J,
         (this.astar = l),
         (this.bstar = u));
     }
-    return r(
+    return i(
       e,
       [
         {
@@ -553,7 +553,7 @@ var J,
     function e() {
       t(this, e);
     }
-    return r(e, null, [
+    return i(e, null, [
       {
         key: `sanitizeRadians`,
         value: function (e) {
@@ -778,18 +778,18 @@ var J,
       },
     ]);
   })();
-(e(Z, `SCALED_DISCOUNT_FROM_LINRGB`, [
+(n(Z, `SCALED_DISCOUNT_FROM_LINRGB`, [
   [0.001200833568784504, 0.002389694492170889, 0.0002795742885861124],
   [0.0005891086651375999, 0.0029785502573438758, 0.0003270666104008398],
   [0.00010146692491640572, 0.0005364214359186694, 0.0032979401770712076],
 ]),
-  e(Z, `LINRGB_FROM_SCALED_DISCOUNT`, [
+  n(Z, `LINRGB_FROM_SCALED_DISCOUNT`, [
     [1373.2198709594231, -1100.4251190754821, -7.278681089101213],
     [-271.815969077903, 559.6580465940733, -32.46047482791194],
     [1.9622899599665666, -57.173814538844006, 308.7233197812385],
   ]),
-  e(Z, `Y_FROM_LINRGB`, [0.2126, 0.7152, 0.0722]),
-  e(
+  n(Z, `Y_FROM_LINRGB`, [0.2126, 0.7152, 0.0722]),
+  n(
     Z,
     `CRITICAL_PLANES`,
     [
@@ -870,7 +870,7 @@ var Q = (function () {
       (this.fLRoot = u),
       (this.z = d));
   }
-  return r(e, null, [
+  return i(e, null, [
     {
       key: `make`,
       value: function () {
@@ -915,12 +915,12 @@ var Q = (function () {
     },
   ]);
 })();
-((J = Q), e(Q, `DEFAULT`, J.make()));
+((J = Q), n(Q, `DEFAULT`, J.make()));
 var ae = (function () {
   function e() {
     t(this, e);
   }
-  return r(e, null, [
+  return i(e, null, [
     {
       key: `ratioOfTones`,
       value: function (t, n) {
@@ -989,20 +989,20 @@ function oe(e, t) {
   }
   return n;
 }
-function se(t) {
-  for (var n = 1; n < arguments.length; n++) {
-    var r = arguments[n] == null ? {} : arguments[n];
-    n % 2
-      ? oe(Object(r), !0).forEach(function (n) {
-          e(t, n, r[n]);
+function se(e) {
+  for (var t = 1; t < arguments.length; t++) {
+    var r = arguments[t] == null ? {} : arguments[t];
+    t % 2
+      ? oe(Object(r), !0).forEach(function (t) {
+          n(e, t, r[t]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(t, Object.getOwnPropertyDescriptors(r))
-        : oe(Object(r)).forEach(function (e) {
-            Object.defineProperty(t, e, Object.getOwnPropertyDescriptor(r, e));
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+        : oe(Object(r)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
           });
   }
-  return t;
+  return e;
 }
 var ce = [1.12, 1.33, 2.03, 2.73, 3.33, 4.27, 5.2, 6.62, 12.46, 14.25],
   le = [1.08, 1.24, 1.55, 1.99, 2.45, 3.34, 4.64, 6.1, 10.19, 12.6],
@@ -1020,15 +1020,15 @@ var ce = [1.12, 1.33, 2.03, 2.73, 3.33, 4.27, 5.2, 6.62, 12.46, 14.25],
   $ = function (e) {
     var t = v(e)[0],
       n = _(t, 100, 60),
-      r = g(n[0], n[1], n[2]) < 0.4 ? ce : le,
+      i = g(n[0], n[1], n[2]) < 0.4 ? ce : le,
       a = l(e),
       o = Y.fromInt(re({ r: a[0], g: a[1], b: a[2], a: a[3] })),
-      s = r.map(function (e) {
+      s = i.map(function (e) {
         var t = ne(Y.from(o.hue, o.chroma, ae.darker(100, e) + 0.25).toInt());
         return m(t.r, t.g, t.b);
       }),
       c = ue(s, e),
-      u = i(s);
+      u = r(s);
     return ((u[c] = e), { ramp: u, replacedColor: s[c] });
   };
 function de(e, t, n) {
@@ -1036,22 +1036,22 @@ function de(e, t, n) {
     e + i < n.length ? r.push(e + i) : r.push(e - (i - (n.length - 1 - e)));
   return r;
 }
-var fe = function (e, t, r) {
-    var i = $(e),
+var fe = function (t, n, r) {
+    var i = $(t),
       a = i.ramp,
       o = i.replacedColor,
       s = r || a,
-      c = ue(s, e),
+      c = ue(s, t),
       l = {},
       u = {},
-      d = p(e, `#FFFFFF`);
+      d = p(t, `#FFFFFF`);
     if (d >= 4.5) {
-      var f = n(de(c, 2, s), 2),
+      var f = e(de(c, 2, s), 2),
         m = f[0],
         h = f[1],
         g = c;
       d < 5.4 && d >= 4.8 && c === 6 && (g = c + 1);
-      var _ = n(de(g, 1, s), 1)[0];
+      var _ = e(de(g, 1, s), 1)[0];
       l = {
         "color.text.brand": g,
         "color.icon.brand": c,
@@ -1110,34 +1110,34 @@ var fe = function (e, t, r) {
           "color.link.pressed": 7,
         }));
     }
-    if (t === `light`) return { light: l };
+    if (n === `light`) return { light: l };
     if (
-      (Object.entries(l).forEach(function (e) {
-        var t = n(e, 2),
-          r = t[0],
-          i = t[1];
+      (Object.entries(l).forEach(function (t) {
+        var n = e(t, 2),
+          r = n[0],
+          i = n[1];
         u[r] = 9 - (typeof i == `string` ? c : i);
       }),
       d < 4.5)
     ) {
       var b = y[`color.text.inverse`];
-      p(b, e) >= 4.5 &&
+      p(b, t) >= 4.5 &&
         c >= 2 &&
         ((u[`color.background.brand.bold`] = c),
         (u[`color.background.brand.bold.hovered`] = c - 1),
         (u[`color.background.brand.bold.pressed`] = c - 2));
     }
-    return t === `dark` ? { dark: u } : { light: l, dark: u };
+    return n === `dark` ? { dark: u } : { light: l, dark: u };
   },
-  pe = function (e, t, r) {
-    var i = r || $(e).ramp,
-      a = fe(e, t, i),
+  pe = function (t, n, r) {
+    var i = r || $(t).ramp,
+      a = fe(t, n, i),
       o = {};
     return (
-      Object.entries(a).forEach(function (e) {
-        var t = n(e, 2),
-          r = t[0],
-          a = t[1];
+      Object.entries(a).forEach(function (t) {
+        var n = e(t, 2),
+          r = n[0],
+          a = n[1];
         (r === `light` || r === `dark`) &&
           (o[r] = se(se({}, a), C({ customThemeTokenMap: a, mode: r, themeRamp: i })));
       }),

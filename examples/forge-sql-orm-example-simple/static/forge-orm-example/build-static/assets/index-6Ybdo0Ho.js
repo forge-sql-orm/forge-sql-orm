@@ -5,9 +5,9 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-DBsnqs9N.js",
       "./rolldown-runtime-COnpUsM8.js",
-      "./custom-theme-CobEg5Zm.js",
+      "./custom-theme-1h79swra.js",
       "./wrapNativeSuper-CMD0Ca0W.js",
-      "./body-BPGJS3_n.js",
+      "./body-9d-YQ3Dr.js",
       "./react-dom-vendor-CmKAYmuF.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -10700,7 +10700,7 @@ var Cc = (function () {
                                       return (
                                         (e.next = 2),
                                         at(
-                                          () => import(`./custom-theme-CobEg5Zm.js`),
+                                          () => import(`./custom-theme-1h79swra.js`),
                                           __vite__mapDeps([2, 3]),
                                           import.meta.url,
                                         )
@@ -10991,11 +10991,10 @@ function Uc(e) {
     y = ls(),
     b = ds(),
     S = Ac(),
-    C = y && !S && b,
-    w = (!B(`platform_dst_subtree_theming`) && !y && !S) || C;
+    C = y && !S && b;
   ((0, x.useEffect)(
     function () {
-      if (w) {
+      if (C) {
         var e = (function () {
           var e = I(
             L.default.mark(function e() {
@@ -11051,7 +11050,7 @@ function Uc(e) {
         );
       } else Ic(m);
     },
-    [y, S, C, u, w, m],
+    [y, S, C, u, m],
   ),
     (0, x.useEffect)(
       function () {
@@ -11065,7 +11064,7 @@ function Uc(e) {
       },
       [o],
     ));
-  var T = Rc(Rc({}, Qs(Rc(Rc({}, m), {}, { colorMode: u }))), {}, l({}, bs, !0));
+  var w = Rc(Rc({}, Qs(Rc(Rc({}, m), {}, { colorMode: u }))), {}, l({}, bs, !0));
   return x.createElement(
     Dc.Provider,
     { value: !0 },
@@ -11081,9 +11080,7 @@ function Uc(e) {
           x.createElement(
             kc.Provider,
             { value: _ },
-            !w && B(`platform_dst_subtree_theming`)
-              ? x.createElement(`div`, F({}, T, { className: V([Hc.body]) }), t)
-              : t,
+            C ? t : x.createElement(`div`, F({}, w, { className: V([Hc.body]) }), t),
           ),
         ),
       ),
@@ -15407,10 +15404,7 @@ function wh(e) {
       },
       [r],
     ),
-    (0, $m.createPortal)(
-      i && B(`platform_dst_subtree_theming`) ? x.createElement(Uc, { defaultColorMode: i }, n) : n,
-      r,
-    )
+    (0, $m.createPortal)(i ? x.createElement(Uc, { defaultColorMode: i }, n) : n, r)
   );
 }
 var Th = typeof window < `u` ? x.useLayoutEffect : x.useEffect;
@@ -15421,27 +15415,33 @@ function Eh(e) {
     i = r[0],
     a = r[1],
     o = Wc();
-  Th(
-    function () {
-      var e = Sh(t);
-      a(e);
-      var n = Ch();
-      if (!(!e || !n))
-        return (
-          n.appendChild(e),
-          function () {
-            (e && n.removeChild(e), a(null));
-          }
-        );
-    },
-    [t],
+  return (
+    Th(
+      function () {
+        var e = Sh(t);
+        a(e);
+        var n = Ch();
+        if (!(!e || !n))
+          return (
+            n.appendChild(e),
+            function () {
+              (e && n.removeChild(e), a(null));
+            }
+          );
+      },
+      [t],
+    ),
+    i
+      ? (0, $m.createPortal)(
+          x.createElement(
+            x.Suspense,
+            { fallback: null },
+            o ? x.createElement(Uc, { defaultColorMode: o }, n) : n,
+          ),
+          i,
+        )
+      : null
   );
-  var s = x.createElement(
-    x.Suspense,
-    { fallback: null },
-    o && B(`platform_dst_subtree_theming`) ? x.createElement(Uc, { defaultColorMode: o }, n) : n,
-  );
-  return i ? (0, $m.createPortal)(s, i) : null;
 }
 var Dh = function (e) {
     var t = f((0, x.useState)(!1), 2),
@@ -16650,7 +16650,7 @@ var Og = function (e) {
   },
   kg = (0, x.lazy)(function () {
     return at(
-      () => import(`./body-BPGJS3_n.js`),
+      () => import(`./body-9d-YQ3Dr.js`),
       __vite__mapDeps([4, 1, 3, 5, 6]),
       import.meta.url,
     );
