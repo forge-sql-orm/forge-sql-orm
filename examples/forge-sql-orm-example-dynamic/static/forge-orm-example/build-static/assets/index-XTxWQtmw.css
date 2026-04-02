@@ -833,9 +833,6 @@ button {
 ._bfhk1af5 {
   background-color: var(--ds-background-accent-purple-bolder-hovered, #803fa5);
 }
-._bfhk1aqn {
-  background-color: var(--ds-background-neutral-bold, #292a2e);
-}
 ._bfhk1axx {
   background-color: var(--ds-background-accent-magenta-subtler-hovered, #fcb6e1);
 }
@@ -2393,8 +2390,8 @@ button {
 ._85i51b66 {
   padding-block-end: var(--ds-space-050, 4px);
 }
-._bfhkgkf6 {
-  background-color: var(--ds-background-neutral-bold, #172b4d);
+._bfhk1aqn {
+  background-color: var(--ds-background-neutral-bold, #292a2e);
 }
 ._o5721q9c {
   white-space: nowrap;
