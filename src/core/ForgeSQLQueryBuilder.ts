@@ -1282,6 +1282,31 @@ export interface ForgeSqlOrmOptions {
 /**
  * Creates a custom type for date/time fields with specified format and timestamp validation.
  */
+function normalizeDateOnlyValue(value: unknown): unknown {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmedValue = value.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
+    return `${trimmedValue} 00:00:00.000`;
+  }
+
+  const dotSeparatedMatch = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(trimmedValue);
+  if (dotSeparatedMatch) {
+    const [, day, month, year] = dotSeparatedMatch;
+    return `${year}-${month}-${day} 00:00:00.000`;
+  }
+
+  const slashSeparatedMatch = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(trimmedValue);
+  if (slashSeparatedMatch) {
+    const [, day, month, year] = slashSeparatedMatch;
+    return `${year}-${month}-${day} 00:00:00.000`;
+  }
+
+  return value;
+}
+
 function createDateCustomType(dataType: string, format: string, isTimeStamp: boolean) {
   return customType<{
     data: Date;
@@ -1295,6 +1320,9 @@ function createDateCustomType(dataType: string, format: string, isTimeStamp: boo
       return formatDateTime(value, format, isTimeStamp);
     },
     fromDriver(value: unknown) {
+      if (value === null || value === undefined) {
+        return value as unknown as Date;
+      }
       return parseDateTime(value as string, format);
     },
   });
@@ -1306,11 +1334,25 @@ function createDateCustomType(dataType: string, format: string, isTimeStamp: boo
  *
  * @type {CustomType}
  */
-export const forgeDateTimeString = createDateCustomType(
-  "datetime",
-  "yyyy-MM-dd' 'HH:mm:ss.SSS",
-  false,
-);
+export const forgeDateTimeString = customType<{
+  data: Date;
+  driver: string;
+  config: { format?: string };
+}>({
+  dataType() {
+    return "datetime";
+  },
+  toDriver(value: Date) {
+    return formatDateTime(value, "yyyy-MM-dd' 'HH:mm:ss.SSS", false);
+  },
+  fromDriver(value: unknown) {
+    if (value === null || value === undefined) {
+      return value as unknown as Date;
+    }
+    const normalizedValue = normalizeDateOnlyValue(value);
+    return parseDateTime(normalizedValue as string, "yyyy-MM-dd' 'HH:mm:ss.SSS");
+  },
+});
 
 /**
  * Custom type for MySQL timestamp fields.

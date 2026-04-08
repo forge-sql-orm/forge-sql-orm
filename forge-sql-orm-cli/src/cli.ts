@@ -9,6 +9,7 @@ import { generateModels } from "./actions/generate-models";
 import { createMigration } from "./actions/migrations-create";
 import { updateMigration } from "./actions/migrations-update";
 import { dropMigration } from "./actions/migrations-drops";
+import { createSchema } from "./actions/schema-create";
 
 const ENV_PATH = path.resolve(process.cwd(), ".env");
 // 🔄 Load environment variables from `.env` file
@@ -279,6 +280,37 @@ program
       },
     );
     await dropMigration(config);
+  });
+
+// ✅ Command: Apply DB schema directly from Drizzle models
+program
+  .command("schema:create")
+  .description("Create/update database schema directly from Drizzle models.")
+  .option("--host <string>", "Database host")
+  .option("--port <number>", "Database port")
+  .option("--user <string>", "Database user")
+  .option("--password <string>", "Database password")
+  .option("--dbName <string>", "Database name")
+  .option("--entitiesPath <string>", "Path to the folder containing entities")
+  .option("--saveEnv", "Save configuration to .env file")
+  .action(async (cmd) => {
+    const config = await getConfig(
+      cmd,
+      "./database/entities",
+      () => ({
+        entitiesPath: cmd.entitiesPath || process.env.FORGE_SQL_ORM_ENTITIESPATH,
+      }),
+      (cfg, questions: unknown[]) => {
+        if (!cfg.entitiesPath)
+          questions.push({
+            type: "input",
+            name: "entitiesPath",
+            message: "Enter the path to entities:",
+            default: "./database/entities",
+          });
+      },
+    );
+    await createSchema(config);
   });
 
 // 🔥 Execute CLI

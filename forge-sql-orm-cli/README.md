@@ -42,6 +42,7 @@ Add the following scripts to your `package.json`:
 npm pkg set scripts.models:create="forge-sql-orm-cli generate:model --output src/entities --saveEnv"
 npm pkg set scripts.migration:create="forge-sql-orm-cli migrations:create --force --output src/migration"
 npm pkg set scripts.migration:update="forge-sql-orm-cli migrations:update --entitiesPath src/entities --output src/migration"
+npm pkg set scripts.schema:create="forge-sql-orm-cli schema:create --entitiesPath src/entities"
 ```
 
 **Note:** The CLI tool is designed to work as a local dependency through npm scripts. Configuration is saved to `.env` file using the `--saveEnv` flag, so you only need to provide database credentials once.
@@ -131,6 +132,25 @@ Options:
 - `--output` - Output directory for migrations (default: ./database/migration)
 - `--entitiesPath` - Path to entity files (default: ./database/entities)
 
+### Create Schema From Models
+
+Create or update database schema directly from Drizzle models (without generating migration files first).  
+This command applies DDL to the target database immediately using `drizzle-kit push`.
+
+```bash
+forge-sql-orm-cli schema:create [options]
+```
+
+Options:
+
+- `--saveEnv` - Save the configuration to a `.env` file
+- `--host` - Database host (default: localhost)
+- `--port` - Database port (default: 3306)
+- `--user` - Database user
+- `--password` - Database password
+- `--dbName` - Database name
+- `--entitiesPath` - Path to entity files (default: ./database/entities)
+
 ## Atlassian Forge SQL Integration
 
 This CLI tool is designed to work seamlessly with Atlassian Forge SQL and Drizzle ORM. It provides the following features:
@@ -185,6 +205,7 @@ npm pkg set scripts.models:create="forge-sql-orm-cli generate:model --output src
 npm pkg set scripts.migration:create="forge-sql-orm-cli migrations:create --force --output src/migration --entitiesPath src/entities"
 npm pkg set scripts.migration:update="forge-sql-orm-cli migrations:update --entitiesPath src/entities --output src/migration"
 npm pkg set scripts.migration:drop="forge-sql-orm-cli migrations:drop --entitiesPath src/entities --output src/migration"
+npm pkg set scripts.schema:create="forge-sql-orm-cli schema:create --entitiesPath src/entities"
 ```
 
 ### Generate Drizzle Models for Atlassian Forge SQL
@@ -220,6 +241,14 @@ npm run migration:drop
 ```
 
 This will create a migration to drop specified tables from your Atlassian Forge SQL database.
+
+### Create/Update Schema Directly From Drizzle Models
+
+```bash
+npm run schema:create
+```
+
+This will apply your Drizzle models from `schema.ts` directly to the target database.
 
 ## Development
 

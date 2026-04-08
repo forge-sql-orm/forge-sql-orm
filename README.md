@@ -1071,6 +1071,7 @@ where Cache context - allows you to batch cache invalidation events and bypass c
    npm pkg set scripts.models:create="forge-sql-orm-cli generate:model --output src/entities --saveEnv"
    npm pkg set scripts.migration:create="forge-sql-orm-cli migrations:create --force --output src/migration --entitiesPath src/entities"
    npm pkg set scripts.migration:update="forge-sql-orm-cli migrations:update --entitiesPath src/entities --output src/migration"
+   npm pkg set scripts.schema:create="forge-sql-orm-cli schema:create --entitiesPath src/entities"
    ```
 
    _(This is done only once when setting up the project)_
@@ -2363,6 +2364,7 @@ The CLI tool provides the following main commands:
 - `migrations:create` - Create new migration files
 - `migrations:update` - Update existing migrations with schema changes
 - `migrations:drop` - Create migration to drop tables
+- `schema:create` - Apply schema directly from Drizzle models to database
 
 ### Installation
 
@@ -2380,6 +2382,7 @@ Add the following scripts to your `package.json`:
 npm pkg set scripts.models:create="forge-sql-orm-cli generate:model --output src/entities --saveEnv"
 npm pkg set scripts.migration:create="forge-sql-orm-cli migrations:create --force --output src/migration --entitiesPath src/entities"
 npm pkg set scripts.migration:update="forge-sql-orm-cli migrations:update --entitiesPath src/entities --output src/migration"
+npm pkg set scripts.schema:create="forge-sql-orm-cli schema:create --entitiesPath src/entities"
 ```
 
 ### Basic Usage
@@ -2395,6 +2398,9 @@ npm run migration:create
 
 # Update migration
 npm run migration:update
+
+# Apply schema directly from Drizzle models
+npm run schema:create
 ```
 
 **Note:** The CLI tool is designed to work as a local dependency through npm scripts. Configuration is saved to `.env` file using the `--saveEnv` flag, so you only need to provide database credentials once.
