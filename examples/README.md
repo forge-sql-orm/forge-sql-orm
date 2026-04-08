@@ -93,6 +93,15 @@ Advanced example demonstrating comprehensive caching capabilities and performanc
 - Optional ID fields with auto-generation
 - Modern React UI with detailed analytics
 
+### [forge-sql-orm-example-vector](forge-sql-orm-example-vector)
+
+Example for **TiDB `VECTOR`** columns and vector SQL helpers (`vecCosineDistance`, etc.) in Forge SQL ORM—storage and similarity search for **AI** workloads (embeddings), aligned with PingCAP’s [vector search SQL tutorial](https://docs.pingcap.com/tidb/stable/vector-search-get-started-using-sql).
+
+- Drizzle schema with `vectorTiDBType({ dimension: n })`
+- Migrations creating `embedded_documents` and seed data (`dog`, `fish`, `tree`)
+- Resolvers: insert, fetch all, cosine-distance search
+- Custom UI (Atlaskit) for 3D demo vectors
+
 ### [forge-sql-orm-example-atlascamp](forge-sql-orm-example-atlascamp)
 
 **Atlas Camp 2026 - February 9, 2026**

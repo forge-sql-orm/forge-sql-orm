@@ -44,6 +44,7 @@
 - ✅ **Optimistic Locking** Ensures data consistency by preventing conflicts when multiple users update the same record
 - ✅ **Query Plan Analysis**: Detailed execution plan analysis and optimization insights
 - ✅ **Rovo Integration** Secure pattern for natural-language analytics with comprehensive security validations, Row-Level Security (RLS) support, and dynamic SQL query execution
+- ✅ **TiDB `VECTOR` type & vector SQL helpers** — Drizzle column type `vectorTiDBType` plus `vecCosineDistance`, `vecL2Distance`, `vecDims`, and related helpers for **SQL with AI** (embeddings storage and similarity search)
 
 ## Table of Contents
 
@@ -84,6 +85,7 @@
 - [Automatic Error Analysis](#automatic-error-analysis) - Automatic timeout and OOM error detection with execution plans
 - [Slow Query Monitoring](#slow-query-monitoring) - Scheduled monitoring of slow queries with execution plans
 - [Date and Time Types](#date-and-time-types)
+- [TiDB vector types (AI / similarity search)](#tidb-vector-types-ai--similarity-search)
 
 ### 🛠️ Development Tools
 
@@ -102,6 +104,7 @@
 - [Organization Tracker Example](examples/forge-sql-orm-example-org-tracker)
 - [Checklist Example](examples/forge-sql-orm-example-checklist)
 - [Cache Example](examples/forge-sql-orm-example-cache) - Advanced caching capabilities with performance monitoring
+- [Vector / AI SQL Example](examples/forge-sql-orm-example-vector) - `VECTOR` columns, embeddings, cosine-distance search (TiDB-compatible)
 - [Rovo Integration Example](https://github.com/vzakharchenko/Forge-Secure-Notes-for-Jira) - Real-world Rovo AI agent implementation with secure natural-language analytics
 
 ### 📚 Reference
@@ -1265,6 +1268,78 @@ Our custom types provide:
 - `forgeTimeString` - For time fields (HH:MM:SS[.fraction])
 
 Each type ensures that the data is properly formatted according to Forge SQL's requirements while providing a clean, type-safe interface for your application code.
+
+---
+
+## TiDB vector types (AI / similarity search)
+
+Forge SQL ORM exposes **TiDB-compatible** `VECTOR` columns and vector functions so you can store **embeddings** and run **similarity search** in SQL—typical for **AI** features (semantic search, RAG-style retrieval) built on Forge SQL.
+
+### Schema: `vectorTiDBType`
+
+Use the Drizzle custom column type from `forge-sql-orm` (same patterns as `text()`, `int()`, …). With a fixed dimension, DDL becomes `VECTOR(n)`; without it, `VECTOR`.
+
+Explicit **SQL column name** + options:
+
+```typescript
+embedding: vectorTiDBType("embedding", { dimension: 1536 }).notNull(),
+```
+
+Config only (column name is the **property key** in `mysqlTable`):
+
+```typescript
+embedding: vectorTiDBType({ dimension: 1536 }).notNull(),
+```
+
+Full example:
+
+```typescript
+import { int, mysqlTable, primaryKey, text } from "drizzle-orm/mysql-core";
+import { vectorTiDBType } from "forge-sql-orm";
+
+export const documents = mysqlTable(
+  "documents",
+  {
+    id: int().autoincrement().notNull(),
+    body: text().notNull(),
+    embedding: vectorTiDBType("embedding", { dimension: 1536 }).notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.id], name: "id" })],
+);
+```
+
+Values in application code are **`number[]`**; the driver maps them to the textual form TiDB expects.
+
+### Queries: distance helpers
+
+Helpers build the same expressions as TiDB’s vector functions (e.g. `VEC_COSINE_DISTANCE`). Use them inside `forgeSQL.select()`, `where()`, `orderBy()`, etc.
+
+```typescript
+import { asc, sql } from "drizzle-orm";
+import { vecCosineDistance } from "forge-sql-orm";
+import { documents } from "./schema";
+
+const queryVector = [0.1, 0.2, 0.3];
+
+const distanceAlias = sql.raw("distance");
+const distance = sql<number>`${vecCosineDistance(documents.embedding, queryVector)} AS \`${distanceAlias}\``;
+
+const nearest = await forgeSQL
+  .select({
+    id: documents.id,
+    body: documents.body,
+    distance,
+  })
+  .from(documents)
+  .orderBy(asc(distanceAlias))
+  .limit(10);
+```
+
+Also available (see `src/core/VectorTiDB.ts`): `vecFromText`, `vecAsText`, `vecDims`, `vecL2Norm`, `vecL2Distance`, `vecL1Distance`, `vecNegativeInnerProduct`.
+
+### Example app
+
+See **[examples/forge-sql-orm-example-vector](examples/forge-sql-orm-example-vector)** for a full Forge app (migrations, resolvers, UI) aligned with [Get Started with Vector Search via SQL](https://docs.pingcap.com/tidb/stable/vector-search-get-started-using-sql).
 
 # Connection to ORM
 
