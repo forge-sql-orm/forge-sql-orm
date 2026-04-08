@@ -1288,9 +1288,6 @@ function normalizeDateOnlyValue(value: unknown): unknown {
   }
 
   const trimmedValue = value.trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
-    return `${trimmedValue} 00:00:00.000`;
-  }
 
   const dotSeparatedMatch = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(trimmedValue);
   if (dotSeparatedMatch) {
@@ -1302,6 +1299,10 @@ function normalizeDateOnlyValue(value: unknown): unknown {
   if (slashSeparatedMatch) {
     const [, day, month, year] = slashSeparatedMatch;
     return `${year}-${month}-${day} 00:00:00.000`;
+  }
+
+  if (trimmedValue.length === 10) {
+    return `${trimmedValue} 00:00:00.000`;
   }
 
   return value;

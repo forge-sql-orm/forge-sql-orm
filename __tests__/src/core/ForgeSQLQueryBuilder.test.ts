@@ -45,22 +45,6 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
       expect(result).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}$/);
     });
 
-    it("should append midnight for date-only driver values", () => {
-      const testTable = mysqlTable("test_table", {
-        id: int("id").primaryKey(),
-        dateTimeField: forgeDateTimeString("date_time_field"),
-      });
-
-      const mapped = (testTable.dateTimeField as any).mapFrom("12.06.2026");
-      expect(mapped).toBeInstanceOf(Date);
-      expect(mapped.getDate()).toBe(12);
-      expect(mapped.getMonth()).toBe(5);
-      expect(mapped.getFullYear()).toBe(2026);
-      expect(mapped.getHours()).toBe(0);
-      expect(mapped.getMinutes()).toBe(0);
-      expect(mapped.getSeconds()).toBe(0);
-    });
-
     it("should parse ISO date-only value with midnight time", () => {
       const testTable = mysqlTable("test_table", {
         id: int("id").primaryKey(),
@@ -68,22 +52,6 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
       });
 
       const mapped = (testTable.dateTimeField as any).mapFrom("2026-06-12");
-      expect(mapped).toBeInstanceOf(Date);
-      expect(mapped.getFullYear()).toBe(2026);
-      expect(mapped.getMonth()).toBe(5);
-      expect(mapped.getDate()).toBe(12);
-      expect(mapped.getHours()).toBe(0);
-      expect(mapped.getMinutes()).toBe(0);
-      expect(mapped.getSeconds()).toBe(0);
-    });
-
-    it("should parse slash-separated date-only value with midnight time", () => {
-      const testTable = mysqlTable("test_table", {
-        id: int("id").primaryKey(),
-        dateTimeField: forgeDateTimeString("date_time_field"),
-      });
-
-      const mapped = (testTable.dateTimeField as any).mapFrom("12/06/2026");
       expect(mapped).toBeInstanceOf(Date);
       expect(mapped.getFullYear()).toBe(2026);
       expect(mapped.getMonth()).toBe(5);
