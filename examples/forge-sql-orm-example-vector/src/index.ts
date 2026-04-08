@@ -2,10 +2,9 @@ import Resolver, { Request } from "@forge/resolver";
 import ForgeSQL from "forge-sql-orm";
 import { dropSchemaMigrations, applySchemaMigrations, fetchSchemaWebTrigger } from "forge-sql-orm";
 import migration from "./migration";
-import { asc, desc, eq, InferInsertModel, InferSelectModel, sql, sql as rawSql } from "drizzle-orm";
+import { asc, InferInsertModel, InferSelectModel, sql } from "drizzle-orm";
 import { embeddedDocuments } from "./entities";
 import { vecCosineDistance } from "forge-sql-orm";
-import { alias } from "drizzle-orm/mysql-core";
 
 const resolver = new Resolver();
 const forgeSQL = new ForgeSQL({ logRawSqlQuery: true });
