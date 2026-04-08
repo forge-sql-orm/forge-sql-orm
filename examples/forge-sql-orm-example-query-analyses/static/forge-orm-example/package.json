@@ -6,7 +6,7 @@
     "@atlaskit/css-reset": "^7.4.1",
     "@atlaskit/dynamic-table": "^18.3.26",
     "@forge/bridge": "^5.15.0",
-    "forge-sql-orm": "^2.1.25",
+    "forge-sql-orm": "^2.1.26",
     "mobx": "6.15.0",
     "mobx-react": "9.2.1",
     "react": "^18.3.1",

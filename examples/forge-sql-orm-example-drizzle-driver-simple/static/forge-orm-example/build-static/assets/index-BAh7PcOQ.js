@@ -6330,7 +6330,7 @@ var Qo = {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `23.10.10`,
         analyticsData: n,
       }),
       se = (0, V.useCallback)(

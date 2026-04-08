@@ -15,7 +15,6 @@ export const defaultConfig: KnipConfig = {
     nsTypes: "error",
     duplicates: "error",
     enumMembers: "error",
-    classMembers: "error",
   },
 };
 
