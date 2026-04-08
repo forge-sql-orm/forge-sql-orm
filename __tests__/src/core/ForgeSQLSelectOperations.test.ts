@@ -10,7 +10,18 @@ import { testEntityDateVersion } from "../../entities/TestEntityDateVersion";
 import { testEntityJoin1 } from "../../entities/TestEntityJoin1";
 import { testEntityJoin2 } from "../../entities/TestEntityJoin2";
 import { testEntityVersionDifferentDateField } from "../../entities/TestEntityVersionDifferentFieldDate";
+import { testEntityVector } from "../../entities/TestEntityVector";
 import { DateTime } from "luxon";
+import {
+  vecAsText,
+  vecCosineDistance,
+  vecDims,
+  vecFromText,
+  vecL1Distance,
+  vecL2Distance,
+  vecL2Norm,
+  vecNegativeInnerProduct,
+} from "../../../src/core/VectorTiDB";
 
 vi.mock("../../../src/utils/cacheUtils", () => ({
   getFromCache: async () => {
@@ -66,6 +77,20 @@ vi.mock("@forge/sql", () => ({
       ) {
         procedureMock = vi.fn().mockResolvedValue({
           rows: [{ ID1: 1, ID2: 2, data: "t", name: "Test" }],
+          metadata: {
+            dbExecutionTime: 1234,
+            responseSize: 525,
+          },
+        });
+      } else if (query.includes("`test_entity_vector`")) {
+        procedureMock = vi.fn().mockResolvedValue({
+          rows: [
+            {
+              id: 1,
+              name: "doc",
+              embedding: "[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]",
+            },
+          ],
           metadata: {
             dbExecutionTime: 1234,
             responseSize: 525,
@@ -1393,5 +1418,102 @@ describe("ForgeSQLSelectOperations", () => {
         table3: { table12: "name", table22: null, table32: null },
       },
     ]);
+  });
+
+  describe("VectorTiDB — SQL emitted for TiDB vector helpers", () => {
+    /** Matches `VECTOR(10)` column `test_entity_vector.embedding` */
+    const QUERY_VECTOR_10 = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+
+    beforeEach(() => {
+      vi.mocked(sql.prepare).mockClear();
+    });
+
+    it("selectFrom includes VECTOR column (vectorTiDBType)", async () => {
+      await forgeSqlOperation.selectFrom(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select `id` as `a_id_id`, `name` as `a_name_name`, `embedding` as `a_embedding_embedding` from `test_entity_vector`",
+      );
+    });
+
+    it("vecAsText(column)", async () => {
+      await forgeSqlOperation
+        .select({ x: vecAsText(testEntityVector.embedding) })
+        .from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_AS_TEXT(`test_entity_vector`.`embedding`) from `test_entity_vector`",
+      );
+    });
+
+    it("vecDims(column)", async () => {
+      await forgeSqlOperation
+        .select({ x: vecDims(testEntityVector.embedding) })
+        .from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_DIMS(`test_entity_vector`.`embedding`) from `test_entity_vector`",
+      );
+    });
+
+    it("vecDims(number[]) inlines VEC_FROM_TEXT", async () => {
+      await forgeSqlOperation.select({ x: vecDims(QUERY_VECTOR_10) }).from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_DIMS(VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+      );
+    });
+
+    it("vecL2Norm(column)", async () => {
+      await forgeSqlOperation
+        .select({ x: vecL2Norm(testEntityVector.embedding) })
+        .from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_L2_NORM(`test_entity_vector`.`embedding`) from `test_entity_vector`",
+      );
+    });
+
+    it("vecL2Distance(column, number[])", async () => {
+      await forgeSqlOperation
+        .select({ x: vecL2Distance(testEntityVector.embedding, QUERY_VECTOR_10) })
+        .from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_L2_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+      );
+    });
+
+    it("vecCosineDistance(column, number[])", async () => {
+      await forgeSqlOperation
+        .select({ x: vecCosineDistance(testEntityVector.embedding, QUERY_VECTOR_10) })
+        .from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_COSINE_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+      );
+    });
+
+    it("vecNegativeInnerProduct(column, number[])", async () => {
+      await forgeSqlOperation
+        .select({ x: vecNegativeInnerProduct(testEntityVector.embedding, QUERY_VECTOR_10) })
+        .from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_NEGATIVE_INNER_PRODUCT(`test_entity_vector`.`embedding`, VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+      );
+    });
+
+    it("vecL1Distance(column, number[])", async () => {
+      await forgeSqlOperation
+        .select({ x: vecL1Distance(testEntityVector.embedding, QUERY_VECTOR_10) })
+        .from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_L1_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+      );
+    });
+
+    it("vecFromText(text) uses parameter placeholder", async () => {
+      await forgeSqlOperation
+        .select({ x: vecFromText("[1,2,3,4,5,6,7,8,9,10]") })
+        .from(testEntityVector);
+      expect(sql.prepare).toHaveBeenCalledWith(
+        "select VEC_FROM_TEXT('?') from `test_entity_vector`",
+      );
+      const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
+      expect(preparedStatement.bindParams).toHaveBeenCalledWith("[1,2,3,4,5,6,7,8,9,10]");
+    });
   });
 });
