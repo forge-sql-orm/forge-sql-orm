@@ -84,17 +84,17 @@ describe("VectorTiDB vectorTiDBType (driver mapping)", () => {
 });
 
 describe("VectorTiDB SQL fragments (toQuery)", () => {
-  it("vecFromText uses placeholder and passes escaped text as param", () => {
+  it("vecFromText uses placeholder and passes raw text as bind param (no SQL escaping)", () => {
     const q = vecFromText("a'b");
     const built = q.toQuery(mysqlQueryConfig);
     expect(built.sql).toMatch(/VEC_FROM_TEXT\('\?'\)/);
-    expect(built.params).toContain("a\\'b");
+    expect(built.params).toContain("a'b");
   });
 
-  it("vecFromText escapes backslashes in param value", () => {
+  it("vecFromText preserves backslashes in param value", () => {
     const q = vecFromText("a\\b");
     const built = q.toQuery(mysqlQueryConfig);
-    expect(built.params?.[0]).toContain("\\\\");
+    expect(built.params?.[0]).toBe("a\\b");
   });
 
   it("vecAsText / vecDims / vecL2Norm / distance helpers compile", () => {
