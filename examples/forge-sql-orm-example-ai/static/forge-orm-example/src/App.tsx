@@ -296,11 +296,13 @@ function App() {
             <Box padding="space.200" xcss={formBlockStyles}>
               <Stack space="space.150">
                 <h3>AI(Vector) search</h3>
-                <Textfield
+                <TextArea
                   value={searchText}
                   maxLength={documentLimit}
+                  minimumRows={6}
+                  resize="vertical"
                   placeholder="Query text"
-                  onChange={(e) => setSearchText((e.target as HTMLInputElement).value)}
+                  onChange={(e) => setSearchText((e.target as HTMLTextAreaElement).value)}
                 />
                 <Box as="small">
                   {searchText.length}/{documentLimit} chars

@@ -140,9 +140,29 @@ In the realm of science and history, the mouse has played an indispensable role.
 
 Open tab **AI(Vector) search** and test:
 
-- `Retractable claws and purring` → expected top match: **Cat**
-- `Ultrasonic communication and rodents` → expected top match: **Mice**
-- `Photosynthesis in autumn` → expected top match: **Tree**
+1. **Test: extract main topic** (Target: `Tree`)
+
+   ```text
+   I am looking for information about large organisms that live for hundreds of years, have a woody trunk, and use their leaves to turn sunlight into energy while providing shade and stabilized soil for the ecosystem.
+   ```
+
+   Expected top match: **Tree** (clear lead due to "woody trunk" and photosynthesis context).
+
+2. **Test: behavioral description** (Target: `Cat`)
+
+   ```text
+   Small domestic predators that were respected in ancient history, known for being very independent, having great vision in the dark, and the ability to land on their feet when they jump from high places.
+   ```
+
+   Expected top match: **Cat** (ancient history + landing on feet + night vision).
+
+3. **Test: mixed long query** (Target: `Mice`)
+
+   ```text
+   Tell me about tiny mammals that are often found in houses or fields, which scientists use in laboratories to study genetics and develop new medicines because they breed very fast and are biologically similar to humans.
+   ```
+
+   Expected top match: **Mice** (strong medical research and rodent traits signal).
 
 ## References
 

@@ -4,7 +4,7 @@ modules:
       resource: main
       resolver:
         function: resolver
-      title: Forge SQL ORM RAG DEMO
+      title: Forge SQL ORM SEMANTIC SEARCH DEMO
   scheduledTrigger:
     - key: scheduled-schema-migration
       function: runSchemaMigration
