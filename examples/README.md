@@ -102,6 +102,15 @@ Example for **TiDB `VECTOR`** columns and vector SQL helpers (`vecCosineDistance
 - Resolvers: insert, fetch all, cosine-distance search
 - Custom UI (Atlaskit) for 3D demo vectors
 
+### [forge-sql-orm-example-ai](forge-sql-orm-example-ai)
+
+Custom UI example for **AI semantic search** with local embeddings in the browser and vector search in Forge SQL/TiDB.
+
+- Frontend embedding generation via `@huggingface/transformers` (`all-MiniLM-L6-v2`)
+- Store `title`, `document`, and vector embedding in `embedded_documents`
+- Search by free-text query (embedding is generated automatically)
+- Cosine-distance ranking with similarity shown as percentage
+
 ### [forge-sql-orm-example-atlascamp](forge-sql-orm-example-atlascamp)
 
 **Atlas Camp 2026 - February 9, 2026**

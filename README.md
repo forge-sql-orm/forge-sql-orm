@@ -105,6 +105,7 @@
 - [Checklist Example](examples/forge-sql-orm-example-checklist)
 - [Cache Example](examples/forge-sql-orm-example-cache) - Advanced caching capabilities with performance monitoring
 - [Vector / AI SQL Example](examples/forge-sql-orm-example-vector) - `VECTOR` columns, embeddings, cosine-distance search (TiDB-compatible)
+- [AI Semantic Search Example](examples/forge-sql-orm-example-ai) - Atlassian Forge app that saves documents and embeddings, then searches by query text
 - [Rovo Integration Example](https://github.com/vzakharchenko/Forge-Secure-Notes-for-Jira) - Real-world Rovo AI agent implementation with secure natural-language analytics
 
 ### 📚 Reference
@@ -136,6 +137,7 @@
 - [Organization Tracker Example](examples/forge-sql-orm-example-org-tracker) - Complex relationships
 - [Checklist Example](examples/forge-sql-orm-example-checklist) - Jira integration
 - [Cache Example](examples/forge-sql-orm-example-cache) - Advanced caching capabilities
+- [AI Semantic Search Example](examples/forge-sql-orm-example-ai) - Runs in Atlassian Forge and stores `title`/`document`/`embedding` for AI vector search
 - [Rovo Integration Example](https://github.com/vzakharchenko/Forge-Secure-Notes-for-Jira) - Real-world Rovo AI agent with secure analytics
 
 ## Usage Approaches
@@ -1277,21 +1279,7 @@ Forge SQL ORM exposes **TiDB-compatible** `VECTOR` columns and vector functions 
 
 ### Schema: `vectorTiDBType`
 
-Use the Drizzle custom column type from `forge-sql-orm` (same patterns as `text()`, `int()`, …). With a fixed dimension, DDL becomes `VECTOR(n)`; without it, `VECTOR`.
-
-Explicit **SQL column name** + options:
-
-```typescript
-embedding: vectorTiDBType("embedding", { dimension: 1536 }).notNull(),
-```
-
-Config only (column name is the **property key** in `mysqlTable`):
-
-```typescript
-embedding: vectorTiDBType({ dimension: 1536 }).notNull(),
-```
-
-Full example:
+Use the Drizzle custom column type from `forge-sql-orm`. With a fixed dimension, DDL becomes `VECTOR(n)`; without it, `VECTOR`.
 
 ```typescript
 import { int, mysqlTable, primaryKey, text } from "drizzle-orm/mysql-core";

@@ -48,7 +48,7 @@
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "^2.1.26",
     "inquirer": "^13.4.1",
-    "mysql2": "^3.20.0",
+    "mysql2": "^3.21.0",
     "reflect-metadata": "^0.2.2",
     "uuid": "^13.0.0"
   },
@@ -62,7 +62,7 @@
     "knip": "^6.3.1",
     "reflect-metadata": "^0.2.2",
     "typescript": "^5.9.3",
-    "vite": "^8.0.7"
+    "vite": "^8.0.8"
   },
   "lint-staged": {
     "*.{ts,tsx,css,scss,md}": [
