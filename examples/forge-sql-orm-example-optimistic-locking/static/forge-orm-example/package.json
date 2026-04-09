@@ -4,7 +4,7 @@
   "description": "",
   "dependencies": {
     "@atlaskit/button": "^23.11.0",
-    "@atlaskit/css-reset": "^7.4.1",
+    "@atlaskit/css-reset": "^7.4.2",
     "@atlaskit/dynamic-table": "^18.3.26",
     "@atlaskit/tabs": "^19.0.3",
     "@atlaskit/tokens": "^11.4.3",
