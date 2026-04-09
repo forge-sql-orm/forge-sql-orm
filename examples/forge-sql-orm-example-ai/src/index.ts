@@ -30,7 +30,7 @@ resolver.define(
     const vector = req.payload.vector;
     const fieldAlias = sql.raw("distance");
     const distance = sql<number>`${vecCosineDistance(embeddedDocuments.embedding, vector)} as \`${fieldAlias}\``;
-    return await forgeSQL
+    return forgeSQL
       .select({
         id: embeddedDocuments.id,
         document: embeddedDocuments.document,
