@@ -1,4 +1,4 @@
-var e = `
+var e=`
 html[data-theme~="shape:shape"], [data-subtree-theme][data-theme~="shape:shape"] {
   --ds-radius-xsmall: 0.125rem;
   --ds-radius-small: 0.25rem;
@@ -12,5 +12,4 @@ html[data-theme~="shape:shape"], [data-subtree-theme][data-theme~="shape:shape"]
   --ds-border-width-selected: 0.125rem;
   --ds-border-width-focused: 0.125rem;
 }
-`;
-export { e as default };
+`;export{e as default};
