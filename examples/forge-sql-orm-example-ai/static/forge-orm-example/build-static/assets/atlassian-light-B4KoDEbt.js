@@ -1,4 +1,4 @@
-var e=`
+var e = `
 html[data-color-mode="light"][data-theme~="light:light"], [data-subtree-theme][data-color-mode="light"][data-theme~="light:light"],
 html[data-color-mode="dark"][data-theme~="dark:light"], [data-subtree-theme][data-color-mode="dark"][data-theme~="dark:light"] {
   color-scheme: light;
@@ -413,4 +413,5 @@ html[data-color-mode="dark"][data-theme~="dark:light"], [data-subtree-theme][dat
   --ds-UNSAFE-transparent: transparent;
   --ds-elevation-surface-current: #FFFFFF;
 }
-`;export{e as default};
+`;
+export { e as default };

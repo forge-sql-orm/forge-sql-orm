@@ -1,4 +1,4 @@
-var e=`
+var e = `
 html[data-color-mode="light"][data-theme~="light:dark-increased-contrast"], [data-subtree-theme][data-color-mode="light"][data-theme~="light:dark-increased-contrast"],
 html[data-color-mode="dark"][data-theme~="dark:dark-increased-contrast"], [data-subtree-theme][data-color-mode="dark"][data-theme~="dark:dark-increased-contrast"],
 html[data-color-mode="light"][data-contrast-mode="more"][data-theme~="light:dark"],
@@ -415,4 +415,5 @@ html[data-color-mode="dark"][data-contrast-mode="more"][data-theme~="dark:dark"]
   --ds-UNSAFE-transparent: transparent;
   --ds-elevation-surface-current: #1F1F21;
 }
-`;export{e as default};
+`;
+export { e as default };

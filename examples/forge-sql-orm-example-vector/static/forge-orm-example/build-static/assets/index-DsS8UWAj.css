@@ -2392,32 +2392,3 @@ button {
     filter: grayscale();
   }
 }
-.vector-tabs-frame {
-  border: var(--ds-border-width) solid var(--ds-border);
-  border-radius: var(--ds-radius-medium);
-  background: var(--ds-surface);
-  max-width: min(100%, 36rem);
-  overflow: hidden;
-}
-.vector-tabs-frame [role="tablist"] {
-  gap: var(--ds-space-050);
-  padding: var(--ds-space-075) var(--ds-space-100);
-  background: var(--ds-background-neutral);
-  border-bottom: var(--ds-border-width) solid var(--ds-border);
-  margin: 0;
-  display: flex;
-}
-.vector-tabs-frame [role="tab"] {
-  text-align: center;
-  border-radius: var(--ds-radius-small);
-  flex: 1 1 0;
-  justify-content: center;
-  transition:
-    background-color 0.15s,
-    box-shadow 0.15s;
-}
-.vector-tabs-frame [role="tab"][aria-selected="true"] {
-  background-color: var(--ds-surface);
-  box-shadow: inset 0 0 0 var(--ds-border-width-selected) var(--ds-border-focused);
-  font-weight: 700;
-}

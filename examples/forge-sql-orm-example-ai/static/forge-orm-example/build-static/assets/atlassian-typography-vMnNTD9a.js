@@ -1,4 +1,4 @@
-var e=`
+var e = `
 html[data-theme~="typography:typography"], [data-subtree-theme][data-theme~="typography:typography"] {
   --ds-font-heading-xxlarge: normal 653 2rem/2.25rem "Atlassian Sans", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Helvetica Neue", sans-serif;
   --ds-font-heading-xlarge: normal 653 1.75rem/2rem "Atlassian Sans", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Helvetica Neue", sans-serif;
@@ -25,4 +25,5 @@ html[data-theme~="typography:typography"], [data-subtree-theme][data-theme~="typ
   --ds-font-family-brand-heading: "Charlie Display", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Helvetica Neue", sans-serif;
   --ds-font-family-brand-body: "Charlie Text", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Helvetica Neue", sans-serif;
 }
-`;export{e as default};
+`;
+export { e as default };
