@@ -309,7 +309,7 @@ var t = e((e) => {
   f = e((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.StatsigMetadataProvider = e.SDK_VERSION = void 0),
-      (e.SDK_VERSION = `3.32.4`));
+      (e.SDK_VERSION = `3.32.5`));
     var t = { sdkVersion: e.SDK_VERSION, sdkType: `js-mono` };
     e.StatsigMetadataProvider = {
       get: () => t,
@@ -462,11 +462,17 @@ var t = e((e) => {
               ? ((t = `event_sender_logs_flushed_emitter_exception`),
                 this._emitter({ name: `logs_flushed`, events: e.events }),
                 i)
-              : { success: !1, statusCode: i.statusCode, failurePath: i.failurePath };
+              : Object.assign(
+                  { success: !1, statusCode: i.statusCode, failurePath: i.failurePath },
+                  i.failureErrorMessage ? { failureErrorMessage: i.failureErrorMessage } : {},
+                );
           } catch (e) {
             return (
               r.Log.warn(`Failed to send batch:`, e),
-              { success: !1, statusCode: -1, failurePath: n.path ?? t }
+              Object.assign(
+                { success: !1, statusCode: -1, failurePath: n.path ?? t },
+                n.errorMessage ? { failureErrorMessage: n.errorMessage } : {},
+              )
             );
           }
         });
@@ -476,25 +482,31 @@ var t = e((e) => {
           let n = yield this._network.post(this._getRequestData(e), t),
             r = n?.code ?? -1;
           return r === -1
-            ? {
-                success: !1,
-                statusCode: -1,
-                failurePath:
-                  t.path ??
-                  (n === void 0
-                    ? `event_sender_post_returned_undefined`
-                    : `event_sender_post_returned_null`),
-              }
+            ? Object.assign(
+                {
+                  success: !1,
+                  statusCode: -1,
+                  failurePath:
+                    t.path ??
+                    (n === void 0
+                      ? `event_sender_post_returned_undefined`
+                      : `event_sender_post_returned_null`),
+                },
+                t.errorMessage ? { failureErrorMessage: t.errorMessage } : {},
+              )
             : { success: r >= 200 && r < 300, statusCode: r };
         });
       }
       _sendEventsViaBeacon(e, t) {
         let n = this._network.beacon(this._getRequestData(e), t);
-        return {
-          success: n,
-          statusCode: n ? 200 : -1,
-          failurePath: n ? void 0 : (t.path ?? `beacon_send_false`),
-        };
+        return Object.assign(
+          {
+            success: n,
+            statusCode: n ? 200 : -1,
+            failurePath: n ? void 0 : (t.path ?? `beacon_send_false`),
+          },
+          !n && t.errorMessage ? { failureErrorMessage: t.errorMessage } : {},
+        );
       }
       _getRequestData(e) {
         return {
@@ -1289,9 +1301,10 @@ var t = e((e) => {
                     ? { body: null, code: m.status }
                     : (m == null &&
                         n &&
-                        (n.path = u
+                        ((n.path = u
                           ? `network_request_timed_out_no_response`
                           : `network_request_exception_no_response`),
+                        l && (n.errorMessage = l)),
                       null)
                 );
               }
@@ -1506,7 +1519,14 @@ var t = e((e) => {
       f = p(),
       m = C(),
       v = E(),
-      b = y();
+      b = y(),
+      x = new Set([
+        `network_request_timed_out_no_response`,
+        `network_request_exception_no_response`,
+        `event_sender_post_returned_null`,
+        `event_sender_post_returned_undefined`,
+        `event_sender_post_exception`,
+      ]);
     e.FlushCoordinator = class {
       constructor(e, t, n, r, a, s, c, l, u, d) {
         ((this._cooldownTimer = null),
@@ -1688,7 +1708,7 @@ var t = e((e) => {
           return n.success
             ? (this._flushInterval.adjustForSuccess(), !0)
             : (this._flushInterval.adjustForFailure(),
-              this._handleFailure(e, t, n.statusCode, n.failurePath),
+              this._handleFailure(e, t, n.statusCode, n.failurePath, n.failureErrorMessage),
               !1);
         });
       }
@@ -1713,7 +1733,10 @@ var t = e((e) => {
         let e = this._pendingEvents.takeAll();
         return this._batchQueue.createBatches(e);
       }
-      _handleFailure(e, t, n, i) {
+      _isRetryableBatch(e, t) {
+        return !!(d.RETRYABLE_CODES.has(e) || (e === -1 && t && x.has(t)));
+      }
+      _handleFailure(e, t, n, i, a) {
         if (t === s.FlushType.Shutdown) {
           (u.Log.warn(
             `${t} flush failed during shutdown. ${e.events.length} event(s) will be saved to storage for retry in next session.`,
@@ -1721,7 +1744,7 @@ var t = e((e) => {
             this._saveShutdownFailedEventsToStorage(e.events));
           return;
         }
-        if (!d.RETRYABLE_CODES.has(n)) {
+        if (!this._isRetryableBatch(n, i)) {
           (u.Log.warn(
             `${t} flush failed after ${e.attempts} attempt(s). ${e.events.length} event(s) will be dropped. Non-retryable error: ${n}`,
           ),
@@ -1732,6 +1755,7 @@ var t = e((e) => {
               n,
               e.attempts,
               i,
+              a,
             ));
           return;
         }
@@ -1746,14 +1770,15 @@ var t = e((e) => {
               n,
               e.attempts,
               i,
+              a,
             ));
           return;
         }
         e.incrementAttempts();
-        let a = this._batchQueue.requeueBatch(e);
-        a > 0 &&
-          (u.Log.warn(`Failed to requeue batch : dropped ${a} events due to full queue`),
-          this._errorBoundary.logDroppedEvents(a, `Batch queue limit reached during requeue`, {
+        let o = this._batchQueue.requeueBatch(e);
+        o > 0 &&
+          (u.Log.warn(`Failed to requeue batch : dropped ${o} events due to full queue`),
+          this._errorBoundary.logDroppedEvents(o, `Batch queue limit reached during requeue`, {
             loggingInterval: this._flushInterval.getCurrentIntervalMs(),
             batchSize: this._batchQueue.batchSize(),
             maxPendingBatches: r.EventRetryConstants.MAX_PENDING_BATCHES,
@@ -2569,15 +2594,17 @@ var t = e((e) => {
           }),
           this._onError(`statsig::log_event_dropped_event_count`, Error(t), !0, r));
       }
-      logEventRequestFailure(e, t, n, r, i, a) {
-        let o = {
+      logEventRequestFailure(e, t, n, r, i, a, o) {
+        let s = {
           eventCount: String(e),
           flushType: n,
           statusCode: String(r),
           reason: t,
           retries: String(i),
         };
-        (a && (o.failurePath = a), this._onError(`statsig::log_event_failed`, Error(t), !0, o));
+        (a && (s.failurePath = a),
+          typeof o == `string` && o.length > 0 && (s.failureErrorMessage = o),
+          this._onError(`statsig::log_event_failed`, Error(t), !0, s));
       }
       getLastSeenErrorAndReset() {
         let e = this._lastSeenError;

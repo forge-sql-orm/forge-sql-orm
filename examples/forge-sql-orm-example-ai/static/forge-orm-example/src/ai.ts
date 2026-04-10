@@ -1,23 +1,23 @@
 /// <reference types="vite/client" />
-import { env, FeatureExtractionPipeline, pipeline } from "@huggingface/transformers";
+import { env, FeatureExtractionPipeline, pipeline, ProgressInfo } from "@huggingface/transformers";
 
 env.localModelPath = `./models/`;
 
 env.allowLocalModels = true;
 env.allowRemoteModels = false;
 env.useBrowserCache = false;
-
+env.useWasmCache = true;
 const isDevMode = import.meta.env.DEV;
 env.backends.onnx.wasm!.wasmPaths = isDevMode ? `${window.location.origin}/wasm/` : `../wasm/`;
 
 const MODEL_NAME = `all-MiniLM-L6-v2`;
 
-interface VectorBuilder {
+export interface VectorBuilder {
   getVector(text: string): Promise<number[]>;
 }
 
 interface MiniLLM {
-  init(): Promise<VectorBuilder>;
+  init(progress: (progressInfo: ProgressInfo) => void): Promise<VectorBuilder>;
 }
 
 class VectorBuilderImpl implements VectorBuilder {
@@ -37,8 +37,10 @@ class VectorBuilderImpl implements VectorBuilder {
 }
 
 class MiniLLMImpl implements MiniLLM {
-  async init(): Promise<VectorBuilder> {
-    const extractor = await pipeline("feature-extraction", MODEL_NAME);
+  async init(progress: (progressInfo: ProgressInfo) => void): Promise<VectorBuilder> {
+    const extractor = await pipeline("feature-extraction", MODEL_NAME, {
+      progress_callback: progress,
+    });
     return new VectorBuilderImpl(extractor);
   }
 }

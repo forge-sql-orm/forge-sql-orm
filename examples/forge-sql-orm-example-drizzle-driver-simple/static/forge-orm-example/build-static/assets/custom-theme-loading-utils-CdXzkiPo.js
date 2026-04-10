@@ -1,20 +1,20 @@
 import { a as e, t } from "./rolldown-runtime-COnpUsM8.js";
 import {
   a as n,
-  d as r,
-  f as i,
-  h as a,
-  i as o,
-  l as s,
-  m as c,
-  n as l,
-  p as u,
+  c as r,
+  d as i,
+  i as a,
+  l as o,
+  n as s,
+  o as c,
+  r as l,
+  s as u,
   t as d,
   u as f,
-} from "./wrapNativeSuper-DbbKRv4Y.js";
-import { t as p } from "./client-core-vendor-WiJ-sxLE.js";
+} from "./wrapNativeSuper-CMD0Ca0W.js";
+import { t as p } from "./client-core-vendor-CTU4k31A.js";
 function m(e, t) {
-  for (; !{}.hasOwnProperty.call(e, t) && (e = r(e)) !== null; );
+  for (; !{}.hasOwnProperty.call(e, t) && (e = u(e)) !== null; );
   return e;
 }
 function h() {
@@ -1546,15 +1546,15 @@ function ge(e, t) {
 }
 function C(e) {
   for (var t = 1; t < arguments.length; t++) {
-    var n = arguments[t] == null ? {} : arguments[t];
+    var r = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? ge(Object(n), !0).forEach(function (t) {
-          s(e, t, n[t]);
+      ? ge(Object(r), !0).forEach(function (t) {
+          n(e, t, r[t]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : ge(Object(n)).forEach(function (t) {
-            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+        : ge(Object(r)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
           });
   }
   return e;
@@ -1562,9 +1562,9 @@ function C(e) {
 var w = `@all-features`,
   _e = (function () {
     function e() {
-      (a(this, e), s(this, `eventToValue`, new Map()), (this.emitter = new he.default()));
+      (i(this, e), n(this, `eventToValue`, new Map()), (this.emitter = new he.default()));
     }
-    return u(e, [
+    return o(e, [
       {
         key: `onGateUpdated`,
         value: function (e, t, n, r) {
@@ -1692,15 +1692,15 @@ function xe(e, t) {
 }
 function A(e) {
   for (var t = 1; t < arguments.length; t++) {
-    var n = arguments[t] == null ? {} : arguments[t];
+    var r = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? xe(Object(n), !0).forEach(function (t) {
-          s(e, t, n[t]);
+      ? xe(Object(r), !0).forEach(function (t) {
+          n(e, t, r[t]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : xe(Object(n)).forEach(function (t) {
-            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+        : xe(Object(r)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
           });
   }
   return e;
@@ -1711,16 +1711,16 @@ var j = function (e) {
   M = function (e, t) {
     if (!e && !t) return !0;
     if (!e || !t) return !1;
-    var r = Object.entries(e),
-      i = Object.entries(t);
-    if (r.length !== i.length) return !1;
-    var a = function (e, t) {
-      var r = n(e, 1)[0],
-        i = n(t, 1)[0];
-      return r.localeCompare(i);
+    var n = Object.entries(e),
+      r = Object.entries(t);
+    if (n.length !== r.length) return !1;
+    var i = function (e, t) {
+      var n = a(e, 1)[0],
+        r = a(t, 1)[0];
+      return n.localeCompare(r);
     };
-    (r.sort(a), i.sort(a));
-    for (var o = 0; o < r.length; o++) if (n(r[o], 2)[1] !== n(i[o], 2)[1]) return !1;
+    (n.sort(i), r.sort(i));
+    for (var o = 0; o < n.length; o++) if (a(n[o], 2)[1] !== a(r[o], 2)[1]) return !1;
     return !0;
   },
   Se = function (e, t) {
@@ -1730,18 +1730,18 @@ var j = function (e) {
 function N(e) {
   var t = [...arguments].slice(1);
   if (!t.length) return e;
-  var r = t.shift();
-  if (r == null) return N.apply(void 0, [e].concat(l(t)));
-  for (var i = 0, a = Object.entries(r); i < a.length; i++) {
-    var o = n(a[i], 2),
-      s = o[0],
-      u = o[1],
-      d = e[s],
-      f = u && c(u) === `object` && !Array.isArray(u),
-      p = d && c(d) === `object` && !Array.isArray(d);
-    f && p ? (e[s] = N(d, u)) : (e[s] = u);
+  var n = t.shift();
+  if (n == null) return N.apply(void 0, [e].concat(s(t)));
+  for (var r = 0, i = Object.entries(n); r < i.length; r++) {
+    var o = a(i[r], 2),
+      c = o[0],
+      l = o[1],
+      u = e[c],
+      d = l && f(l) === `object` && !Array.isArray(l),
+      p = u && f(u) === `object` && !Array.isArray(u);
+    d && p ? (e[c] = N(u, l)) : (e[c] = l);
   }
-  return N.apply(void 0, [e].concat(l(t)));
+  return N.apply(void 0, [e].concat(s(t)));
 }
 var Ce = function (e) {
     var t = e.api,
@@ -1749,9 +1749,9 @@ var Ce = function (e) {
       r = e.loggingIntervalMillis,
       i = e.loggingBufferMaxSize,
       a = e.localMode,
-      s = e.eventLoggingApi,
-      c = e.eventLoggingApiForRetries,
-      l = e.disableLocalStorage,
+      o = e.eventLoggingApi,
+      s = e.eventLoggingApiForRetries,
+      c = e.disableLocalStorage,
       u = e.ignoreWindowUndefined,
       d = e.disableAllLogging;
     return (
@@ -1761,61 +1761,61 @@ var Ce = function (e) {
       e.disableErrorLogging,
       e.disableAutoMetricsLogging,
       A(
-        A({}, o(e, be)),
+        A({}, l(e, be)),
         {},
         {
           networkConfig: {
             api: t,
-            logEventUrl: s ? s + `rgstr` : void 0,
-            logEventFallbackUrls: c ? [c] : void 0,
+            logEventUrl: o ? o + `rgstr` : void 0,
+            logEventFallbackUrls: s ? [s] : void 0,
             preventAllNetworkTraffic: a || (!u && typeof window > `u`),
           },
           includeCurrentPageUrlWithEvents: !n,
           loggingIntervalMs: r,
           loggingBufferMaxSize: i,
-          disableStorage: l === void 0 ? a : l,
+          disableStorage: c === void 0 ? a : c,
           disableLogging: d === void 0 ? a : d,
         },
       )
     );
   },
   we = Object.entries(D).map(function (e) {
-    var t = n(e, 2),
-      r = t[0],
-      i = t[1];
-    return [r.toLowerCase(), i];
+    var t = a(e, 2),
+      n = t[0],
+      r = t[1];
+    return [n.toLowerCase(), r];
   }),
   Te = function (e) {
     var t = e.reason.toLowerCase();
     return {
       reason:
         we.find(function (e) {
-          var r = n(e, 1)[0];
-          return t.includes(r);
+          var n = a(e, 1)[0];
+          return t.includes(n);
         })?.[1] ?? D.Unknown,
       time: e.receivedAt ?? Date.now(),
     };
   },
-  P = function (e) {
+  Ee = function (e) {
     return e.map(function (e) {
       return typeof e == `string` ? { gate: e } : e;
     });
   },
-  Ee = (function () {
-    function e(t, n, r, i) {
+  De = (function () {
+    function e(t, n, r, a) {
       var o = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : [],
         s = arguments.length > 5 && arguments[5] !== void 0 ? arguments[5] : ``,
         c = arguments.length > 6 && arguments[6] !== void 0 ? arguments[6] : null;
-      (a(this, e),
+      (i(this, e),
         (this.value = n),
         (this._name = t),
         (this._ruleID = r),
         (this._secondaryExposures = o),
         (this._allocatedExperimentName = s),
-        (this._evaluationDetails = i),
+        (this._evaluationDetails = a),
         (this._onDefaultValueFallback = c));
     }
-    return u(
+    return o(
       e,
       [
         {
@@ -1824,8 +1824,8 @@ var Ce = function (e) {
             var r,
               i = this.getValue(e, t);
             if (i == null) return t;
-            var a = Array.isArray(t) ? `array` : c(t),
-              o = Array.isArray(i) ? `array` : c(i);
+            var a = Array.isArray(t) ? `array` : f(t),
+              o = Array.isArray(i) ? `array` : f(i);
             if (n) {
               var s;
               return n(i)
@@ -1861,7 +1861,7 @@ var Ce = function (e) {
               t.value,
               t.ruleID,
               Te(t.details),
-              P(t.__evaluation?.secondary_exposures ?? []),
+              Ee(t.__evaluation?.secondary_exposures ?? []),
               t.groupName ?? void 0,
             );
             return ((n.experiment = t), n);
@@ -1870,25 +1870,25 @@ var Ce = function (e) {
       ],
     );
   })(),
-  De = (function () {
-    function e(t, n, r, i) {
+  Oe = (function () {
+    function e(t, n, r, a) {
       var o = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : null,
         s = arguments.length > 5 && arguments[5] !== void 0 ? arguments[5] : [],
         c = arguments.length > 6 && arguments[6] !== void 0 ? arguments[6] : [],
         l = arguments.length > 7 && arguments[7] !== void 0 ? arguments[7] : ``,
         u = arguments.length > 8 && arguments[8] !== void 0 ? arguments[8] : [];
-      (a(this, e),
+      (i(this, e),
         (this._logParameterFunction = o),
         (this._name = t),
         (this._value = JSON.parse(JSON.stringify(n ?? {}))),
         (this._ruleID = r ?? ``),
-        (this._evaluationDetails = i),
+        (this._evaluationDetails = a),
         (this._secondaryExposures = s),
         (this._undelegatedSecondaryExposures = c),
         (this._allocatedExperimentName = l),
         (this._explicitParameters = u));
     }
-    return u(
+    return o(
       e,
       [
         {
@@ -1904,7 +1904,7 @@ var Ce = function (e) {
               ? n(i)
                 ? a()
                 : t
-              : t == null || (c(i) === c(t) && Array.isArray(t) === Array.isArray(i))
+              : t == null || (f(i) === f(t) && Array.isArray(t) === Array.isArray(i))
                 ? a()
                 : t;
           },
@@ -1937,8 +1937,8 @@ var Ce = function (e) {
               function (e, n) {
                 return t.get(n);
               },
-              P(t.__evaluation?.secondary_exposures ?? []),
-              P(t.__evaluation?.undelegated_secondary_exposures ?? []),
+              Ee(t.__evaluation?.secondary_exposures ?? []),
+              Ee(t.__evaluation?.undelegated_secondary_exposures ?? []),
               t.__evaluation?.allocated_experiment_name,
               t.__evaluation?.explicit_parameters,
             );
@@ -1947,25 +1947,25 @@ var Ce = function (e) {
       ],
     );
   })(),
-  F = `0.0.0-development`;
-function Oe(e, t, n) {
-  return ((t = r(t)), i(e, ke() ? Reflect.construct(t, n || [], r(e).constructor) : t.apply(e, n)));
+  P = `0.0.0-development`;
+function ke(e, t, n) {
+  return ((t = u(t)), r(e, Ae() ? Reflect.construct(t, n || [], u(e).constructor) : t.apply(e, n)));
 }
-function ke() {
+function Ae() {
   try {
     var e = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
   } catch {}
-  return (ke = function () {
+  return (Ae = function () {
     return !!e;
   })();
 }
-var Ae = (function (e) {
+var je = (function (e) {
   function t(e) {
-    return (a(this, t), Oe(this, t, [e]));
+    return (i(this, t), ke(this, t, [e]));
   }
-  return (f(t, e), u(t));
+  return (c(t, e), o(t));
 })(d(Error));
-function je(e, t) {
+function Me(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var r = Object.getOwnPropertySymbols(e);
@@ -1977,36 +1977,36 @@ function je(e, t) {
   }
   return n;
 }
-function Me(e) {
+function Ne(e) {
   for (var t = 1; t < arguments.length; t++) {
-    var n = arguments[t] == null ? {} : arguments[t];
+    var r = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? je(Object(n), !0).forEach(function (t) {
-          s(e, t, n[t]);
+      ? Me(Object(r), !0).forEach(function (t) {
+          n(e, t, r[t]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : je(Object(n)).forEach(function (t) {
-            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+        : Me(Object(r)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
           });
   }
   return e;
 }
-var Ne = 5e3,
-  Pe = `https://api.atlassian.com/flags`,
-  Fe = `https://api.stg.atlassian.com/flags`,
-  Ie = `https://api.dev.atlassian.com/flags`,
-  Le = `https://api.stg.atlassian-us-gov-mod.com/flags`,
-  Re = `https://api.atlassian-us-gov-mod.com/flags`,
-  ze = `https://atlassian-statsig-proxy-archetype.atl-paas.%s.atl-ic.net`,
-  Be = `oasis-stg.com/flags`,
-  Ve = `atlassian-isolated.net/flags`,
-  He = `/gateway/api/flags`,
-  I = (function () {
+var Pe = 5e3,
+  Fe = `https://api.atlassian.com/flags`,
+  Ie = `https://api.stg.atlassian.com/flags`,
+  Le = `https://api.dev.atlassian.com/flags`,
+  Re = `https://api.stg.atlassian-us-gov-mod.com/flags`,
+  ze = `https://api.atlassian-us-gov-mod.com/flags`,
+  Be = `https://atlassian-statsig-proxy-archetype.atl-paas.%s.atl-ic.net`,
+  Ve = `oasis-stg.com/flags`,
+  He = `atlassian-isolated.net/flags`,
+  Ue = `/gateway/api/flags`,
+  F = (function () {
     function e() {
-      a(this, e);
+      i(this, e);
     }
-    return u(e, null, [
+    return o(e, null, [
       {
         key: `fetchClientSdk`,
         value: (function () {
@@ -2114,7 +2114,7 @@ var Ne = 5e3,
                     case 3:
                       throw (
                         (n = e.sent),
-                        new Ae(
+                        new je(
                           `Non 2xx response status received, status: ${t.status}, body: ${JSON.stringify(n)}`,
                         )
                       );
@@ -2123,7 +2123,7 @@ var Ne = 5e3,
                         e.next = 7;
                         break;
                       }
-                      throw new Ae(`Unexpected 204 response`);
+                      throw new je(`Unexpected 204 response`);
                     case 7:
                     case `end`:
                       return e.stop();
@@ -2169,26 +2169,26 @@ var Ne = 5e3,
           var t = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : !1,
             n = arguments.length > 2 ? arguments[2] : void 0,
             r = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : null;
-          if (t) return He;
+          if (t) return Ue;
           if (n === k.FEDRAMP_MODERATE)
             switch (e) {
               case O.Production:
-                return Re;
+                return ze;
               case O.Staging:
-                return Le;
+                return Re;
               default:
                 throw Error(`Invalid environment "${e}" for "${n}" perimeter`);
             }
           else if (n === k.COMMERCIAL)
             switch (e) {
               case O.Development:
-                return Ie;
+                return Le;
               case O.Staging:
                 var i = this.getApiUrl(r);
-                return i === null ? Fe : i;
+                return i === null ? Ie : i;
               default:
                 var a = this.getApiUrl(r);
-                return a === null ? Pe : a;
+                return a === null ? Fe : a;
             }
           else throw Error(`Invalid perimeter "${n}"`);
         },
@@ -2211,7 +2211,7 @@ var Ne = 5e3,
                             i.perimeter,
                             i.isolationContextId,
                           )),
-                          (s = i.fetchTimeoutMs || Ne),
+                          (s = i.fetchTimeoutMs || Pe),
                           AbortSignal.timeout
                             ? (c = AbortSignal.timeout(s))
                             : AbortController &&
@@ -2223,13 +2223,13 @@ var Ne = 5e3,
                           (t.next = 5),
                           fetch(
                             `${o}${n}`,
-                            Me(
+                            Ne(
                               {
                                 method: r,
                                 headers: {
                                   "Content-Type": `application/json`,
                                   "X-Client-Name": `feature-gate-js-client`,
-                                  "X-Client-Version": F,
+                                  "X-Client-Version": P,
                                   "X-API-KEY": i.apiKey,
                                 },
                                 signal: c,
@@ -2264,13 +2264,13 @@ var Ne = 5e3,
         key: `getApiUrl`,
         value: function (e) {
           var t = this.getWindowLocation();
-          if (t === void 0) return e ? ze.replace(`%s`, e) : null;
+          if (t === void 0) return e ? Be.replace(`%s`, e) : null;
           var n = t.protocol,
             r = t.hostname,
             i = r.match(/([^.]+)\.oasis-stg\.com$/);
-          if (i) return `${n}//api.${i[1]}.${Be}`;
+          if (i) return `${n}//api.${i[1]}.${Ve}`;
           var a = r.match(/([^.]+)\.atlassian-isolated\.net$/);
-          return a ? `${n}//api.${a[1]}.${Ve}` : null;
+          return a ? `${n}//api.${a[1]}.${He}` : null;
         },
       },
       {
@@ -2281,7 +2281,7 @@ var Ne = 5e3,
       },
     ]);
   })();
-function Ue(e, t) {
+function We(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var r = Object.getOwnPropertySymbols(e);
@@ -2293,53 +2293,53 @@ function Ue(e, t) {
   }
   return n;
 }
-function L(e) {
+function I(e) {
   for (var t = 1; t < arguments.length; t++) {
-    var n = arguments[t] == null ? {} : arguments[t];
+    var r = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? Ue(Object(n), !0).forEach(function (t) {
-          s(e, t, n[t]);
+      ? We(Object(r), !0).forEach(function (t) {
+          n(e, t, r[t]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : Ue(Object(n)).forEach(function (t) {
-            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+        : We(Object(r)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
           });
   }
   return e;
 }
-function We(e, t, n) {
-  return ((t = r(t)), i(e, Ge() ? Reflect.construct(t, n || [], r(e).constructor) : t.apply(e, n)));
+function Ge(e, t, n) {
+  return ((t = u(t)), r(e, Ke() ? Reflect.construct(t, n || [], u(e).constructor) : t.apply(e, n)));
 }
-function Ge() {
+function Ke() {
   try {
     var e = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
   } catch {}
-  return (Ge = function () {
+  return (Ke = function () {
     return !!e;
   })();
 }
-function Ke(e, t, n, i) {
-  var a = h(r(1 & i ? e.prototype : e), t, n);
-  return 2 & i && typeof a == `function`
+function qe(e, t, n, r) {
+  var i = h(u(1 & r ? e.prototype : e), t, n);
+  return 2 & r && typeof i == `function`
     ? function (e) {
-        return a.apply(n, e);
+        return i.apply(n, e);
       }
-    : a;
+    : i;
 }
-var qe = (function (e) {
+var Je = (function (e) {
     function t() {
       var e;
       return (
-        a(this, t),
-        (e = We(this, t, [`NoFetchDataAdapter`, `nofetch`])),
-        s(e, `bootstrapResult`, null),
+        i(this, t),
+        (e = Ge(this, t, [`NoFetchDataAdapter`, `nofetch`])),
+        n(e, `bootstrapResult`, null),
         e
       );
     }
     return (
-      f(t, e),
-      u(t, [
+      c(t, e),
+      o(t, [
         {
           key: `setBootstrapData`,
           value: function (e) {
@@ -2388,8 +2388,8 @@ var qe = (function (e) {
                           return e.abrupt(
                             `return`,
                             this.bootstrapResult &&
-                              L(
-                                L({}, this.bootstrapResult),
+                              I(
+                                I({}, this.bootstrapResult),
                                 {},
                                 { fullUserHash: (0, E._getFullUserHash)(n) },
                               ),
@@ -2415,7 +2415,7 @@ var qe = (function (e) {
           value: function (e) {
             return (
               this.bootstrapResult &&
-              L(L({}, this.bootstrapResult), {}, { fullUserHash: (0, E._getFullUserHash)(e) })
+              I(I({}, this.bootstrapResult), {}, { fullUserHash: (0, E._getFullUserHash)(e) })
             );
           },
         },
@@ -2458,21 +2458,21 @@ var qe = (function (e) {
         {
           key: `setDataLegacy`,
           value: function (e, n) {
-            Ke(t, `setData`, this, 3)([e, n]);
+            qe(t, `setData`, this, 3)([e, n]);
           },
         },
         {
           key: `toJSON`,
           value: function () {
-            var e = L({}, this);
+            var e = I({}, this);
             return (delete e._options, delete e._inMemoryCache, delete e.bootstrapResult, e);
           },
         },
       ])
     );
   })(E.DataAdapterCore),
-  R = p();
-function Je(e, t) {
+  L = p();
+function Ye(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var r = Object.getOwnPropertySymbols(e);
@@ -2484,25 +2484,25 @@ function Je(e, t) {
   }
   return n;
 }
-function z(e) {
+function R(e) {
   for (var t = 1; t < arguments.length; t++) {
-    var n = arguments[t] == null ? {} : arguments[t];
+    var r = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? Je(Object(n), !0).forEach(function (t) {
-          s(e, t, n[t]);
+      ? Ye(Object(r), !0).forEach(function (t) {
+          n(e, t, r[t]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : Je(Object(n)).forEach(function (t) {
-            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+        : Ye(Object(r)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
           });
   }
   return e;
 }
-function Ye(e, t) {
+function Xe(e, t) {
   var n = (typeof Symbol < `u` && e[Symbol.iterator]) || e[`@@iterator`];
   if (!n) {
-    if (Array.isArray(e) || (n = Xe(e)) || (t && e && typeof e.length == `number`)) {
+    if (Array.isArray(e) || (n = Ze(e)) || (t && e && typeof e.length == `number`)) {
       n && (e = n);
       var r = 0,
         i = function () {};
@@ -2543,26 +2543,26 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     },
   };
 }
-function Xe(e, t) {
+function Ze(e, t) {
   if (e) {
-    if (typeof e == `string`) return Ze(e, t);
+    if (typeof e == `string`) return Qe(e, t);
     var n = {}.toString.call(e).slice(8, -1);
     return (
       n === `Object` && e.constructor && (n = e.constructor.name),
       n === `Map` || n === `Set`
         ? Array.from(e)
         : n === `Arguments` || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)
-          ? Ze(e, t)
+          ? Qe(e, t)
           : void 0
     );
   }
 }
-function Ze(e, t) {
+function Qe(e, t) {
   (t == null || t > e.length) && (t = e.length);
   for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
   return r;
 }
-var Qe = `LocalOverride:Recognized`,
+var z = `LocalOverride:Recognized`,
   $e = `STATSIG_OVERRIDES`,
   et = `STATSIG_JS_LITE_LOCAL_OVERRIDES`,
   B = function () {
@@ -2573,12 +2573,12 @@ var Qe = `LocalOverride:Recognized`,
   },
   tt = (function () {
     function e(t) {
-      (a(this, e),
+      (i(this, e),
         (this._overrides = B()),
         (this._djb2Map = new Map()),
         (this._localStorageKey = t));
     }
-    return u(e, [
+    return o(e, [
       {
         key: `parseStoredOverrides`,
         value: function (e) {
@@ -2593,24 +2593,24 @@ var Qe = `LocalOverride:Recognized`,
       {
         key: `mergeOverrides`,
         value: function () {
-          for (var e = B(), t = [...arguments], r = 0, i = t; r < i.length; r++) {
-            for (var a = i[r], o = 0, s = Object.entries((c = a.gates) ?? {}); o < s.length; o++) {
+          for (var e = B(), t = [...arguments], n = 0, r = t; n < r.length; n++) {
+            for (var i = r[n], o = 0, s = Object.entries((c = i.gates) ?? {}); o < s.length; o++) {
               var c,
-                l = n(s[o], 2),
+                l = a(s[o], 2),
                 u = l[0],
                 d = l[1];
               e.gates[u] = d;
             }
-            for (var f = 0, p = Object.entries((m = a.configs) ?? {}); f < p.length; f++) {
+            for (var f = 0, p = Object.entries((m = i.configs) ?? {}); f < p.length; f++) {
               var m,
-                h = n(p[f], 2),
+                h = a(p[f], 2),
                 g = h[0],
                 _ = h[1];
               e.configs[g] = _;
             }
-            for (var v = 0, y = Object.entries((b = a.layers) ?? {}); v < y.length; v++) {
+            for (var v = 0, y = Object.entries((b = i.layers) ?? {}); v < y.length; v++) {
               var b,
-                x = n(y[v], 2),
+                x = a(y[v], 2),
                 S = x[0],
                 ee = x[1];
               e.layers[S] = ee;
@@ -2633,12 +2633,12 @@ var Qe = `LocalOverride:Recognized`,
           for (var t = 0, n = Object.values(e); t < n.length; t++) {
             var r = n[t],
               i = new Set(Object.keys(r)),
-              a = Ye(i),
+              a = Xe(i),
               o;
             try {
               for (a.s(); !(o = a.n()).done; ) {
                 var s = o.value,
-                  c = (0, R._DJB2)(s);
+                  c = (0, L._DJB2)(s);
                 i.has(c) && delete r[c];
               }
             } catch (e) {
@@ -2667,18 +2667,18 @@ var Qe = `LocalOverride:Recognized`,
       {
         key: `applyOverrides`,
         value: function (e) {
-          var t = z(z({}, B()), e);
+          var t = R(R({}, B()), e);
           this._djb2Map.clear();
-          for (var r = 0, i = Object.entries(t); r < i.length; r++)
+          for (var n = 0, r = Object.entries(t); n < r.length; n++)
             for (
-              var a = n(i[r], 2), o = a[0], s = a[1], c = 0, l = Object.entries(s);
+              var i = a(r[n], 2), o = i[0], s = i[1], c = 0, l = Object.entries(s);
               c < l.length;
               c++
             ) {
-              var u = n(l[c], 2),
+              var u = a(l[c], 2),
                 d = u[0],
                 f = u[1];
-              this._djb2Map.set(V((0, R._DJB2)(d), o), f);
+              this._djb2Map.set(V((0, L._DJB2)(d), o), f);
             }
           this._overrides = t;
         },
@@ -2693,7 +2693,7 @@ var Qe = `LocalOverride:Recognized`,
         key: `overrideGate`,
         value: function (e, t) {
           ((this._overrides.gates[e] = t),
-            this._djb2Map.set(V((0, R._DJB2)(e), `gates`), t),
+            this._djb2Map.set(V((0, L._DJB2)(e), `gates`), t),
             this.saveOverrides());
         },
       },
@@ -2701,7 +2701,7 @@ var Qe = `LocalOverride:Recognized`,
         key: `removeGateOverride`,
         value: function (e) {
           (delete this._overrides.gates[e],
-            this._djb2Map.delete(V((0, R._DJB2)(e), `gates`)),
+            this._djb2Map.delete(V((0, L._DJB2)(e), `gates`)),
             this.saveOverrides());
         },
       },
@@ -2711,14 +2711,14 @@ var Qe = `LocalOverride:Recognized`,
           var n = this._overrides.gates[e.name] ?? this._djb2Map.get(V(e.name, `gates`));
           return n == null
             ? null
-            : z(z({}, e), {}, { value: n, details: z(z({}, e.details), {}, { reason: Qe }) });
+            : R(R({}, e), {}, { value: n, details: R(R({}, e.details), {}, { reason: z }) });
         },
       },
       {
         key: `overrideDynamicConfig`,
         value: function (e, t) {
           ((this._overrides.configs[e] = t),
-            this._djb2Map.set(V((0, R._DJB2)(e), `configs`), t),
+            this._djb2Map.set(V((0, L._DJB2)(e), `configs`), t),
             this.saveOverrides());
         },
       },
@@ -2726,7 +2726,7 @@ var Qe = `LocalOverride:Recognized`,
         key: `removeDynamicConfigOverride`,
         value: function (e) {
           (delete this._overrides.configs[e],
-            this._djb2Map.delete(V((0, R._DJB2)(e), `configs`)),
+            this._djb2Map.delete(V((0, L._DJB2)(e), `configs`)),
             this.saveOverrides());
         },
       },
@@ -2740,7 +2740,7 @@ var Qe = `LocalOverride:Recognized`,
         key: `overrideExperiment`,
         value: function (e, t) {
           ((this._overrides.configs[e] = t),
-            this._djb2Map.set(V((0, R._DJB2)(e), `configs`), t),
+            this._djb2Map.set(V((0, L._DJB2)(e), `configs`), t),
             this.saveOverrides());
         },
       },
@@ -2748,7 +2748,7 @@ var Qe = `LocalOverride:Recognized`,
         key: `removeExperimentOverride`,
         value: function (e) {
           (delete this._overrides.configs[e],
-            this._djb2Map.delete(V((0, R._DJB2)(e), `configs`)),
+            this._djb2Map.delete(V((0, L._DJB2)(e), `configs`)),
             this.saveOverrides());
         },
       },
@@ -2762,7 +2762,7 @@ var Qe = `LocalOverride:Recognized`,
         key: `overrideLayer`,
         value: function (e, t) {
           ((this._overrides.layers[e] = t),
-            this._djb2Map.set(V((0, R._DJB2)(e), `layers`), t),
+            this._djb2Map.set(V((0, L._DJB2)(e), `layers`), t),
             this.saveOverrides());
         },
       },
@@ -2770,7 +2770,7 @@ var Qe = `LocalOverride:Recognized`,
         key: `removeLayerOverride`,
         value: function (e) {
           (delete this._overrides.layers[e],
-            this._djb2Map.delete(V((0, R._DJB2)(e), `layers`)),
+            this._djb2Map.delete(V((0, L._DJB2)(e), `layers`)),
             this.saveOverrides());
         },
       },
@@ -2789,13 +2789,13 @@ var Qe = `LocalOverride:Recognized`,
           var n = this._overrides.layers[e.name] ?? this._djb2Map.get(V(e.name, `layers`));
           return n == null
             ? null
-            : z(
-                z({}, e),
+            : R(
+                R({}, e),
                 {},
                 {
                   __value: n,
-                  get: (0, R._makeTypedGet)(e.name, n),
-                  details: z(z({}, e.details), {}, { reason: Qe }),
+                  get: (0, L._makeTypedGet)(e.name, n),
+                  details: R(R({}, e.details), {}, { reason: z }),
                 },
               );
         },
@@ -2806,13 +2806,13 @@ var Qe = `LocalOverride:Recognized`,
           var n = t[e.name] ?? this._djb2Map.get(V(e.name, `configs`));
           return n == null
             ? null
-            : z(
-                z({}, e),
+            : R(
+                R({}, e),
                 {},
                 {
                   value: n,
-                  get: (0, R._makeTypedGet)(e.name, n),
-                  details: z(z({}, e.details), {}, { reason: Qe }),
+                  get: (0, L._makeTypedGet)(e.name, n),
+                  details: R(R({}, e.details), {}, { reason: z }),
                 },
               );
         },
@@ -2834,15 +2834,15 @@ function rt(e, t) {
 }
 function H(e) {
   for (var t = 1; t < arguments.length; t++) {
-    var n = arguments[t] == null ? {} : arguments[t];
+    var r = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? rt(Object(n), !0).forEach(function (t) {
-          s(e, t, n[t]);
+      ? rt(Object(r), !0).forEach(function (t) {
+          n(e, t, r[t]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : rt(Object(n)).forEach(function (t) {
-            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
+        : rt(Object(r)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
           });
   }
   return e;
@@ -2852,28 +2852,28 @@ var it = `client-default-key`,
   ot = (function () {
     function e() {
       var t = this,
-        n = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {},
-        r = n.localStorageKey,
-        i = r === void 0 ? $e : r,
-        o = n.overrideAdapter;
-      (a(this, e),
-        s(this, `initPromise`, null),
-        s(this, `initCompleted`, !1),
-        s(this, `initWithDefaults`, !1),
-        s(this, `hasCheckGateErrorOccurred`, !1),
-        s(this, `hasGetExperimentErrorOccurred`, !1),
-        s(this, `hasGetExperimentValueErrorOccurred`, !1),
-        s(this, `hasGetLayerErrorOccurred`, !1),
-        s(this, `hasGetLayerValueErrorOccurred`, !1),
-        s(this, `subscriptions`, new _e()),
-        s(this, `dataAdapter`, new qe()),
-        s(this, `statsigValuesUpdated`, function () {
+        r = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {},
+        a = r.localStorageKey,
+        o = a === void 0 ? $e : a,
+        s = r.overrideAdapter;
+      (i(this, e),
+        n(this, `initPromise`, null),
+        n(this, `initCompleted`, !1),
+        n(this, `initWithDefaults`, !1),
+        n(this, `hasCheckGateErrorOccurred`, !1),
+        n(this, `hasGetExperimentErrorOccurred`, !1),
+        n(this, `hasGetExperimentValueErrorOccurred`, !1),
+        n(this, `hasGetLayerErrorOccurred`, !1),
+        n(this, `hasGetLayerValueErrorOccurred`, !1),
+        n(this, `subscriptions`, new _e()),
+        n(this, `dataAdapter`, new Je()),
+        n(this, `statsigValuesUpdated`, function () {
           (t.user && t.statsigClient.updateUserSync(t.user, { disableBackgroundCacheRefresh: !0 }),
             t.subscriptions.anyUpdated());
         }),
-        (this.overrideAdapter = o || new tt(i)));
+        (this.overrideAdapter = s || new tt(o)));
     }
-    return u(e, [
+    return o(e, [
       {
         key: `initialize`,
         value: (function () {
@@ -2957,7 +2957,7 @@ var it = `client-default-key`,
                           (s = performance.now()),
                           (this.initOptions = o),
                           (this.provider = n),
-                          this.provider.setClientVersion(F),
+                          this.provider.setClientVersion(P),
                           this.provider.setApplyUpdateCallback &&
                             this.provider.setApplyUpdateCallback(
                               this.applyUpdateCallback.bind(this),
@@ -3124,7 +3124,7 @@ var it = `client-default-key`,
                           this.assertInitialized(this.statsigClient),
                           (i = j(t)),
                           (a = function () {
-                            return I.fetchExperimentValues(i, n, r).then(function (e) {
+                            return F.fetchExperimentValues(i, n, r).then(function (e) {
                               return {
                                 experimentValues: e.experimentValues,
                                 customAttributesFromFetch: e.customAttributes,
@@ -3358,7 +3358,7 @@ var it = `client-default-key`,
             this.assertInitialized(this.statsigClient);
             var n = t.fireExperimentExposure,
               r = n === void 0 ? !0 : n;
-            return Ee.fromExperiment(
+            return De.fromExperiment(
               this.statsigClient.getExperiment(e, { disableExposureLog: !r }),
             );
           } catch (t) {
@@ -3370,7 +3370,7 @@ var it = `client-default-key`,
                   error: t,
                 }),
                 !0)),
-              new Ee(e, {}, ``, { time: Date.now(), reason: D.Error })
+              new De(e, {}, ``, { time: Date.now(), reason: D.Error })
             );
           }
         },
@@ -3526,33 +3526,33 @@ var it = `client-default-key`,
         key: `init`,
         value: (function () {
           var e = _(
-            T.default.mark(function e(t, r, i) {
-              var a, o, s, c, l, u, d, f;
+            T.default.mark(function e(t, n, r) {
+              var i, o, s, c, l, u, d, f;
               return T.default.wrap(
                 function (e) {
                   for (;;)
                     switch ((e.prev = e.next)) {
                       case 0:
-                        if (((a = H({}, t)), !t.localMode)) {
+                        if (((i = H({}, t)), !t.localMode)) {
                           e.next = 5;
                           break;
                         }
-                        return ((e.next = 4), this.initFromValues(a, r, i));
+                        return ((e.next = 4), this.initFromValues(i, n, r));
                       case 4:
                         return e.abrupt(`return`);
                       case 5:
                         return (
                           (e.prev = 5),
-                          (c = I.fetchClientSdk(t).then(function (e) {
-                            return (a.sdkKey = e.clientSdkKey);
+                          (c = F.fetchClientSdk(t).then(function (e) {
+                            return (i.sdkKey = e.clientSdkKey);
                           })),
-                          (l = I.fetchExperimentValues(t, r, i)),
+                          (l = F.fetchExperimentValues(t, n, r)),
                           (e.next = 10),
                           Promise.all([c, l])
                         );
                       case 10:
                         ((u = e.sent),
-                          (d = n(u, 2)),
+                          (d = a(u, 2)),
                           (f = d[1]),
                           (o = f.experimentValues),
                           (s = f.customAttributes),
@@ -3568,12 +3568,12 @@ var it = `client-default-key`,
                             ),
                           console.warn(`Initialising Statsig client without values`),
                           (e.next = 23),
-                          this.initFromValues(a, r, i)
+                          this.initFromValues(i, n, r)
                         );
                       case 23:
                         throw e.t0;
                       case 24:
-                        return e.abrupt(`return`, this.initFromValues(a, r, s, o));
+                        return e.abrupt(`return`, this.initFromValues(i, n, s, o));
                       case 25:
                       case `end`:
                         return e.stop();
@@ -3595,7 +3595,7 @@ var it = `client-default-key`,
         key: `initWithProvider`,
         value: (function () {
           var e = _(
-            T.default.mark(function e(t, r, i, a) {
+            T.default.mark(function e(t, n, r, i) {
               var o, s, c, l, u, d, f, p;
               return T.default.wrap(
                 function (e) {
@@ -3606,20 +3606,20 @@ var it = `client-default-key`,
                           (o = H(H({}, t), {}, { disableCurrentPageLogging: !0 })),
                           (e.prev = 1),
                           (e.next = 4),
-                          r.setProfile(t, i, a)
+                          n.setProfile(t, r, i)
                         );
                       case 4:
                         return (
-                          (l = r.getClientSdkKey().then(function (e) {
+                          (l = n.getClientSdkKey().then(function (e) {
                             return (o.sdkKey = e);
                           })),
-                          (u = r.getExperimentValues()),
+                          (u = n.getExperimentValues()),
                           (e.next = 8),
                           Promise.all([l, u])
                         );
                       case 8:
                         ((d = e.sent),
-                          (f = n(d, 2)),
+                          (f = a(d, 2)),
                           (p = f[1]),
                           (s = p.experimentValues),
                           (c = p.customAttributesFromFetch),
@@ -3635,12 +3635,12 @@ var it = `client-default-key`,
                             ),
                           console.warn(`Initialising Statsig client without values`),
                           (e.next = 21),
-                          this.initFromValues(o, i, a)
+                          this.initFromValues(o, r, i)
                         );
                       case 21:
                         throw e.t0;
                       case 22:
-                        return e.abrupt(`return`, this.initFromValues(o, i, c, s));
+                        return e.abrupt(`return`, this.initFromValues(o, r, c, s));
                       case 23:
                       case `end`:
                         return e.stop();
@@ -3665,9 +3665,9 @@ var it = `client-default-key`,
             T.default.mark(function e(t, n, r) {
               var i,
                 a,
+                o,
                 s,
                 c,
-                l,
                 u,
                 d,
                 f,
@@ -3682,23 +3682,23 @@ var it = `client-default-key`,
                           this.overrideAdapter.initFromStoredOverrides(),
                           (this.currentIdentifiers = n),
                           (this.currentAttributes = r),
-                          (s = Ce(t)),
-                          (s.sdkKey ||= it),
-                          ((i = s.networkConfig) != null && i.logEventUrl) ||
-                            (s.networkConfig = H(H({}, s.networkConfig), {}, { logEventUrl: at })),
-                          s.perimeter === k.FEDRAMP_MODERATE && (s.disableLogging = !0),
-                          (c = s.sdkKey),
-                          (l = s.environment),
-                          s.updateUserCompletionCallback,
-                          s.perimeter,
-                          (u = o(s, nt)),
+                          (o = Ce(t)),
+                          (o.sdkKey ||= it),
+                          ((i = o.networkConfig) != null && i.logEventUrl) ||
+                            (o.networkConfig = H(H({}, o.networkConfig), {}, { logEventUrl: at })),
+                          o.perimeter === k.FEDRAMP_MODERATE && (o.disableLogging = !0),
+                          (s = o.sdkKey),
+                          (c = o.environment),
+                          o.updateUserCompletionCallback,
+                          o.perimeter,
+                          (u = l(o, nt)),
                           (d = Se(n, r)),
                           (this.user = N({}, a.user, d)),
                           (f = H(
                             H({}, u),
                             {},
                             {
-                              environment: { tier: l },
+                              environment: { tier: c },
                               includeCurrentPageUrlWithEvents: !1,
                               dataAdapter: this.dataAdapter,
                               overrideAdapter: this.overrideAdapter,
@@ -3706,10 +3706,10 @@ var it = `client-default-key`,
                             },
                           )),
                           n.stableId
-                            ? E.StableID.setOverride(n.stableId, c)
+                            ? E.StableID.setOverride(n.stableId, s)
                             : (f.disableStableID = !0),
                           (e.prev = 13),
-                          (this.statsigClient = new E.StatsigClient(c, this.user, f)),
+                          (this.statsigClient = new E.StatsigClient(s, this.user, f)),
                           this.dataAdapter.setBootstrapData(a),
                           (e.next = 18),
                           this.statsigClient.initializeAsync()
@@ -3931,7 +3931,7 @@ var it = `client-default-key`,
       {
         key: `getPackageVersion`,
         value: function () {
-          return F;
+          return P;
         },
       },
       {
@@ -3942,7 +3942,7 @@ var it = `client-default-key`,
             this.assertInitialized(this.statsigClient);
             var n = t.fireLayerExposure,
               r = n === void 0 ? !0 : n;
-            return De.fromLayer(this.statsigClient.getLayer(e, { disableExposureLog: !r }));
+            return Oe.fromLayer(this.statsigClient.getLayer(e, { disableExposureLog: !r }));
           } catch (t) {
             return (
               (this.hasGetLayerErrorOccurred ||=
@@ -3952,7 +3952,7 @@ var it = `client-default-key`,
                   error: t,
                 }),
                 !0)),
-              De.fromLayer((0, E._makeLayer)(e, { reason: `Error` }, null))
+              Oe.fromLayer((0, E._makeLayer)(e, { reason: `Error` }, null))
             );
           }
         },
@@ -3986,9 +3986,9 @@ var it = `client-default-key`,
   U,
   W = (function () {
     function e() {
-      a(this, e);
+      i(this, e);
     }
-    return u(e, null, [
+    return o(e, null, [
       {
         key: `isGateExists`,
         value: function (e) {
@@ -4004,10 +4004,10 @@ var it = `client-default-key`,
     ]);
   })();
 ((U = W),
-  s(W, `client`, new ot()),
-  s(W, `hasCheckGateErrorOccurred`, !1),
-  s(W, `hasGetExperimentValueErrorOccurred`, !1),
-  s(W, `checkGate`, function (e, t) {
+  n(W, `client`, new ot()),
+  n(W, `hasCheckGateErrorOccurred`, !1),
+  n(W, `hasGetExperimentValueErrorOccurred`, !1),
+  n(W, `checkGate`, function (e, t) {
     try {
       if (
         typeof window < `u` &&
@@ -4028,7 +4028,7 @@ var it = `client-default-key`,
     }
     return U.client.checkGate(e, t);
   }),
-  s(W, `getExperimentValue`, function (e, t, n, r) {
+  n(W, `getExperimentValue`, function (e, t, n, r) {
     try {
       if (
         typeof window < `u` &&
@@ -4054,34 +4054,34 @@ var it = `client-default-key`,
     }
     return U.client.getExperimentValue(e, t, n, r);
   }),
-  s(W, `initializeCalled`, U.client.initializeCalled.bind(U.client)),
-  s(W, `initializeCompleted`, U.client.initializeCompleted.bind(U.client)),
-  s(W, `waitUntilInitializeCompleted`, U.client.waitUntilInitializeCompleted.bind(U.client)),
-  s(W, `initialize`, U.client.initialize.bind(U.client)),
-  s(W, `initializeWithProvider`, U.client.initializeWithProvider.bind(U.client)),
-  s(W, `initializeFromValues`, U.client.initializeFromValues.bind(U.client)),
-  s(W, `manuallyLogGateExposure`, U.client.manuallyLogGateExposure.bind(U.client)),
-  s(W, `getExperiment`, U.client.getExperiment.bind(U.client)),
-  s(W, `manuallyLogExperimentExposure`, U.client.manuallyLogExperimentExposure.bind(U.client)),
-  s(W, `manuallyLogLayerExposure`, U.client.manuallyLogLayerExposure.bind(U.client)),
-  s(W, `shutdownStatsig`, U.client.shutdownStatsig.bind(U.client)),
-  s(W, `overrideGate`, U.client.overrideGate.bind(U.client)),
-  s(W, `clearGateOverride`, U.client.clearGateOverride.bind(U.client)),
-  s(W, `overrideConfig`, U.client.overrideConfig.bind(U.client)),
-  s(W, `clearConfigOverride`, U.client.clearConfigOverride.bind(U.client)),
-  s(W, `setOverrides`, U.client.setOverrides.bind(U.client)),
-  s(W, `getOverrides`, U.client.getOverrides.bind(U.client)),
-  s(W, `clearAllOverrides`, U.client.clearAllOverrides.bind(U.client)),
-  s(W, `isCurrentUser`, U.client.isCurrentUser.bind(U.client)),
-  s(W, `onGateUpdated`, U.client.onGateUpdated.bind(U.client)),
-  s(W, `onExperimentValueUpdated`, U.client.onExperimentValueUpdated.bind(U.client)),
-  s(W, `onAnyUpdated`, U.client.onAnyUpdated.bind(U.client)),
-  s(W, `updateUser`, U.client.updateUser.bind(U.client)),
-  s(W, `updateUserWithProvider`, U.client.updateUserWithProvider.bind(U.client)),
-  s(W, `updateUserWithValues`, U.client.updateUserWithValues.bind(U.client)),
-  s(W, `getPackageVersion`, U.client.getPackageVersion.bind(U.client)),
-  s(W, `getLayer`, U.client.getLayer.bind(U.client)),
-  s(W, `getLayerValue`, U.client.getLayerValue.bind(U.client)));
+  n(W, `initializeCalled`, U.client.initializeCalled.bind(U.client)),
+  n(W, `initializeCompleted`, U.client.initializeCompleted.bind(U.client)),
+  n(W, `waitUntilInitializeCompleted`, U.client.waitUntilInitializeCompleted.bind(U.client)),
+  n(W, `initialize`, U.client.initialize.bind(U.client)),
+  n(W, `initializeWithProvider`, U.client.initializeWithProvider.bind(U.client)),
+  n(W, `initializeFromValues`, U.client.initializeFromValues.bind(U.client)),
+  n(W, `manuallyLogGateExposure`, U.client.manuallyLogGateExposure.bind(U.client)),
+  n(W, `getExperiment`, U.client.getExperiment.bind(U.client)),
+  n(W, `manuallyLogExperimentExposure`, U.client.manuallyLogExperimentExposure.bind(U.client)),
+  n(W, `manuallyLogLayerExposure`, U.client.manuallyLogLayerExposure.bind(U.client)),
+  n(W, `shutdownStatsig`, U.client.shutdownStatsig.bind(U.client)),
+  n(W, `overrideGate`, U.client.overrideGate.bind(U.client)),
+  n(W, `clearGateOverride`, U.client.clearGateOverride.bind(U.client)),
+  n(W, `overrideConfig`, U.client.overrideConfig.bind(U.client)),
+  n(W, `clearConfigOverride`, U.client.clearConfigOverride.bind(U.client)),
+  n(W, `setOverrides`, U.client.setOverrides.bind(U.client)),
+  n(W, `getOverrides`, U.client.getOverrides.bind(U.client)),
+  n(W, `clearAllOverrides`, U.client.clearAllOverrides.bind(U.client)),
+  n(W, `isCurrentUser`, U.client.isCurrentUser.bind(U.client)),
+  n(W, `onGateUpdated`, U.client.onGateUpdated.bind(U.client)),
+  n(W, `onExperimentValueUpdated`, U.client.onExperimentValueUpdated.bind(U.client)),
+  n(W, `onAnyUpdated`, U.client.onAnyUpdated.bind(U.client)),
+  n(W, `updateUser`, U.client.updateUser.bind(U.client)),
+  n(W, `updateUserWithProvider`, U.client.updateUserWithProvider.bind(U.client)),
+  n(W, `updateUserWithValues`, U.client.updateUserWithValues.bind(U.client)),
+  n(W, `getPackageVersion`, U.client.getPackageVersion.bind(U.client)),
+  n(W, `getLayer`, U.client.getLayer.bind(U.client)),
+  n(W, `getLayerValue`, U.client.getLayerValue.bind(U.client)));
 var G = W;
 if (typeof window < `u`)
   if (window.__FEATUREGATES_JS__ === void 0) window.__FEATUREGATES_JS__ = W;
@@ -4093,7 +4093,7 @@ if (typeof window < `u`)
       `4.10.0 or earlier`;
     if (ct !== `0.0.0-development`) {
       var lt = `Multiple versions of FeatureGateClients found on the current page.
-      The currently bound version is ${ct} when module version ${F} was loading.`;
+      The currently bound version is ${ct} when module version ${P} was loading.`;
       console.warn(lt);
     }
   }
@@ -4250,15 +4250,40 @@ var Et = {
     "motion.avatar.enter": `--ds-avatar-enter`,
     "motion.avatar.exit": `--ds-avatar-exit`,
     "motion.avatar.hovered": `--ds-avatar-hovered`,
-    "motion.content.enter.long": `--ds-content-enter-long`,
-    "motion.content.enter.medium": `--ds-content-enter-medium`,
-    "motion.content.enter.short": `--ds-content-enter-short`,
-    "motion.content.exit.long": `--ds-content-exit-long`,
-    "motion.content.exit.medium": `--ds-content-exit-medium`,
-    "motion.content.exit.short": `--ds-content-exit-short`,
+    "motion.blanket.enter": `--ds-blanket-enter`,
+    "motion.blanket.exit": `--ds-blanket-exit`,
+    "motion.duration.instant": `--ds-duration-instant`,
+    "motion.duration.long": `--ds-duration-long`,
+    "motion.duration.medium": `--ds-duration-medium`,
+    "motion.duration.short": `--ds-duration-short`,
+    "motion.duration.xlong": `--ds-duration-xlong`,
+    "motion.duration.xshort": `--ds-duration-xshort`,
+    "motion.duration.xxlong": `--ds-duration-xxlong`,
+    "motion.duration.xxshort": `--ds-duration-xxshort`,
+    "motion.easing.in.practical": `--ds-easing-in-practical`,
+    "motion.easing.inout.bold": `--ds-easing-inout-bold`,
+    "motion.easing.out.practical": `--ds-easing-out-practical`,
+    "motion.easing.out.bold": `--ds-easing-out-bold`,
+    "motion.easing.spring": `--ds-easing-spring`,
     "motion.flag.enter": `--ds-flag-enter`,
     "motion.flag.exit": `--ds-flag-exit`,
     "motion.flag.reposition": `--ds-flag-reposition`,
+    "motion.keyframe.fade.in": `--ds-keyframe-fade-in`,
+    "motion.keyframe.fade.out": `--ds-keyframe-fade-out`,
+    "motion.keyframe.scale.in.medium": `--ds-keyframe-scale-in-medium`,
+    "motion.keyframe.scale.in.small": `--ds-keyframe-scale-in-small`,
+    "motion.keyframe.scale.out.medium": `--ds-keyframe-scale-out-medium`,
+    "motion.keyframe.scale.out.small": `--ds-keyframe-scale-out-small`,
+    "motion.keyframe.slide.in.bottom.short": `--ds-keyframe-slide-in-bottom-short`,
+    "motion.keyframe.slide.in.left.half": `--ds-keyframe-slide-in-left-half`,
+    "motion.keyframe.slide.in.left.short": `--ds-keyframe-slide-in-left-short`,
+    "motion.keyframe.slide.in.right.short": `--ds-keyframe-slide-in-right-short`,
+    "motion.keyframe.slide.in.top.short": `--ds-keyframe-slide-in-top-short`,
+    "motion.keyframe.slide.out.bottom.short": `--ds-keyframe-slide-out-bottom-short`,
+    "motion.keyframe.slide.out.left.half": `--ds-keyframe-slide-out-left-half`,
+    "motion.keyframe.slide.out.left.short": `--ds-keyframe-slide-out-left-short`,
+    "motion.keyframe.slide.out.right.short": `--ds-keyframe-slide-out-right-short`,
+    "motion.keyframe.slide.out.top.short": `--ds-keyframe-slide-out-top-short`,
     "motion.modal.enter": `--ds-modal-enter`,
     "motion.modal.exit": `--ds-modal-exit`,
     "motion.popup.enter.bottom": `--ds-popup-enter-bottom`,
@@ -4744,12 +4769,11 @@ var Et = {
   Ot = `data-subtree-theme`,
   kt = `data-color-mode`,
   At = `data-contrast-mode`,
-  Q = `data-custom-theme`,
-  jt = `--ds-token-not-found`,
+  jt = `data-custom-theme`,
   Mt = function (e) {
     return /^#[0-9A-F]{6}$/i.test(e);
   },
-  $ = function (e) {
+  Q = function (e) {
     return /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(e);
   };
 function Nt(e, t, n) {
@@ -4763,7 +4787,7 @@ function Pt(e) {
   return 1;
 }
 function Ft(e) {
-  if (!$(e)) throw Error(`Invalid HEX`);
+  if (!Q(e)) throw Error(`Invalid HEX`);
   var t = e.substring(1).split(``);
   return (
     t.length === 3 && (t = [t[0], t[0], t[1], t[1], t[2], t[2]]),
@@ -4772,7 +4796,7 @@ function Ft(e) {
   );
 }
 function It(e) {
-  if (!$(e)) throw Error(`Invalid HEX`);
+  if (!Q(e)) throw Error(`Invalid HEX`);
   var t = e.substring(1).split(``);
   return (
     t.length === 3 && (t = [t[0], t[0], t[1], t[1], t[2], t[2]]),
@@ -4781,7 +4805,7 @@ function It(e) {
   );
 }
 function Lt(e) {
-  if (!$(e)) throw Error(`Invalid HEX`);
+  if (!Q(e)) throw Error(`Invalid HEX`);
   var t = 0,
     n = 0,
     r = 0;
@@ -4820,7 +4844,7 @@ function Rt(e, t, n) {
     };
   return [255 * a(0), 255 * a(8), 255 * a(4)];
 }
-function zt(e, t, n) {
+function $(e, t, n) {
   var r = e / 255,
     i = t / 255,
     a = n / 255,
@@ -4829,19 +4853,19 @@ function zt(e, t, n) {
     c = a <= 0.03928 ? a / 12.92 : ((a + 0.055) / 1.055) ** 2.4;
   return 0.2126 * o + 0.7152 * s + 0.0722 * c;
 }
-function Bt(e, t) {
-  if (!$(e) || !$(t)) throw Error(`Invalid HEX`);
+function zt(e, t) {
+  if (!Q(e) || !Q(t)) throw Error(`Invalid HEX`);
   var n = It(e),
     r = It(t),
-    i = zt(n[0], n[1], n[2]),
-    a = zt(r[0], r[1], r[2]),
+    i = $(n[0], n[1], n[2]),
+    a = $(r[0], r[1], r[2]),
     o = Math.max(i, a),
     s = Math.min(i, a);
   return (o + 0.05) / (s + 0.05);
 }
-function Vt(e, t) {
-  var n = Ht(e),
-    r = Ht(t),
+function Bt(e, t) {
+  var n = Vt(e),
+    r = Vt(t),
     i = n[0] - r[0],
     a = n[1] - r[1],
     o = n[2] - r[2],
@@ -4857,7 +4881,7 @@ function Vt(e, t) {
     h = f * f + p * p + m * m;
   return h < 0 ? 0 : Math.sqrt(h);
 }
-function Ht(e) {
+function Vt(e) {
   var t = e[0] / 255,
     n = e[1] / 255,
     r = e[2] / 255,
@@ -4877,37 +4901,37 @@ function Ht(e) {
     [116 * a - 16, 500 * (i - a), 200 * (a - o)]
   );
 }
-var Ut = function (e) {
+var Ht = function (e) {
   for (var t = 0, n = 0; n < e.length; n++) {
     var r = e.charCodeAt(n);
     ((t = (t << 5) - t + r), (t &= t));
   }
   return new Uint32Array([t])[0].toString(36);
 };
-function Wt(e, t) {
-  var n = Ut(JSON.stringify(e)),
+function Ut(e, t) {
+  var n = Ht(JSON.stringify(e)),
     r = [];
   return (
     (t === `auto` ? [`light`, `dark`] : [t]).forEach(function (e) {
-      var t = document.head.querySelector(`style[${Q}="${n}"][${Z}="${e}"]`);
+      var t = document.head.querySelector(`style[${jt}="${n}"][${Z}="${e}"]`);
       t ? document.head.appendChild(t) : r.push(e);
     }),
     r
   );
 }
-function Gt(e) {
-  var t = l(Array.from(document.head.querySelectorAll(`style[${Q}][${Z}]`)));
+function Wt(e) {
+  var t = s(Array.from(document.head.querySelectorAll(`style[${jt}][${Z}]`)));
   t.length < e ||
     t.slice(0, t.length - (e - 1)).forEach(function (e) {
       return e.remove();
     });
 }
-function Kt(e, t) {
-  return Object.entries(e).reduce(function (e, r) {
-    var i = n(r, 2),
-      a = i[0],
-      o = i[1],
-      s = Dt[a];
+function Gt(e, t) {
+  return Object.entries(e).reduce(function (e, n) {
+    var r = a(n, 2),
+      i = r[0],
+      o = r[1],
+      s = Dt[i];
     return s
       ? `${e}
   ${s}: ${typeof o == `string` ? o : t[o]};`
@@ -4915,32 +4939,30 @@ function Kt(e, t) {
   }, ``);
 }
 export {
-  St as C,
-  _ as D,
-  ae as E,
-  h as O,
-  Ct as S,
-  X as T,
+  X as C,
+  h as E,
+  Et as S,
+  _ as T,
   Ot as _,
   Rt as a,
-  Dt as b,
+  Ct as b,
   Lt as c,
   Mt as d,
-  zt as f,
-  Q as g,
+  $ as f,
+  jt as g,
   At as h,
-  Ut as i,
+  Ht as i,
   It as l,
   kt as m,
-  Gt as n,
-  Vt as o,
+  Wt as n,
+  Bt as o,
   Nt as p,
-  Kt as r,
-  Bt as s,
-  Wt as t,
+  Gt as r,
+  zt as s,
+  Ut as t,
   Ft as u,
   Z as v,
-  Et as w,
-  xt as x,
-  jt as y,
+  ae as w,
+  St as x,
+  xt as y,
 };

@@ -1,4 +1,4 @@
-# Forge SQL ORM — AI Vector Search Example
+# Forge SQL ORM — AI Semantic Search Example
 
 This example demonstrates **AI semantic search** with Forge SQL ORM:
 

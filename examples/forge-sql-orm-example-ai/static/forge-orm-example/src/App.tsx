@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { invoke } from "@forge/bridge";
 import Button from "@atlaskit/button";
 import DynamicTable from "@atlaskit/dynamic-table";
@@ -7,7 +7,7 @@ import Textfield from "@atlaskit/textfield";
 import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
 import SectionMessage from "@atlaskit/section-message";
 import { Box, Inline, Stack, xcss } from "@atlaskit/primitives";
-import { miniLLM } from "./ai";
+import { useVectorModel } from "./vectorModelContext";
 
 type SearchResult = {
   id: number;
@@ -38,6 +38,7 @@ const contentCellStyles = xcss({
 });
 
 function App() {
+  const vectorModel = useVectorModel();
   const [activeTabIndex, setActiveTabIndex] = useState(1);
   const [title, setTitle] = useState("");
   const [documentText, setDocumentText] = useState("");
@@ -49,7 +50,6 @@ function App() {
   const [openDocumentId, setOpenDocumentId] = useState<number | null>(null);
   const [openVectorId, setOpenVectorId] = useState<number | null>(null);
   const [openSearchDocumentId, setOpenSearchDocumentId] = useState<number | null>(null);
-  const vectorBuilderRef = useRef<Awaited<ReturnType<typeof miniLLM.init>> | null>(null);
   const documentLimit = 2048;
 
   const fetchDocumentsFromApi = useCallback(async (): Promise<DocumentRow[]> => {
@@ -96,10 +96,7 @@ function App() {
     setIsLoading(true);
     setMessage("");
     try {
-      if (!vectorBuilderRef.current) {
-        vectorBuilderRef.current = await miniLLM.init();
-      }
-      const vector = await vectorBuilderRef.current.getVector(trimmedDocument);
+      const vector = await vectorModel.getVector(trimmedDocument);
       const insertId = await invoke<number>("create", {
         data: {
           title: trimmedTitle,
@@ -136,10 +133,7 @@ function App() {
     setIsLoading(true);
     setMessage("");
     try {
-      if (!vectorBuilderRef.current) {
-        vectorBuilderRef.current = await miniLLM.init();
-      }
-      const vector = await vectorBuilderRef.current.getVector(trimmedSearchText);
+      const vector = await vectorModel.getVector(trimmedSearchText);
       const data = await invoke<SearchResult[]>("search", { vector });
       setResults(data);
       setDocuments([]);

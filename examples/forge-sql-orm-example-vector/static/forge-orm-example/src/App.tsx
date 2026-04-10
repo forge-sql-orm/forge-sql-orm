@@ -4,8 +4,12 @@ import Button from "@atlaskit/button";
 import Textfield from "@atlaskit/textfield";
 import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
 import SectionMessage from "@atlaskit/section-message";
-import { Box, Inline, Stack } from "@atlaskit/primitives";
-import "./vectorTabsFrame.css";
+import { Box, Inline, Stack, xcss } from "@atlaskit/primitives";
+
+const tabsWrapperStyles = xcss({
+  width: "100%",
+  maxWidth: "100%",
+});
 
 type SearchResult = {
   id: number;
@@ -126,7 +130,7 @@ function App() {
       <Stack space="space.300">
         <h2>TiDB Vector Example (3D)</h2>
 
-        <div className="vector-tabs-frame">
+        <Box xcss={tabsWrapperStyles}>
           <Tabs
             id="vector-tabs"
             selected={activeTabIndex}
@@ -196,7 +200,7 @@ function App() {
               </Box>
             </TabPanel>
           </Tabs>
-        </div>
+        </Box>
 
         {message ? (
           <SectionMessage appearance="information">
