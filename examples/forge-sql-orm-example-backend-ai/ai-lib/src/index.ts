@@ -8,8 +8,6 @@ export const initAI = async (basePath: string) => {
   env.allowRemoteModels = false;
 
   env.localModelPath = path.join(basePath, "models/");
-  env.backends.onnx.wasm!.proxy = false;
-  env.backends.onnx.wasm!.wasmPaths = path.join(basePath, "wasm/");
 
   const extractor = await pipeline("feature-extraction", MODEL_NAME, {
     device: "cpu",
