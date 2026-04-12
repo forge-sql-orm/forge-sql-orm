@@ -4,7 +4,7 @@ import copy from "rollup-plugin-copy";
 import * as os from "node:os";
 
 export default defineConfig((config: UserConfig) => {
-  let arch = "arm64";
+  let arch;
   let isProduction = false;
   if (!config.mode) {
     throw new Error(
