@@ -1,0 +1,61 @@
+modules:
+  jira:globalPage:
+    - key: forge-sql-orm-example-hello-world-page
+      resource: main
+      resolver:
+        function: resolver
+      title: Forge SQL ORM SEMANTIC SEARCH BACKEND DEMO
+  scheduledTrigger:
+    - key: scheduled-schema-migration
+      function: runSchemaMigration
+      interval: hour
+  trigger:
+    - key: post-install-schema-migration
+      function: runSchemaMigration
+      events:
+        - avi:forge:installed:app
+  #  webtrigger:
+  #    - key: invoke-schema-migration
+  #      function: runSchemaMigration
+  #      security:
+  #        egress:
+  #          allowDataEgress: false
+  #          allowedResponses:
+  #            - statusCode: 200
+  #              body: '{"body": "Migrations successfully executed"}'
+  #    - key: drop-schema-migration
+  #      function: dropMigrations
+  #    - key: fetch-schema
+  #      function: fetchSchema
+  sql:
+    - key: main
+      engine: mysql
+  function:
+    - key: resolver
+      handler: index.handler
+    - key: runSchemaMigration
+      handler: index.handlerMigration
+    - key: dropMigrations
+      handler: index.dropMigrations
+    - key: fetchSchema
+      handler: index.fetchMigrations
+resources:
+  - key: main
+    path: static/forge-orm-example/build-static
+    tunnel:
+      port: 3099
+app:
+  runtime:
+    name: nodejs24.x
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/e05c9f71-3320-4eb7-bf83-89c20c6f8d21
+  package:
+    extraFiles:
+      - models/**/*
+      - ai-lib/dist/**/*
+permissions:
+  content:
+    styles:
+      - "unsafe-inline"
+    scripts:
+      - "unsafe-eval"

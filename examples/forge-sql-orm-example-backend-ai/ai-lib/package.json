@@ -1,0 +1,23 @@
+{
+  "name": "ai-lib",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build:tunnel": "vite build --mode tunnel",
+    "build:arm64": "vite build --mode production:arm64",
+    "build:x86_64": "vite build --mode production:x86_64"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.0.1",
+    "vite": "^8.0.8"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "vite-plugin-static-copy": "^4.0.1"
+  }
+}
