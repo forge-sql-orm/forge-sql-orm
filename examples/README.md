@@ -104,11 +104,20 @@ Example for **TiDB `VECTOR`** columns and vector SQL helpers (`vecCosineDistance
 
 ### [forge-sql-orm-example-ai](forge-sql-orm-example-ai)
 
-Custom UI example for **AI semantic search** with local embeddings in the browser and vector search in Forge SQL/TiDB.
+Custom UI example for **AI semantic search** with embeddings computed **on the frontend** (Custom UI / browser) and vector search in Forge SQL/TiDB.
 
-- Frontend embedding generation via `@huggingface/transformers` (`all-MiniLM-L6-v2`)
+- **Embeddings on the frontend:** `@huggingface/transformers` (`all-MiniLM-L6-v2`) in the browser before `invoke`
 - Store `title`, `document`, and vector embedding in `embedded_documents`
-- Search by free-text query (embedding is generated automatically)
+- Search by free-text query (query embedding is computed in the browser, then sent to the resolver)
+- Cosine-distance ranking with similarity shown as percentage
+
+### [forge-sql-orm-example-backend-ai](forge-sql-orm-example-backend-ai)
+
+Same **AI semantic search** flow, but embeddings are computed **on the Forge backend** (resolver runtime), not in Custom UI.
+
+- **Embeddings on the backend:** sidecar bundle in `ai-lib/` (see `manifest.yml` → `extraFiles`), loaded from resolver code; Custom UI sends plain `title` / `document` / search `text` only
+- `create` and `search` resolvers call the embedding pipeline server-side before SQL
+- Requires a separate `ai-lib` build per target (`arm64` / `x86_64` for deploy, `build:tunnel` for `forge tunnel`)
 - Cosine-distance ranking with similarity shown as percentage
 
 ### [forge-sql-orm-example-atlascamp](forge-sql-orm-example-atlascamp)

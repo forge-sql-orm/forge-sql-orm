@@ -1,0 +1,58 @@
+{
+  "name": "forge_sql_orm_example_frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@atlaskit/button": "^23.11.2",
+    "@atlaskit/css-reset": "^7.4.3",
+    "@atlaskit/dynamic-table": "^18.3.27",
+    "@atlaskit/primitives": "^18.1.4",
+    "@atlaskit/section-message": "^8.12.13",
+    "@atlaskit/tabs": "^19.0.4",
+    "@atlaskit/textarea": "^8.2.9",
+    "@atlaskit/textfield": "^8.3.1",
+    "@forge/bridge": "^5.15.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.6.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "dotenv": "17.4.2",
+    "knip": "^6.4.1",
+    "prettier": "^3.8.2",
+    "prettier-plugin-pkg": "^0.22.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.8"
+  },
+  "scripts": {
+    "build": "vite build",
+    "build:husky": "vite build",
+    "build:deploy": "vite build && cd .. && ./deploy.sh ",
+    "build:tunnel": "cd .. && forge tunnel",
+    "start": "PORT=3099 vite serve",
+    "prettier": "prettier src vite.config.ts --write",
+    "knip": "knip"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "overrides": {
+    "parse-url": "npm:parse-url@latest",
+    "gry": "npm:gry@latest",
+    "got": "npm:got@latest"
+  }
+}

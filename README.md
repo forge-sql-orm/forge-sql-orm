@@ -45,6 +45,7 @@
 - ✅ **Query Plan Analysis**: Detailed execution plan analysis and optimization insights
 - ✅ **Rovo Integration** Secure pattern for natural-language analytics with comprehensive security validations, Row-Level Security (RLS) support, and dynamic SQL query execution
 - ✅ **TiDB `VECTOR` type & vector SQL helpers** — Drizzle column type `vectorTiDBType` plus `vecCosineDistance`, `vecL2Distance`, `vecDims`, and related helpers for **SQL with AI** (embeddings storage and similarity search)
+- ✅ **AI semantic search examples for Forge** — embeddings in [Custom UI (frontend)](examples/forge-sql-orm-example-ai) or on the [Forge backend](examples/forge-sql-orm-example-backend-ai) via an `ai-lib` sidecar; both use vector search in SQL
 
 ## Table of Contents
 
@@ -105,7 +106,8 @@
 - [Checklist Example](examples/forge-sql-orm-example-checklist)
 - [Cache Example](examples/forge-sql-orm-example-cache) - Advanced caching capabilities with performance monitoring
 - [Vector / AI SQL Example](examples/forge-sql-orm-example-vector) - `VECTOR` columns, embeddings, cosine-distance search (TiDB-compatible)
-- [AI Semantic Search Example](examples/forge-sql-orm-example-ai) - Atlassian Forge app that saves documents and embeddings, then searches by query text
+- [AI Semantic Search (frontend embeddings)](examples/forge-sql-orm-example-ai) - Custom UI computes embeddings in the browser; resolvers store vectors and run cosine search
+- [AI Semantic Search (backend embeddings)](examples/forge-sql-orm-example-backend-ai) - Resolvers compute embeddings server-side (`ai-lib` sidecar); Custom UI sends text only
 - [Rovo Integration Example](https://github.com/vzakharchenko/Forge-Secure-Notes-for-Jira) - Real-world Rovo AI agent implementation with secure natural-language analytics
 
 ### 📚 Reference
@@ -137,7 +139,8 @@
 - [Organization Tracker Example](examples/forge-sql-orm-example-org-tracker) - Complex relationships
 - [Checklist Example](examples/forge-sql-orm-example-checklist) - Jira integration
 - [Cache Example](examples/forge-sql-orm-example-cache) - Advanced caching capabilities
-- [AI Semantic Search Example](examples/forge-sql-orm-example-ai) - Runs in Atlassian Forge and stores `title`/`document`/`embedding` for AI vector search
+- [AI Semantic Search (frontend embeddings)](examples/forge-sql-orm-example-ai) - Embeddings in the browser; Forge SQL stores `title`/`document`/`embedding` and runs vector search
+- [AI Semantic Search (backend embeddings)](examples/forge-sql-orm-example-backend-ai) - Embeddings in Forge functions; UI sends `title`/`document` and search text only
 - [Rovo Integration Example](https://github.com/vzakharchenko/Forge-Secure-Notes-for-Jira) - Real-world Rovo AI agent with secure analytics
 
 ## Usage Approaches
@@ -1328,6 +1331,8 @@ Also available (see `src/core/VectorTiDB.ts`): `vecFromText`, `vecAsText`, `vecD
 ### Example app
 
 See **[examples/forge-sql-orm-example-vector](examples/forge-sql-orm-example-vector)** for a full Forge app (migrations, resolvers, UI) aligned with [Get Started with Vector Search via SQL](https://docs.pingcap.com/tidb/stable/vector-search-get-started-using-sql).
+
+For **semantic search** with learned embeddings, use **[examples/forge-sql-orm-example-ai](examples/forge-sql-orm-example-ai)** (embeddings in Custom UI) or **[examples/forge-sql-orm-example-backend-ai](examples/forge-sql-orm-example-backend-ai)** (embeddings in Forge resolvers via `ai-lib`).
 
 # Connection to ORM
 
