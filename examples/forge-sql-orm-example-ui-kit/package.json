@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@forge/bridge": "5.15.0",
-    "@forge/react": "11.14.0",
+    "@forge/react": "11.14.1",
     "@forge/resolver": "1.7.1",
     "@forge/sql": "^3.0.21",
     "drizzle-orm": "^0.45.2",
