@@ -706,12 +706,12 @@ var Ne,
       return !!e?.callBridge;
     }
     e.getCallBridge = () => {
-      if (!n(window.__bridge))
+      if (!n(globalThis.__bridge))
         throw new t.BridgeAPIError(`
       Unable to establish a connection with the Custom UI bridge.
       If you are trying to run your app locally, Forge apps only work in the context of Atlassian products. Refer to https://go.atlassian.com/forge-tunneling-with-custom-ui for how to tunnel when using a local development server.
     `);
-      return window.__bridge.callBridge;
+      return globalThis.__bridge.callBridge;
     };
   }),
   Ve = i((e) => {

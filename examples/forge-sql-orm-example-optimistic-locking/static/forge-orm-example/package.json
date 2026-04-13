@@ -4,11 +4,11 @@
   "description": "",
   "dependencies": {
     "@atlaskit/button": "^23.11.2",
-    "@atlaskit/css-reset": "^7.4.3",
+    "@atlaskit/css-reset": "^7.4.4",
     "@atlaskit/dynamic-table": "^18.3.27",
     "@atlaskit/tabs": "^19.0.4",
     "@atlaskit/tokens": "^12.0.0",
-    "@forge/bridge": "^5.15.0",
+    "@forge/bridge": "^5.15.1",
     "mobx": "6.15.0",
     "mobx-react": "9.2.1",
     "react": "^18.3.1",

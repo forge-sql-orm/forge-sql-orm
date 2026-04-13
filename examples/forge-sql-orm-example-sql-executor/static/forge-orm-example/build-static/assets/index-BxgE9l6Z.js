@@ -37,8 +37,8 @@ import { t as s } from "./lodash-vendor-DVWR8zLq.js";
 })();
 var c = e(a()),
   l = r({
-    __addDisposableResource: () => k,
-    __assign: () => M,
+    __addDisposableResource: () => ce,
+    __assign: () => j,
     __asyncDelegator: () => ee,
     __asyncGenerator: () => O,
     __asyncValues: () => te,
@@ -47,9 +47,9 @@ var c = e(a()),
     __classPrivateFieldGet: () => ae,
     __classPrivateFieldIn: () => se,
     __classPrivateFieldSet: () => oe,
-    __createBinding: () => N,
+    __createBinding: () => M,
     __decorate: () => f,
-    __disposeResources: () => A,
+    __disposeResources: () => le,
     __esDecorate: () => m,
     __exportStar: () => x,
     __extends: () => u,
@@ -62,19 +62,19 @@ var c = e(a()),
     __propKey: () => g,
     __read: () => C,
     __rest: () => d,
-    __rewriteRelativeImportExtension: () => ce,
+    __rewriteRelativeImportExtension: () => k,
     __runInitializers: () => h,
     __setFunctionName: () => _,
     __spread: () => w,
     __spreadArray: () => E,
     __spreadArrays: () => T,
     __values: () => S,
-    default: () => L,
+    default: () => F,
   });
 function u(e, t) {
   if (typeof t != `function` && t !== null)
     throw TypeError(`Class extends value ` + String(t) + ` is not a constructor or null`);
-  j(e, t);
+  A(e, t);
   function n() {
     this.constructor = e;
   }
@@ -275,7 +275,7 @@ function b(e, t) {
   }
 }
 function x(e, t) {
-  for (var n in e) n !== `default` && !Object.prototype.hasOwnProperty.call(t, n) && N(t, e, n);
+  for (var n in e) n !== `default` && !Object.prototype.hasOwnProperty.call(t, n) && M(t, e, n);
 }
 function S(e) {
   var t = typeof Symbol == `function` && Symbol.iterator,
@@ -436,8 +436,8 @@ function ne(e, t) {
 function re(e) {
   if (e && e.__esModule) return e;
   var t = {};
-  if (e != null) for (var n = F(e), r = 0; r < n.length; r++) n[r] !== `default` && N(t, e, n[r]);
-  return (P(t, e), t);
+  if (e != null) for (var n = N(e), r = 0; r < n.length; r++) n[r] !== `default` && M(t, e, n[r]);
+  return (ue(t, e), t);
 }
 function ie(e) {
   return e && e.__esModule ? e : { default: e };
@@ -460,7 +460,7 @@ function se(e, t) {
     throw TypeError(`Cannot use 'in' operator on non-object`);
   return typeof e == `function` ? t === e : e.has(t);
 }
-function k(e, t, n) {
+function ce(e, t, n) {
   if (t != null) {
     if (typeof t != `object` && typeof t != `function`) throw TypeError(`Object expected.`);
     var r, i;
@@ -485,9 +485,9 @@ function k(e, t, n) {
   } else n && e.stack.push({ async: !0 });
   return t;
 }
-function A(e) {
+function le(e) {
   function t(t) {
-    ((e.error = e.hasError ? new I(t, e.error, `An error was suppressed during disposal.`) : t),
+    ((e.error = e.hasError ? new P(t, e.error, `An error was suppressed during disposal.`) : t),
       (e.hasError = !0));
   }
   var n,
@@ -514,7 +514,7 @@ function A(e) {
   }
   return i();
 }
-function ce(e, t) {
+function k(e, t) {
   return typeof e == `string` && /^\.\.?\//.test(e)
     ? e.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function (e, n, r, i, a) {
         return n
@@ -527,17 +527,17 @@ function ce(e, t) {
       })
     : e;
 }
-var j,
+var A,
+  j,
   M,
+  ue,
   N,
   P,
   F,
-  I,
-  L,
-  R = n(() => {
-    ((j = function (e, t) {
+  I = n(() => {
+    ((A = function (e, t) {
       return (
-        (j =
+        (A =
           Object.setPrototypeOf ||
           ({ __proto__: [] } instanceof Array &&
             function (e, t) {
@@ -546,12 +546,12 @@ var j,
           function (e, t) {
             for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n]);
           }),
-        j(e, t)
+        A(e, t)
       );
     }),
-      (M = function () {
+      (j = function () {
         return (
-          (M =
+          (j =
             Object.assign ||
             function (e) {
               for (var t, n = 1, r = arguments.length; n < r; n++)
@@ -559,10 +559,10 @@ var j,
                   Object.prototype.hasOwnProperty.call(t, i) && (e[i] = t[i]);
               return e;
             }),
-          M.apply(this, arguments)
+          j.apply(this, arguments)
         );
       }),
-      (N = Object.create
+      (M = Object.create
         ? function (e, t, n, r) {
             r === void 0 && (r = n);
             var i = Object.getOwnPropertyDescriptor(t, n);
@@ -578,35 +578,35 @@ var j,
         : function (e, t, n, r) {
             (r === void 0 && (r = n), (e[r] = t[n]));
           }),
-      (P = Object.create
+      (ue = Object.create
         ? function (e, t) {
             Object.defineProperty(e, `default`, { enumerable: !0, value: t });
           }
         : function (e, t) {
             e.default = t;
           }),
-      (F = function (e) {
+      (N = function (e) {
         return (
-          (F =
+          (N =
             Object.getOwnPropertyNames ||
             function (e) {
               var t = [];
               for (var n in e) Object.prototype.hasOwnProperty.call(e, n) && (t[t.length] = n);
               return t;
             }),
-          F(e)
+          N(e)
         );
       }),
-      (I =
+      (P =
         typeof SuppressedError == `function`
           ? SuppressedError
           : function (e, t, n) {
               var r = Error(n);
               return ((r.name = `SuppressedError`), (r.error = e), (r.suppressed = t), r);
             }),
-      (L = {
+      (F = {
         __extends: u,
-        __assign: M,
+        __assign: j,
         __rest: d,
         __decorate: f,
         __param: p,
@@ -617,7 +617,7 @@ var j,
         __metadata: v,
         __awaiter: y,
         __generator: b,
-        __createBinding: N,
+        __createBinding: M,
         __exportStar: x,
         __values: S,
         __read: C,
@@ -634,12 +634,12 @@ var j,
         __classPrivateFieldGet: ae,
         __classPrivateFieldSet: oe,
         __classPrivateFieldIn: se,
-        __addDisposableResource: k,
-        __disposeResources: A,
-        __rewriteRelativeImportExtension: ce,
+        __addDisposableResource: ce,
+        __disposeResources: le,
+        __rewriteRelativeImportExtension: k,
       }));
   }),
-  le = i((e) => {
+  de = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.NavigationTarget = void 0),
       (e.NavigationTarget = {
@@ -654,29 +654,29 @@ var j,
         ProjectSettingsDetails: `projectSettingsDetails`,
       }));
   }),
-  z = i((e) => {
+  L = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.BridgeAPIError = void 0),
       (e.BridgeAPIError = class extends Error {}));
   }),
-  B = i((e) => {
+  R = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getCallBridge = void 0));
-    var t = z();
+    var t = L();
     function n(e) {
       return !!e?.callBridge;
     }
     e.getCallBridge = () => {
-      if (!n(window.__bridge))
+      if (!n(globalThis.__bridge))
         throw new t.BridgeAPIError(`
       Unable to establish a connection with the Custom UI bridge.
       If you are trying to run your app locally, Forge apps only work in the context of Atlassian products. Refer to https://go.atlassian.com/forge-tunneling-with-custom-ui for how to tunnel when using a local development server.
     `);
-      return window.__bridge.callBridge;
+      return globalThis.__bridge.callBridge;
     };
   }),
-  V = i((e) => {
+  z = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.withRateLimiter = void 0));
-    var t = z();
+    var t = L();
     e.withRateLimiter = (e, n, r, i) => {
       let a = Date.now(),
         o = 0;
@@ -688,11 +688,11 @@ var j,
       };
     };
   }),
-  ue = i((e) => {
+  fe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.makeInvoke = e.invoke = void 0));
-    var t = B(),
-      n = z(),
-      r = V(),
+    var t = R(),
+      n = L(),
+      r = z(),
       i = (0, t.getCallBridge)(),
       a = (e) => {
         if (e && Object.values(e).some((e) => typeof e == `function`))
@@ -712,15 +712,15 @@ var j,
     }
     e.makeInvoke = o;
   }),
-  H = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(ue(), e));
+  B = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(fe(), e));
   }),
-  U = i((e) => {
+  V = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e._invokeEndpointFn = e.InvokeType = void 0));
-    var t = B(),
-      n = z(),
-      r = V(),
+    var t = R(),
+      n = L(),
+      r = z(),
       i = 500,
       a = 25,
       o = 1e3 * a;
@@ -755,35 +755,35 @@ var j,
       );
     };
   }),
-  de = i((e) => {
+  pe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.invokeRemote = void 0));
-    var t = U();
+    var t = V();
     e.invokeRemote = (e) => (0, t._invokeEndpointFn)(t.InvokeType.REMOTE)(e);
   }),
-  fe = i((e) => {
+  me = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.invokeService = void 0));
-    var t = U();
+    var t = V();
     e.invokeService = (e) => (0, t._invokeEndpointFn)(t.InvokeType.SERVICE)(e);
   }),
-  pe = i((e) => {
+  he = i((e) => {
     Object.defineProperty(e, `__esModule`, { value: !0 });
-    var n = (R(), t(l));
-    (n.__exportStar(de(), e), n.__exportStar(fe(), e));
+    var n = (I(), t(l));
+    (n.__exportStar(pe(), e), n.__exportStar(me(), e));
   }),
-  me = i((e) => {
+  ge = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.submit = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = (0, t.getCallBridge)();
     e.submit = async (e) => {
       if ((await r(`submit`, e)) === !1)
         throw new n.BridgeAPIError(`this resource's view is not submittable.`);
     };
   }),
-  he = i((e) => {
+  _e = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.close = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = (0, t.getCallBridge)();
     e.close = async (e) => {
       try {
@@ -794,10 +794,10 @@ var j,
       }
     };
   }),
-  ge = i((e) => {
+  ve = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.open = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = (0, t.getCallBridge)();
     e.open = async () => {
       try {
@@ -808,19 +808,19 @@ var j,
       }
     };
   }),
-  _e = i((e) => {
+  ye = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.refresh = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = (0, t.getCallBridge)();
     e.refresh = async (e) => {
       if ((await r(`refresh`, e)) === !1)
         throw new n.BridgeAPIError(`this resource's view is not refreshable.`);
     };
   }),
-  ve = i((e) => {
+  be = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.createHistory = void 0));
-    var t = (0, B().getCallBridge)();
+    var t = (0, R().getCallBridge)();
     e.createHistory = async () => {
       let e = await t(`createHistory`);
       return (
@@ -831,7 +831,7 @@ var j,
       );
     };
   }),
-  W = i((e) => {
+  H = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.FORGE_SUPPORTED_LOCALE_CODES = e.I18N_BUNDLE_FOLDER_NAME = e.I18N_INFO_FILE_NAME = void 0),
       (e.I18N_INFO_FILE_NAME = `i18n-info.json`),
@@ -841,7 +841,7 @@ var j,
           `.`,
         )));
   }),
-  ye = i((e) => {
+  xe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.TranslationsGetter = e.TranslationGetterError = void 0));
     var t = (e, t) => {
@@ -920,10 +920,10 @@ var j,
         }
       }));
   }),
-  G = i((e) => {
+  U = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.getTranslationValueFromContent = e.getTranslationValue = void 0));
-    var n = (R(), t(l)).__importDefault(s());
+    var n = (I(), t(l)).__importDefault(s());
     ((e.getTranslationValue = (t, n, r) => {
       let i = t[r];
       return i ? (0, e.getTranslationValueFromContent)(i, n) : null;
@@ -937,9 +937,9 @@ var j,
         return typeof r == `string` ? r : null;
       }));
   }),
-  be = i((e) => {
+  Se = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.Translator = void 0));
-    var t = G();
+    var t = U();
     e.Translator = class {
       locale;
       translationsGetter;
@@ -969,9 +969,9 @@ var j,
       }
     };
   }),
-  xe = i((e) => {
+  Ce = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.ensureLocale = void 0));
-    var t = W(),
+    var t = H(),
       n = new Set(t.FORGE_SUPPORTED_LOCALE_CODES),
       r = { "en-UK": `en-GB`, "nb-NO": `no-NO` },
       i = t.FORGE_SUPPORTED_LOCALE_CODES.reduce(
@@ -986,7 +986,7 @@ var j,
       return n.has(t) ? t : (i[t] ?? r[t] ?? null);
     };
   }),
-  Se = i((e) => {
+  we = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.extractI18nPropertiesFromModules =
         e.extractI18nKeysFromModules =
@@ -1033,29 +1033,29 @@ var j,
         return n;
       }));
   }),
-  Ce = i((e) => {
+  Te = i((e) => {
     Object.defineProperty(e, `__esModule`, { value: !0 });
   }),
-  we = i((e) => {
+  W = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.getI18nSupportedModuleEntries =
         e.extractI18nPropertiesFromModules =
         e.extractI18nKeysFromModules =
         e.getTranslationValue =
           void 0));
-    var n = (R(), t(l));
-    (n.__exportStar(W(), e),
-      n.__exportStar(ye(), e),
-      n.__exportStar(be(), e),
-      n.__exportStar(xe(), e));
-    var r = G();
+    var n = (I(), t(l));
+    (n.__exportStar(H(), e),
+      n.__exportStar(xe(), e),
+      n.__exportStar(Se(), e),
+      n.__exportStar(Ce(), e));
+    var r = U();
     Object.defineProperty(e, `getTranslationValue`, {
       enumerable: !0,
       get: function () {
         return r.getTranslationValue;
       },
     });
-    var i = Se();
+    var i = we();
     (Object.defineProperty(e, `extractI18nKeysFromModules`, {
       enumerable: !0,
       get: function () {
@@ -1074,12 +1074,12 @@ var j,
           return i.getI18nSupportedModuleEntries;
         },
       }),
-      n.__exportStar(Ce(), e));
+      n.__exportStar(Te(), e));
   }),
-  Te = i((e) => {
+  Ee = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getContext = void 0));
-    var t = B(),
-      n = we(),
+    var t = R(),
+      n = W(),
       r = (0, t.getCallBridge)();
     e.getContext = async () => {
       let e = await r(`getContext`),
@@ -1087,10 +1087,10 @@ var j,
       return (t && (e.locale = (0, n.ensureLocale)(t) ?? t), e);
     };
   }),
-  Ee = i((e) => {
+  De = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.changeWindowTitle = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = (0, t.getCallBridge)();
     e.changeWindowTitle = async (e) => {
       try {
@@ -1100,12 +1100,12 @@ var j,
       }
     };
   }),
-  De = i((e) => {
+  Oe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.theme = void 0));
-    var t = (0, B().getCallBridge)();
+    var t = (0, R().getCallBridge)();
     e.theme = { enable: () => t(`enableTheming`) };
   }),
-  K = i((e) => {
+  ke = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.blobToBase64 = e.base64ToBlob = void 0),
       (e.base64ToBlob = (e, t) => {
@@ -1127,14 +1127,14 @@ var j,
             r.readAsDataURL(e));
         })));
   }),
-  Oe = i((e) => {
+  Ae = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.containsSerialisedBlobs =
         e.containsBlobs =
         e.deserialiseBlobsInPayload =
         e.serialiseBlobsInPayload =
           void 0));
-    var t = K(),
+    var t = ke(),
       n = (e) => {
         if (typeof e != `object` || !e || Object.prototype.toString.call(e) !== `[object Object]`)
           return !1;
@@ -1190,10 +1190,10 @@ var j,
               ? Object.values(t).some((t) => (0, e.containsSerialisedBlobs)(t))
               : !1));
   }),
-  ke = i((e) => {
+  G = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.events = void 0));
-    var t = B(),
-      n = Oe(),
+    var t = R(),
+      n = Ae(),
       r = (0, t.getCallBridge)(),
       i = (e) => (t) => {
         let r = t;
@@ -1221,11 +1221,11 @@ var j,
       onPublic: (e, t) => r(`onPublic`, { event: e, callback: i(t) }),
     };
   }),
-  Ae = i((e) => {
+  je = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.emitReadyEvent = void 0));
-    var t = ke(),
-      n = Ze(),
-      r = (0, B().getCallBridge)(),
+    var t = G(),
+      n = Qe(),
+      r = (0, R().getCallBridge)(),
       i = `EXTENSION_READY`;
     e.emitReadyEvent = async () => {
       let e = await n.view.getContext();
@@ -1235,17 +1235,17 @@ var j,
       } catch {}
     };
   }),
-  je,
   Me,
-  q,
   Ne,
-  Pe = n(() => {
-    ((je = `modulepreload`),
-      (Me = function (e, t) {
+  K,
+  Pe,
+  Fe = n(() => {
+    ((Me = `modulepreload`),
+      (Ne = function (e, t) {
         return new URL(e, t).href;
       }),
-      (q = {}),
-      (Ne = function (e, t, n) {
+      (K = {}),
+      (Pe = function (e, t, n) {
         let r = Promise.resolve();
         if (t && t.length > 0) {
           let e = document.getElementsByTagName(`link`),
@@ -1263,8 +1263,8 @@ var j,
           }
           r = o(
             t.map((t) => {
-              if (((t = Me(t, n)), t in q)) return;
-              q[t] = !0;
+              if (((t = Ne(t, n)), t in K)) return;
+              K[t] = !0;
               let r = t.endsWith(`.css`),
                 i = r ? `[rel="stylesheet"]` : ``;
               if (n)
@@ -1275,7 +1275,7 @@ var j,
               else if (document.querySelector(`link[href="${t}"]${i}`)) return;
               let o = document.createElement(`link`);
               if (
-                ((o.rel = r ? `stylesheet` : je),
+                ((o.rel = r ? `stylesheet` : Me),
                 r || (o.as = `script`),
                 (o.crossOrigin = ``),
                 (o.href = t),
@@ -1300,7 +1300,7 @@ var j,
         });
       }));
   }),
-  Fe = i((e) => {
+  Ie = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = r));
     var t,
       n = new Uint8Array(16);
@@ -1316,15 +1316,15 @@ var j,
       return t(n);
     }
   }),
-  Ie = i((e) => {
+  Le = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.default = void 0),
       (e.default =
         /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i));
   }),
-  J = i((e) => {
+  q = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = n(Ie());
+    var t = n(Le());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1333,11 +1333,11 @@ var j,
     }
     e.default = r;
   }),
-  Y = i((e) => {
+  J = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.default = void 0),
       (e.unsafeStringify = i));
-    var t = n(J());
+    var t = n(q());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1374,10 +1374,10 @@ var j,
     }
     e.default = a;
   }),
-  Le = i((e) => {
+  Re = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = r(Fe()),
-      n = Y();
+    var t = r(Ie()),
+      n = J();
     function r(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1423,9 +1423,9 @@ var j,
     }
     e.default = c;
   }),
-  Re = i((e) => {
+  ze = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = n(J());
+    var t = n(q());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1455,12 +1455,12 @@ var j,
     }
     e.default = r;
   }),
-  ze = i((e) => {
+  Be = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.URL = e.DNS = void 0),
       (e.default = s));
-    var t = Y(),
-      n = r(Re());
+    var t = J(),
+      n = r(ze());
     function r(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1503,7 +1503,7 @@ var j,
       return ((c.DNS = a), (c.URL = o), c);
     }
   }),
-  Be = i((e) => {
+  Ve = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
     function t(e) {
       if (typeof e == `string`) {
@@ -1640,27 +1640,27 @@ var j,
     }
     e.default = t;
   }),
-  Ve = i((e) => {
+  He = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = r(ze()),
-      n = r(Be());
+    var t = r(Be()),
+      n = r(Ve());
     function r(e) {
       return e && e.__esModule ? e : { default: e };
     }
     e.default = (0, t.default)(`v3`, 48, n.default);
   }),
-  He = i((e) => {
+  Ue = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.default = void 0),
       (e.default = {
         randomUUID: typeof crypto < `u` && crypto.randomUUID && crypto.randomUUID.bind(crypto),
       }));
   }),
-  Ue = i((e) => {
+  We = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = i(He()),
-      n = i(Fe()),
-      r = Y();
+    var t = i(Ue()),
+      n = i(Ie()),
+      r = J();
     function i(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1677,7 +1677,7 @@ var j,
     }
     e.default = a;
   }),
-  We = i((e) => {
+  Ge = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
     function t(e, t, n, r) {
       switch (e) {
@@ -1764,23 +1764,23 @@ var j,
     }
     e.default = r;
   }),
-  Ge = i((e) => {
+  Ke = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = r(ze()),
-      n = r(We());
+    var t = r(Be()),
+      n = r(Ge());
     function r(e) {
       return e && e.__esModule ? e : { default: e };
     }
     e.default = (0, t.default)(`v5`, 80, n.default);
   }),
-  Ke = i((e) => {
+  qe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.default = void 0),
       (e.default = `00000000-0000-0000-0000-000000000000`));
   }),
-  qe = i((e) => {
+  Je = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = n(J());
+    var t = n(q());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1790,7 +1790,7 @@ var j,
     }
     e.default = r;
   }),
-  Je = i((e) => {
+  Ye = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       Object.defineProperty(e, `NIL`, {
         enumerable: !0,
@@ -1846,26 +1846,26 @@ var j,
           return o.default;
         },
       }));
-    var t = u(Le()),
-      n = u(Ve()),
-      r = u(Ue()),
-      i = u(Ge()),
-      a = u(Ke()),
-      o = u(qe()),
-      s = u(J()),
-      c = u(Y()),
-      l = u(Re());
+    var t = u(Re()),
+      n = u(He()),
+      r = u(We()),
+      i = u(Ke()),
+      a = u(qe()),
+      o = u(Je()),
+      s = u(q()),
+      c = u(J()),
+      l = u(ze());
     function u(e) {
       return e && e.__esModule ? e : { default: e };
     }
   }),
-  Ye = i((t) => {
-    (Pe(),
+  Xe = i((t) => {
+    (Fe(),
       Object.defineProperty(t, `__esModule`, { value: !0 }),
       (t.createAdfRendererIframeProps = void 0));
-    var n = Je();
+    var n = Ye();
     t.createAdfRendererIframeProps = async (t, r) => {
-      let i = await Ne(
+      let i = await Pe(
           () => import(`./iframe-resizer-DVrYH2CP.js`).then((t) => e(t.default)),
           __vite__mapDeps([0, 1]),
           import.meta.url,
@@ -1910,10 +1910,10 @@ var j,
       );
     };
   }),
-  Xe = i((e) => {
+  Ze = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.onClose = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = (0, t.getCallBridge)();
     e.onClose = async (e) => {
       try {
@@ -1926,19 +1926,19 @@ var j,
       }
     };
   }),
-  Ze = i((e) => {
+  Qe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.view = void 0));
-    var t = me(),
-      n = he(),
-      r = ge(),
-      i = _e(),
-      a = ve(),
-      o = Te(),
-      s = Ee(),
-      c = De(),
-      l = Ae(),
-      u = Ye(),
-      d = Xe();
+    var t = ge(),
+      n = _e(),
+      r = ve(),
+      i = ye(),
+      a = be(),
+      o = Ee(),
+      s = De(),
+      c = Oe(),
+      l = je(),
+      u = Xe(),
+      d = Ze();
     e.view = {
       submit: t.submit,
       close: n.close,
@@ -1953,12 +1953,12 @@ var j,
       createAdfRendererIframeProps: u.createAdfRendererIframeProps,
     };
   }),
-  X = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(Ze(), e));
+  Y = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(Qe(), e));
   }),
-  Qe = i((e) => {
+  $e = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.router = void 0));
-    var t = (0, B().getCallBridge)();
+    var t = (0, R().getCallBridge)();
     e.router = {
       getUrl: async (e) => {
         if (!e?.target) throw Error(`target is required for getUrl`);
@@ -1983,13 +1983,13 @@ var j,
       reload: async () => t(`reload`),
     };
   }),
-  $e = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(Qe(), e));
-  }),
   et = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar($e(), e));
+  }),
+  tt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.Modal = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = (0, t.getCallBridge)(),
       i = () => {};
     e.Modal = class {
@@ -2024,13 +2024,13 @@ var j,
       }
     };
   }),
-  tt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(et(), e));
-  }),
   nt = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(tt(), e));
+  }),
+  rt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.productFetchApi = e.remoteFetchApi = void 0));
-    var t = K(),
+    var t = ke(),
       n = async (e, n = !1) => {
         let r = {};
         for (let [i, a] of e.entries())
@@ -2112,22 +2112,22 @@ var j,
         };
       }));
   }),
-  rt = i((e) => {
+  it = i((e) => {
     var t;
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.requestRemote = e.requestBitbucket = e.requestJira = e.requestConfluence = void 0));
-    var n = B(),
-      r = nt();
+    var n = R(),
+      r = rt();
     ((t = (0, r.productFetchApi)((0, n.getCallBridge)())),
       (e.requestConfluence = t.requestConfluence),
       (e.requestJira = t.requestJira),
       (e.requestBitbucket = t.requestBitbucket),
       (e.requestRemote = (0, r.remoteFetchApi)((0, n.getCallBridge)()).requestRemote));
   }),
-  it = i((e) => {
+  at = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.showFlag = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = (0, t.getCallBridge)();
     e.showFlag = (e) => {
       if (!e.id) throw new n.BridgeAPIError(`"id" must be defined in flag options`);
@@ -2135,9 +2135,9 @@ var j,
       return { close: async () => (await t, r(`closeFlag`, { id: e.id })) };
     };
   }),
-  at = i((e) => {
+  ot = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.showFlag = void 0));
-    var t = it();
+    var t = at();
     Object.defineProperty(e, `showFlag`, {
       enumerable: !0,
       get: function () {
@@ -2145,12 +2145,12 @@ var j,
       },
     });
   }),
-  ot = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(ke(), e));
-  }),
   st = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(G(), e));
+  }),
+  ct = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.realtime = void 0));
-    var t = (0, B().getCallBridge)();
+    var t = (0, R().getCallBridge)();
     e.realtime = {
       publish: (e, n, r) =>
         t(`publishRealtimeChannel`, { channelName: e, eventPayload: n, options: r }),
@@ -2162,7 +2162,7 @@ var j,
         t(`subscribeRealtimeChannel`, { channelName: e, onEvent: n, options: r, isGlobal: !0 }),
     };
   }),
-  ct = i((e) => {
+  lt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.Bitbucket = e.Confluence = e.Jira = void 0),
       (function (e) {
@@ -2175,17 +2175,17 @@ var j,
         ((e.Repository = `repository`), (e.PullRequest = `pullRequest`));
       })((e.Bitbucket ||= {})));
   }),
-  lt = i((e) => {
+  ut = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.Bitbucket = e.Confluence = e.Jira = e.realtime = void 0));
-    var t = st();
+    var t = ct();
     Object.defineProperty(e, `realtime`, {
       enumerable: !0,
       get: function () {
         return t.realtime;
       },
     });
-    var n = ct();
+    var n = lt();
     (Object.defineProperty(e, `Jira`, {
       enumerable: !0,
       get: function () {
@@ -2205,11 +2205,11 @@ var j,
         },
       }));
   }),
-  ut = i((e) => {
+  dt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.open = e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE = void 0));
-    var t = B(),
-      n = z(),
+    var t = R(),
+      n = L(),
       r = 30,
       i = (0, t.getCallBridge)();
     e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE = `Unable to open Rovo Chat due to usage in an unsupported product. Only Confluence, Jira and some Jira Service Management modules are supported at this point. See https://developer.atlassian.com/platform/forge/apis-reference/ui-api-bridge/rovo/`;
@@ -2232,25 +2232,25 @@ var j,
         throw new n.BridgeAPIError(e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE);
     };
   }),
-  dt = i((e) => {
+  ft = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.isEnabled = void 0));
-    var t = (0, B().getCallBridge)();
+    var t = (0, R().getCallBridge)();
     e.isEnabled = () => t(`isRovoEnabled`);
   }),
-  ft = i((e) => {
+  pt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.rovo = void 0));
-    var t = ut(),
-      n = dt();
+    var t = dt(),
+      n = ft();
     e.rovo = { open: t.open, isEnabled: n.isEnabled };
   }),
-  pt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(ft(), e));
-  }),
   mt = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(pt(), e));
+  }),
+  ht = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.createTranslationFunction = e.getTranslations = e.resetTranslationsCache = void 0));
-    var t = we(),
-      n = X(),
+    var t = W(),
+      n = Y(),
       r = new t.TranslationsGetter({
         getI18nInfoConfig: async () => {
           let e = await fetch(`./${t.I18N_BUNDLE_FOLDER_NAME}/${t.I18N_INFO_FILE_NAME}`);
@@ -2277,9 +2277,9 @@ var j,
         return (await a.init(), (e, t) => a.translate(e) ?? t ?? e);
       }));
   }),
-  ht = i((e) => {
+  gt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.permissions = void 0));
-    var t = (0, B().getCallBridge)();
+    var t = (0, R().getCallBridge)();
     e.permissions = {
       egress: {
         get: async (e) => t(`__permission__egressGet`, e),
@@ -2293,7 +2293,7 @@ var j,
       },
     };
   }),
-  Z = i((e) => {
+  X = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.parseUrl = void 0));
     function t(e) {
       let t = e.match(/^(.*?:)/)?.[0] ?? `https:`,
@@ -2303,7 +2303,7 @@ var j,
     }
     e.parseUrl = t;
   }),
-  gt = i((e) => {
+  _t = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.getEgressesBasedOnToggles =
         e.sortAndGroupEgressPermissionsByDomain =
@@ -2311,7 +2311,7 @@ var j,
         e.EgressType =
         e.globToRegex =
           void 0));
-    var t = Z();
+    var t = X();
     function n(e) {
       let t = e.replace(/[.+?^${}()|[\]\\]/g, `\\$&`).replace(/\*/g, `.*`);
       return RegExp(`^${t}$`);
@@ -2363,10 +2363,10 @@ var j,
         return [...n.entries()].map(([e, t]) => ({ type: e, addresses: [...new Set(t)] }));
       }));
   }),
-  _t = i((e) => {
+  vt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.EgressFilteringService = void 0));
-    var t = Z(),
-      n = gt();
+    var t = X(),
+      n = _t();
     e.EgressFilteringService = class {
       constructor(e) {
         ((this.URLs = e.filter((e) => !e.startsWith(`*`)).map((e) => this.parseUrl(e))),
@@ -2425,19 +2425,19 @@ var j,
       }
     };
   }),
-  vt = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
-    var n = (R(), t(l));
-    (n.__exportStar(_t(), e), n.__exportStar(Z(), e), n.__exportStar(gt(), e));
-  }),
   yt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(vt(), e));
+    Object.defineProperty(e, `__esModule`, { value: !0 });
+    var n = (I(), t(l));
+    (n.__exportStar(vt(), e), n.__exportStar(X(), e), n.__exportStar(_t(), e));
   }),
   bt = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(yt(), e));
+  }),
+  xt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.checkPermissions = e.createPermissionUtils = void 0));
-    var t = yt(),
-      n = X();
+    var t = bt(),
+      n = Y();
     function r(e) {
       return typeof e == `string` ? e : `address` in e && e.address ? e.address : e.remote || ``;
     }
@@ -2546,35 +2546,35 @@ var j,
     }
     e.checkPermissions = m;
   }),
-  xt = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
-    var n = (R(), t(l));
-    (n.__exportStar(ht(), e), n.__exportStar(bt(), e));
-  }),
   St = i((e) => {
+    Object.defineProperty(e, `__esModule`, { value: !0 });
+    var n = (I(), t(l));
+    (n.__exportStar(gt(), e), n.__exportStar(xt(), e));
+  }),
+  Ct = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.BRIDGE_OBJECT_STORE_RESTRICTED_ENVIRONMENT_ERROR = void 0),
       (e.BRIDGE_OBJECT_STORE_RESTRICTED_ENVIRONMENT_ERROR = `Object Store bridge methods are restricted to Forge apps in a non-production environment. For more information please see https://developer.atlassian.com/platform/forge/cli-reference/environments/ for reference on Forge app environments.`));
   }),
-  Q = i((e) => {
+  Z = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.checkRestrictedEnvironment = void 0));
-    var t = z(),
-      n = X(),
-      r = St();
+    var t = L(),
+      n = Y(),
+      r = Ct();
     e.checkRestrictedEnvironment = async () => {
       let { environmentType: e } = await n.view.getContext();
       if (e === `PRODUCTION`)
         throw new t.BridgeAPIError(r.BRIDGE_OBJECT_STORE_RESTRICTED_ENVIRONMENT_ERROR);
     };
   }),
-  Ct = i((e) => {
+  wt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.upload = e.createUploadPromises = void 0));
-    var t = H(),
-      n = z(),
-      r = Q(),
-      i = (0, B().getCallBridge)(),
+    var t = B(),
+      n = L(),
+      r = Z(),
+      i = (0, R().getCallBridge)(),
       a = (e, t) => {
         let n = atob(e),
           r = Array(n.length);
@@ -2681,12 +2681,12 @@ var j,
         return await Promise.all(a.map((e) => e.promise));
       }));
   }),
-  wt = i((e) => {
+  Tt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.deleteObjects = void 0));
-    var t = H(),
-      n = z(),
-      r = Q(),
-      i = (0, B().getCallBridge)();
+    var t = B(),
+      n = L(),
+      r = Z(),
+      i = (0, R().getCallBridge)();
     e.deleteObjects = async ({ functionKey: e, keys: a }) => {
       if (
         (await (0, r.checkRestrictedEnvironment)(),
@@ -2703,12 +2703,12 @@ var j,
       );
     };
   }),
-  Tt = i((e) => {
+  Et = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.download = void 0));
-    var t = H(),
-      n = z(),
-      r = Q(),
-      i = (0, B().getCallBridge)();
+    var t = B(),
+      n = L(),
+      r = Z(),
+      i = (0, R().getCallBridge)();
     e.download = async ({ functionKey: e, keys: a }) => {
       if (
         (await (0, r.checkRestrictedEnvironment)(),
@@ -2744,12 +2744,12 @@ var j,
       return await Promise.all(s);
     };
   }),
-  Et = i((e) => {
+  Dt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getMetadata = void 0));
-    var t = H(),
-      n = z(),
-      r = Q(),
-      i = (0, B().getCallBridge)();
+    var t = B(),
+      n = L(),
+      r = Z(),
+      i = (0, R().getCallBridge)();
     e.getMetadata = async ({ functionKey: e, keys: a }) => {
       if (
         (await (0, r.checkRestrictedEnvironment)(),
@@ -2771,19 +2771,19 @@ var j,
       );
     };
   }),
-  Dt = i((e) => {
+  Ot = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.createUploadPromises = e.objectStore = void 0));
-    var t = Ct();
+    var t = wt();
     Object.defineProperty(e, `createUploadPromises`, {
       enumerable: !0,
       get: function () {
         return t.createUploadPromises;
       },
     });
-    var n = wt(),
-      r = Tt(),
-      i = Et();
+    var n = Tt(),
+      r = Et(),
+      i = Dt();
     e.objectStore = {
       upload: t.upload,
       download: r.download,
@@ -2791,12 +2791,12 @@ var j,
       delete: n.deleteObjects,
     };
   }),
-  Ot = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
-    var n = (R(), t(l));
-    (n.__exportStar(Dt(), e), n.__exportStar(St(), e));
-  }),
   kt = i((e) => {
+    Object.defineProperty(e, `__esModule`, { value: !0 });
+    var n = (I(), t(l));
+    (n.__exportStar(Ot(), e), n.__exportStar(Ct(), e));
+  }),
+  At = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.Evaluator = void 0),
       (e.Evaluator = class {
@@ -2832,19 +2832,19 @@ var j,
         }
       }));
   }),
-  At = i((e) => {
+  jt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.FeatureFlagEventType = void 0),
       (function (e) {
         e.CHECKFLAG = `checkFlag`;
       })((e.FeatureFlagEventType ||= {})));
   }),
-  jt = i((e) => {
+  Mt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.trackFeatureFlagEvent = void 0));
-    var t = B(),
-      n = z(),
-      r = V(),
-      i = At(),
+    var t = R(),
+      n = L(),
+      r = z(),
+      i = jt(),
       a = 500,
       o = 1e3 * 25,
       s = (0, t.getCallBridge)(),
@@ -2865,11 +2865,11 @@ var j,
       `Feature flags calls are rate limited at ${a}req/${o / 1e3}s`,
     );
   }),
-  Mt = i((e) => {
+  Nt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.initFeatureFlags = void 0));
-    var t = B(),
-      n = z(),
-      r = V(),
+    var t = R(),
+      n = L(),
+      r = z(),
       i = 500,
       a = 1e3 * 25,
       o = (0, t.getCallBridge)(),
@@ -2895,12 +2895,12 @@ var j,
       `Feature flags initialisation calls are rate limited at ${i}req/${a / 1e3}s`,
     );
   }),
-  Nt = i((e) => {
+  Pt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.FeatureFlags = void 0));
-    var t = kt(),
-      n = jt(),
-      r = Mt(),
-      i = At();
+    var t = At(),
+      n = Mt(),
+      r = Nt(),
+      i = jt();
     e.FeatureFlags = class {
       constructor() {
         ((this.initialized = !1), (this.eventProps = {}));
@@ -2940,9 +2940,9 @@ var j,
       }
     };
   }),
-  Pt = i((e) => {
+  Ft = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.FeatureFlags = void 0));
-    var t = Nt();
+    var t = Pt();
     Object.defineProperty(e, `FeatureFlags`, {
       enumerable: !0,
       get: function () {
@@ -2950,370 +2950,371 @@ var j,
       },
     });
   }),
-  Ft = i((e) => {
+  It = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.i18n = e.NavigationTarget = void 0));
-    var n = (R(), t(l)),
-      r = le();
+    var n = (I(), t(l)),
+      r = de();
     (Object.defineProperty(e, `NavigationTarget`, {
       enumerable: !0,
       get: function () {
         return r.NavigationTarget;
       },
     }),
-      n.__exportStar(H(), e),
-      n.__exportStar(pe(), e),
-      n.__exportStar(X(), e),
-      n.__exportStar($e(), e),
-      n.__exportStar(tt(), e),
-      n.__exportStar(rt(), e),
-      n.__exportStar(at(), e),
+      n.__exportStar(B(), e),
+      n.__exportStar(he(), e),
+      n.__exportStar(Y(), e),
+      n.__exportStar(et(), e),
+      n.__exportStar(nt(), e),
+      n.__exportStar(it(), e),
       n.__exportStar(ot(), e),
-      n.__exportStar(lt(), e),
-      n.__exportStar(pt(), e),
-      (e.i18n = n.__importStar(mt())),
-      n.__exportStar(xt(), e),
-      n.__exportStar(Ot(), e),
-      n.__exportStar(Pt(), e));
+      n.__exportStar(st(), e),
+      n.__exportStar(ut(), e),
+      n.__exportStar(mt(), e),
+      (e.i18n = n.__importStar(ht())),
+      n.__exportStar(St(), e),
+      n.__exportStar(kt(), e),
+      n.__exportStar(Ft(), e));
   }),
-  It = i((e) => {
+  Lt = i((e) => {
     var t = a(),
       n = Symbol.for(`react.element`),
-      r = Object.prototype.hasOwnProperty,
-      i = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
-      o = { key: !0, ref: !0, __self: !0, __source: !0 };
-    function s(e, t, a) {
-      var s,
+      r = Symbol.for(`react.fragment`),
+      i = Object.prototype.hasOwnProperty,
+      o = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
+      s = { key: !0, ref: !0, __self: !0, __source: !0 };
+    function c(e, t, r) {
+      var a,
         c = {},
         l = null,
         u = null;
-      for (s in (a !== void 0 && (l = `` + a),
+      for (a in (r !== void 0 && (l = `` + r),
       t.key !== void 0 && (l = `` + t.key),
       t.ref !== void 0 && (u = t.ref),
       t))
-        r.call(t, s) && !o.hasOwnProperty(s) && (c[s] = t[s]);
+        i.call(t, a) && !s.hasOwnProperty(a) && (c[a] = t[a]);
       if (e && e.defaultProps)
-        for (s in ((t = e.defaultProps), t)) c[s] === void 0 && (c[s] = t[s]);
-      return { $$typeof: n, type: e, key: l, ref: u, props: c, _owner: i.current };
+        for (a in ((t = e.defaultProps), t)) c[a] === void 0 && (c[a] = t[a]);
+      return { $$typeof: n, type: e, key: l, ref: u, props: c, _owner: o.current };
     }
-    ((e.jsx = s), (e.jsxs = s));
+    ((e.Fragment = r), (e.jsx = c), (e.jsxs = c));
   }),
-  Lt = i((e, t) => {
-    t.exports = It();
+  Rt = i((e, t) => {
+    t.exports = Lt();
   }),
-  Rt = Ft(),
-  $ = Lt(),
-  zt = () => {
-    let [e, t] = (0, c.useState)(null),
-      [n, r] = (0, c.useState)(!1),
-      [i, a] = (0, c.useState)(null),
-      [o, s] = (0, c.useState)(null),
-      l = async (e) => {
-        (r(!0), a(null), t(null), s(e));
-        try {
-          (t((await (0, Rt.invoke)(e)) || []), a(null));
-        } catch (e) {
-          (a(e instanceof Error ? e.message : `Unknown error occurred`), t(null));
-        } finally {
-          r(!1);
-        }
-      };
-    return (0, $.jsxs)(`div`, {
-      style: {
-        padding: `20px`,
-        fontFamily: `Arial, sans-serif`,
-        maxWidth: `1200px`,
-        margin: `0 auto`,
-      },
-      children: [
-        (0, $.jsx)(`h1`, {
-          style: { color: `#0052CC`, marginBottom: `30px` },
-          children: `🚀 Forge SQL ORM Query Demo`,
-        }),
-        (0, $.jsxs)(`div`, {
+  Q = It(),
+  $ = Rt();
+function zt() {
+  let [e, t] = (0, c.useState)(``),
+    [n, r] = (0, c.useState)(``),
+    [i, a] = (0, c.useState)(``),
+    [o, s] = (0, c.useState)(!1),
+    [l, u] = (0, c.useState)(!1),
+    [d, f] = (0, c.useState)(!1),
+    [p, m] = (0, c.useState)([]),
+    h = (e, t, n) => {
+      m((r) => [{ id: Date.now(), query: e, result: t, timestamp: new Date(), type: n }, ...r]);
+    },
+    g = async () => {
+      try {
+        (a(``), s(!0));
+        let t = await (0, Q.invoke)(`execute`, { query: e });
+        (r(t), h(e, t, `SQL`));
+      } catch (e) {
+        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
+      } finally {
+        s(!1);
+      }
+    },
+    _ = async () => {
+      try {
+        (a(``), u(!0));
+        let t = await (0, Q.invoke)(`executeDDL`, { query: e });
+        (r(t), h(e, t, `DDL`));
+      } catch (e) {
+        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
+      } finally {
+        u(!1);
+      }
+    },
+    v = async () => {
+      try {
+        (a(``), f(!0));
+        let t = await (0, Q.invoke)(`executeCommand`, { command: e });
+        (r(t), h(e, t, `COMMAND`));
+      } catch (e) {
+        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
+      } finally {
+        f(!1);
+      }
+    },
+    y = (e) =>
+      new Intl.DateTimeFormat(`en-US`, {
+        hour: `2-digit`,
+        minute: `2-digit`,
+        second: `2-digit`,
+        hour12: !1,
+      }).format(e),
+    b = (e) => {
+      switch (e) {
+        case `SQL`:
+          return `#0052CC`;
+        case `DDL`:
+          return `#36B37E`;
+        case `COMMAND`:
+          return `#FF5630`;
+        default:
+          return `#0052CC`;
+      }
+    };
+  return (0, $.jsxs)(`div`, {
+    style: { padding: `20px`, maxWidth: `800px`, margin: `0 auto` },
+    children: [
+      (0, $.jsx)(`h1`, { children: `SQL Query Executor` }),
+      (0, $.jsxs)(`div`, {
+        style: { marginBottom: `20px` },
+        children: [
+          (0, $.jsx)(`textarea`, {
+            value: e,
+            onChange: (e) => t(e.target.value),
+            placeholder: `Enter your SQL query here...`,
+            style: {
+              width: `100%`,
+              minHeight: `150px`,
+              padding: `10px`,
+              marginBottom: `10px`,
+              fontFamily: `monospace`,
+              fontSize: `14px`,
+            },
+          }),
+          (0, $.jsxs)(`div`, {
+            style: { display: `flex`, gap: `10px` },
+            children: [
+              (0, $.jsx)(`button`, {
+                onClick: g,
+                disabled: o || l || d,
+                style: {
+                  padding: `10px 20px`,
+                  backgroundColor: o ? `#0052CC80` : `#0052CC`,
+                  color: `white`,
+                  border: `none`,
+                  borderRadius: `3px`,
+                  cursor: o ? `not-allowed` : `pointer`,
+                  display: `flex`,
+                  alignItems: `center`,
+                  gap: `8px`,
+                },
+                children: o
+                  ? (0, $.jsxs)($.Fragment, {
+                      children: [
+                        (0, $.jsx)(`div`, {
+                          style: {
+                            width: `16px`,
+                            height: `16px`,
+                            border: `2px solid #ffffff`,
+                            borderTop: `2px solid transparent`,
+                            borderRadius: `50%`,
+                            animation: `spin 1s linear infinite`,
+                          },
+                        }),
+                        `Executing...`,
+                      ],
+                    })
+                  : `Execute Query`,
+              }),
+              (0, $.jsx)(`button`, {
+                onClick: _,
+                disabled: o || l || d,
+                style: {
+                  padding: `10px 20px`,
+                  backgroundColor: l ? `#36B37E80` : `#36B37E`,
+                  color: `white`,
+                  border: `none`,
+                  borderRadius: `3px`,
+                  cursor: l ? `not-allowed` : `pointer`,
+                  display: `flex`,
+                  alignItems: `center`,
+                  gap: `8px`,
+                },
+                children: l
+                  ? (0, $.jsxs)($.Fragment, {
+                      children: [
+                        (0, $.jsx)(`div`, {
+                          style: {
+                            width: `16px`,
+                            height: `16px`,
+                            border: `2px solid #ffffff`,
+                            borderTop: `2px solid transparent`,
+                            borderRadius: `50%`,
+                            animation: `spin 1s linear infinite`,
+                          },
+                        }),
+                        `Executing...`,
+                      ],
+                    })
+                  : `Execute DDL`,
+              }),
+              (0, $.jsx)(`button`, {
+                onClick: v,
+                disabled: o || l || d,
+                style: {
+                  padding: `10px 20px`,
+                  backgroundColor: d ? `#FF563080` : `#FF5630`,
+                  color: `white`,
+                  border: `none`,
+                  borderRadius: `3px`,
+                  cursor: d ? `not-allowed` : `pointer`,
+                  display: `flex`,
+                  alignItems: `center`,
+                  gap: `8px`,
+                },
+                children: d
+                  ? (0, $.jsxs)($.Fragment, {
+                      children: [
+                        (0, $.jsx)(`div`, {
+                          style: {
+                            width: `16px`,
+                            height: `16px`,
+                            border: `2px solid #ffffff`,
+                            borderTop: `2px solid transparent`,
+                            borderRadius: `50%`,
+                            animation: `spin 1s linear infinite`,
+                          },
+                        }),
+                        `Executing...`,
+                      ],
+                    })
+                  : `Execute Command`,
+              }),
+            ],
+          }),
+        ],
+      }),
+      i &&
+        (0, $.jsx)(`div`, {
           style: {
-            padding: `20px`,
-            backgroundColor: `#F4F5F7`,
-            borderRadius: `8px`,
-            marginBottom: `30px`,
+            padding: `10px`,
+            backgroundColor: `#FFEBE6`,
+            border: `1px solid #DE350B`,
+            borderRadius: `3px`,
+            marginBottom: `20px`,
+            color: `#DE350B`,
           },
+          children: i,
+        }),
+      n &&
+        (0, $.jsxs)(`div`, {
           children: [
-            (0, $.jsx)(`h3`, {
-              style: { color: `#172B4D`, marginBottom: `15px` },
-              children: `Query Types:`,
-            }),
-            (0, $.jsxs)(`ul`, {
-              style: { color: `#6B778C`, lineHeight: `1.6` },
-              children: [
-                (0, $.jsxs)(`li`, {
-                  children: [
-                    (0, $.jsx)(`strong`, { children: `Timeout Error:` }),
-                    ` Executes a query with SLEEP(10) to test timeout behavior`,
-                  ],
-                }),
-                (0, $.jsxs)(`li`, {
-                  children: [
-                    (0, $.jsx)(`strong`, { children: `OOM Error:` }),
-                    ` Executes a complex query with subquery that may cause Out of Memory`,
-                  ],
-                }),
-                (0, $.jsxs)(`li`, {
-                  children: [
-                    (0, $.jsx)(`strong`, { children: `Optimized Query:` }),
-                    ` Uses cached permissions for better performance`,
-                  ],
-                }),
-                (0, $.jsxs)(`li`, {
-                  children: [
-                    (0, $.jsx)(`strong`, { children: `Cached Query:` }),
-                    ` Uses cached permissions with optimized query structure`,
-                  ],
-                }),
-              ],
+            (0, $.jsx)(`h3`, { children: `Result:` }),
+            (0, $.jsx)(`pre`, {
+              style: {
+                backgroundColor: `#F4F5F7`,
+                padding: `15px`,
+                borderRadius: `3px`,
+                overflow: `auto`,
+                maxHeight: `400px`,
+              },
+              children: n,
             }),
           ],
         }),
+      p.length > 0 &&
         (0, $.jsxs)(`div`, {
-          style: {
-            marginBottom: `40px`,
-            padding: `20px`,
-            border: `1px solid #ddd`,
-            borderRadius: `8px`,
-          },
+          style: { marginTop: `30px` },
           children: [
-            (0, $.jsx)(`h2`, {
-              style: { color: `#172B4D`, marginBottom: `20px` },
-              children: `Execute Queries`,
-            }),
-            (0, $.jsx)(`p`, {
-              style: { color: `#6B778C`, marginBottom: `20px` },
-              children: `Click on a button to execute the corresponding query and see the results or errors.`,
-            }),
-            (0, $.jsxs)(`div`, {
-              style: {
-                display: `grid`,
-                gridTemplateColumns: `repeat(auto-fit, minmax(200px, 1fr))`,
-                gap: `15px`,
-                marginBottom: `20px`,
-              },
-              children: [
-                (0, $.jsx)(`button`, {
-                  onClick: () => l(`getTimeOutError`),
-                  disabled: n,
-                  style: {
-                    padding: `15px 24px`,
-                    backgroundColor: o === `getTimeOutError` ? `#FF8B00` : `#FF5630`,
-                    color: `white`,
-                    border: `none`,
-                    borderRadius: `4px`,
-                    cursor: n ? `not-allowed` : `pointer`,
-                    opacity: n && o !== `getTimeOutError` ? 0.6 : 1,
-                    fontSize: `16px`,
-                    fontWeight: `bold`,
-                    transition: `all 0.3s ease`,
-                  },
-                  children: n && o === `getTimeOutError` ? `Loading...` : `⏱️ Timeout Error`,
-                }),
-                (0, $.jsx)(`button`, {
-                  onClick: () => l(`getOOMError`),
-                  disabled: n,
-                  style: {
-                    padding: `15px 24px`,
-                    backgroundColor: o === `getOOMError` ? `#C43E37` : `#FF5630`,
-                    color: `white`,
-                    border: `none`,
-                    borderRadius: `4px`,
-                    cursor: n ? `not-allowed` : `pointer`,
-                    opacity: n && o !== `getOOMError` ? 0.6 : 1,
-                    fontSize: `16px`,
-                    fontWeight: `bold`,
-                    transition: `all 0.3s ease`,
-                  },
-                  children: n && o === `getOOMError` ? `Loading...` : `💥 OOM Error`,
-                }),
-                (0, $.jsx)(`button`, {
-                  onClick: () => l(`getQueryResult`),
-                  disabled: n,
-                  style: {
-                    padding: `15px 24px`,
-                    backgroundColor: o === `getQueryResult` ? `#36B37E` : `#0052CC`,
-                    color: `white`,
-                    border: `none`,
-                    borderRadius: `4px`,
-                    cursor: n ? `not-allowed` : `pointer`,
-                    opacity: n && o !== `getQueryResult` ? 0.6 : 1,
-                    fontSize: `16px`,
-                    fontWeight: `bold`,
-                    transition: `all 0.3s ease`,
-                  },
-                  children: n && o === `getQueryResult` ? `Loading...` : `✅ Optimized Query`,
-                }),
-                (0, $.jsx)(`button`, {
-                  onClick: () => l(`getQueryResultCache`),
-                  disabled: n,
-                  style: {
-                    padding: `15px 24px`,
-                    backgroundColor: o === `getQueryResultCache` ? `#36B37E` : `#0052CC`,
-                    color: `white`,
-                    border: `none`,
-                    borderRadius: `4px`,
-                    cursor: n ? `not-allowed` : `pointer`,
-                    opacity: n && o !== `getQueryResultCache` ? 0.6 : 1,
-                    fontSize: `16px`,
-                    fontWeight: `bold`,
-                    transition: `all 0.3s ease`,
-                  },
-                  children: n && o === `getQueryResultCache` ? `Loading...` : `💾 Cached Query`,
-                }),
-              ],
-            }),
-            i &&
-              (0, $.jsxs)(`div`, {
-                style: {
-                  padding: `15px`,
-                  backgroundColor: `#FFEBEE`,
-                  border: `1px solid #FFCDD2`,
-                  borderRadius: `4px`,
-                  color: `#C62828`,
-                  marginBottom: `20px`,
-                },
-                children: [(0, $.jsx)(`strong`, { children: `Error:` }), ` `, i],
-              }),
-            e &&
-              !i &&
-              (0, $.jsxs)(`div`, {
-                style: {
-                  padding: `15px`,
-                  backgroundColor: `#F4F5F7`,
-                  borderRadius: `4px`,
-                  marginTop: `10px`,
-                },
-                children: [
-                  (0, $.jsx)(`h3`, {
-                    style: { margin: `0 0 10px 0`, color: `#172B4D` },
-                    children: `Query Results`,
-                  }),
-                  (0, $.jsxs)(`div`, {
-                    style: { fontSize: `14px`, color: `#6B778C`, marginBottom: `10px` },
-                    children: [`Found `, e.length, ` record(s)`],
-                  }),
-                  (0, $.jsx)(`div`, {
-                    style: { maxHeight: `400px`, overflowY: `auto` },
-                    children: (0, $.jsxs)(`table`, {
-                      style: { width: `100%`, borderCollapse: `collapse` },
-                      children: [
-                        (0, $.jsx)(`thead`, {
-                          children: (0, $.jsxs)(`tr`, {
-                            style: { backgroundColor: `#E9ECF0` },
+            (0, $.jsx)(`h2`, { children: `Query History` }),
+            (0, $.jsx)(`div`, {
+              style: { display: `flex`, flexDirection: `column`, gap: `20px` },
+              children: p.map((e) =>
+                (0, $.jsxs)(
+                  `div`,
+                  {
+                    style: { border: `1px solid #DFE1E6`, borderRadius: `3px`, overflow: `hidden` },
+                    children: [
+                      (0, $.jsxs)(`div`, {
+                        style: {
+                          padding: `10px`,
+                          backgroundColor: b(e.type),
+                          color: `white`,
+                          display: `flex`,
+                          justifyContent: `space-between`,
+                          alignItems: `center`,
+                        },
+                        children: [
+                          (0, $.jsxs)(`span`, {
+                            style: { fontWeight: `bold` },
+                            children: [e.type, ` Query`],
+                          }),
+                          (0, $.jsx)(`span`, { children: y(e.timestamp) }),
+                        ],
+                      }),
+                      (0, $.jsxs)(`div`, {
+                        style: { padding: `15px` },
+                        children: [
+                          (0, $.jsxs)(`div`, {
+                            style: { marginBottom: `10px` },
                             children: [
-                              (0, $.jsx)(`th`, {
-                                style: {
-                                  padding: `8px`,
-                                  textAlign: `left`,
-                                  border: `1px solid #ddd`,
-                                },
-                                children: `ID`,
+                              (0, $.jsx)(`h4`, {
+                                style: { margin: `0 0 5px 0` },
+                                children: `Query:`,
                               }),
-                              (0, $.jsx)(`th`, {
+                              (0, $.jsx)(`pre`, {
                                 style: {
-                                  padding: `8px`,
-                                  textAlign: `left`,
-                                  border: `1px solid #ddd`,
+                                  backgroundColor: `#F4F5F7`,
+                                  padding: `10px`,
+                                  borderRadius: `3px`,
+                                  margin: 0,
+                                  overflow: `auto`,
+                                  maxHeight: `200px`,
                                 },
-                                children: `User ID`,
-                              }),
-                              (0, $.jsx)(`th`, {
-                                style: {
-                                  padding: `8px`,
-                                  textAlign: `left`,
-                                  border: `1px solid #ddd`,
-                                },
-                                children: `Title`,
-                              }),
-                              (0, $.jsx)(`th`, {
-                                style: {
-                                  padding: `8px`,
-                                  textAlign: `left`,
-                                  border: `1px solid #ddd`,
-                                },
-                                children: `Created At`,
-                              }),
-                              (0, $.jsx)(`th`, {
-                                style: {
-                                  padding: `8px`,
-                                  textAlign: `left`,
-                                  border: `1px solid #ddd`,
-                                },
-                                children: `Document ID`,
+                                children: e.query,
                               }),
                             ],
                           }),
-                        }),
-                        (0, $.jsx)(`tbody`, {
-                          children: e.map((e, t) =>
-                            (0, $.jsxs)(
-                              `tr`,
-                              {
-                                children: [
-                                  (0, $.jsxs)(`td`, {
-                                    style: {
-                                      padding: `8px`,
-                                      border: `1px solid #ddd`,
-                                      fontSize: `12px`,
-                                    },
-                                    children: [String(e.id).substring(0, 8), `...`],
-                                  }),
-                                  (0, $.jsxs)(`td`, {
-                                    style: {
-                                      padding: `8px`,
-                                      border: `1px solid #ddd`,
-                                      fontSize: `12px`,
-                                    },
-                                    children: [String(e.userId).substring(0, 8), `...`],
-                                  }),
-                                  (0, $.jsx)(`td`, {
-                                    style: { padding: `8px`, border: `1px solid #ddd` },
-                                    children:
-                                      e.title.length > 50
-                                        ? `${e.title.substring(0, 50)}...`
-                                        : e.title,
-                                  }),
-                                  (0, $.jsx)(`td`, {
-                                    style: {
-                                      padding: `8px`,
-                                      border: `1px solid #ddd`,
-                                      fontSize: `12px`,
-                                    },
-                                    children: new Date(e.createdAt).toLocaleString(),
-                                  }),
-                                  (0, $.jsxs)(`td`, {
-                                    style: {
-                                      padding: `8px`,
-                                      border: `1px solid #ddd`,
-                                      fontSize: `12px`,
-                                    },
-                                    children: [String(e.documentId).substring(0, 8), `...`],
-                                  }),
-                                ],
-                              },
-                              t,
-                            ),
-                          ),
-                        }),
-                      ],
-                    }),
-                  }),
-                ],
-              }),
+                          (0, $.jsxs)(`div`, {
+                            children: [
+                              (0, $.jsx)(`h4`, {
+                                style: { margin: `0 0 5px 0` },
+                                children: `Result:`,
+                              }),
+                              (0, $.jsx)(`pre`, {
+                                style: {
+                                  backgroundColor: `#F4F5F7`,
+                                  padding: `10px`,
+                                  borderRadius: `3px`,
+                                  margin: 0,
+                                  overflow: `auto`,
+                                  maxHeight: `200px`,
+                                },
+                                children: e.result,
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                    ],
+                  },
+                  e.id,
+                ),
+              ),
+            }),
           ],
         }),
-      ],
-    });
-  },
-  Bt = (0, o().createRoot)(document.getElementById(`root`)),
+      (0, $.jsx)(`style`, {
+        children: `
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `,
+      }),
+    ],
+  });
+}
+var Bt = (0, o().createRoot)(document.getElementById(`root`)),
   Vt = () => {
-    Bt.render((0, $.jsx)(c.StrictMode, { children: (0, $.jsx)(zt, {}) }));
+    Bt.render((0, $.jsx)(zt, {}));
   };
-Rt.view.theme
+Q.view.theme
   .enable()
   .then(() => {
     Vt();

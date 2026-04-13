@@ -37,44 +37,44 @@ import { t as s } from "./lodash-vendor-DVWR8zLq.js";
 })();
 var c = e(a()),
   l = r({
-    __addDisposableResource: () => ce,
-    __assign: () => j,
-    __asyncDelegator: () => ee,
-    __asyncGenerator: () => O,
-    __asyncValues: () => te,
-    __await: () => D,
+    __addDisposableResource: () => le,
+    __assign: () => k,
+    __asyncDelegator: () => te,
+    __asyncGenerator: () => D,
+    __asyncValues: () => ne,
+    __await: () => E,
     __awaiter: () => y,
-    __classPrivateFieldGet: () => ae,
-    __classPrivateFieldIn: () => se,
-    __classPrivateFieldSet: () => oe,
-    __createBinding: () => M,
+    __classPrivateFieldGet: () => oe,
+    __classPrivateFieldIn: () => ce,
+    __classPrivateFieldSet: () => se,
+    __createBinding: () => A,
     __decorate: () => f,
-    __disposeResources: () => le,
+    __disposeResources: () => ue,
     __esDecorate: () => m,
-    __exportStar: () => x,
+    __exportStar: () => ee,
     __extends: () => u,
     __generator: () => b,
-    __importDefault: () => ie,
-    __importStar: () => re,
-    __makeTemplateObject: () => ne,
+    __importDefault: () => ae,
+    __importStar: () => ie,
+    __makeTemplateObject: () => re,
     __metadata: () => v,
     __param: () => p,
     __propKey: () => g,
-    __read: () => C,
+    __read: () => S,
     __rest: () => d,
-    __rewriteRelativeImportExtension: () => k,
+    __rewriteRelativeImportExtension: () => de,
     __runInitializers: () => h,
     __setFunctionName: () => _,
-    __spread: () => w,
-    __spreadArray: () => E,
-    __spreadArrays: () => T,
-    __values: () => S,
-    default: () => F,
+    __spread: () => C,
+    __spreadArray: () => T,
+    __spreadArrays: () => w,
+    __values: () => x,
+    default: () => P,
   });
 function u(e, t) {
   if (typeof t != `function` && t !== null)
     throw TypeError(`Class extends value ` + String(t) + ` is not a constructor or null`);
-  A(e, t);
+  O(e, t);
   function n() {
     this.constructor = e;
   }
@@ -274,10 +274,10 @@ function b(e, t) {
     return { value: s[0] ? s[1] : void 0, done: !0 };
   }
 }
-function x(e, t) {
-  for (var n in e) n !== `default` && !Object.prototype.hasOwnProperty.call(t, n) && M(t, e, n);
+function ee(e, t) {
+  for (var n in e) n !== `default` && !Object.prototype.hasOwnProperty.call(t, n) && A(t, e, n);
 }
-function S(e) {
+function x(e) {
   var t = typeof Symbol == `function` && Symbol.iterator,
     n = t && e[t],
     r = 0;
@@ -290,7 +290,7 @@ function S(e) {
     };
   throw TypeError(t ? `Object is not iterable.` : `Symbol.iterator is not defined.`);
 }
-function C(e, t) {
+function S(e, t) {
   var n = typeof Symbol == `function` && e[Symbol.iterator];
   if (!n) return e;
   var r = n.call(e),
@@ -310,26 +310,26 @@ function C(e, t) {
   }
   return a;
 }
-function w() {
-  for (var e = [], t = 0; t < arguments.length; t++) e = e.concat(C(arguments[t]));
+function C() {
+  for (var e = [], t = 0; t < arguments.length; t++) e = e.concat(S(arguments[t]));
   return e;
 }
-function T() {
+function w() {
   for (var e = 0, t = 0, n = arguments.length; t < n; t++) e += arguments[t].length;
   for (var r = Array(e), i = 0, t = 0; t < n; t++)
     for (var a = arguments[t], o = 0, s = a.length; o < s; o++, i++) r[i] = a[o];
   return r;
 }
-function E(e, t, n) {
+function T(e, t, n) {
   if (n || arguments.length === 2)
     for (var r = 0, i = t.length, a; r < i; r++)
       (a || !(r in t)) && ((a ||= Array.prototype.slice.call(t, 0, r)), (a[r] = t[r]));
   return e.concat(a || Array.prototype.slice.call(t));
 }
-function D(e) {
-  return this instanceof D ? ((this.v = e), this) : new D(e);
+function E(e) {
+  return this instanceof E ? ((this.v = e), this) : new E(e);
 }
-function O(e, t, n) {
+function D(e, t, n) {
   if (!Symbol.asyncIterator) throw TypeError(`Symbol.asyncIterator is not defined.`);
   var r = n.apply(e, t || []),
     i,
@@ -366,7 +366,7 @@ function O(e, t, n) {
     }
   }
   function l(e) {
-    e.value instanceof D ? Promise.resolve(e.value.v).then(u, d) : f(a[0][2], e);
+    e.value instanceof E ? Promise.resolve(e.value.v).then(u, d) : f(a[0][2], e);
   }
   function u(e) {
     c(`next`, e);
@@ -378,7 +378,7 @@ function O(e, t, n) {
     (e(t), a.shift(), a.length && c(a[0][0], a[0][1]));
   }
 }
-function ee(e) {
+function te(e) {
   var t, n;
   return (
     (t = {}),
@@ -395,18 +395,18 @@ function ee(e) {
   function r(r, i) {
     t[r] = e[r]
       ? function (t) {
-          return (n = !n) ? { value: D(e[r](t)), done: !1 } : i ? i(t) : t;
+          return (n = !n) ? { value: E(e[r](t)), done: !1 } : i ? i(t) : t;
         }
       : i;
   }
 }
-function te(e) {
+function ne(e) {
   if (!Symbol.asyncIterator) throw TypeError(`Symbol.asyncIterator is not defined.`);
   var t = e[Symbol.asyncIterator],
     n;
   return t
     ? t.call(e)
-    : ((e = typeof S == `function` ? S(e) : e[Symbol.iterator]()),
+    : ((e = typeof x == `function` ? x(e) : e[Symbol.iterator]()),
       (n = {}),
       r(`next`),
       r(`throw`),
@@ -430,37 +430,37 @@ function te(e) {
     }, t);
   }
 }
-function ne(e, t) {
+function re(e, t) {
   return (Object.defineProperty ? Object.defineProperty(e, `raw`, { value: t }) : (e.raw = t), e);
 }
-function re(e) {
+function ie(e) {
   if (e && e.__esModule) return e;
   var t = {};
-  if (e != null) for (var n = N(e), r = 0; r < n.length; r++) n[r] !== `default` && M(t, e, n[r]);
-  return (ue(t, e), t);
+  if (e != null) for (var n = M(e), r = 0; r < n.length; r++) n[r] !== `default` && A(t, e, n[r]);
+  return (j(t, e), t);
 }
-function ie(e) {
+function ae(e) {
   return e && e.__esModule ? e : { default: e };
 }
-function ae(e, t, n, r) {
+function oe(e, t, n, r) {
   if (n === `a` && !r) throw TypeError(`Private accessor was defined without a getter`);
   if (typeof t == `function` ? e !== t || !r : !t.has(e))
     throw TypeError(`Cannot read private member from an object whose class did not declare it`);
   return n === `m` ? r : n === `a` ? r.call(e) : r ? r.value : t.get(e);
 }
-function oe(e, t, n, r, i) {
+function se(e, t, n, r, i) {
   if (r === `m`) throw TypeError(`Private method is not writable`);
   if (r === `a` && !i) throw TypeError(`Private accessor was defined without a setter`);
   if (typeof t == `function` ? e !== t || !i : !t.has(e))
     throw TypeError(`Cannot write private member to an object whose class did not declare it`);
   return (r === `a` ? i.call(e, n) : i ? (i.value = n) : t.set(e, n), n);
 }
-function se(e, t) {
+function ce(e, t) {
   if (t === null || (typeof t != `object` && typeof t != `function`))
     throw TypeError(`Cannot use 'in' operator on non-object`);
   return typeof e == `function` ? t === e : e.has(t);
 }
-function ce(e, t, n) {
+function le(e, t, n) {
   if (t != null) {
     if (typeof t != `object` && typeof t != `function`) throw TypeError(`Object expected.`);
     var r, i;
@@ -485,9 +485,9 @@ function ce(e, t, n) {
   } else n && e.stack.push({ async: !0 });
   return t;
 }
-function le(e) {
+function ue(e) {
   function t(t) {
-    ((e.error = e.hasError ? new P(t, e.error, `An error was suppressed during disposal.`) : t),
+    ((e.error = e.hasError ? new N(t, e.error, `An error was suppressed during disposal.`) : t),
       (e.hasError = !0));
   }
   var n,
@@ -514,7 +514,7 @@ function le(e) {
   }
   return i();
 }
-function k(e, t) {
+function de(e, t) {
   return typeof e == `string` && /^\.\.?\//.test(e)
     ? e.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function (e, n, r, i, a) {
         return n
@@ -527,17 +527,17 @@ function k(e, t) {
       })
     : e;
 }
-var A,
+var O,
+  k,
+  A,
   j,
   M,
-  ue,
   N,
   P,
-  F,
-  I = n(() => {
-    ((A = function (e, t) {
+  F = n(() => {
+    ((O = function (e, t) {
       return (
-        (A =
+        (O =
           Object.setPrototypeOf ||
           ({ __proto__: [] } instanceof Array &&
             function (e, t) {
@@ -546,12 +546,12 @@ var A,
           function (e, t) {
             for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n]);
           }),
-        A(e, t)
+        O(e, t)
       );
     }),
-      (j = function () {
+      (k = function () {
         return (
-          (j =
+          (k =
             Object.assign ||
             function (e) {
               for (var t, n = 1, r = arguments.length; n < r; n++)
@@ -559,10 +559,10 @@ var A,
                   Object.prototype.hasOwnProperty.call(t, i) && (e[i] = t[i]);
               return e;
             }),
-          j.apply(this, arguments)
+          k.apply(this, arguments)
         );
       }),
-      (M = Object.create
+      (A = Object.create
         ? function (e, t, n, r) {
             r === void 0 && (r = n);
             var i = Object.getOwnPropertyDescriptor(t, n);
@@ -578,35 +578,35 @@ var A,
         : function (e, t, n, r) {
             (r === void 0 && (r = n), (e[r] = t[n]));
           }),
-      (ue = Object.create
+      (j = Object.create
         ? function (e, t) {
             Object.defineProperty(e, `default`, { enumerable: !0, value: t });
           }
         : function (e, t) {
             e.default = t;
           }),
-      (N = function (e) {
+      (M = function (e) {
         return (
-          (N =
+          (M =
             Object.getOwnPropertyNames ||
             function (e) {
               var t = [];
               for (var n in e) Object.prototype.hasOwnProperty.call(e, n) && (t[t.length] = n);
               return t;
             }),
-          N(e)
+          M(e)
         );
       }),
-      (P =
+      (N =
         typeof SuppressedError == `function`
           ? SuppressedError
           : function (e, t, n) {
               var r = Error(n);
               return ((r.name = `SuppressedError`), (r.error = e), (r.suppressed = t), r);
             }),
-      (F = {
+      (P = {
         __extends: u,
-        __assign: j,
+        __assign: k,
         __rest: d,
         __decorate: f,
         __param: p,
@@ -617,29 +617,29 @@ var A,
         __metadata: v,
         __awaiter: y,
         __generator: b,
-        __createBinding: M,
-        __exportStar: x,
-        __values: S,
-        __read: C,
-        __spread: w,
-        __spreadArrays: T,
-        __spreadArray: E,
-        __await: D,
-        __asyncGenerator: O,
-        __asyncDelegator: ee,
-        __asyncValues: te,
-        __makeTemplateObject: ne,
-        __importStar: re,
-        __importDefault: ie,
-        __classPrivateFieldGet: ae,
-        __classPrivateFieldSet: oe,
-        __classPrivateFieldIn: se,
-        __addDisposableResource: ce,
-        __disposeResources: le,
-        __rewriteRelativeImportExtension: k,
+        __createBinding: A,
+        __exportStar: ee,
+        __values: x,
+        __read: S,
+        __spread: C,
+        __spreadArrays: w,
+        __spreadArray: T,
+        __await: E,
+        __asyncGenerator: D,
+        __asyncDelegator: te,
+        __asyncValues: ne,
+        __makeTemplateObject: re,
+        __importStar: ie,
+        __importDefault: ae,
+        __classPrivateFieldGet: oe,
+        __classPrivateFieldSet: se,
+        __classPrivateFieldIn: ce,
+        __addDisposableResource: le,
+        __disposeResources: ue,
+        __rewriteRelativeImportExtension: de,
       }));
   }),
-  de = i((e) => {
+  fe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.NavigationTarget = void 0),
       (e.NavigationTarget = {
@@ -654,29 +654,29 @@ var A,
         ProjectSettingsDetails: `projectSettingsDetails`,
       }));
   }),
-  L = i((e) => {
+  I = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.BridgeAPIError = void 0),
       (e.BridgeAPIError = class extends Error {}));
   }),
-  R = i((e) => {
+  L = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getCallBridge = void 0));
-    var t = L();
+    var t = I();
     function n(e) {
       return !!e?.callBridge;
     }
     e.getCallBridge = () => {
-      if (!n(window.__bridge))
+      if (!n(globalThis.__bridge))
         throw new t.BridgeAPIError(`
       Unable to establish a connection with the Custom UI bridge.
       If you are trying to run your app locally, Forge apps only work in the context of Atlassian products. Refer to https://go.atlassian.com/forge-tunneling-with-custom-ui for how to tunnel when using a local development server.
     `);
-      return window.__bridge.callBridge;
+      return globalThis.__bridge.callBridge;
     };
   }),
-  z = i((e) => {
+  R = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.withRateLimiter = void 0));
-    var t = L();
+    var t = I();
     e.withRateLimiter = (e, n, r, i) => {
       let a = Date.now(),
         o = 0;
@@ -688,11 +688,11 @@ var A,
       };
     };
   }),
-  fe = i((e) => {
+  pe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.makeInvoke = e.invoke = void 0));
-    var t = R(),
-      n = L(),
-      r = z(),
+    var t = L(),
+      n = I(),
+      r = R(),
       i = (0, t.getCallBridge)(),
       a = (e) => {
         if (e && Object.values(e).some((e) => typeof e == `function`))
@@ -712,15 +712,15 @@ var A,
     }
     e.makeInvoke = o;
   }),
-  B = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(fe(), e));
+  z = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (F(), t(l)).__exportStar(pe(), e));
   }),
-  V = i((e) => {
+  B = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e._invokeEndpointFn = e.InvokeType = void 0));
-    var t = R(),
-      n = L(),
-      r = z(),
+    var t = L(),
+      n = I(),
+      r = R(),
       i = 500,
       a = 25,
       o = 1e3 * a;
@@ -755,35 +755,35 @@ var A,
       );
     };
   }),
-  pe = i((e) => {
+  me = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.invokeRemote = void 0));
-    var t = V();
+    var t = B();
     e.invokeRemote = (e) => (0, t._invokeEndpointFn)(t.InvokeType.REMOTE)(e);
   }),
-  me = i((e) => {
+  he = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.invokeService = void 0));
-    var t = V();
+    var t = B();
     e.invokeService = (e) => (0, t._invokeEndpointFn)(t.InvokeType.SERVICE)(e);
   }),
-  he = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
-    var n = (I(), t(l));
-    (n.__exportStar(pe(), e), n.__exportStar(me(), e));
-  }),
   ge = i((e) => {
+    Object.defineProperty(e, `__esModule`, { value: !0 });
+    var n = (F(), t(l));
+    (n.__exportStar(me(), e), n.__exportStar(he(), e));
+  }),
+  _e = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.submit = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = (0, t.getCallBridge)();
     e.submit = async (e) => {
       if ((await r(`submit`, e)) === !1)
         throw new n.BridgeAPIError(`this resource's view is not submittable.`);
     };
   }),
-  _e = i((e) => {
+  ve = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.close = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = (0, t.getCallBridge)();
     e.close = async (e) => {
       try {
@@ -794,10 +794,10 @@ var A,
       }
     };
   }),
-  ve = i((e) => {
+  ye = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.open = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = (0, t.getCallBridge)();
     e.open = async () => {
       try {
@@ -808,19 +808,19 @@ var A,
       }
     };
   }),
-  ye = i((e) => {
+  be = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.refresh = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = (0, t.getCallBridge)();
     e.refresh = async (e) => {
       if ((await r(`refresh`, e)) === !1)
         throw new n.BridgeAPIError(`this resource's view is not refreshable.`);
     };
   }),
-  be = i((e) => {
+  xe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.createHistory = void 0));
-    var t = (0, R().getCallBridge)();
+    var t = (0, L().getCallBridge)();
     e.createHistory = async () => {
       let e = await t(`createHistory`);
       return (
@@ -831,7 +831,7 @@ var A,
       );
     };
   }),
-  H = i((e) => {
+  V = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.FORGE_SUPPORTED_LOCALE_CODES = e.I18N_BUNDLE_FOLDER_NAME = e.I18N_INFO_FILE_NAME = void 0),
       (e.I18N_INFO_FILE_NAME = `i18n-info.json`),
@@ -841,7 +841,7 @@ var A,
           `.`,
         )));
   }),
-  xe = i((e) => {
+  Se = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.TranslationsGetter = e.TranslationGetterError = void 0));
     var t = (e, t) => {
@@ -920,10 +920,10 @@ var A,
         }
       }));
   }),
-  U = i((e) => {
+  H = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.getTranslationValueFromContent = e.getTranslationValue = void 0));
-    var n = (I(), t(l)).__importDefault(s());
+    var n = (F(), t(l)).__importDefault(s());
     ((e.getTranslationValue = (t, n, r) => {
       let i = t[r];
       return i ? (0, e.getTranslationValueFromContent)(i, n) : null;
@@ -937,9 +937,9 @@ var A,
         return typeof r == `string` ? r : null;
       }));
   }),
-  Se = i((e) => {
+  Ce = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.Translator = void 0));
-    var t = U();
+    var t = H();
     e.Translator = class {
       locale;
       translationsGetter;
@@ -969,9 +969,9 @@ var A,
       }
     };
   }),
-  Ce = i((e) => {
+  we = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.ensureLocale = void 0));
-    var t = H(),
+    var t = V(),
       n = new Set(t.FORGE_SUPPORTED_LOCALE_CODES),
       r = { "en-UK": `en-GB`, "nb-NO": `no-NO` },
       i = t.FORGE_SUPPORTED_LOCALE_CODES.reduce(
@@ -986,7 +986,7 @@ var A,
       return n.has(t) ? t : (i[t] ?? r[t] ?? null);
     };
   }),
-  we = i((e) => {
+  Te = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.extractI18nPropertiesFromModules =
         e.extractI18nKeysFromModules =
@@ -1033,29 +1033,29 @@ var A,
         return n;
       }));
   }),
-  Te = i((e) => {
+  Ee = i((e) => {
     Object.defineProperty(e, `__esModule`, { value: !0 });
   }),
-  W = i((e) => {
+  U = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.getI18nSupportedModuleEntries =
         e.extractI18nPropertiesFromModules =
         e.extractI18nKeysFromModules =
         e.getTranslationValue =
           void 0));
-    var n = (I(), t(l));
-    (n.__exportStar(H(), e),
-      n.__exportStar(xe(), e),
+    var n = (F(), t(l));
+    (n.__exportStar(V(), e),
       n.__exportStar(Se(), e),
-      n.__exportStar(Ce(), e));
-    var r = U();
+      n.__exportStar(Ce(), e),
+      n.__exportStar(we(), e));
+    var r = H();
     Object.defineProperty(e, `getTranslationValue`, {
       enumerable: !0,
       get: function () {
         return r.getTranslationValue;
       },
     });
-    var i = we();
+    var i = Te();
     (Object.defineProperty(e, `extractI18nKeysFromModules`, {
       enumerable: !0,
       get: function () {
@@ -1074,12 +1074,12 @@ var A,
           return i.getI18nSupportedModuleEntries;
         },
       }),
-      n.__exportStar(Te(), e));
+      n.__exportStar(Ee(), e));
   }),
-  Ee = i((e) => {
+  De = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getContext = void 0));
-    var t = R(),
-      n = W(),
+    var t = L(),
+      n = U(),
       r = (0, t.getCallBridge)();
     e.getContext = async () => {
       let e = await r(`getContext`),
@@ -1087,10 +1087,10 @@ var A,
       return (t && (e.locale = (0, n.ensureLocale)(t) ?? t), e);
     };
   }),
-  De = i((e) => {
+  Oe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.changeWindowTitle = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = (0, t.getCallBridge)();
     e.changeWindowTitle = async (e) => {
       try {
@@ -1100,12 +1100,12 @@ var A,
       }
     };
   }),
-  Oe = i((e) => {
+  ke = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.theme = void 0));
-    var t = (0, R().getCallBridge)();
+    var t = (0, L().getCallBridge)();
     e.theme = { enable: () => t(`enableTheming`) };
   }),
-  ke = i((e) => {
+  Ae = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.blobToBase64 = e.base64ToBlob = void 0),
       (e.base64ToBlob = (e, t) => {
@@ -1127,14 +1127,14 @@ var A,
             r.readAsDataURL(e));
         })));
   }),
-  Ae = i((e) => {
+  je = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.containsSerialisedBlobs =
         e.containsBlobs =
         e.deserialiseBlobsInPayload =
         e.serialiseBlobsInPayload =
           void 0));
-    var t = ke(),
+    var t = Ae(),
       n = (e) => {
         if (typeof e != `object` || !e || Object.prototype.toString.call(e) !== `[object Object]`)
           return !1;
@@ -1190,10 +1190,10 @@ var A,
               ? Object.values(t).some((t) => (0, e.containsSerialisedBlobs)(t))
               : !1));
   }),
-  G = i((e) => {
+  Me = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.events = void 0));
-    var t = R(),
-      n = Ae(),
+    var t = L(),
+      n = je(),
       r = (0, t.getCallBridge)(),
       i = (e) => (t) => {
         let r = t;
@@ -1221,11 +1221,11 @@ var A,
       onPublic: (e, t) => r(`onPublic`, { event: e, callback: i(t) }),
     };
   }),
-  je = i((e) => {
+  Ne = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.emitReadyEvent = void 0));
-    var t = G(),
-      n = Qe(),
-      r = (0, R().getCallBridge)(),
+    var t = Me(),
+      n = $e(),
+      r = (0, L().getCallBridge)(),
       i = `EXTENSION_READY`;
     e.emitReadyEvent = async () => {
       let e = await n.view.getContext();
@@ -1235,17 +1235,17 @@ var A,
       } catch {}
     };
   }),
-  Me,
-  Ne,
-  K,
+  W,
   Pe,
-  Fe = n(() => {
-    ((Me = `modulepreload`),
-      (Ne = function (e, t) {
+  G,
+  Fe,
+  Ie = n(() => {
+    ((W = `modulepreload`),
+      (Pe = function (e, t) {
         return new URL(e, t).href;
       }),
-      (K = {}),
-      (Pe = function (e, t, n) {
+      (G = {}),
+      (Fe = function (e, t, n) {
         let r = Promise.resolve();
         if (t && t.length > 0) {
           let e = document.getElementsByTagName(`link`),
@@ -1263,8 +1263,8 @@ var A,
           }
           r = o(
             t.map((t) => {
-              if (((t = Ne(t, n)), t in K)) return;
-              K[t] = !0;
+              if (((t = Pe(t, n)), t in G)) return;
+              G[t] = !0;
               let r = t.endsWith(`.css`),
                 i = r ? `[rel="stylesheet"]` : ``;
               if (n)
@@ -1275,7 +1275,7 @@ var A,
               else if (document.querySelector(`link[href="${t}"]${i}`)) return;
               let o = document.createElement(`link`);
               if (
-                ((o.rel = r ? `stylesheet` : Me),
+                ((o.rel = r ? `stylesheet` : W),
                 r || (o.as = `script`),
                 (o.crossOrigin = ``),
                 (o.href = t),
@@ -1300,7 +1300,7 @@ var A,
         });
       }));
   }),
-  Ie = i((e) => {
+  Le = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = r));
     var t,
       n = new Uint8Array(16);
@@ -1316,15 +1316,15 @@ var A,
       return t(n);
     }
   }),
-  Le = i((e) => {
+  Re = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.default = void 0),
       (e.default =
         /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i));
   }),
-  q = i((e) => {
+  K = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = n(Le());
+    var t = n(Re());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1333,11 +1333,11 @@ var A,
     }
     e.default = r;
   }),
-  J = i((e) => {
+  q = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.default = void 0),
       (e.unsafeStringify = i));
-    var t = n(q());
+    var t = n(K());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1374,10 +1374,10 @@ var A,
     }
     e.default = a;
   }),
-  Re = i((e) => {
+  ze = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = r(Ie()),
-      n = J();
+    var t = r(Le()),
+      n = q();
     function r(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1423,9 +1423,9 @@ var A,
     }
     e.default = c;
   }),
-  ze = i((e) => {
+  Be = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = n(q());
+    var t = n(K());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1455,12 +1455,12 @@ var A,
     }
     e.default = r;
   }),
-  Be = i((e) => {
+  Ve = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.URL = e.DNS = void 0),
       (e.default = s));
-    var t = J(),
-      n = r(ze());
+    var t = q(),
+      n = r(Be());
     function r(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1503,7 +1503,7 @@ var A,
       return ((c.DNS = a), (c.URL = o), c);
     }
   }),
-  Ve = i((e) => {
+  He = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
     function t(e) {
       if (typeof e == `string`) {
@@ -1640,27 +1640,27 @@ var A,
     }
     e.default = t;
   }),
-  He = i((e) => {
+  Ue = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = r(Be()),
-      n = r(Ve());
+    var t = r(Ve()),
+      n = r(He());
     function r(e) {
       return e && e.__esModule ? e : { default: e };
     }
     e.default = (0, t.default)(`v3`, 48, n.default);
   }),
-  Ue = i((e) => {
+  We = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.default = void 0),
       (e.default = {
         randomUUID: typeof crypto < `u` && crypto.randomUUID && crypto.randomUUID.bind(crypto),
       }));
   }),
-  We = i((e) => {
+  Ge = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = i(Ue()),
-      n = i(Ie()),
-      r = J();
+    var t = i(We()),
+      n = i(Le()),
+      r = q();
     function i(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1677,7 +1677,7 @@ var A,
     }
     e.default = a;
   }),
-  Ge = i((e) => {
+  Ke = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
     function t(e, t, n, r) {
       switch (e) {
@@ -1764,23 +1764,23 @@ var A,
     }
     e.default = r;
   }),
-  Ke = i((e) => {
+  qe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = r(Be()),
-      n = r(Ge());
+    var t = r(Ve()),
+      n = r(Ke());
     function r(e) {
       return e && e.__esModule ? e : { default: e };
     }
     e.default = (0, t.default)(`v5`, 80, n.default);
   }),
-  qe = i((e) => {
+  Je = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.default = void 0),
       (e.default = `00000000-0000-0000-0000-000000000000`));
   }),
-  Je = i((e) => {
+  Ye = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
-    var t = n(q());
+    var t = n(K());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
     }
@@ -1790,7 +1790,7 @@ var A,
     }
     e.default = r;
   }),
-  Ye = i((e) => {
+  Xe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       Object.defineProperty(e, `NIL`, {
         enumerable: !0,
@@ -1846,26 +1846,26 @@ var A,
           return o.default;
         },
       }));
-    var t = u(Re()),
-      n = u(He()),
-      r = u(We()),
-      i = u(Ke()),
-      a = u(qe()),
-      o = u(Je()),
-      s = u(q()),
-      c = u(J()),
-      l = u(ze());
+    var t = u(ze()),
+      n = u(Ue()),
+      r = u(Ge()),
+      i = u(qe()),
+      a = u(Je()),
+      o = u(Ye()),
+      s = u(K()),
+      c = u(q()),
+      l = u(Be());
     function u(e) {
       return e && e.__esModule ? e : { default: e };
     }
   }),
-  Xe = i((t) => {
-    (Fe(),
+  Ze = i((t) => {
+    (Ie(),
       Object.defineProperty(t, `__esModule`, { value: !0 }),
       (t.createAdfRendererIframeProps = void 0));
-    var n = Ye();
+    var n = Xe();
     t.createAdfRendererIframeProps = async (t, r) => {
-      let i = await Pe(
+      let i = await Fe(
           () => import(`./iframe-resizer-DVrYH2CP.js`).then((t) => e(t.default)),
           __vite__mapDeps([0, 1]),
           import.meta.url,
@@ -1910,10 +1910,10 @@ var A,
       );
     };
   }),
-  Ze = i((e) => {
+  Qe = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.onClose = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = (0, t.getCallBridge)();
     e.onClose = async (e) => {
       try {
@@ -1926,19 +1926,19 @@ var A,
       }
     };
   }),
-  Qe = i((e) => {
+  $e = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.view = void 0));
-    var t = ge(),
-      n = _e(),
-      r = ve(),
-      i = ye(),
-      a = be(),
-      o = Ee(),
-      s = De(),
-      c = Oe(),
-      l = je(),
-      u = Xe(),
-      d = Ze();
+    var t = _e(),
+      n = ve(),
+      r = ye(),
+      i = be(),
+      a = xe(),
+      o = De(),
+      s = Oe(),
+      c = ke(),
+      l = Ne(),
+      u = Ze(),
+      d = Qe();
     e.view = {
       submit: t.submit,
       close: n.close,
@@ -1953,12 +1953,12 @@ var A,
       createAdfRendererIframeProps: u.createAdfRendererIframeProps,
     };
   }),
-  Y = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(Qe(), e));
+  J = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (F(), t(l)).__exportStar($e(), e));
   }),
-  $e = i((e) => {
+  et = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.router = void 0));
-    var t = (0, R().getCallBridge)();
+    var t = (0, L().getCallBridge)();
     e.router = {
       getUrl: async (e) => {
         if (!e?.target) throw Error(`target is required for getUrl`);
@@ -1983,13 +1983,13 @@ var A,
       reload: async () => t(`reload`),
     };
   }),
-  et = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar($e(), e));
-  }),
   tt = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (F(), t(l)).__exportStar(et(), e));
+  }),
+  nt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.Modal = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = (0, t.getCallBridge)(),
       i = () => {};
     e.Modal = class {
@@ -2024,13 +2024,13 @@ var A,
       }
     };
   }),
-  nt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(tt(), e));
-  }),
   rt = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (F(), t(l)).__exportStar(nt(), e));
+  }),
+  it = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.productFetchApi = e.remoteFetchApi = void 0));
-    var t = ke(),
+    var t = Ae(),
       n = async (e, n = !1) => {
         let r = {};
         for (let [i, a] of e.entries())
@@ -2112,22 +2112,22 @@ var A,
         };
       }));
   }),
-  it = i((e) => {
+  at = i((e) => {
     var t;
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.requestRemote = e.requestBitbucket = e.requestJira = e.requestConfluence = void 0));
-    var n = R(),
-      r = rt();
+    var n = L(),
+      r = it();
     ((t = (0, r.productFetchApi)((0, n.getCallBridge)())),
       (e.requestConfluence = t.requestConfluence),
       (e.requestJira = t.requestJira),
       (e.requestBitbucket = t.requestBitbucket),
       (e.requestRemote = (0, r.remoteFetchApi)((0, n.getCallBridge)()).requestRemote));
   }),
-  at = i((e) => {
+  ot = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.showFlag = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = (0, t.getCallBridge)();
     e.showFlag = (e) => {
       if (!e.id) throw new n.BridgeAPIError(`"id" must be defined in flag options`);
@@ -2135,9 +2135,9 @@ var A,
       return { close: async () => (await t, r(`closeFlag`, { id: e.id })) };
     };
   }),
-  ot = i((e) => {
+  st = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.showFlag = void 0));
-    var t = at();
+    var t = ot();
     Object.defineProperty(e, `showFlag`, {
       enumerable: !0,
       get: function () {
@@ -2145,12 +2145,12 @@ var A,
       },
     });
   }),
-  st = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(G(), e));
-  }),
   ct = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (F(), t(l)).__exportStar(Me(), e));
+  }),
+  lt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.realtime = void 0));
-    var t = (0, R().getCallBridge)();
+    var t = (0, L().getCallBridge)();
     e.realtime = {
       publish: (e, n, r) =>
         t(`publishRealtimeChannel`, { channelName: e, eventPayload: n, options: r }),
@@ -2162,7 +2162,7 @@ var A,
         t(`subscribeRealtimeChannel`, { channelName: e, onEvent: n, options: r, isGlobal: !0 }),
     };
   }),
-  lt = i((e) => {
+  ut = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.Bitbucket = e.Confluence = e.Jira = void 0),
       (function (e) {
@@ -2175,17 +2175,17 @@ var A,
         ((e.Repository = `repository`), (e.PullRequest = `pullRequest`));
       })((e.Bitbucket ||= {})));
   }),
-  ut = i((e) => {
+  dt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.Bitbucket = e.Confluence = e.Jira = e.realtime = void 0));
-    var t = ct();
+    var t = lt();
     Object.defineProperty(e, `realtime`, {
       enumerable: !0,
       get: function () {
         return t.realtime;
       },
     });
-    var n = lt();
+    var n = ut();
     (Object.defineProperty(e, `Jira`, {
       enumerable: !0,
       get: function () {
@@ -2205,11 +2205,11 @@ var A,
         },
       }));
   }),
-  dt = i((e) => {
+  ft = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.open = e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE = void 0));
-    var t = R(),
-      n = L(),
+    var t = L(),
+      n = I(),
       r = 30,
       i = (0, t.getCallBridge)();
     e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE = `Unable to open Rovo Chat due to usage in an unsupported product. Only Confluence, Jira and some Jira Service Management modules are supported at this point. See https://developer.atlassian.com/platform/forge/apis-reference/ui-api-bridge/rovo/`;
@@ -2232,25 +2232,25 @@ var A,
         throw new n.BridgeAPIError(e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE);
     };
   }),
-  ft = i((e) => {
+  pt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.isEnabled = void 0));
-    var t = (0, R().getCallBridge)();
+    var t = (0, L().getCallBridge)();
     e.isEnabled = () => t(`isRovoEnabled`);
   }),
-  pt = i((e) => {
+  mt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.rovo = void 0));
-    var t = dt(),
-      n = ft();
+    var t = ft(),
+      n = pt();
     e.rovo = { open: t.open, isEnabled: n.isEnabled };
   }),
-  mt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(pt(), e));
-  }),
   ht = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (F(), t(l)).__exportStar(mt(), e));
+  }),
+  gt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.createTranslationFunction = e.getTranslations = e.resetTranslationsCache = void 0));
-    var t = W(),
-      n = Y(),
+    var t = U(),
+      n = J(),
       r = new t.TranslationsGetter({
         getI18nInfoConfig: async () => {
           let e = await fetch(`./${t.I18N_BUNDLE_FOLDER_NAME}/${t.I18N_INFO_FILE_NAME}`);
@@ -2277,9 +2277,9 @@ var A,
         return (await a.init(), (e, t) => a.translate(e) ?? t ?? e);
       }));
   }),
-  gt = i((e) => {
+  _t = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.permissions = void 0));
-    var t = (0, R().getCallBridge)();
+    var t = (0, L().getCallBridge)();
     e.permissions = {
       egress: {
         get: async (e) => t(`__permission__egressGet`, e),
@@ -2293,7 +2293,7 @@ var A,
       },
     };
   }),
-  X = i((e) => {
+  Y = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.parseUrl = void 0));
     function t(e) {
       let t = e.match(/^(.*?:)/)?.[0] ?? `https:`,
@@ -2303,7 +2303,7 @@ var A,
     }
     e.parseUrl = t;
   }),
-  _t = i((e) => {
+  vt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.getEgressesBasedOnToggles =
         e.sortAndGroupEgressPermissionsByDomain =
@@ -2311,7 +2311,7 @@ var A,
         e.EgressType =
         e.globToRegex =
           void 0));
-    var t = X();
+    var t = Y();
     function n(e) {
       let t = e.replace(/[.+?^${}()|[\]\\]/g, `\\$&`).replace(/\*/g, `.*`);
       return RegExp(`^${t}$`);
@@ -2363,10 +2363,10 @@ var A,
         return [...n.entries()].map(([e, t]) => ({ type: e, addresses: [...new Set(t)] }));
       }));
   }),
-  vt = i((e) => {
+  yt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.EgressFilteringService = void 0));
-    var t = X(),
-      n = _t();
+    var t = Y(),
+      n = vt();
     e.EgressFilteringService = class {
       constructor(e) {
         ((this.URLs = e.filter((e) => !e.startsWith(`*`)).map((e) => this.parseUrl(e))),
@@ -2425,19 +2425,19 @@ var A,
       }
     };
   }),
-  yt = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
-    var n = (I(), t(l));
-    (n.__exportStar(vt(), e), n.__exportStar(X(), e), n.__exportStar(_t(), e));
-  }),
   bt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (I(), t(l)).__exportStar(yt(), e));
+    Object.defineProperty(e, `__esModule`, { value: !0 });
+    var n = (F(), t(l));
+    (n.__exportStar(yt(), e), n.__exportStar(Y(), e), n.__exportStar(vt(), e));
   }),
   xt = i((e) => {
+    (Object.defineProperty(e, `__esModule`, { value: !0 }), (F(), t(l)).__exportStar(bt(), e));
+  }),
+  St = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.checkPermissions = e.createPermissionUtils = void 0));
-    var t = bt(),
-      n = Y();
+    var t = xt(),
+      n = J();
     function r(e) {
       return typeof e == `string` ? e : `address` in e && e.address ? e.address : e.remote || ``;
     }
@@ -2546,35 +2546,35 @@ var A,
     }
     e.checkPermissions = m;
   }),
-  St = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
-    var n = (I(), t(l));
-    (n.__exportStar(gt(), e), n.__exportStar(xt(), e));
-  }),
   Ct = i((e) => {
+    Object.defineProperty(e, `__esModule`, { value: !0 });
+    var n = (F(), t(l));
+    (n.__exportStar(_t(), e), n.__exportStar(St(), e));
+  }),
+  wt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.BRIDGE_OBJECT_STORE_RESTRICTED_ENVIRONMENT_ERROR = void 0),
       (e.BRIDGE_OBJECT_STORE_RESTRICTED_ENVIRONMENT_ERROR = `Object Store bridge methods are restricted to Forge apps in a non-production environment. For more information please see https://developer.atlassian.com/platform/forge/cli-reference/environments/ for reference on Forge app environments.`));
   }),
-  Z = i((e) => {
+  X = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.checkRestrictedEnvironment = void 0));
-    var t = L(),
-      n = Y(),
-      r = Ct();
+    var t = I(),
+      n = J(),
+      r = wt();
     e.checkRestrictedEnvironment = async () => {
       let { environmentType: e } = await n.view.getContext();
       if (e === `PRODUCTION`)
         throw new t.BridgeAPIError(r.BRIDGE_OBJECT_STORE_RESTRICTED_ENVIRONMENT_ERROR);
     };
   }),
-  wt = i((e) => {
+  Tt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.upload = e.createUploadPromises = void 0));
-    var t = B(),
-      n = L(),
-      r = Z(),
-      i = (0, R().getCallBridge)(),
+    var t = z(),
+      n = I(),
+      r = X(),
+      i = (0, L().getCallBridge)(),
       a = (e, t) => {
         let n = atob(e),
           r = Array(n.length);
@@ -2681,12 +2681,12 @@ var A,
         return await Promise.all(a.map((e) => e.promise));
       }));
   }),
-  Tt = i((e) => {
+  Et = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.deleteObjects = void 0));
-    var t = B(),
-      n = L(),
-      r = Z(),
-      i = (0, R().getCallBridge)();
+    var t = z(),
+      n = I(),
+      r = X(),
+      i = (0, L().getCallBridge)();
     e.deleteObjects = async ({ functionKey: e, keys: a }) => {
       if (
         (await (0, r.checkRestrictedEnvironment)(),
@@ -2703,12 +2703,12 @@ var A,
       );
     };
   }),
-  Et = i((e) => {
+  Dt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.download = void 0));
-    var t = B(),
-      n = L(),
-      r = Z(),
-      i = (0, R().getCallBridge)();
+    var t = z(),
+      n = I(),
+      r = X(),
+      i = (0, L().getCallBridge)();
     e.download = async ({ functionKey: e, keys: a }) => {
       if (
         (await (0, r.checkRestrictedEnvironment)(),
@@ -2744,12 +2744,12 @@ var A,
       return await Promise.all(s);
     };
   }),
-  Dt = i((e) => {
+  Ot = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getMetadata = void 0));
-    var t = B(),
-      n = L(),
-      r = Z(),
-      i = (0, R().getCallBridge)();
+    var t = z(),
+      n = I(),
+      r = X(),
+      i = (0, L().getCallBridge)();
     e.getMetadata = async ({ functionKey: e, keys: a }) => {
       if (
         (await (0, r.checkRestrictedEnvironment)(),
@@ -2771,19 +2771,19 @@ var A,
       );
     };
   }),
-  Ot = i((e) => {
+  kt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.createUploadPromises = e.objectStore = void 0));
-    var t = wt();
+    var t = Tt();
     Object.defineProperty(e, `createUploadPromises`, {
       enumerable: !0,
       get: function () {
         return t.createUploadPromises;
       },
     });
-    var n = Tt(),
-      r = Et(),
-      i = Dt();
+    var n = Et(),
+      r = Dt(),
+      i = Ot();
     e.objectStore = {
       upload: t.upload,
       download: r.download,
@@ -2791,12 +2791,12 @@ var A,
       delete: n.deleteObjects,
     };
   }),
-  kt = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
-    var n = (I(), t(l));
-    (n.__exportStar(Ot(), e), n.__exportStar(Ct(), e));
-  }),
   At = i((e) => {
+    Object.defineProperty(e, `__esModule`, { value: !0 });
+    var n = (F(), t(l));
+    (n.__exportStar(kt(), e), n.__exportStar(wt(), e));
+  }),
+  jt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.Evaluator = void 0),
       (e.Evaluator = class {
@@ -2832,19 +2832,19 @@ var A,
         }
       }));
   }),
-  jt = i((e) => {
+  Mt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.FeatureFlagEventType = void 0),
       (function (e) {
         e.CHECKFLAG = `checkFlag`;
       })((e.FeatureFlagEventType ||= {})));
   }),
-  Mt = i((e) => {
+  Nt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.trackFeatureFlagEvent = void 0));
-    var t = R(),
-      n = L(),
-      r = z(),
-      i = jt(),
+    var t = L(),
+      n = I(),
+      r = R(),
+      i = Mt(),
       a = 500,
       o = 1e3 * 25,
       s = (0, t.getCallBridge)(),
@@ -2865,11 +2865,11 @@ var A,
       `Feature flags calls are rate limited at ${a}req/${o / 1e3}s`,
     );
   }),
-  Nt = i((e) => {
+  Pt = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.initFeatureFlags = void 0));
-    var t = R(),
-      n = L(),
-      r = z(),
+    var t = L(),
+      n = I(),
+      r = R(),
       i = 500,
       a = 1e3 * 25,
       o = (0, t.getCallBridge)(),
@@ -2895,12 +2895,12 @@ var A,
       `Feature flags initialisation calls are rate limited at ${i}req/${a / 1e3}s`,
     );
   }),
-  Pt = i((e) => {
+  Ft = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.FeatureFlags = void 0));
-    var t = At(),
-      n = Mt(),
-      r = Nt(),
-      i = jt();
+    var t = jt(),
+      n = Nt(),
+      r = Pt(),
+      i = Mt();
     e.FeatureFlags = class {
       constructor() {
         ((this.initialized = !1), (this.eventProps = {}));
@@ -2940,9 +2940,9 @@ var A,
       }
     };
   }),
-  Ft = i((e) => {
+  It = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.FeatureFlags = void 0));
-    var t = Pt();
+    var t = Ft();
     Object.defineProperty(e, `FeatureFlags`, {
       enumerable: !0,
       get: function () {
@@ -2950,375 +2950,196 @@ var A,
       },
     });
   }),
-  It = i((e) => {
+  Z = i((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.i18n = e.NavigationTarget = void 0));
-    var n = (I(), t(l)),
-      r = de();
+    var n = (F(), t(l)),
+      r = fe();
     (Object.defineProperty(e, `NavigationTarget`, {
       enumerable: !0,
       get: function () {
         return r.NavigationTarget;
       },
     }),
-      n.__exportStar(B(), e),
-      n.__exportStar(he(), e),
-      n.__exportStar(Y(), e),
-      n.__exportStar(et(), e),
-      n.__exportStar(nt(), e),
-      n.__exportStar(it(), e),
-      n.__exportStar(ot(), e),
+      n.__exportStar(z(), e),
+      n.__exportStar(ge(), e),
+      n.__exportStar(J(), e),
+      n.__exportStar(tt(), e),
+      n.__exportStar(rt(), e),
+      n.__exportStar(at(), e),
       n.__exportStar(st(), e),
-      n.__exportStar(ut(), e),
-      n.__exportStar(mt(), e),
-      (e.i18n = n.__importStar(ht())),
-      n.__exportStar(St(), e),
-      n.__exportStar(kt(), e),
-      n.__exportStar(Ft(), e));
-  }),
+      n.__exportStar(ct(), e),
+      n.__exportStar(dt(), e),
+      n.__exportStar(ht(), e),
+      (e.i18n = n.__importStar(gt())),
+      n.__exportStar(Ct(), e),
+      n.__exportStar(At(), e),
+      n.__exportStar(It(), e));
+  })(),
   Lt = i((e) => {
     var t = a(),
       n = Symbol.for(`react.element`),
-      r = Symbol.for(`react.fragment`),
-      i = Object.prototype.hasOwnProperty,
-      o = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
-      s = { key: !0, ref: !0, __self: !0, __source: !0 };
-    function c(e, t, r) {
-      var a,
+      r = Object.prototype.hasOwnProperty,
+      i = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
+      o = { key: !0, ref: !0, __self: !0, __source: !0 };
+    function s(e, t, a) {
+      var s,
         c = {},
         l = null,
         u = null;
-      for (a in (r !== void 0 && (l = `` + r),
+      for (s in (a !== void 0 && (l = `` + a),
       t.key !== void 0 && (l = `` + t.key),
       t.ref !== void 0 && (u = t.ref),
       t))
-        i.call(t, a) && !s.hasOwnProperty(a) && (c[a] = t[a]);
+        r.call(t, s) && !o.hasOwnProperty(s) && (c[s] = t[s]);
       if (e && e.defaultProps)
-        for (a in ((t = e.defaultProps), t)) c[a] === void 0 && (c[a] = t[a]);
-      return { $$typeof: n, type: e, key: l, ref: u, props: c, _owner: o.current };
+        for (s in ((t = e.defaultProps), t)) c[s] === void 0 && (c[s] = t[s]);
+      return { $$typeof: n, type: e, key: l, ref: u, props: c, _owner: i.current };
     }
-    ((e.Fragment = r), (e.jsx = c), (e.jsxs = c));
+    ((e.jsx = s), (e.jsxs = s));
   }),
-  Rt = i((e, t) => {
+  Q = i((e, t) => {
     t.exports = Lt();
-  }),
-  Q = It(),
-  $ = Rt();
+  })();
+async function $(e, t, n) {
+  await (0, Z.showFlag)({
+    id: `checklist-${Date.now()}`,
+    title: e,
+    type: n,
+    description: t,
+    isAutoDismiss: !0,
+  });
+}
+function Rt(e) {
+  return new Date(e).toLocaleString(`en-GB`, {
+    day: `2-digit`,
+    month: `2-digit`,
+    year: `numeric`,
+    hour: `2-digit`,
+    minute: `2-digit`,
+    hour12: !1,
+  });
+}
 function zt() {
-  let [e, t] = (0, c.useState)(``),
-    [n, r] = (0, c.useState)(``),
-    [i, a] = (0, c.useState)(``),
-    [o, s] = (0, c.useState)(!1),
-    [l, u] = (0, c.useState)(!1),
-    [d, f] = (0, c.useState)(!1),
-    [p, m] = (0, c.useState)([]),
-    h = (e, t, n) => {
-      m((r) => [{ id: Date.now(), query: e, result: t, timestamp: new Date(), type: n }, ...r]);
-    },
-    g = async () => {
+  return (0, Q.jsx)(`div`, {
+    className: `loading-overlay`,
+    children: (0, Q.jsx)(`div`, { className: `loading-spinner` }),
+  });
+}
+function Bt() {
+  let [e, t] = (0, c.useState)({
+      checkList: `[]`,
+      issueId: ``,
+      updatedAt: new Date(),
+      updateDisplayName: ``,
+      updateId: ``,
+    }),
+    [n, r] = (0, c.useState)(!0),
+    [i, a] = (0, c.useState)(!1);
+  (0, c.useEffect)(() => {
+    o();
+  }, []);
+  let o = async () => {
       try {
-        (a(``), s(!0));
-        let t = await (0, Q.invoke)(`execute`, { query: e });
-        (r(t), h(e, t, `SQL`));
-      } catch (e) {
-        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
+        t(await (0, Z.invoke)(`getCheckList`));
+      } catch {
+        await $(
+          `Checklist Loading Error`,
+          `Unable to load the checklist. Please try again later.`,
+          `error`,
+        );
       } finally {
-        s(!1);
+        r(!1);
       }
     },
-    _ = async () => {
+    s = async (n) => {
       try {
-        (a(``), u(!0));
-        let t = await (0, Q.invoke)(`executeDDL`, { query: e });
-        (r(t), h(e, t, `DDL`));
-      } catch (e) {
-        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
+        a(!0);
+        let r = await (0, Z.invoke)(n ? `updateWithOptimisticLocking` : `update`, e);
+        r.error
+          ? r.concurrent
+            ? (await $(
+                `Concurrent Modification Detected`,
+                `User ${r.data?.updateDisplayName} has modified the checklist before you. Your changes could not be saved.`,
+                `error`,
+              ),
+              await o())
+            : await $(
+                `Update Failed`,
+                r.message || `Unable to update the checklist. Please try again later.`,
+                `error`,
+              )
+          : r.data &&
+            (t(r.data),
+            await $(`Update Successful`, `The checklist has been successfully updated`, `success`));
+      } catch {
+        await $(
+          `Update Error`,
+          `An error occurred while updating the checklist. Please try again later.`,
+          `error`,
+        );
       } finally {
-        u(!1);
+        a(!1);
       }
     },
-    v = async () => {
-      try {
-        (a(``), f(!0));
-        let t = await (0, Q.invoke)(`executeCommand`, { command: e });
-        (r(t), h(e, t, `COMMAND`));
-      } catch (e) {
-        (a(e instanceof Error ? e.message : `An error occurred`), r(``));
-      } finally {
-        f(!1);
-      }
-    },
-    y = (e) =>
-      new Intl.DateTimeFormat(`en-US`, {
-        hour: `2-digit`,
-        minute: `2-digit`,
-        second: `2-digit`,
-        hour12: !1,
-      }).format(e),
-    b = (e) => {
-      switch (e) {
-        case `SQL`:
-          return `#0052CC`;
-        case `DDL`:
-          return `#36B37E`;
-        case `COMMAND`:
-          return `#FF5630`;
-        default:
-          return `#0052CC`;
-      }
+    l = (n) => {
+      let r = [...JSON.parse(e.checkList)];
+      ((r[n] = { ...r[n], done: !r[n].done }), t({ ...e, checkList: JSON.stringify(r) }));
     };
-  return (0, $.jsxs)(`div`, {
-    style: { padding: `20px`, maxWidth: `800px`, margin: `0 auto` },
-    children: [
-      (0, $.jsx)(`h1`, { children: `SQL Query Executor` }),
-      (0, $.jsxs)(`div`, {
-        style: { marginBottom: `20px` },
+  return n
+    ? (0, Q.jsx)(`div`, { className: `checklist-container`, children: (0, Q.jsx)(zt, {}) })
+    : (0, Q.jsxs)(`div`, {
+        className: `checklist-container`,
         children: [
-          (0, $.jsx)(`textarea`, {
-            value: e,
-            onChange: (e) => t(e.target.value),
-            placeholder: `Enter your SQL query here...`,
-            style: {
-              width: `100%`,
-              minHeight: `150px`,
-              padding: `10px`,
-              marginBottom: `10px`,
-              fontFamily: `monospace`,
-              fontSize: `14px`,
-            },
-          }),
-          (0, $.jsxs)(`div`, {
-            style: { display: `flex`, gap: `10px` },
+          i && (0, Q.jsx)(zt, {}),
+          (0, Q.jsxs)(`div`, {
+            className: `checklist-header`,
             children: [
-              (0, $.jsx)(`button`, {
-                onClick: g,
-                disabled: o || l || d,
-                style: {
-                  padding: `10px 20px`,
-                  backgroundColor: o ? `#0052CC80` : `#0052CC`,
-                  color: `white`,
-                  border: `none`,
-                  borderRadius: `3px`,
-                  cursor: o ? `not-allowed` : `pointer`,
-                  display: `flex`,
-                  alignItems: `center`,
-                  gap: `8px`,
-                },
-                children: o
-                  ? (0, $.jsxs)($.Fragment, {
-                      children: [
-                        (0, $.jsx)(`div`, {
-                          style: {
-                            width: `16px`,
-                            height: `16px`,
-                            border: `2px solid #ffffff`,
-                            borderTop: `2px solid transparent`,
-                            borderRadius: `50%`,
-                            animation: `spin 1s linear infinite`,
-                          },
-                        }),
-                        `Executing...`,
-                      ],
-                    })
-                  : `Execute Query`,
-              }),
-              (0, $.jsx)(`button`, {
-                onClick: _,
-                disabled: o || l || d,
-                style: {
-                  padding: `10px 20px`,
-                  backgroundColor: l ? `#36B37E80` : `#36B37E`,
-                  color: `white`,
-                  border: `none`,
-                  borderRadius: `3px`,
-                  cursor: l ? `not-allowed` : `pointer`,
-                  display: `flex`,
-                  alignItems: `center`,
-                  gap: `8px`,
-                },
-                children: l
-                  ? (0, $.jsxs)($.Fragment, {
-                      children: [
-                        (0, $.jsx)(`div`, {
-                          style: {
-                            width: `16px`,
-                            height: `16px`,
-                            border: `2px solid #ffffff`,
-                            borderTop: `2px solid transparent`,
-                            borderRadius: `50%`,
-                            animation: `spin 1s linear infinite`,
-                          },
-                        }),
-                        `Executing...`,
-                      ],
-                    })
-                  : `Execute DDL`,
-              }),
-              (0, $.jsx)(`button`, {
-                onClick: v,
-                disabled: o || l || d,
-                style: {
-                  padding: `10px 20px`,
-                  backgroundColor: d ? `#FF563080` : `#FF5630`,
-                  color: `white`,
-                  border: `none`,
-                  borderRadius: `3px`,
-                  cursor: d ? `not-allowed` : `pointer`,
-                  display: `flex`,
-                  alignItems: `center`,
-                  gap: `8px`,
-                },
-                children: d
-                  ? (0, $.jsxs)($.Fragment, {
-                      children: [
-                        (0, $.jsx)(`div`, {
-                          style: {
-                            width: `16px`,
-                            height: `16px`,
-                            border: `2px solid #ffffff`,
-                            borderTop: `2px solid transparent`,
-                            borderRadius: `50%`,
-                            animation: `spin 1s linear infinite`,
-                          },
-                        }),
-                        `Executing...`,
-                      ],
-                    })
-                  : `Execute Command`,
+              (0, Q.jsx)(`h2`, { children: `Issue Checklist` }),
+              (0, Q.jsxs)(`div`, {
+                className: `last-update`,
+                children: [`Last updated by `, e.updateDisplayName, ` on `, Rt(e.updatedAt)],
               }),
             ],
           }),
-        ],
-      }),
-      i &&
-        (0, $.jsx)(`div`, {
-          style: {
-            padding: `10px`,
-            backgroundColor: `#FFEBE6`,
-            border: `1px solid #DE350B`,
-            borderRadius: `3px`,
-            marginBottom: `20px`,
-            color: `#DE350B`,
-          },
-          children: i,
-        }),
-      n &&
-        (0, $.jsxs)(`div`, {
-          children: [
-            (0, $.jsx)(`h3`, { children: `Result:` }),
-            (0, $.jsx)(`pre`, {
-              style: {
-                backgroundColor: `#F4F5F7`,
-                padding: `15px`,
-                borderRadius: `3px`,
-                overflow: `auto`,
-                maxHeight: `400px`,
-              },
-              children: n,
-            }),
-          ],
-        }),
-      p.length > 0 &&
-        (0, $.jsxs)(`div`, {
-          style: { marginTop: `30px` },
-          children: [
-            (0, $.jsx)(`h2`, { children: `Query History` }),
-            (0, $.jsx)(`div`, {
-              style: { display: `flex`, flexDirection: `column`, gap: `20px` },
-              children: p.map((e) =>
-                (0, $.jsxs)(
-                  `div`,
-                  {
-                    style: { border: `1px solid #DFE1E6`, borderRadius: `3px`, overflow: `hidden` },
-                    children: [
-                      (0, $.jsxs)(`div`, {
-                        style: {
-                          padding: `10px`,
-                          backgroundColor: b(e.type),
-                          color: `white`,
-                          display: `flex`,
-                          justifyContent: `space-between`,
-                          alignItems: `center`,
-                        },
-                        children: [
-                          (0, $.jsxs)(`span`, {
-                            style: { fontWeight: `bold` },
-                            children: [e.type, ` Query`],
-                          }),
-                          (0, $.jsx)(`span`, { children: y(e.timestamp) }),
-                        ],
-                      }),
-                      (0, $.jsxs)(`div`, {
-                        style: { padding: `15px` },
-                        children: [
-                          (0, $.jsxs)(`div`, {
-                            style: { marginBottom: `10px` },
-                            children: [
-                              (0, $.jsx)(`h4`, {
-                                style: { margin: `0 0 5px 0` },
-                                children: `Query:`,
-                              }),
-                              (0, $.jsx)(`pre`, {
-                                style: {
-                                  backgroundColor: `#F4F5F7`,
-                                  padding: `10px`,
-                                  borderRadius: `3px`,
-                                  margin: 0,
-                                  overflow: `auto`,
-                                  maxHeight: `200px`,
-                                },
-                                children: e.query,
-                              }),
-                            ],
-                          }),
-                          (0, $.jsxs)(`div`, {
-                            children: [
-                              (0, $.jsx)(`h4`, {
-                                style: { margin: `0 0 5px 0` },
-                                children: `Result:`,
-                              }),
-                              (0, $.jsx)(`pre`, {
-                                style: {
-                                  backgroundColor: `#F4F5F7`,
-                                  padding: `10px`,
-                                  borderRadius: `3px`,
-                                  margin: 0,
-                                  overflow: `auto`,
-                                  maxHeight: `200px`,
-                                },
-                                children: e.result,
-                              }),
-                            ],
-                          }),
-                        ],
-                      }),
-                    ],
-                  },
-                  e.id,
-                ),
+          (0, Q.jsx)(`div`, {
+            className: `checklist`,
+            children: JSON.parse(e.checkList).map((e, t) =>
+              (0, Q.jsxs)(
+                `div`,
+                {
+                  className: `checklist-item`,
+                  children: [
+                    (0, Q.jsx)(`input`, {
+                      type: `checkbox`,
+                      checked: e.done,
+                      onChange: () => l(t),
+                    }),
+                    (0, Q.jsx)(`span`, { children: e.label }),
+                  ],
+                },
+                t,
               ),
-            }),
-          ],
-        }),
-      (0, $.jsx)(`style`, {
-        children: `
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `,
-      }),
-    ],
-  });
+            ),
+          }),
+          (0, Q.jsxs)(`div`, {
+            className: `buttons`,
+            children: [
+              (0, Q.jsx)(`button`, { onClick: () => s(!0), children: `Update with Locking` }),
+              (0, Q.jsx)(`button`, { onClick: () => s(!1), children: `Update without Locking` }),
+            ],
+          }),
+        ],
+      });
 }
-var Bt = (0, o().createRoot)(document.getElementById(`root`)),
-  Vt = () => {
-    Bt.render((0, $.jsx)(zt, {}));
+var Vt = (0, o().createRoot)(document.getElementById(`root`)),
+  Ht = () => {
+    Vt.render((0, Q.jsx)(Bt, {}));
   };
-Q.view.theme
+Z.view.theme
   .enable()
   .then(() => {
-    Vt();
+    Ht();
   })
   .catch((e) => {
-    (console.error(e.message), Vt());
+    (console.error(e.message), Ht());
   });
