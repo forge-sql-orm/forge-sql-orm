@@ -9,7 +9,7 @@
     "@forge/events": "^2.1.2",
     "@forge/kvs": "^1.6.0",
     "@forge/resolver": "1.7.1",
-    "@forge/sql": "^3.0.21",
+    "@forge/sql": "^3.0.22",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "^2.1.26"
   },
