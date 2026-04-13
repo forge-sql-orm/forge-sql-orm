@@ -7,7 +7,7 @@
   "dependencies": {
     "@forge/api": "^7.1.2",
     "@forge/events": "^2.1.2",
-    "@forge/kvs": "^1.6.0",
+    "@forge/kvs": "^1.6.1",
     "@forge/resolver": "1.7.1",
     "@forge/sql": "^3.0.21",
     "drizzle-orm": "^0.45.2",
