@@ -18,7 +18,7 @@
     "knip": "^6.4.1"
   },
   "dependencies": {
-    "@forge/bridge": "5.15.0",
+    "@forge/bridge": "5.15.1",
     "@forge/react": "11.14.0",
     "@forge/resolver": "1.7.1",
     "@forge/sql": "^3.0.21",
