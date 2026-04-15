@@ -87,7 +87,7 @@ describe("VectorTiDB SQL fragments (toQuery)", () => {
   it("vecFromText uses placeholder and passes raw text as bind param (no SQL escaping)", () => {
     const q = vecFromText("a'b");
     const built = q.toQuery(mysqlQueryConfig);
-    expect(built.sql).toMatch(/VEC_FROM_TEXT\('\?'\)/);
+    expect(built.sql).toMatch(/VEC_FROM_TEXT\(\?\)/);
     expect(built.params).toContain("a'b");
   });
 
@@ -102,7 +102,9 @@ describe("VectorTiDB SQL fragments (toQuery)", () => {
     const qVec = [1, 2, 3];
     expect(vecAsText(v).toQuery(mysqlQueryConfig).sql).toContain("VEC_AS_TEXT");
     expect(vecDims(v).toQuery(mysqlQueryConfig).sql).toContain("VEC_DIMS");
-    expect(vecDims(qVec).toQuery(mysqlQueryConfig).sql).toContain("VEC_FROM_TEXT('[1,2,3]')");
+    const dimsBuilt = vecDims(qVec).toQuery(mysqlQueryConfig);
+    expect(dimsBuilt.sql).toContain("VEC_FROM_TEXT(?)");
+    expect(dimsBuilt.params).toContain("[1,2,3]");
     expect(vecL2Norm(v).toQuery(mysqlQueryConfig).sql).toContain("VEC_L2_NORM");
     expect(vecL2Distance(v, qVec).toQuery(mysqlQueryConfig).sql).toContain("VEC_L2_DISTANCE");
     expect(vecCosineDistance(v, qVec).toQuery(mysqlQueryConfig).sql).toContain(

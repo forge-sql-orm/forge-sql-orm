@@ -1453,10 +1453,14 @@ describe("ForgeSQLSelectOperations", () => {
       );
     });
 
-    it("vecDims(number[]) inlines VEC_FROM_TEXT", async () => {
+    it("vecDims(number[]) uses placeholder in VEC_FROM_TEXT", async () => {
       await forgeSqlOperation.select({ x: vecDims(QUERY_VECTOR_10) }).from(testEntityVector);
       expect(sql.prepare).toHaveBeenCalledWith(
-        "select VEC_DIMS(VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+        "select VEC_DIMS(VEC_FROM_TEXT(?)) from `test_entity_vector`",
+      );
+      const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
+      expect(preparedStatement.bindParams).toHaveBeenCalledWith(
+        "[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]",
       );
     });
 
@@ -1474,7 +1478,7 @@ describe("ForgeSQLSelectOperations", () => {
         .select({ x: vecL2Distance(testEntityVector.embedding, QUERY_VECTOR_10) })
         .from(testEntityVector);
       expect(sql.prepare).toHaveBeenCalledWith(
-        "select VEC_L2_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+        "select VEC_L2_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT(?)) from `test_entity_vector`",
       );
     });
 
@@ -1483,7 +1487,7 @@ describe("ForgeSQLSelectOperations", () => {
         .select({ x: vecCosineDistance(testEntityVector.embedding, QUERY_VECTOR_10) })
         .from(testEntityVector);
       expect(sql.prepare).toHaveBeenCalledWith(
-        "select VEC_COSINE_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+        "select VEC_COSINE_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT(?)) from `test_entity_vector`",
       );
     });
 
@@ -1492,7 +1496,7 @@ describe("ForgeSQLSelectOperations", () => {
         .select({ x: vecNegativeInnerProduct(testEntityVector.embedding, QUERY_VECTOR_10) })
         .from(testEntityVector);
       expect(sql.prepare).toHaveBeenCalledWith(
-        "select VEC_NEGATIVE_INNER_PRODUCT(`test_entity_vector`.`embedding`, VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+        "select VEC_NEGATIVE_INNER_PRODUCT(`test_entity_vector`.`embedding`, VEC_FROM_TEXT(?)) from `test_entity_vector`",
       );
     });
 
@@ -1501,7 +1505,7 @@ describe("ForgeSQLSelectOperations", () => {
         .select({ x: vecL1Distance(testEntityVector.embedding, QUERY_VECTOR_10) })
         .from(testEntityVector);
       expect(sql.prepare).toHaveBeenCalledWith(
-        "select VEC_L1_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT('[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]')) from `test_entity_vector`",
+        "select VEC_L1_DISTANCE(`test_entity_vector`.`embedding`, VEC_FROM_TEXT(?)) from `test_entity_vector`",
       );
     });
 
@@ -1509,9 +1513,7 @@ describe("ForgeSQLSelectOperations", () => {
       await forgeSqlOperation
         .select({ x: vecFromText("[1,2,3,4,5,6,7,8,9,10]") })
         .from(testEntityVector);
-      expect(sql.prepare).toHaveBeenCalledWith(
-        "select VEC_FROM_TEXT('?') from `test_entity_vector`",
-      );
+      expect(sql.prepare).toHaveBeenCalledWith("select VEC_FROM_TEXT(?) from `test_entity_vector`");
       const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
       expect(preparedStatement.bindParams).toHaveBeenCalledWith("[1,2,3,4,5,6,7,8,9,10]");
     });
