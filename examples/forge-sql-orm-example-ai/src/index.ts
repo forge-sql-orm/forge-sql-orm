@@ -7,7 +7,7 @@ import { embeddedDocuments } from "./entities";
 import { vecCosineDistance } from "forge-sql-orm";
 
 const resolver = new Resolver();
-const forgeSQL = new ForgeSQL({ logRawSqlQuery: true });
+const forgeSQL = new ForgeSQL({ logRawSqlQuery: false });
 
 resolver.define(
   "create",

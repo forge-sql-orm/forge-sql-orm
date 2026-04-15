@@ -12,7 +12,7 @@ import { embeddedDocuments } from "./entities";
 import { getVector } from "./ai";
 
 const resolver = new Resolver();
-const forgeSQL = new ForgeSQL({ logRawSqlQuery: true });
+const forgeSQL = new ForgeSQL({ logRawSqlQuery: false });
 
 type CreateDocumentInput = Pick<InferInsertModel<typeof embeddedDocuments>, "title" | "document">;
 

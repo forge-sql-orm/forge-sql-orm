@@ -56,7 +56,7 @@ type VectorInput = string | number[] | SQL | AnyColumn;
 
 function vectorExpr(value: VectorInput): SQL {
   if (Array.isArray(value)) {
-    return sql.raw(`VEC_FROM_TEXT('${vectorToText(value)}')`);
+    return sql`VEC_FROM_TEXT(${vectorToText(value)})`;
   }
   if (typeof value === "string") {
     return sql.raw(value);
@@ -106,7 +106,7 @@ export const vectorTiDBType = customType<{
  * vecFromText("[1, 2, 3]")
  */
 export function vecFromText(text: string): SQL {
-  return sql`VEC_FROM_TEXT('${text}')`;
+  return sql`VEC_FROM_TEXT(${text})`;
 }
 
 /**
