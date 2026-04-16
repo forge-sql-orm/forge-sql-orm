@@ -127,47 +127,6 @@ describe("transformValue", () => {
     });
   });
 
-  describe("nextVal", () => {
-    it("should return a valid SQL template literal for sequence", () => {
-      const result = nextVal("test_sequence");
-      expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          decoder: {},
-          shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["NEXTVAL(test_sequence)"] }],
-        }),
-      );
-    });
-
-    it("should handle sequence names with special characters", () => {
-      const result = nextVal("test-sequence_123");
-      expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          decoder: {},
-          shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["NEXTVAL(test-sequence_123)"] }],
-        }),
-      );
-    });
-
-    it("should handle empty sequence name", () => {
-      const result = nextVal("");
-      expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          decoder: {},
-          shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["NEXTVAL()"] }],
-        }),
-      );
-    });
-  });
-
   describe("generateDropTableStatements", () => {
     it("should generate correct DROP TABLE statements for single table", () => {
       const tables = ["users"];

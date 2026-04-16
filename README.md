@@ -45,6 +45,7 @@
 - ✅ **Query Plan Analysis**: Detailed execution plan analysis and optimization insights
 - ✅ **Rovo Integration** Secure pattern for natural-language analytics with comprehensive security validations, Row-Level Security (RLS) support, and dynamic SQL query execution
 - ✅ **TiDB `VECTOR` type & vector SQL helpers** — Drizzle column type `vectorTiDBType` plus `vecCosineDistance`, `vecL2Distance`, `vecDims`, and related helpers for **SQL with AI** (embeddings storage and similarity search)
+- ✅ **Binary custom types (`BINARY` / `VARBINARY` / `BLOB`)** — built-in `forgeBinary`, `forgeVarBinary`, `forgeBLOB`, `forgeTinyBLOB`, `forgeMediumBLOB`, and `uuidBinary` for compact binary storage in Atlassian Forge
 - ✅ **AI semantic search examples for Forge** — embeddings in [Custom UI (frontend)](examples/forge-sql-orm-example-ai) or on the [Forge backend](examples/forge-sql-orm-example-backend-ai) via an `ai-lib` sidecar; both use vector search in SQL
 
 ## Table of Contents
@@ -87,6 +88,8 @@
 - [Slow Query Monitoring](#slow-query-monitoring) - Scheduled monitoring of slow queries with execution plans
 - [Date and Time Types](#date-and-time-types)
 - [TiDB vector types (AI / similarity search)](#tidb-vector-types-ai--similarity-search)
+- [Custom types for binary and UUID data](#custom-types-for-binary-and-uuid-data)
+- [TiDB SQL function helpers](#tidb-sql-function-helpers)
 
 ### 🛠️ Development Tools
 
@@ -1333,6 +1336,78 @@ Also available (see `src/core/VectorTiDB.ts`): `vecFromText`, `vecAsText`, `vecD
 See **[examples/forge-sql-orm-example-vector](examples/forge-sql-orm-example-vector)** for a full Forge app (migrations, resolvers, UI) aligned with [Get Started with Vector Search via SQL](https://docs.pingcap.com/tidb/stable/vector-search-get-started-using-sql).
 
 For **semantic search** with learned embeddings, use **[examples/forge-sql-orm-example-ai](examples/forge-sql-orm-example-ai)** (embeddings in Custom UI) or **[examples/forge-sql-orm-example-backend-ai](examples/forge-sql-orm-example-backend-ai)** (embeddings in Forge resolvers via `ai-lib`).
+
+## Custom types for binary and UUID data
+
+Forge SQL ORM provides custom types from `src/core/customTypes.ts` for compact binary storage and UUID primary keys.
+
+| Type              | SQL type        | Use case                                                                                                  |
+| ----------------- | --------------- | --------------------------------------------------------------------------------------------------------- |
+| `uuidBinary`      | `VARBINARY(16)` | Store UUID primary keys in compact binary form; writes use `UUID_TO_BIN(...)`, reads return UUID strings. |
+| `forgeVarBinary`  | `VARBINARY(n)`  | Variable-length binary payloads (e.g., small encrypted payloads or protocol bytes).                       |
+| `forgeBinary`     | `BINARY(n)`     | Fixed-length binary values (e.g., hashes, signatures, fixed-size binary tokens).                          |
+| `forgeBLOB`       | `BLOB`          | General-purpose binary files/content.                                                                     |
+| `forgeTinyBLOB`   | `TINYBLOB`      | Small binary payloads.                                                                                    |
+| `forgeMediumBLOB` | `MEDIUMBLOB`    | Medium-size binary payloads.                                                                              |
+
+Binary custom types encode data to Base64 in JS and write through `FROM_BASE64(...)`, which keeps SQL safe and works well with Forge SQL payload constraints.
+
+### Example (with BLOB)
+
+```typescript
+import { int, mysqlTable, text } from "drizzle-orm/mysql-core";
+import { forgeBLOB, uuidBinary } from "forge-sql-orm";
+
+export const files = mysqlTable("files", {
+  id: uuidBinary("id").primaryKey().notNull(),
+  name: text("name").notNull(),
+  content: forgeBLOB("content").notNull(),
+});
+
+await forgeSQL.insert(files).values({
+  id: "00112233-4455-6677-8899-aabbccddeeff",
+  name: "avatar.png",
+  content: Buffer.from([137, 80, 78, 71]), // PNG signature bytes (example)
+});
+```
+
+## TiDB SQL function helpers
+
+`forge-sql-orm` also includes ready-to-use TiDB/MySQL SQL helper modules in `src/core/functions`. They return Drizzle `sql` fragments, so you can compose them inside `select`, `where`, `orderBy`, `groupBy`, computed columns, and other query builders.
+
+| Module              | What it does                                                                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `VectorTiDB`        | Vector search helpers such as cosine distance, L1/L2 distance, dimensions, and vector text conversion.                                |
+| `StringTiDB`        | String manipulation helpers such as concatenation, substring, replace, trim, case conversion, and pattern-oriented string operations. |
+| `NumericTiDB`       | Arithmetic and numeric helpers such as addition/subtraction operators, rounding, powers, logarithms, trigonometry, and random values. |
+| `DateTiDB`          | Date/time helpers such as `DATE_ADD`, `DATE_SUB`, formatting, extraction, timestamp conversion, and calendar calculations.            |
+| `BitTiDB`           | Bitwise operators and bit functions such as AND/OR/XOR, shifts, negation, and bit counting.                                           |
+| `CastTiDB`          | SQL casting helpers for `CAST`, `CONVERT`, binary conversion, and reusable cast target builders.                                      |
+| `EncryptTiDB`       | Encryption, hashing, compression, and password-strength helpers such as AES, SHA, MD5, and compression functions.                     |
+| `InformationTiDB`   | Metadata helpers such as current database/user, connection id, version, row count, and TiDB environment info.                         |
+| `JsonTiDB`          | JSON creation, extraction, search, mutation, validation, schema checking, and storage inspection helpers.                             |
+| `AggregateTiDB`     | Extra aggregate helpers not already covered by Drizzle, such as percentile/approximation and specialized aggregate expressions.       |
+| `WindowTiDB`        | Window function call helpers such as `rowNumber`, `rank`, `denseRank`, `lag`, `lead`, and `firstValue` for use with `OVER (...)`.     |
+| `SequenceTiDB`      | Sequence helpers such as `NEXTVAL`, `LASTVAL`, and `SETVAL` for working with TiDB sequences.                                          |
+| `UtilityTiDB`       | Small utility helpers such as byte and nanosecond formatting functions.                                                               |
+| `MiscellaneousTiDB` | Miscellaneous helpers such as UUID/IP utilities, `sleep`, `default`, and compatibility helpers.                                       |
+| `TiDBSpecificTiDB`  | TiDB-specific helpers such as TSO parsing, resource-group helpers, SQL digest helpers, MVCC inspection, and key encoding helpers.     |
+
+### Example
+
+```typescript
+import { sql } from "drizzle-orm";
+import { concat } from "forge-sql-orm";
+import { users } from "./schema";
+
+const rows = await forgeSQL
+  .select({
+    label: sql<string>`${concat(users.firstName, sql`' '`, users.lastName)}`,
+  })
+  .from(users);
+```
+
+In this example, `concat(...)` builds a safe SQL fragment that Drizzle can embed into the final query.
 
 # Connection to ORM
 

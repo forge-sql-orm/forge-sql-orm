@@ -11,6 +11,7 @@ import { testEntityJoin1 } from "../../entities/TestEntityJoin1";
 import { testEntityJoin2 } from "../../entities/TestEntityJoin2";
 import { testEntityVersionDifferentDateField } from "../../entities/TestEntityVersionDifferentFieldDate";
 import { testEntityVector } from "../../entities/TestEntityVector";
+import { customTypeEntity } from "../../entities/CustomTypeEntity";
 import { DateTime } from "luxon";
 import {
   vecAsText,
@@ -21,7 +22,7 @@ import {
   vecL2Distance,
   vecL2Norm,
   vecNegativeInnerProduct,
-} from "../../../src/core/VectorTiDB";
+} from "../../../src/core/functions/VectorTiDB";
 
 vi.mock("../../../src/utils/cacheUtils", () => ({
   getFromCache: async () => {
@@ -89,6 +90,39 @@ vi.mock("@forge/sql", () => ({
               id: 1,
               name: "doc",
               embedding: "[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]",
+            },
+          ],
+          metadata: {
+            dbExecutionTime: 1234,
+            responseSize: 525,
+          },
+        });
+      } else if (query.includes("`custom_Type_Entity`")) {
+        procedureMock = vi.fn().mockResolvedValue({
+          rows: [
+            {
+              a_id_id: 1,
+              a_blob_blob: { type: "Buffer", data: [1, 2, 3] },
+              a_tinyblob_tinyblob: { type: "Buffer", data: [4, 5] },
+              a_mediumblob_mediumblob: { type: "Buffer", data: [6] },
+              a_binary_binary: { type: "Buffer", data: [7, 8, 9, 10] },
+              a_varbinary_varbinary: { type: "Buffer", data: [11] },
+            },
+          ],
+          metadata: {
+            dbExecutionTime: 1234,
+            responseSize: 525,
+          },
+        });
+      } else if (query.includes("`custom_type` as `a_customtype_custom_type`")) {
+        // Covers `uuidBinary` custom type mapping on a dedicated select.
+        procedureMock = vi.fn().mockResolvedValue({
+          rows: [
+            {
+              a_customtype_custom_type: {
+                type: "Buffer",
+                data: Array.from(Buffer.from("00112233445566778899aabbccddeeff", "hex")),
+              },
             },
           ],
           metadata: {
@@ -322,6 +356,39 @@ describe("ForgeSQLSelectOperations", () => {
     );
     expect(preparedStatement.execute).toHaveBeenCalled();
     expect(result).toEqual([{ id: 1, name: "t" }]);
+  });
+
+  it("should map forge binary customTypes (BLOB/BINARY/VARBINARY) from driver", async () => {
+    const result = await forgeSqlOperation.selectFrom(customTypeEntity);
+    const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
+
+    expect(sql.prepare).toHaveBeenCalledWith(
+      "select `id` as `a_id_id`, `blob` as `a_blob_blob`, `tinyBlob` as `a_tinyblob_tinyblob`, `mediumBlob` as `a_mediumblob_mediumblob`, `binary` as `a_binary_binary`, `varBinary` as `a_varbinary_varbinary` from `custom_Type_Entity`",
+    );
+    expect(preparedStatement.execute).toHaveBeenCalled();
+    expect(result).toEqual([
+      {
+        id: 1,
+        blob: Buffer.from([1, 2, 3]),
+        tinyBlob: Buffer.from([4, 5]),
+        mediumBlob: Buffer.from([6]),
+        binary: Buffer.from([7, 8, 9, 10]),
+        varBinary: Buffer.from([11]),
+      },
+    ]);
+  });
+
+  it("should map uuidBinary (VARBINARY(16)) from driver", async () => {
+    const result = await forgeSqlOperation
+      .select({ customType: testEntityJoin1.customType })
+      .from(testEntityJoin1);
+
+    const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
+    expect(sql.prepare).toHaveBeenCalledWith(
+      "select `custom_type` as `a_customtype_custom_type` from `test_entity_join1`",
+    );
+    expect(preparedStatement.execute).toHaveBeenCalled();
+    expect(result).toEqual([{ customType: "00112233-4455-6677-8899-aabbccddeeff" }]);
   });
 
   it("test drizzle $with Query", async () => {

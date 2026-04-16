@@ -112,9 +112,11 @@ import ForgeSQLORM, { ForgeSqlOperation } from "../../../src";
 import { testEntity } from "../../entities/TestEntity";
 import { testEntityVersion, TestEntityVersion } from "../../entities/TestEntityVersion";
 import { testEntityDateVersion, TestEntityDateVersion } from "../../entities/TestEntityDateVersion";
+import { customTypeEntity } from "../../entities/CustomTypeEntity";
 import { eq } from "drizzle-orm";
 import { testEntityTimeStampVersion } from "../../entities/TestEntityTimeStampVersion";
 import { TestEntityVersionDifferentField } from "../../entities/TestEntityVersionDifferentField";
+import { testEntityJoin1 } from "../../entities/TestEntityJoin1";
 
 describe("ForgeSQLCrudOperations", () => {
   let forgeSqlOperation: ForgeSqlOperation;
@@ -219,6 +221,58 @@ describe("ForgeSQLCrudOperations", () => {
 
     const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
     expect(preparedStatement.bindParams).toHaveBeenCalledWith(1, "Test");
+    expect(preparedStatement.execute).toHaveBeenCalled();
+  });
+
+  it("should serialize binary customTypes on insert via FROM_BASE64 and null literal", async () => {
+    await forgeSqlOperation.modifyWithVersioning().insert(customTypeEntity, [
+      {
+        id: 1,
+        blob: Buffer.from([1, 2, 3]),
+        tinyBlob: new Uint8Array([4, 5]) as any,
+        mediumBlob: "hello" as any,
+        binary: { a: 1 } as any,
+        varBinary: null as any,
+      },
+    ]);
+
+    expect(vi.mocked(sql.prepare)).toHaveBeenCalledWith(
+      "insert into `custom_Type_Entity` (`id`, `blob`, `tinyBlob`, `mediumBlob`, `binary`, `varBinary`) values (?, FROM_BASE64(?), FROM_BASE64(?), FROM_BASE64(?), FROM_BASE64(?), ?)",
+    );
+
+    const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
+    expect(preparedStatement.bindParams).toHaveBeenCalledWith(
+      1,
+      Buffer.from([1, 2, 3]).toString("base64"),
+      Buffer.from([4, 5]).toString("base64"),
+      Buffer.from("hello").toString("base64"),
+      Buffer.from(JSON.stringify({ a: 1 })).toString("base64"),
+      null,
+    );
+    expect(preparedStatement.execute).toHaveBeenCalled();
+  });
+
+  it("should use UUID_TO_BIN for uuidBinary customType on insert", async () => {
+    await forgeSqlOperation.modifyWithVersioning().insert(testEntityJoin1, [
+      {
+        id: 1,
+        name: "Test",
+        email: "test@example.com",
+        customType: "00112233-4455-6677-8899-aabbccddeeff",
+      },
+    ]);
+
+    expect(vi.mocked(sql.prepare)).toHaveBeenCalledWith(
+      "insert into `test_entity_join1` (`id`, `name`, `email`, `custom_type`) values (?, ?, ?, UUID_TO_BIN(?))",
+    );
+
+    const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
+    expect(preparedStatement.bindParams).toHaveBeenCalledWith(
+      1,
+      "Test",
+      "test@example.com",
+      "00112233-4455-6677-8899-aabbccddeeff",
+    );
     expect(preparedStatement.execute).toHaveBeenCalled();
   });
 
