@@ -1,21 +1,70 @@
 import { describe, expect, it } from "vitest";
-import { getTableColumns } from "drizzle-orm";
+import { getTableColumns, type SQL } from "drizzle-orm";
 import { CasingCache } from "drizzle-orm/casing";
 import { int, mysqlTable, timestamp } from "drizzle-orm/mysql-core";
 import {
   addDate,
+  addTime,
+  convertTz,
   curdate,
+  currentDate,
+  currentTime,
+  currentTimestamp,
+  curtime,
   dateAdd,
+  dateDiff,
   dateFormat,
+  dateOf,
+  dateSub,
+  day,
+  dayName,
+  dayOfMonth,
+  dayOfWeek,
+  dayOfYear,
   extract,
+  fromDays,
+  fromUnixtime,
+  getFormat,
+  hour,
+  interval,
+  lastDay,
+  localTime,
+  localTimestamp,
+  makeDate,
+  makeTime,
+  microsecond,
+  minute,
+  month,
+  monthName,
   now,
+  periodAdd,
+  periodDiff,
+  quarter,
+  secToTime,
+  second,
   strToDate,
   subDate,
+  subTime,
+  sysdate,
+  timeDiff,
+  timeFormat,
+  timeOf,
+  timeToSec,
   timestampAdd,
   timestampDiff,
   timestampExpr,
+  toDays,
+  toSeconds,
   unixTimestamp,
-} from "../../../../src/core/functions/DateTiDB";
+  utcDate,
+  utcTime,
+  utcTimestamp,
+  week,
+  weekDay,
+  weekOfYear,
+  year,
+  yearWeek,
+} from "../../../../src";
 
 const t = mysqlTable("date_t", {
   id: int("id").primaryKey(),
@@ -82,5 +131,72 @@ describe("DateTiDB SQL fragments (toQuery)", () => {
     expect(dateFormat(cols.created, "%Y").toQuery(mysqlQueryConfig).sql).toBe(
       "DATE_FORMAT(`date_t`.`created`, ?)",
     );
+  });
+
+  it("smoke: invokes each DateTiDB export for coverage", () => {
+    const d = cols.created;
+    const q = mysqlQueryConfig;
+    const run = (s: SQL) => expect(s.toQuery(q).sql.length).toBeGreaterThan(0);
+
+    run(interval(1, "DAY"));
+    run(addTime(d, "01:00:00"));
+    run(convertTz(d, "UTC", "+00:00"));
+    run(currentDate());
+    run(currentTime());
+    run(currentTime(3));
+    run(currentTimestamp());
+    run(currentTimestamp(3));
+    run(curtime());
+    run(curtime(3));
+    run(dateOf(d));
+    run(dateSub(d, 1, "DAY"));
+    run(dateDiff(d, d));
+    run(day(d));
+    run(dayName(d));
+    run(dayOfMonth(d));
+    run(dayOfWeek(d));
+    run(dayOfYear(d));
+    run(fromDays(738156));
+    run(fromUnixtime(1));
+    run(fromUnixtime(1, "%Y"));
+    run(getFormat("USA", "DATE"));
+    run(hour(d));
+    run(lastDay(d));
+    run(localTime());
+    run(localTime(3));
+    run(localTimestamp());
+    run(localTimestamp(3));
+    run(makeDate(2024, 32));
+    run(makeTime(12, 30, 45));
+    run(microsecond(d));
+    run(minute(d));
+    run(month(d));
+    run(monthName(d));
+    run(periodAdd(202401, 1));
+    run(periodDiff(202401, 202402));
+    run(quarter(d));
+    run(secToTime(3600));
+    run(second(d));
+    run(subTime(d, "01:00:00"));
+    run(sysdate());
+    run(sysdate(3));
+    run(timeOf(d));
+    run(timeFormat(d, "%H"));
+    run(timeToSec(d));
+    run(timeDiff(d, d));
+    run(toDays(d));
+    run(toSeconds(d));
+    run(utcDate());
+    run(utcTime());
+    run(utcTime(3));
+    run(utcTimestamp());
+    run(utcTimestamp(3));
+    run(week(d));
+    run(week(d, 0));
+    run(weekDay(d));
+    run(weekOfYear(d));
+    run(year(d));
+    run(yearWeek(d));
+    run(yearWeek(d, 0));
   });
 });
