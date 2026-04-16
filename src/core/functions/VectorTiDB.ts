@@ -1,9 +1,5 @@
-import { customType } from "drizzle-orm/mysql-core";
 import { sql, type SQL, type AnyColumn } from "drizzle-orm";
-
-type VectorConfig = {
-  dimension?: number;
-};
+export { vectorTiDBType } from "../customTypes";
 
 function validateVectorValue(value: number[]): void {
   if (!Array.isArray(value)) {
@@ -15,28 +11,6 @@ function validateVectorValue(value: number[]): void {
       throw new Error("TiDB vector contains invalid number");
     }
   }
-}
-
-function parseVectorText(value: string): number[] {
-  const trimmed = value.trim();
-  if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) {
-    throw new Error(`Invalid TiDB vector text: ${value}`);
-  }
-
-  // TiDB stores vectors as textual representation, e.g. "[0.3,0.5,-0.1]".
-  const parsed = JSON.parse(trimmed) as unknown;
-  if (!Array.isArray(parsed)) {
-    throw new Error(`Invalid TiDB vector text: ${value}`);
-  }
-
-  const result = parsed.map((item) => {
-    if (typeof item !== "number" || !Number.isFinite(item)) {
-      throw new Error(`Invalid TiDB vector element: ${String(item)}`);
-    }
-    return item;
-  });
-
-  return result;
 }
 
 function vectorToText(value: number[]): string {
@@ -63,39 +37,6 @@ function vectorExpr(value: VectorInput): SQL {
   }
   return sql`${value}`;
 }
-
-/**
- * TiDB `VECTOR` column type (same call shapes as other Drizzle MySQL builders).
- *
- * - `vectorTiDBType('embedding', { dimension: 1536 })` — SQL column name + fixed dimension (`VECTOR(1536)`).
- * - `vectorTiDBType({ dimension: 1536 })` — config only; column name comes from the object key in `mysqlTable`.
- * - `vectorTiDBType('embedding')` or `vectorTiDBType()` — `VECTOR` without a fixed size in DDL.
- *
- * Values are `number[]` in application code; the driver maps to TiDB’s text form.
- */
-export const vectorTiDBType = customType<{
-  data: number[];
-  driverData: string;
-  config: VectorConfig;
-}>({
-  dataType(config) {
-    const dim = config?.dimension;
-    return dim ? `vector(${dim})` : "vector";
-  },
-  toDriver(value: number[]) {
-    validateVectorValue(value);
-    return `[${value.join(",")}]`;
-  },
-  fromDriver(value: unknown) {
-    if (value === null || value === undefined) {
-      return value as unknown as number[];
-    }
-    if (typeof value !== "string") {
-      throw new Error(`Invalid TiDB vector driver value type: ${typeof value}`);
-    }
-    return parseVectorText(value);
-  },
-});
 
 /**
  * Converts a text representation of a vector into a TiDB VECTOR expression.

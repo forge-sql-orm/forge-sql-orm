@@ -1,5 +1,5 @@
 import { int, mysqlTable, primaryKey, varchar } from "drizzle-orm/mysql-core";
-import { uuidBinary } from "./CustomTypes";
+import { uuidBinary } from "../../src";
 
 export const testEntityJoin1 = mysqlTable(
   "test_entity_join1",

@@ -738,10 +738,6 @@ export function formatLimitOffset(limitOrOffset: number): number {
   return sql.raw(`${limitOrOffset}`) as unknown as number;
 }
 
-export function nextVal(sequenceName: string): number {
-  return sql.raw(`NEXTVAL(${sequenceName})`) as unknown as number;
-}
-
 /**
  * Helper function to build base query for CLUSTER_STATEMENTS_SUMMARY table
  */

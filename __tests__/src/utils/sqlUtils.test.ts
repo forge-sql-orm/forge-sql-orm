@@ -2,7 +2,6 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import {
   formatLimitOffset,
   generateDropTableStatements,
-  nextVal,
   parseDateTime,
   formatDateTime,
   withTimeout,
@@ -15,11 +14,11 @@ import {
   handleErrorsWithPlan,
   slowQueryPerHours,
   checkProductionEnvironment,
-} from "../../../src/utils/sqlUtils";
+} from "../../../src";
 import { DateTime } from "luxon";
 import { int, mysqlTable, varchar, text, primaryKey } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";
+import { ForgeSqlOperation } from "../../../src";
 
 // Mock @forge/api
 const mockGetAppContext = vi.fn();
@@ -122,47 +121,6 @@ describe("transformValue", () => {
           shouldInlineParams: false,
           usedTables: [],
           queryChunks: [{ value: ["-5"] }],
-        }),
-      );
-    });
-  });
-
-  describe("nextVal", () => {
-    it("should return a valid SQL template literal for sequence", () => {
-      const result = nextVal("test_sequence");
-      expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          decoder: {},
-          shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["NEXTVAL(test_sequence)"] }],
-        }),
-      );
-    });
-
-    it("should handle sequence names with special characters", () => {
-      const result = nextVal("test-sequence_123");
-      expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          decoder: {},
-          shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["NEXTVAL(test-sequence_123)"] }],
-        }),
-      );
-    });
-
-    it("should handle empty sequence name", () => {
-      const result = nextVal("");
-      expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          decoder: {},
-          shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["NEXTVAL()"] }],
         }),
       );
     });

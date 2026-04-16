@@ -13,7 +13,7 @@ import {
   vecL2Norm,
   vecNegativeInnerProduct,
   vectorTiDBType,
-} from "../../../src/core/VectorTiDB";
+} from "../../../../src/core/functions/VectorTiDB";
 
 const vectorTable = mysqlTable("vector_test_t", {
   id: int("id").primaryKey(),
