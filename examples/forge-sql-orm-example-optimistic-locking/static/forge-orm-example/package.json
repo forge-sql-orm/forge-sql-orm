@@ -6,7 +6,7 @@
     "@atlaskit/button": "^23.11.3",
     "@atlaskit/css-reset": "^7.4.5",
     "@atlaskit/dynamic-table": "^18.3.28",
-    "@atlaskit/tabs": "^19.0.5",
+    "@atlaskit/tabs": "^19.1.0",
     "@atlaskit/tokens": "^13.0.0",
     "@forge/bridge": "^5.15.1",
     "mobx": "6.15.0",
