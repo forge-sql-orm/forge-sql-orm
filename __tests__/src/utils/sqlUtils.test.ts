@@ -14,11 +14,11 @@ import {
   handleErrorsWithPlan,
   slowQueryPerHours,
   checkProductionEnvironment,
-} from "../../../src/utils/sqlUtils";
+} from "../../../src";
 import { DateTime } from "luxon";
 import { int, mysqlTable, varchar, text, primaryKey } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";
+import { ForgeSqlOperation } from "../../../src";
 
 // Mock @forge/api
 const mockGetAppContext = vi.fn();

@@ -48,13 +48,16 @@ function binaryToDriver(value: Buffer | Uint8Array | string | undefined | null) 
     return sql`null`;
   }
 
-  const buffer = Buffer.isBuffer(value)
-    ? value
-    : value instanceof Uint8Array
-      ? Buffer.from(value)
-      : typeof value === "string"
-        ? Buffer.from(value)
-        : Buffer.from(JSON.stringify(value));
+  let buffer: Buffer;
+  if (Buffer.isBuffer(value)) {
+    buffer = value;
+  } else if (value instanceof Uint8Array) {
+    buffer = Buffer.from(value);
+  } else if (typeof value === "string") {
+    buffer = Buffer.from(value);
+  } else {
+    buffer = Buffer.from(JSON.stringify(value));
+  }
   return fromBase64(buffer.toString("base64"));
 }
 

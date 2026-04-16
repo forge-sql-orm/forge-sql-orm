@@ -43,9 +43,6 @@ export type TimestampUnit =
   | "QUARTER"
   | "YEAR";
 
-/** `EXTRACT(unit FROM …)` — `unit` is emitted as a SQL keyword (trusted). */
-export type ExtractUnit = MysqlIntervalUnit;
-
 export type GetFormatLocale = "USA" | "JIS" | "ISO" | "EUR" | "INTERNAL";
 export type GetFormatType = "DATE" | "DATETIME" | "TIME";
 
@@ -157,7 +154,7 @@ export function dayOfYear(expr: DateSqlInput): SQL {
 }
 
 /** `EXTRACT(unit FROM expr)` */
-export function extract(unit: ExtractUnit, expr: DateSqlInput): SQL {
+export function extract(unit: MysqlIntervalUnit, expr: DateSqlInput): SQL {
   return sql`EXTRACT(${sql.raw(unit)} FROM ${expr})`;
 }
 
