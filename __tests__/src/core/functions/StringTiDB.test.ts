@@ -77,16 +77,25 @@ describe("StringTiDB SQL fragments (toQuery)", () => {
 
   it("regexp helpers compile", () => {
     expect(regexpInstr("abc", "^a").toQuery(mysqlQueryConfig).sql).toBe("REGEXP_INSTR(?, ?)");
-    expect(regexpInstr("abc", "^a", 1, 2, 0, "i").toQuery(mysqlQueryConfig).sql).toBe(
-      "REGEXP_INSTR(?, ?, ?, ?, ?, ?)",
-    );
+    expect(
+      regexpInstr("abc", "^a", {
+        start: 1,
+        occurrence: 2,
+        returnOption: 0,
+        matchType: "i",
+      }).toQuery(mysqlQueryConfig).sql,
+    ).toBe("REGEXP_INSTR(?, ?, ?, ?, ?, ?)");
 
     expect(regexpReplace("TooDB", "o{2}", "i").toQuery(mysqlQueryConfig).sql).toBe(
       "REGEXP_REPLACE(?, ?, ?)",
     );
-    expect(regexpReplace("TooDB", "o", "i", 1, 2, "i").toQuery(mysqlQueryConfig).sql).toBe(
-      "REGEXP_REPLACE(?, ?, ?, ?, ?, ?)",
-    );
+    expect(
+      regexpReplace("TooDB", "o", "i", {
+        start: 1,
+        occurrence: 2,
+        matchType: "i",
+      }).toQuery(mysqlQueryConfig).sql,
+    ).toBe("REGEXP_REPLACE(?, ?, ?, ?, ?, ?)");
   });
 
   it("LIKE and REGEXP infix operators", () => {

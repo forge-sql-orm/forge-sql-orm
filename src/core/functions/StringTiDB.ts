@@ -233,28 +233,25 @@ export function quote(str: StringSqlInput): SQL {
   return sql`QUOTE(${str})`;
 }
 
+export interface RegexpInstrOptions {
+  start?: StringSqlInput;
+  occurrence?: StringSqlInput;
+  returnOption?: StringSqlInput;
+  matchType?: StringSqlInput;
+}
+
 /** `REGEXP_INSTR(str, regexp [, start [, occurrence [, return_option [, match_type]]]])` */
 export function regexpInstr(
   str: StringSqlInput,
   regexp: StringSqlInput,
-  start?: StringSqlInput,
-  occurrence?: StringSqlInput,
-  returnOption?: StringSqlInput,
-  matchType?: StringSqlInput,
+  options?: RegexpInstrOptions,
 ): SQL {
-  if (start === undefined) {
-    return sql`REGEXP_INSTR(${str}, ${regexp})`;
-  }
-  if (occurrence === undefined) {
-    return sql`REGEXP_INSTR(${str}, ${regexp}, ${start})`;
-  }
-  if (returnOption === undefined) {
-    return sql`REGEXP_INSTR(${str}, ${regexp}, ${start}, ${occurrence})`;
-  }
-  if (matchType === undefined) {
-    return sql`REGEXP_INSTR(${str}, ${regexp}, ${start}, ${occurrence}, ${returnOption})`;
-  }
-  return sql`REGEXP_INSTR(${str}, ${regexp}, ${start}, ${occurrence}, ${returnOption}, ${matchType})`;
+  const args: StringSqlInput[] = [str, regexp];
+  if (options?.start !== undefined) args.push(options.start);
+  if (options?.occurrence !== undefined) args.push(options.occurrence);
+  if (options?.returnOption !== undefined) args.push(options.returnOption);
+  if (options?.matchType !== undefined) args.push(options.matchType);
+  return sql`REGEXP_INSTR(${joinArgs(args)})`;
 }
 
 /** `REGEXP_LIKE(str, regexp [, match_type])` */
@@ -269,25 +266,24 @@ export function regexpLike(
   return sql`REGEXP_LIKE(${str}, ${regexp})`;
 }
 
+export interface RegexpReplaceOptions {
+  start?: StringSqlInput;
+  occurrence?: StringSqlInput;
+  matchType?: StringSqlInput;
+}
+
 /** `REGEXP_REPLACE(str, regexp, replace [, start [, occurrence [, match_type]]])` */
 export function regexpReplace(
   str: StringSqlInput,
   regexp: StringSqlInput,
   replace: StringSqlInput,
-  start?: StringSqlInput,
-  occurrence?: StringSqlInput,
-  matchType?: StringSqlInput,
+  options?: RegexpReplaceOptions,
 ): SQL {
-  if (start === undefined) {
-    return sql`REGEXP_REPLACE(${str}, ${regexp}, ${replace})`;
-  }
-  if (occurrence === undefined) {
-    return sql`REGEXP_REPLACE(${str}, ${regexp}, ${replace}, ${start})`;
-  }
-  if (matchType === undefined) {
-    return sql`REGEXP_REPLACE(${str}, ${regexp}, ${replace}, ${start}, ${occurrence})`;
-  }
-  return sql`REGEXP_REPLACE(${str}, ${regexp}, ${replace}, ${start}, ${occurrence}, ${matchType})`;
+  const args: StringSqlInput[] = [str, regexp, replace];
+  if (options?.start !== undefined) args.push(options.start);
+  if (options?.occurrence !== undefined) args.push(options.occurrence);
+  if (options?.matchType !== undefined) args.push(options.matchType);
+  return sql`REGEXP_REPLACE(${joinArgs(args)})`;
 }
 
 /** `REGEXP_SUBSTR(str, regexp [, start [, occurrence [, match_type]]])` */
