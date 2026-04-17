@@ -6,11 +6,11 @@
   "dependencies": {
     "@atlaskit/button": "^23.11.3",
     "@atlaskit/css-reset": "^7.4.5",
-    "@atlaskit/dynamic-table": "^18.3.28",
+    "@atlaskit/dynamic-table": "^18.4.0",
     "@atlaskit/primitives": "^19.0.0",
     "@atlaskit/section-message": "^8.12.14",
-    "@atlaskit/tabs": "^19.0.5",
-    "@atlaskit/textarea": "^8.2.10",
+    "@atlaskit/tabs": "^19.1.0",
+    "@atlaskit/textarea": "^8.3.0",
     "@atlaskit/textfield": "^8.3.2",
     "@forge/bridge": "^5.15.1",
     "react": "^18.3.1",
@@ -26,7 +26,7 @@
     "knip": "^6.4.1",
     "prettier": "^3.8.3",
     "prettier-plugin-pkg": "^0.22.1",
-    "typescript": "^6.0.2",
+    "typescript": "^6.0.3",
     "vite": "^8.0.8"
   },
   "scripts": {

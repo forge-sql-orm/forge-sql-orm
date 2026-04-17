@@ -13,7 +13,7 @@
     "build:ci": "tsc --target esnext --project tsconfig.json  --outDir dist && rm -rf dist"
   },
   "devDependencies": {
-    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-hooks": "^7.1.0",
     "forge-sql-orm-cli": "^2.1.26",
     "knip": "^6.4.1"
   },
