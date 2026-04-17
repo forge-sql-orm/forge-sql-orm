@@ -1573,10 +1573,20 @@ const userStats = await forgeSQL.fetch().executeQueryOnlyOne(
 ### Raw SQL Queries
 
 ```js
-// Using executeRawSQL for direct SQL queries
+// Using executeRawSQL for direct SQL SELECT queries
 const users = await forgeSQL
   .fetch()
   .executeRawSQL<Users>("SELECT * FROM users");
+
+// Using executeRawUpdateSQL for raw INSERT / UPDATE / DELETE statements.
+// Returns an UpdateQueryResponse with affectedRows / insertId.
+const result = await forgeSQL
+  .fetch()
+  .executeRawUpdateSQL(
+    "UPDATE `users` SET `active` = ? WHERE `last_login` < ?",
+    [false, new Date("2024-01-01")],
+  );
+console.log(`Deactivated ${result.affectedRows} user(s)`);
 
 // Using execute() for raw SQL with local caching
 const users = await forgeSQL
@@ -2627,7 +2637,36 @@ function:
     handler: index.dropMigrations
 ```
 
-### 3. Fetch Schema Trigger
+### 3. Drop Tables Trigger
+
+⚠️ **DEVELOPMENT ONLY**: Like the Drop Migrations Trigger, this trigger permanently deletes data and cannot be undone. It is automatically disabled in production environments.
+
+Unlike `dropSchemaMigrations`, which drops tables **and** their sequences, `dropTableSchemaMigrations` drops only the tables (and their constraints), leaving sequences intact. Use this when you want to reseed table data without resetting auto-increment counters.
+
+```typescript
+// Example usage in your Forge app
+import { dropTableSchemaMigrations } from "forge-sql-orm";
+
+export const dropTables = () => {
+  return dropTableSchemaMigrations();
+};
+```
+
+Configure in `manifest.yml`:
+
+```yaml
+webtrigger:
+  - key: drop-tables
+    function: dropTables
+sql:
+  - key: main
+    engine: mysql
+function:
+  - key: dropTables
+    handler: index.dropTables
+```
+
+### 4. Fetch Schema Trigger
 
 ⚠️ **DEVELOPMENT ONLY**: This trigger is designed for development environments only and should not be used in production.
 
@@ -2677,7 +2716,7 @@ CREATE TABLE IF NOT EXISTS orders (...);
 SET foreign_key_checks = 1;
 ```
 
-### 4. Clear Cache Scheduler Trigger
+### 5. Clear Cache Scheduler Trigger
 
 This trigger automatically cleans up expired cache entries based on their TTL (Time To Live).
 
@@ -2726,7 +2765,7 @@ function:
 - `hour` - Every hour
 - `day` - Every day
 
-### 5. Slow Query Scheduler Trigger
+### 6. Slow Query Scheduler Trigger
 
 This scheduler trigger automatically monitors and analyzes slow queries on a scheduled basis. For detailed information, see the [Slow Query Monitoring](#slow-query-monitoring) section.
 
@@ -3423,6 +3462,56 @@ const ctePlan = await analyzeForgeSql.explain(
     .from(sql`activeUsers au`)
     .leftJoin(sql`completedOrders co`, eq(sql`au.id`, sql`co.userId`)),
 );
+```
+
+#### EXPLAIN ANALYZE (actual execution statistics)
+
+`explain` / `explainRaw` return the optimizer's estimated plan without running the query. Use `explainAnalyze` / `explainAnalyzeRaw` when you need **actual** runtime statistics — the database executes the query and returns per-operator execution times, actual row counts, and memory usage.
+
+```typescript
+// Drizzle query — executes it and returns real statistics
+const actualPlan = await analyzeForgeSql.explainAnalyze(
+  forgeSQL.selectFrom(users).where(eq(users.active, true)),
+);
+
+// Raw SQL — same behavior
+const actualRawPlan = await analyzeForgeSql.explainAnalyzeRaw(
+  "SELECT * FROM users WHERE id = ?",
+  [1],
+);
+```
+
+> ⚠️ `explainAnalyze` executes the query for real. Do not call it on `UPDATE` / `DELETE` / `INSERT` in a production resolver — the side effects will be persisted.
+
+#### Slow-query inspection
+
+`analyzeSlowQueries` returns normalized rows from TiDB's `CLUSTER_SLOW_QUERY` table — the same data source used by `slowQuerySchedulerTrigger`, but accessible on-demand for ad-hoc debugging.
+
+```typescript
+const slowQueries = await analyzeForgeSql.analyzeSlowQueries();
+// slowQueries: SlowQueryNormalized[]
+// Each row includes: query, digest, execution time, memory usage, plan, ...
+```
+
+#### Query history per table
+
+When you need to see how a specific table has been queried recently — for example to confirm an index change improved something, or to find missing indexes — use `analyzeQueriesHistory` (Drizzle tables) or `analyzeQueriesHistoryRaw` (plain table names). Both accept an optional `[fromDate, toDate]` window and return rows from TiDB's `STATEMENTS_SUMMARY_HISTORY`.
+
+```typescript
+// Drizzle table references
+const byDrizzle = await analyzeForgeSql.analyzeQueriesHistory(
+  [users, orders],
+  new Date(Date.now() - 24 * 60 * 60 * 1000), // last 24h
+  new Date(),
+);
+
+// Or raw table names when the schema is not available to the caller
+const byName = await analyzeForgeSql.analyzeQueriesHistoryRaw(
+  ["users", "orders"],
+  new Date(Date.now() - 60 * 60 * 1000), // last 1h
+);
+// byDrizzle / byName: ClusterStatementRowCamelCase[]
+// Each row includes: digest, sampleSql, execCount, avgLatency, maxLatency, planInCache, ...
 ```
 
 This analysis provides insights into:
