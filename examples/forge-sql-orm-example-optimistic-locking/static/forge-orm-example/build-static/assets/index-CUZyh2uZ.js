@@ -9,7 +9,7 @@ const __vite__mapDeps = (
       "./custom-theme-loading-utils-ByyD2p9P.js",
       "./wrapNativeSuper-DbbKRv4Y.js",
       "./client-core-vendor-BFJ-FBHn.js",
-      "./body-tlvIHgQr.js",
+      "./body-CNMcShQz.js",
       "./inline-styles-if-ranking-4FDZxTl0.js",
       "./react-dom-vendor-DD8-Uyz5.js",
       "./inline-styles-if-ranking-DMqwCerb.css",
@@ -14002,7 +14002,7 @@ var B_ = function (e) {
   },
   V_ = (0, B.lazy)(function () {
     return It(
-      () => import(`./body-tlvIHgQr.js`),
+      () => import(`./body-CNMcShQz.js`),
       __vite__mapDeps([6, 1, 7, 4, 8, 9, 10]),
       import.meta.url,
     );

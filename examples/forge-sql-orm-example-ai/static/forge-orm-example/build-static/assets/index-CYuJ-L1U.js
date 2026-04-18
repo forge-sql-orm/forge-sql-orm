@@ -9,7 +9,7 @@ const __vite__mapDeps = (
       "./wrapNativeSuper-BmCJ3c35.js",
       "./client-core-vendor-C3jPwzOA.js",
       "./iframe-resizer-Db-n2jU4.js",
-      "./body-1QpJNadQ.js",
+      "./body-D_1PhZNY.js",
       "./inline-styles-if-ranking-B3n6Evfn.js",
       "./react-dom-vendor-Bd5mlCjg.js",
       "./inline-styles-if-ranking-DMqwCerb.css",
@@ -12096,7 +12096,7 @@ var mm = function (e) {
   },
   hm = (0, I.lazy)(function () {
     return yn(
-      () => import(`./body-1QpJNadQ.js`),
+      () => import(`./body-D_1PhZNY.js`),
       __vite__mapDeps([6, 2, 7, 3, 8, 9, 10]),
       import.meta.url,
     );
