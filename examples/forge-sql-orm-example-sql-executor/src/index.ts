@@ -1,15 +1,16 @@
 import Resolver, { Request } from "@forge/resolver";
 import { spawn } from "child_process";
-import { sql } from "@forge/sql";
+import ForgeSQL from "forge-sql-orm";
 import { dropSchemaMigrations, applySchemaMigrations, fetchSchemaWebTrigger } from "forge-sql-orm";
 
 const resolver = new Resolver();
+const forgeSQL = new ForgeSQL({ logRawSqlQuery: true });
 
 resolver.define("execute", async (req: Request<{ query: string }>): Promise<string> => {
   try {
     const query = req.payload.query;
-    let result = await sql.executeRaw(query);
-    return JSON.stringify(result);
+    const result = await forgeSQL.execute(query);
+    return JSON.stringify(result[0]);
   } catch (e) {
     console.error(e);
     return JSON.stringify(e);
@@ -19,7 +20,7 @@ resolver.define("execute", async (req: Request<{ query: string }>): Promise<stri
 resolver.define("executeDDL", async (req: Request<{ query: string }>): Promise<string> => {
   try {
     const query = req.payload.query;
-    let result = await sql.executeDDL(query);
+    const result = await forgeSQL.executeDDL(query);
     return JSON.stringify(result);
   } catch (e) {
     console.error(e);
