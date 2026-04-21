@@ -1,6 +1,6 @@
 {
   "name": "forge-sql-orm-cli",
-  "version": "2.1.26",
+  "version": "2.1.27",
   "description": "CLI tool for Forge SQL ORM",
   "main": "dist-cli/cli.js",
   "types": "dist-cli/cli.d.ts",
@@ -46,7 +46,7 @@
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
-    "forge-sql-orm": "^2.1.26",
+    "forge-sql-orm": "^2.1.27",
     "inquirer": "^13.4.2",
     "mysql2": "^3.22.2",
     "reflect-metadata": "^0.2.2",
