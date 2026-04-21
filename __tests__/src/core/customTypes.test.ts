@@ -10,7 +10,7 @@ import {
   forgeVarBinary,
   uuidBinary,
   vectorTiDBType,
-} from "../../../src/core/customTypes";
+} from "../../../src";
 
 const t = mysqlTable("custom_types_t", {
   id: int("id").primaryKey(),
