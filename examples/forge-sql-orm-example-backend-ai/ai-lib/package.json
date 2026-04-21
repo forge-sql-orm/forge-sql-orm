@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@huggingface/transformers": "^4.1.0",
-    "vite": "^8.0.8"
+    "vite": "^8.0.9"
   },
   "devDependencies": {
     "esbuild": "^0.28.0",
