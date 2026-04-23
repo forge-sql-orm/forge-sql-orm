@@ -62,7 +62,7 @@
     "knip": "^6.6.1",
     "reflect-metadata": "^0.2.2",
     "typescript": "^5.9.3",
-    "vite": "^8.0.9"
+    "vite": "^8.0.10"
   },
   "lint-staged": {
     "*.{ts,tsx,css,scss,md}": [

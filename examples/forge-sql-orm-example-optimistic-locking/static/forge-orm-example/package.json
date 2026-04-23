@@ -7,7 +7,7 @@
     "@atlaskit/css-reset": "^7.4.5",
     "@atlaskit/dynamic-table": "^18.4.0",
     "@atlaskit/tabs": "^19.1.0",
-    "@atlaskit/tokens": "^13.0.0",
+    "@atlaskit/tokens": "^13.0.1",
     "@forge/bridge": "^5.15.1",
     "mobx": "6.15.0",
     "mobx-react": "9.2.1",
@@ -25,7 +25,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-pkg": "^0.22.1",
     "typescript": "^6.0.3",
-    "vite": "^8.0.9"
+    "vite": "^8.0.10"
   },
   "scripts": {
     "build": "vite build",
