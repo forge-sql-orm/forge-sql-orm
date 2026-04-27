@@ -15,13 +15,13 @@
   "devDependencies": {
     "eslint-plugin-react-hooks": "^7.1.1",
     "forge-sql-orm-cli": "^2.1.27",
-    "knip": "^6.6.2"
+    "knip": "^6.7.0"
   },
   "dependencies": {
-    "@forge/bridge": "5.15.1",
-    "@forge/react": "11.14.1",
-    "@forge/resolver": "1.7.1",
-    "@forge/sql": "^3.0.22",
+    "@forge/bridge": "5.16.0",
+    "@forge/react": "11.15.0",
+    "@forge/resolver": "1.8.0",
+    "@forge/sql": "^3.0.23",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "^2.1.27",
     "react": "^18.2.0"

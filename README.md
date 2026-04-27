@@ -260,31 +260,6 @@ npm install forge-sql-orm @forge/sql drizzle-orm -S
 npm install forge-sql-orm @forge/sql @forge/kvs drizzle-orm -S
 ```
 
-**⚠️ Important for UI-Kit projects:**
-
-If you're installing `forge-sql-orm` in a UI-Kit project (projects using `@forge/react`), you may encounter peer dependency conflicts with `@types/react`. This is due to a conflict between `@types/react@18` (required by `@forge/react`) and `@types/react@19` (optional peer dependency from `drizzle-orm` via `bun-types`).
-
-To resolve this, use the `--legacy-peer-deps` flag:
-
-```sh
-# Basic installation for UI-Kit projects
-npm install forge-sql-orm @forge/sql drizzle-orm -S --legacy-peer-deps
-
-# With caching support for UI-Kit projects
-npm install forge-sql-orm @forge/sql @forge/kvs drizzle-orm -S --legacy-peer-deps
-```
-
-**Note:** The `--legacy-peer-deps` flag tells npm to ignore peer dependency conflicts. This is safe in this case because `bun-types` is an optional peer dependency and doesn't affect the functionality of `forge-sql-orm` in Forge environments.
-
-This will:
-
-- Install Forge-SQL-ORM (the ORM for @forge/sql)
-- Install @forge/sql, the Forge database layer
-- Install @forge/kvs, the Forge Key-Value Store for caching (optional, only needed for caching features)
-- Install Drizzle ORM and its MySQL driver
-- Install TypeScript types for MySQL
-- Install forge-sql-orm-cli A command-line interface tool for managing Atlassian Forge SQL migrations and model generation with Drizzle ORM integration.
-
 ## Quick Start
 
 ### 1. Basic Setup
