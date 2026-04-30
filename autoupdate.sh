@@ -45,6 +45,8 @@ step "Installing dependencies (npm i)..."
 run npm i
 step "Running knip..."
 run npm run knip
+step "Running lint:fix..."
+run npm run lint:fix
 step "Building CLI..."
 run npm run build
 

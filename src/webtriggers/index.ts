@@ -14,7 +14,7 @@ export interface TriggerResponse<BODY> {
 }
 
 export const getHttpResponse = <Body>(statusCode: number, body: Body): TriggerResponse<Body> => {
-  let statusText = "";
+  let statusText: string;
   if (statusCode === 200) {
     statusText = "Ok";
   } else {

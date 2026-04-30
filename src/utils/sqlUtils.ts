@@ -133,7 +133,7 @@ function parseStringToDateTime(value: string): DateTime | null {
  * Converts a value to DateTime
  */
 function valueToDateTime(value: Date | string | number): DateTime {
-  let dt: DateTime | null = null;
+  let dt: DateTime | null;
 
   if (value instanceof Date) {
     dt = DateTime.fromJSDate(value);
