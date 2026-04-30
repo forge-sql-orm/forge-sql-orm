@@ -59,15 +59,15 @@ jobs:
     - run: cd forge-sql-orm-cli && npm run lint
     - run: cd forge-sql-orm-cli && npm run build
     - run: echo BUILD EXAMPLES
-    - run: cd examples/forge-sql-orm-example-dynamic && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-dynamic && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-dynamic && npm run knip
-    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm run build
 
-    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-drizzle-driver-simple && npm run knip
-    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-drizzle-driver-simple/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-drizzle-driver-simple/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -97,10 +97,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-drizzle-driver-simple && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-simple && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-simple && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-simple && npm run knip
     - run: cd examples/forge-sql-orm-example-simple && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-simple/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-simple/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-simple/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-simple/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -130,10 +130,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-simple && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-optimistic-locking && npm run knip
     - run: cd examples/forge-sql-orm-example-optimistic-locking && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -163,10 +163,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-optimistic-locking && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-optimistic-locking && npm run knip
     - run: cd examples/forge-sql-orm-example-optimistic-locking && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -196,10 +196,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-optimistic-locking && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-query-analyses && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-query-analyses && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-query-analyses && npm run knip
     - run: cd examples/forge-sql-orm-example-query-analyses && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-query-analyses/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-query-analyses/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-query-analyses/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-query-analyses/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -229,10 +229,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-query-analyses && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-checklist && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-checklist && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-checklist && npm run knip
     - run: cd examples/forge-sql-orm-example-checklist && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-checklist/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-checklist/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-checklist/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-checklist/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -262,10 +262,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-checklist && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-org-tracker && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-org-tracker && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-org-tracker && npm run knip
     - run: cd examples/forge-sql-orm-example-org-tracker && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-org-tracker/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-org-tracker/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-org-tracker/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-org-tracker/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -295,10 +295,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-org-tracker && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-dynamic && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-dynamic && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-dynamic && npm run knip
     - run: cd examples/forge-sql-orm-example-dynamic && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -328,10 +328,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-dynamic && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-sql-executor && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-sql-executor && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-sql-executor && npm run knip
     - run: cd examples/forge-sql-orm-example-sql-executor && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-sql-executor/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-sql-executor/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-sql-executor/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-sql-executor/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -361,10 +361,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-sql-executor && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-cache && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-cache && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-cache && npm run knip
     - run: cd examples/forge-sql-orm-example-cache && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-cache/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-cache/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-cache/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-cache/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -394,10 +394,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-cache && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-atlascamp && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-atlascamp && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-atlascamp && npm run knip
     - run: cd examples/forge-sql-orm-example-atlascamp && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -428,10 +428,10 @@ jobs:
       run: cd examples/forge-sql-orm-example-atlascamp && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
 
-    - run: cd examples/forge-sql-orm-example-vector && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-vector && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-vector && npm run knip
     - run: cd examples/forge-sql-orm-example-vector && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-vector/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-vector/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-vector/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-vector/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -461,10 +461,10 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-vector && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-ai && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-ai && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-ai && npm run knip
     - run: cd examples/forge-sql-orm-example-ai && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-ai/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-ai/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-ai/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-ai/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -494,12 +494,12 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-ai && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-backend-ai && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-backend-ai && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-backend-ai && npm run knip
     - run: cd examples/forge-sql-orm-example-backend-ai && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-backend-ai/ai-lib && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-backend-ai/ai-lib && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-backend-ai/ai-lib && npm run build:arm64
-    - run: cd examples/forge-sql-orm-example-backend-ai/static/forge-orm-example && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-backend-ai/static/forge-orm-example && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-backend-ai/static/forge-orm-example && npm run knip
     - run: cd examples/forge-sql-orm-example-backend-ai/static/forge-orm-example && npm run build
     - name: Forge Deploy (Production)
@@ -529,7 +529,7 @@ jobs:
         FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
       run: cd examples/forge-sql-orm-example-backend-ai && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
 
-    - run: cd examples/forge-sql-orm-example-ui-kit && npm i --ignore-scripts
+    - run: cd examples/forge-sql-orm-example-ui-kit && npm ci --ignore-scripts
     - run: cd examples/forge-sql-orm-example-ui-kit && npm run knip
     - run: cd examples/forge-sql-orm-example-ui-kit && npm run build:ci
     - name: Forge Deploy (Production)
