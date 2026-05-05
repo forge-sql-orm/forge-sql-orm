@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
 import {
   formatLimitOffset,
   generateDropTableStatements,
@@ -15,7 +15,7 @@ import {
   slowQueryPerHours,
   checkProductionEnvironment,
 } from "../../../src";
-import { DateTime } from "luxon";
+import { DateTime, Settings } from "luxon";
 import { int, mysqlTable, varchar, text, primaryKey } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 import { ForgeSqlOperation } from "../../../src";
@@ -25,6 +25,14 @@ const mockGetAppContext = vi.fn();
 vi.mock("@forge/api", () => ({
   getAppContext: () => mockGetAppContext(),
 }));
+
+beforeAll(() => {
+  Settings.defaultZone = "utc";
+});
+
+afterAll(() => {
+  Settings.defaultZone = "system";
+});
 
 // Test suite for transformValue function
 describe("transformValue", () => {
@@ -45,7 +53,7 @@ describe("transformValue", () => {
     });
 
     it("should handle Date object input", () => {
-      const date = new Date("2024-03-03T12:34:56.789");
+      const date = new Date("2024-03-03T12:34:56.789Z");
       const format = "yyyy-LL-dd'T'HH:mm:ss.SSS";
       const parsedDate = parseDateTime(date, format);
       expect(parsedDate).toBeInstanceOf(Date);
@@ -208,7 +216,7 @@ describe("transformValue", () => {
 
   describe("formatDateTime", () => {
     it("should format Date object correctly", () => {
-      const date = new Date("2024-03-03T12:34:56.789");
+      const date = new Date("2024-03-03T12:34:56.789Z");
       const result = formatDateTime(date, "yyyy-LL-dd'T'HH:mm:ss.SSS", false);
       expect(result).toBe("2024-03-03T12:34:56.789");
     });

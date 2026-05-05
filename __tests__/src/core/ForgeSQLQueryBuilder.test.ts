@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { mysqlTable, int } from "drizzle-orm/mysql-core";
 import {
   forgeDateTimeString,
@@ -7,6 +7,15 @@ import {
   forgeTimeString,
 } from "../../../src/core/ForgeSQLQueryBuilder";
 import { formatDateTime, parseDateTime } from "../../../src/utils/sqlUtils";
+import { Settings } from "luxon";
+
+beforeAll(() => {
+  Settings.defaultZone = "utc";
+});
+
+afterAll(() => {
+  Settings.defaultZone = "system";
+});
 
 describe("ForgeSQLQueryBuilder - Custom Types", () => {
   describe("forgeDateTimeString", () => {
@@ -53,12 +62,12 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
 
       const mapped = (testTable.dateTimeField as any).mapFrom("2026-06-12");
       expect(mapped).toBeInstanceOf(Date);
-      expect(mapped.getFullYear()).toBe(2026);
-      expect(mapped.getMonth()).toBe(5);
-      expect(mapped.getDate()).toBe(12);
-      expect(mapped.getHours()).toBe(0);
-      expect(mapped.getMinutes()).toBe(0);
-      expect(mapped.getSeconds()).toBe(0);
+      expect(mapped.getUTCFullYear()).toBe(2026);
+      expect(mapped.getUTCMonth()).toBe(5);
+      expect(mapped.getUTCDate()).toBe(12);
+      expect(mapped.getUTCHours()).toBe(0);
+      expect(mapped.getUTCMinutes()).toBe(0);
+      expect(mapped.getUTCSeconds()).toBe(0);
     });
 
     it("should return null and undefined from driver as is", () => {
@@ -96,9 +105,9 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
       // Test the parseDateTime function directly (used by fromDriver)
       const result = parseDateTime(timestampString, "yyyy-MM-dd' 'HH:mm:ss.SSS");
       expect(result).toBeInstanceOf(Date);
-      expect(result.getFullYear()).toBe(2024);
-      expect(result.getMonth()).toBe(0);
-      expect(result.getDate()).toBe(15);
+      expect(result.getUTCFullYear()).toBe(2024);
+      expect(result.getUTCMonth()).toBe(0);
+      expect(result.getUTCDate()).toBe(15);
     });
 
     it("should handle UTC conversion for timestamps", () => {
@@ -133,9 +142,9 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
       // Test the parseDateTime function directly (used by fromDriver)
       const result = parseDateTime(dateString, "yyyy-MM-dd");
       expect(result).toBeInstanceOf(Date);
-      expect(result.getFullYear()).toBe(2024);
-      expect(result.getMonth()).toBe(0);
-      expect(result.getDate()).toBe(15);
+      expect(result.getUTCFullYear()).toBe(2024);
+      expect(result.getUTCMonth()).toBe(0);
+      expect(result.getUTCDate()).toBe(15);
     });
 
     it("should handle different dates", () => {

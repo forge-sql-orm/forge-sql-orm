@@ -4,7 +4,7 @@ import { Query } from "drizzle-orm";
 import { AnyMySqlTable } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
 import { Filter, FilterConditions, kvs, WhereConditions } from "@forge/kvs";
-import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
+import { ForgeSqlOrmOptions } from "../core";
 import { cacheApplicationContext, isTableContainsTableInCacheContext } from "./cacheContextUtils";
 import { extractBacktickedValues } from "./cacheTableUtils";
 
