@@ -8,7 +8,7 @@
     "@forge/resolver": "1.8.0",
     "@forge/sql": "^3.0.23",
     "drizzle-orm": "^0.45.2",
-    "forge-sql-orm": "^2.1.27"
+    "forge-sql-orm": "^2.1.28"
   },
   "scripts": {
     "build:ci": "tsc --target esnext --project tsconfig.json  --outDir dist && rm -rf dist",
