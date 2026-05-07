@@ -6,7 +6,7 @@
     "@atlaskit/css-reset": "^7.4.5",
     "@atlaskit/dynamic-table": "^18.4.1",
     "@forge/bridge": "^5.16.0",
-    "mobx": "6.15.1",
+    "mobx": "6.15.3",
     "mobx-react": "9.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -18,11 +18,11 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^6.0.1",
     "dotenv": "17.4.2",
-    "knip": "^6.11.0",
+    "knip": "^6.12.0",
     "prettier": "^3.8.3",
     "prettier-plugin-pkg": "^0.22.1",
     "typescript": "^6.0.3",
-    "vite": "^8.0.10"
+    "vite": "^8.0.11"
   },
   "scripts": {
     "build": "vite build",

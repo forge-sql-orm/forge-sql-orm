@@ -1,20 +1,20 @@
-import { a as e, h as t, l as n, n as r, p as i } from "./wrapNativeSuper-DbbKRv4Y.js";
+import { a as e, c as t, f as n, l as r, s as i } from "./wrapNativeSuper-C8aTj56-.js";
 import {
-  _ as a,
-  a as o,
-  c as s,
-  d as c,
-  f as l,
-  g as u,
-  h as d,
+  a,
+  c as o,
+  d as s,
+  f as c,
+  g as l,
+  h as u,
+  i as d,
   l as f,
   m as p,
   o as m,
   p as h,
-  s as g,
-  u as _,
-  v,
-} from "./index-HfVboDSK.js";
+  r as g,
+  s as _,
+  u as v,
+} from "./index-D7sHhhPL.js";
 var y = {
     "color.text.brand": `#669DF1`,
     "elevation.surface.overlay": `#2B2C2F`,
@@ -88,19 +88,19 @@ var y = {
       a = Object.keys(t);
     return (
       x.forEach(function (e) {
-        var o = e.backgroundLight,
-          s = e.backgroundDark,
-          c = e.foreground,
-          l = e.desiredContrast,
-          u = e.updatedTokens,
-          d = n === `light` ? o : s,
-          f = t[c],
-          p = t[d];
-        _(
-          a.includes(c) ? (typeof f == `string` ? f : r[f]) : S(c, n),
-          a.includes(d) ? (typeof p == `string` ? p : r[p]) : S(d, n),
-        ) <= l &&
-          u.forEach(function (e) {
+        var s = e.backgroundLight,
+          c = e.backgroundDark,
+          l = e.foreground,
+          u = e.desiredContrast,
+          d = e.updatedTokens,
+          f = n === `light` ? s : c,
+          p = t[l],
+          m = t[f];
+        o(
+          a.includes(l) ? (typeof p == `string` ? p : r[p]) : S(l, n),
+          a.includes(f) ? (typeof m == `string` ? m : r[m]) : S(f, n),
+        ) <= u &&
+          d.forEach(function (e) {
             var r = t[e];
             typeof r == `number` && (i[e] = n === `light` ? r + 1 : r - 1);
           });
@@ -225,15 +225,15 @@ function ie(e) {
 }
 var J,
   Y = (function () {
-    function e(n) {
-      (t(this, e), (this.argb = n));
-      var r = X.fromInt(n);
-      ((this.internalHue = r.hue),
-        (this.internalChroma = r.chroma),
-        (this.internalTone = V(n)),
-        (this.argb = n));
+    function e(t) {
+      (r(this, e), (this.argb = t));
+      var n = X.fromInt(t);
+      ((this.internalHue = n.hue),
+        (this.internalChroma = n.chroma),
+        (this.internalTone = V(t)),
+        (this.argb = t));
     }
-    return i(
+    return t(
       e,
       [
         {
@@ -305,10 +305,10 @@ var J,
     );
   })(),
   X = (function () {
-    function e(n, r, i, a, o, s, c, l, u) {
-      (t(this, e),
-        (this.hue = n),
-        (this.chroma = r),
+    function e(t, n, i, a, o, s, c, l, u) {
+      (r(this, e),
+        (this.hue = t),
+        (this.chroma = n),
         (this.j = i),
         (this.q = a),
         (this.m = o),
@@ -317,7 +317,7 @@ var J,
         (this.astar = l),
         (this.bstar = u));
     }
-    return i(
+    return t(
       e,
       [
         {
@@ -551,9 +551,9 @@ var J,
   })(),
   Z = (function () {
     function e() {
-      t(this, e);
+      r(this, e);
     }
-    return i(e, null, [
+    return t(e, null, [
       {
         key: `sanitizeRadians`,
         value: function (e) {
@@ -778,18 +778,18 @@ var J,
       },
     ]);
   })();
-(n(Z, `SCALED_DISCOUNT_FROM_LINRGB`, [
+(i(Z, `SCALED_DISCOUNT_FROM_LINRGB`, [
   [0.001200833568784504, 0.002389694492170889, 0.0002795742885861124],
   [0.0005891086651375999, 0.0029785502573438758, 0.0003270666104008398],
   [0.00010146692491640572, 0.0005364214359186694, 0.0032979401770712076],
 ]),
-  n(Z, `LINRGB_FROM_SCALED_DISCOUNT`, [
+  i(Z, `LINRGB_FROM_SCALED_DISCOUNT`, [
     [1373.2198709594231, -1100.4251190754821, -7.278681089101213],
     [-271.815969077903, 559.6580465940733, -32.46047482791194],
     [1.9622899599665666, -57.173814538844006, 308.7233197812385],
   ]),
-  n(Z, `Y_FROM_LINRGB`, [0.2126, 0.7152, 0.0722]),
-  n(
+  i(Z, `Y_FROM_LINRGB`, [0.2126, 0.7152, 0.0722]),
+  i(
     Z,
     `CRITICAL_PLANES`,
     [
@@ -857,10 +857,10 @@ var J,
     ],
   ));
 var Q = (function () {
-  function e(n, r, i, a, o, s, c, l, u, d) {
-    (t(this, e),
-      (this.n = n),
-      (this.aw = r),
+  function e(t, n, i, a, o, s, c, l, u, d) {
+    (r(this, e),
+      (this.n = t),
+      (this.aw = n),
       (this.nbb = i),
       (this.ncb = a),
       (this.c = o),
@@ -870,7 +870,7 @@ var Q = (function () {
       (this.fLRoot = u),
       (this.z = d));
   }
-  return i(e, null, [
+  return t(e, null, [
     {
       key: `make`,
       value: function () {
@@ -915,12 +915,12 @@ var Q = (function () {
     },
   ]);
 })();
-((J = Q), n(Q, `DEFAULT`, J.make()));
+((J = Q), i(Q, `DEFAULT`, J.make()));
 var ae = (function () {
   function e() {
-    t(this, e);
+    r(this, e);
   }
-  return i(e, null, [
+  return t(e, null, [
     {
       key: `ratioOfTones`,
       value: function (t, n) {
@@ -991,15 +991,15 @@ function oe(e, t) {
 }
 function se(e) {
   for (var t = 1; t < arguments.length; t++) {
-    var r = arguments[t] == null ? {} : arguments[t];
+    var n = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? oe(Object(r), !0).forEach(function (t) {
-          n(e, t, r[t]);
+      ? oe(Object(n), !0).forEach(function (t) {
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(r))
-        : oe(Object(r)).forEach(function (t) {
-            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(r, t));
+        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
+        : oe(Object(n)).forEach(function (t) {
+            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
           });
   }
   return e;
@@ -1011,68 +1011,68 @@ var ce = [1.12, 1.33, 2.03, 2.73, 3.33, 4.27, 5.2, 6.62, 12.46, 14.25],
       r = null;
     return (
       e.forEach(function (e, i) {
-        var a = f(l(e), l(t));
+        var a = _(v(e), v(t));
         (r === null || a < r) && ((n = i), (r = a));
       }),
       n
     );
   },
-  $ = function (e) {
-    var t = c(e)[0],
-      n = s(t, 100, 60),
-      i = p(n[0], n[1], n[2]) < 0.4 ? ce : le,
-      a = h(e),
+  $ = function (t) {
+    var n = f(t)[0],
+      r = m(n, 100, 60),
+      i = c(r[0], r[1], r[2]) < 0.4 ? ce : le,
+      a = s(t),
       o = Y.fromInt(re({ r: a[0], g: a[1], b: a[2], a: a[3] })),
       l = i.map(function (e) {
         var t = ne(Y.from(o.hue, o.chroma, ae.darker(100, e) + 0.25).toInt());
-        return d(t.r, t.g, t.b);
+        return h(t.r, t.g, t.b);
       }),
-      u = ue(l, e),
-      f = r(l);
-    return ((f[u] = e), { ramp: f, replacedColor: l[u] });
+      u = ue(l, t),
+      d = e(l);
+    return ((d[u] = t), { ramp: d, replacedColor: l[u] });
   };
 function de(e, t, n) {
   for (var r = [], i = 1; i <= t; i++)
     e + i < n.length ? r.push(e + i) : r.push(e - (i - (n.length - 1 - e)));
   return r;
 }
-var fe = function (t, n, r) {
-    var i = $(t),
+var fe = function (e, t, r) {
+    var i = $(e),
       a = i.ramp,
-      o = i.replacedColor,
-      s = r || a,
-      c = ue(s, t),
-      l = {},
+      s = i.replacedColor,
+      c = r || a,
+      l = ue(c, e),
       u = {},
-      d = _(t, `#FFFFFF`);
-    if (d >= 4.5) {
-      var f = e(de(c, 2, s), 2),
-        p = f[0],
-        m = f[1],
-        h = c;
-      d < 5.4 && d >= 4.8 && c === 6 && (h = c + 1);
-      var g = e(de(h, 1, s), 1)[0];
-      l = {
-        "color.text.brand": h,
-        "color.icon.brand": c,
+      d = {},
+      f = o(e, `#FFFFFF`);
+    if (f >= 4.5) {
+      var p = n(de(l, 2, c), 2),
+        m = p[0],
+        h = p[1],
+        g = l;
+      f < 5.4 && f >= 4.8 && l === 6 && (g = l + 1);
+      var _ = n(de(g, 1, c), 1)[0];
+      u = {
+        "color.text.brand": g,
+        "color.icon.brand": l,
         "color.background.brand.subtlest": 0,
         "color.background.brand.subtlest.hovered": 1,
         "color.background.brand.subtlest.pressed": 2,
-        "color.background.brand.bold": c,
-        "color.background.brand.bold.hovered": p,
-        "color.background.brand.bold.pressed": m,
+        "color.background.brand.bold": l,
+        "color.background.brand.bold.hovered": m,
+        "color.background.brand.bold.pressed": h,
         "color.background.brand.boldest": 9,
         "color.background.brand.boldest.hovered": 8,
         "color.background.brand.boldest.pressed": 7,
-        "color.border.brand": c,
-        "color.text.selected": h,
-        "color.icon.selected": c,
-        "color.background.selected.bold": c,
-        "color.background.selected.bold.hovered": p,
-        "color.background.selected.bold.pressed": m,
-        "color.border.selected": c,
-        "color.link": h,
-        "color.link.pressed": g,
+        "color.border.brand": l,
+        "color.text.selected": g,
+        "color.icon.selected": l,
+        "color.background.selected.bold": l,
+        "color.background.selected.bold.hovered": m,
+        "color.background.selected.bold.pressed": h,
+        "color.border.selected": l,
+        "color.link": g,
+        "color.link.pressed": _,
         "color.chart.brand": 5,
         "color.chart.brand.hovered": 6,
         "color.background.selected": 0,
@@ -1081,8 +1081,8 @@ var fe = function (t, n, r) {
       };
     } else {
       var v = 6;
-      (d < 4.5 && d >= 4 && c === 6 && (v = o),
-        (l = {
+      (f < 4.5 && f >= 4 && l === 6 && (v = s),
+        (u = {
           "color.background.brand.subtlest": 0,
           "color.background.brand.subtlest.hovered": 1,
           "color.background.brand.subtlest.pressed": 2,
@@ -1110,34 +1110,34 @@ var fe = function (t, n, r) {
           "color.link.pressed": 7,
         }));
     }
-    if (n === `light`) return { light: l };
+    if (t === `light`) return { light: u };
     if (
-      (Object.entries(l).forEach(function (t) {
-        var n = e(t, 2),
-          r = n[0],
-          i = n[1];
-        u[r] = 9 - (typeof i == `string` ? c : i);
+      (Object.entries(u).forEach(function (e) {
+        var t = n(e, 2),
+          r = t[0],
+          i = t[1];
+        d[r] = 9 - (typeof i == `string` ? l : i);
       }),
-      d < 4.5)
+      f < 4.5)
     ) {
       var b = y[`color.text.inverse`];
-      _(b, t) >= 4.5 &&
-        c >= 2 &&
-        ((u[`color.background.brand.bold`] = c),
-        (u[`color.background.brand.bold.hovered`] = c - 1),
-        (u[`color.background.brand.bold.pressed`] = c - 2));
+      o(b, e) >= 4.5 &&
+        l >= 2 &&
+        ((d[`color.background.brand.bold`] = l),
+        (d[`color.background.brand.bold.hovered`] = l - 1),
+        (d[`color.background.brand.bold.pressed`] = l - 2));
     }
-    return n === `dark` ? { dark: u } : { light: l, dark: u };
+    return t === `dark` ? { dark: d } : { light: u, dark: d };
   },
-  pe = function (t, n, r) {
-    var i = r || $(t).ramp,
-      a = fe(t, n, i),
+  pe = function (e, t, r) {
+    var i = r || $(e).ramp,
+      a = fe(e, t, i),
       o = {};
     return (
-      Object.entries(a).forEach(function (t) {
-        var n = e(t, 2),
-          r = n[0],
-          a = n[1];
+      Object.entries(a).forEach(function (e) {
+        var t = n(e, 2),
+          r = t[0],
+          a = t[1];
         (r === `light` || r === `dark`) &&
           (o[r] = se(se({}, a), C({ customThemeTokenMap: a, mode: r, themeRamp: i })));
       }),
@@ -1148,8 +1148,8 @@ var fe = function (t, n, r) {
 function he(e) {
   var t,
     n = e == null || (t = e.UNSAFE_themeOptions) == null ? void 0 : t.brandColor,
-    r = e?.colorMode || v.colorMode,
-    i = g(JSON.stringify(e?.UNSAFE_themeOptions)),
+    r = e?.colorMode || l.colorMode,
+    i = a(JSON.stringify(e?.UNSAFE_themeOptions)),
     o = $(n).ramp,
     s = [],
     c = pe(n, r, o);
@@ -1160,9 +1160,9 @@ function he(e) {
         id: `light`,
         attrs: { "data-theme": `light`, "data-custom-theme": i },
         css: `
-html[${a}="${i}"][${u}="light"][data-theme~="light:light"] {
+html[${u}="${i}"][${p}="light"][data-theme~="light:light"] {
   /* Branded tokens */
-    ${m(c.light, o)}
+    ${d(c.light, o)}
 }`,
       }),
     (r === `dark` || r === `auto`) &&
@@ -1171,9 +1171,9 @@ html[${a}="${i}"][${u}="light"][data-theme~="light:light"] {
         id: `dark`,
         attrs: { "data-theme": `dark`, "data-custom-theme": i },
         css: `
-html[${a}="${i}"][${u}="dark"][data-theme~="dark:dark"] {
+html[${u}="${i}"][${p}="dark"][data-theme~="dark:dark"] {
   /* Branded tokens */
-    ${m(c.dark, o)}
+    ${d(c.dark, o)}
 }`,
       }),
     s
@@ -1181,7 +1181,7 @@ html[${a}="${i}"][${u}="dark"][data-theme~="dark:dark"] {
 }
 function ge(e) {
   var t = he(e);
-  (o(10),
+  (g(10),
     t.map(function (e) {
       var t = document.createElement(`style`);
       (document.head.appendChild(t),

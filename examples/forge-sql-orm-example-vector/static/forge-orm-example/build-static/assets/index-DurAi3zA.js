@@ -9860,12 +9860,8 @@ var mc = {
     );
   },
   _c = (0, u.createContext)(`elevation.surface`),
-  vc = function () {
-    return (0, u.useContext)(_c);
-  };
-_c.displayName = `SurfaceProvider`;
-var yc = () =>
-  Error(`
+  vc = () =>
+    Error(`
  ██████╗ ██████╗ ███╗   ███╗██████╗ ██╗██╗     ███████╗██████╗
 ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██║██║     ██╔════╝██╔══██╗
 ██║     ██║   ██║██╔████╔██║██████╔╝██║██║     █████╗  ██║  ██║
@@ -9883,26 +9879,26 @@ var yc = () =>
   For more information visit https://compiledcssinjs.com/docs/installation and follow the instructions.
 `);
 X();
-var bc = (...e) => Y(e);
-function xc() {
+var yc = (...e) => Y(e);
+function bc() {
   return {
     css() {
-      throw yc();
+      throw vc();
     },
     cssMap() {
-      throw yc();
+      throw vc();
     },
-    cx: bc,
+    cx: yc,
     XCSSProp() {
-      throw yc();
+      throw vc();
     },
   };
 }
-var Sc = xc();
-(Sc.css, Sc.cssMap, Sc.cssMap);
-var Cc = Sc.cx;
-(Sc.XCSSProp, X());
-var wc = [
+var xc = bc();
+(xc.css, xc.cssMap, xc.cssMap);
+var Sc = xc.cx;
+(xc.XCSSProp, X());
+var Cc = [
     `as`,
     `role`,
     `alignItems`,
@@ -9916,7 +9912,7 @@ var wc = [
     `wrap`,
     `xcss`,
   ],
-  Tc = {
+  wc = {
     "space.0": `_1p57ze3t`,
     "space.025": `_1p57v77o`,
     "space.050": `_1p571b66`,
@@ -9932,7 +9928,7 @@ var wc = [
     "space.800": `_1p57xncg`,
     "space.1000": `_1p571epz`,
   },
-  Ec = {
+  Tc = {
     "space.0": `_gy1pze3t`,
     "space.025": `_gy1pv77o`,
     "space.050": `_gy1p1b66`,
@@ -9948,7 +9944,7 @@ var wc = [
     "space.800": `_gy1pxncg`,
     "space.1000": `_gy1p1epz`,
   },
-  Dc = {
+  Ec = {
     start: `_1bahv2br`,
     center: `_1bah1h6o`,
     end: `_1bahh9n0`,
@@ -9957,17 +9953,17 @@ var wc = [
     "space-evenly": `_1bahitcz`,
     stretch: `_1bah1fhb`,
   },
-  Oc = { column: `_2lx21bp4`, row: `_2lx2vrvc` },
-  kc = { wrap: `_1n261g80`, nowrap: `_1n261q9c` },
-  Ac = {
+  Dc = { column: `_2lx21bp4`, row: `_2lx2vrvc` },
+  Oc = { wrap: `_1n261g80`, nowrap: `_1n261q9c` },
+  kc = {
     start: `_4cvrv2br`,
     center: `_4cvr1h6o`,
     baseline: `_4cvr1q9y`,
     end: `_4cvrh9n0`,
     stretch: `_4cvr1fhb`,
   },
-  jc = { root: `_1e0c1txw _vchhusvi` },
-  Mc = (0, u.memo)(
+  Ac = { root: `_1e0c1txw _vchhusvi` },
+  jc = (0, u.memo)(
     (0, u.forwardRef)(function (e, t) {
       var n = e.as,
         r = n === void 0 ? `div` : n,
@@ -9982,21 +9978,21 @@ var wc = [
         p = e.direction,
         m = e.wrap,
         h = e.xcss,
-        g = cn(e, wc);
+        g = cn(e, Cc);
       return u.createElement(
         r,
         en({}, g, {
           role: i,
           className: Y([
-            jc.root,
-            s && Ec[s],
-            c && Ec[c],
+            Ac.root,
             s && Tc[s],
-            l && Tc[l],
-            a && Ac[a],
-            p && Oc[p],
-            o && Dc[o],
-            m && kc[m],
+            c && Tc[c],
+            s && wc[s],
+            l && wc[l],
+            a && kc[a],
+            p && Dc[p],
+            o && Ec[o],
+            m && Oc[m],
             h,
           ]),
           "data-testid": f,
@@ -10006,8 +10002,8 @@ var wc = [
       );
     }),
   );
-((Mc.displayName = `Flex`), X());
-var Nc = [
+((jc.displayName = `Flex`), X());
+var Mc = [
     `as`,
     `alignInline`,
     `alignBlock`,
@@ -10022,16 +10018,16 @@ var Nc = [
     `role`,
     `children`,
   ],
-  Pc = {
+  Nc = {
     separator: `_1mouze3t _195g1i6y _syazjjyb _lcxvglyw _uiztglyw`,
     hug: `_16jlidpf`,
     fill: `_1bsb1osq _16jlkb7n`,
   },
-  Fc = function (e) {
+  Pc = function (e) {
     var t = e.children;
-    return u.createElement(`span`, { className: Y([Pc.separator]) }, t);
+    return u.createElement(`span`, { className: Y([Nc.separator]) }, t);
   },
-  Ic = (0, u.memo)(
+  Fc = (0, u.memo)(
     (0, u.forwardRef)(function (e, t) {
       var n = e.as,
         r = e.alignInline,
@@ -10048,8 +10044,8 @@ var Nc = [
         h = e.testId,
         g = e.role,
         _ = e.children,
-        v = cn(e, Nc),
-        y = typeof p == `string` ? u.createElement(Fc, null, p) : p,
+        v = cn(e, Mc),
+        y = typeof p == `string` ? u.createElement(Pc, null, p) : p,
         b = y
           ? u.Children.toArray(_)
               .filter(Boolean)
@@ -10058,7 +10054,7 @@ var Nc = [
               })
           : _;
       return u.createElement(
-        Mc,
+        jc,
         en({}, v, {
           as: n,
           role: g,
@@ -10068,7 +10064,7 @@ var Nc = [
           gap: d,
           rowGap: f,
           wrap: s ? `wrap` : void 0,
-          xcss: Cc(l === `hug` && Pc.hug, l === `fill` && Pc.fill, m),
+          xcss: Sc(l === `hug` && Nc.hug, l === `fill` && Nc.fill, m),
           testId: h,
           ref: t,
         }),
@@ -10076,8 +10072,8 @@ var Nc = [
       );
     }),
   );
-Ic.displayName = `Inline`;
-var Lc = [
+Fc.displayName = `Inline`;
+var Ic = [
     `as`,
     `alignInline`,
     `alignBlock`,
@@ -10089,8 +10085,8 @@ var Lc = [
     `xcss`,
     `role`,
   ],
-  Rc = { hug: `_16jlidpf`, fill: `_1bsb1osq _16jlkb7n` },
-  zc = (0, u.memo)(
+  Lc = { hug: `_16jlidpf`, fill: `_1bsb1osq _16jlkb7n` },
+  Rc = (0, u.memo)(
     (0, u.forwardRef)(function (e, t) {
       var n = e.as,
         r = e.alignInline,
@@ -10103,9 +10099,9 @@ var Lc = [
         d = e.testId,
         f = e.xcss,
         p = e.role,
-        m = cn(e, Lc);
+        m = cn(e, Ic);
       return u.createElement(
-        Mc,
+        jc,
         en({}, m, {
           as: n,
           role: p,
@@ -10113,7 +10109,7 @@ var Lc = [
           direction: `column`,
           alignItems: r,
           justifyContent: o || a,
-          xcss: Cc(s === `hug` && Rc.hug, s === `fill` && Rc.fill, f),
+          xcss: Sc(s === `hug` && Lc.hug, s === `fill` && Lc.fill, f),
           testId: d,
           ref: t,
         }),
@@ -10121,26 +10117,29 @@ var Lc = [
       );
     }),
   );
-zc.displayName = `Stack`;
-var Bc = !0,
-  Vc = `Invariant failed`;
-function Hc(e, t) {
+Rc.displayName = `Stack`;
+var zc = !0,
+  Bc = `Invariant failed`;
+function Vc(e, t) {
   if (!e) {
-    if (Bc) throw Error(Vc);
+    if (zc) throw Error(Bc);
     var n = typeof t == `function` ? t() : t,
-      r = n ? `${Vc}: ${n}` : Vc;
+      r = n ? `${Bc}: ${n}` : Bc;
     throw Error(r);
   }
 }
-var Uc = (0, u.createContext)(!1),
-  Wc = function () {
-    return (0, u.useContext)(Uc);
+var Hc = (0, u.createContext)(!1),
+  Uc = function () {
+    return (0, u.useContext)(Hc);
   },
-  Gc = Uc.Provider;
-X();
+  Wc = Hc.Provider,
+  Gc = function () {
+    return (0, u.useContext)(_c);
+  };
+((_c.displayName = `SurfaceProvider`), X());
 var Kc = [`span`, `p`, `strong`, `em`],
   qc = function (e, t) {
-    var n = vc();
+    var n = Gc();
     if (e !== `inherit`) {
       if (e) return e;
       if (!t) return Qc.hasOwnProperty(n) ? Qc[n] : `color.text`;
@@ -10238,8 +10237,8 @@ var Kc = [`span`, `p`, `strong`, `em`],
       d = e.maxLines,
       f = e.xcss,
       p = e.children;
-    Hc(Kc.includes(r), `@atlaskit/primitives: Text received an invalid "as" value of "${r}"`);
-    var m = Wc(),
+    Vc(Kc.includes(r), `@atlaskit/primitives: Text received an invalid "as" value of "${r}"`);
+    var m = Uc(),
       h = qc(i, m);
     !c && !m && (c = `medium`);
     var g = u.createElement(
@@ -10264,7 +10263,7 @@ var Kc = [`span`, `p`, `strong`, `em`],
       },
       p,
     );
-    return m ? g : u.createElement(Gc, { value: !0 }, g);
+    return m ? g : u.createElement(Wc, { value: !0 }, g);
   });
 function el() {
   if (typeof window < `u` && window.navigator != null) {
@@ -10343,7 +10342,7 @@ var tl = [`as`, `children`, `isInset`, `testId`, `style`, `xcss`],
         action: `clicked`,
         componentName: l || `Pressable`,
         packageName: `@atlaskit/primitives`,
-        packageVersion: `19.0.0`,
+        packageVersion: `0.0.0-development`,
         analyticsData: d,
         actionSubject: `button`,
       });
@@ -10355,7 +10354,7 @@ var tl = [`as`, `children`, `isInset`, `testId`, `style`, `xcss`],
         type: a,
         onClick: v,
         disabled: r,
-        xcss: bc(ol.root, r && ol.disabled, m),
+        xcss: yc(ol.root, r && ol.disabled, m),
         testId: p,
         ref: t,
       }),
@@ -11830,7 +11829,7 @@ var Eu = (function () {
                                       return (
                                         (e.next = 2),
                                         Ke(
-                                          () => import(`./custom-theme-BJOnF6hO.js`),
+                                          () => import(`./custom-theme-BulO3cj7.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -12617,7 +12616,7 @@ var fd =
           analyticsContext: pe,
           role: he,
           ref: nd([xe, t]),
-          xcss: Cc(
+          xcss: Sc(
             hd.base,
             J(`platform-dst-shape-theme-default`) && hd.baseT26Shape,
             I === `default` && gd.root,
@@ -16655,7 +16654,7 @@ var Eg = {
     xxsmall: `_fqoxi4vh`,
   },
   Ag = function (e) {
-    var t = vc();
+    var t = Gc();
     return e || (Eh.hasOwnProperty(t) ? Eh[t] : `color.text`);
   },
   jg = (0, u.forwardRef)(function (e, t) {
@@ -17011,7 +17010,7 @@ var r_ = e(Hg()),
             ]),
           },
           u.createElement(
-            Ic,
+            Fc,
             { space: `space.200`, alignBlock: `stretch` },
             u.createElement(
               `div`,
@@ -17025,13 +17024,13 @@ var r_ = e(Hg()),
               }),
             ),
             u.createElement(
-              zc,
+              Rc,
               { space: `space.100`, testId: d && `${d}--content`, xcss: i_.contentContainer },
               !!o && u.createElement(jg, { as: `h2`, size: `small` }, o),
               u.createElement(`div`, { className: Y([i_.content]) }, n),
               x.length > 0 &&
                 u.createElement(
-                  Ic,
+                  Fc,
                   {
                     shouldWrap: !0,
                     testId: d && `${d}--actions`,
@@ -17043,7 +17042,7 @@ var r_ = e(Hg()),
                   },
                   x.map(function (e, t) {
                     return u.createElement(
-                      Ic,
+                      Fc,
                       { role: x.length > 1 ? `listitem` : void 0, key: t },
                       e,
                     );
