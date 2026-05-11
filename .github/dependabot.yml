@@ -1,13 +1,20 @@
 version: 2
 updates:
+  # ==========================================
+  # ROOT & CLI
+  # ==========================================
   - package-ecosystem: "npm"
-    directory: "/" # Root project
+    directory: "/" 
     schedule:
       interval: "daily"
     open-pull-requests-limit: 5
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-root:
+        patterns:
+          - "*"
 
   - package-ecosystem: "npm"
     directory: "/forge-sql-orm-cli"
@@ -17,7 +24,16 @@ updates:
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-cli:
+        patterns:
+          - "*"
 
+  # ==========================================
+  # EXAMPLES
+  # ==========================================
+
+  # --- drizzle-driver-simple ---
   - package-ecosystem: "npm"
     directory: "/examples/forge-sql-orm-example-drizzle-driver-simple"
     schedule:
@@ -26,6 +42,10 @@ updates:
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-drizzle:
+        patterns:
+          - "*"
 
   - package-ecosystem: "npm"
     directory: "/examples/forge-sql-orm-example-drizzle-driver-simple/static/forge-orm-example"
@@ -40,53 +60,12 @@ updates:
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-drizzle-static:
+        patterns:
+          - "*"
 
-  - package-ecosystem: "npm"
-    directory: "/examples/forge-sql-orm-example-simple"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    labels:
-      - dependencies
-      - npm
-
-  - package-ecosystem: "npm"
-    directory: "/examples/forge-sql-orm-example-simple/static/forge-orm-example"
-    ignore:
-      - dependency-name: "react"
-      - dependency-name: "react-dom"
-      - dependency-name: "@types/react"
-      - dependency-name: "@types/react-dom"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    labels:
-      - dependencies
-      - npm
-
-  - package-ecosystem: "npm"
-    directory: "/examples/forge-sql-orm-example-optimistic-locking"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    labels:
-      - dependencies
-      - npm
-
-  - package-ecosystem: "npm"
-    directory: "/examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example"
-    ignore:
-      - dependency-name: "react"
-      - dependency-name: "react-dom"
-      - dependency-name: "@types/react"
-      - dependency-name: "@types/react-dom"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    labels:
-      - dependencies
-      - npm
-
+  # --- dynamic ---
   - package-ecosystem: "npm"
     directory: "/examples/forge-sql-orm-example-dynamic"
     schedule:
@@ -95,6 +74,10 @@ updates:
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-dynamic:
+        patterns:
+          - "*"
 
   - package-ecosystem: "npm"
     directory: "/examples/forge-sql-orm-example-dynamic/static/forge-orm-example"
@@ -109,7 +92,204 @@ updates:
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-dynamic-static:
+        patterns:
+          - "*"
 
+  # --- optimistic-locking ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-optimistic-locking"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-optimistic:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-optimistic-static:
+        patterns:
+          - "*"
+
+  # --- query-analyses ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-query-analyses"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-query-analyses:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-query-analyses/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-query-analyses-static:
+        patterns:
+          - "*"
+
+  # --- simple ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-simple"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-simple:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-simple/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-simple-static:
+        patterns:
+          - "*"
+
+  # --- checklist ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-checklist"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-checklist:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-checklist/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-checklist-static:
+        patterns:
+          - "*"
+
+  # --- org-tracker ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-org-tracker"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-org-tracker:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-org-tracker/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-org-tracker-static:
+        patterns:
+          - "*"
+
+  # --- sql-executor ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-sql-executor"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-sql-executor:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-sql-executor/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-sql-executor-static:
+        patterns:
+          - "*"
+
+  # --- cache ---
   - package-ecosystem: "npm"
     directory: "/examples/forge-sql-orm-example-cache"
     schedule:
@@ -118,6 +298,10 @@ updates:
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-cache:
+        patterns:
+          - "*"
 
   - package-ecosystem: "npm"
     directory: "/examples/forge-sql-orm-example-cache/static/forge-orm-example"
@@ -132,7 +316,153 @@ updates:
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-cache-static:
+        patterns:
+          - "*"
 
+  # --- atlascamp ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-atlascamp"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-atlascamp:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-atlascamp/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-atlascamp-static:
+        patterns:
+          - "*"
+
+  # --- vector ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-vector"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-vector:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-vector/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-vector-static:
+        patterns:
+          - "*"
+
+  # --- ai ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-ai"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-ai:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-ai/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-ai-static:
+        patterns:
+          - "*"
+
+  # --- backend-ai (3 folders: root, ai-lib, static) ---
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-backend-ai"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-backend-ai:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-backend-ai/ai-lib"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-backend-ai-lib:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/examples/forge-sql-orm-example-backend-ai/static/forge-orm-example"
+    ignore:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      all-deps-backend-ai-static:
+        patterns:
+          - "*"
+
+  # --- ui-kit ---
   - package-ecosystem: "npm"
     directory: "/examples/forge-sql-orm-example-ui-kit"
     ignore:
@@ -143,3 +473,7 @@ updates:
     labels:
       - dependencies
       - npm
+    groups:
+      all-deps-ui-kit:
+        patterns:
+          - "*"
