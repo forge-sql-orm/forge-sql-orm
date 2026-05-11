@@ -13,19 +13,19 @@ import {
   u as f,
 } from "./wrapNativeSuper-DbbKRv4Y.js";
 import {
-  C as p,
-  E as m,
-  S as h,
-  T as g,
-  b as _,
+  _ as p,
+  d as m,
+  f as h,
+  g,
+  h as _,
   i as v,
-  n as y,
-  r as b,
-  t as x,
-  w as S,
-  x as C,
-  y as w,
-} from "./index-j2m0FpSa.js";
+  m as y,
+  n as b,
+  p as x,
+  r as S,
+  t as C,
+  v as w,
+} from "./index-BghLyxip.js";
 function T(e, t, n) {
   return ((t = i(t)), a(e, E() ? Reflect.construct(t, n || [], i(e).constructor) : t.apply(e, n)));
 }
@@ -401,7 +401,7 @@ function W(e) {
 var Fe = W(function () {
     return typeof HTMLElement < `u` && typeof HTMLElement.prototype.showPopover == `function`;
   }),
-  G = w();
+  G = m();
 function Ie(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -2885,7 +2885,7 @@ var oi = (0, j.memo)(
           },
           [r, n],
         );
-      return j.createElement(`div`, m({ ref: t, style: o }, a));
+      return j.createElement(`div`, w({ ref: t, style: o }, a));
     }),
   ),
   Q = {
@@ -3094,9 +3094,9 @@ function gi(e) {
     f = u.droppableId,
     p = u.type,
     m = u.mode,
-    h = N(),
-    g = h.contextId,
-    v = h.getDragState,
+    g = N(),
+    _ = g.contextId,
+    v = g.getDragState,
     y = (0, j.useRef)(null),
     b = (0, j.useRef)(null),
     x = re(),
@@ -3107,15 +3107,15 @@ function gi(e) {
         (y.current && C(),
           e && S(ie(e, c(c({}, L.draggable.droppableId, f), L.draggable.index, String(i)))),
           (y.current = e),
-          (b.current = ce({ contextId: g, draggableId: n })));
+          (b.current = ce({ contextId: _, draggableId: n })));
       },
-      [g, n, f, i, C, S],
+      [_, n, f, i, C, S],
     ),
     T = qr(i),
     E = r((0, j.useReducer)(pi, ci), 2),
     D = E[0],
     O = E[1],
-    k = ve({ draggableId: n, droppableId: f, getIndex: T, contextId: g, type: p }),
+    k = ve({ draggableId: n, droppableId: f, getIndex: T, contextId: _, type: p }),
     M = D.type === `dragging`,
     ee = D.type === `hiding`,
     te = Vr(),
@@ -3127,10 +3127,10 @@ function gi(e) {
     function () {
       if (D.type === `idle` && !o) {
         var e = y.current;
-        _(e instanceof HTMLElement);
+        h(e instanceof HTMLElement);
         var t = b.current;
         return (
-          _(t instanceof HTMLElement),
+          h(t instanceof HTMLElement),
           (0, G.bindAll)(t, [
             {
               type: `keydown`,
@@ -3187,7 +3187,7 @@ function gi(e) {
     ));
   var z = D.type !== `idle` && m === `standard`,
     oe = (0, j.useRef)(null);
-  Ur({ elementRef: z ? oe : y, data: k, direction: d, contextId: g, isDropDisabled: ne, type: p });
+  Ur({ elementRef: z ? oe : y, data: k, direction: d, contextId: _, isDropDisabled: ne, type: p });
   var se = (0, j.useRef)(!0);
   ((0, j.useEffect)(function () {
     return (
@@ -3253,7 +3253,7 @@ function gi(e) {
                   t.mode === `SNAP` &&
                     queueMicrotask(function () {
                       if (v().isDragging) {
-                        var e = Kr(g),
+                        var e = Kr(_),
                           r = e ? e.getBoundingClientRect() : null,
                           i = Gr();
                         O({
@@ -3288,13 +3288,13 @@ function gi(e) {
             }),
           );
     },
-    [k.draggableId, k.contextId, R, F, d, g, B, v],
+    [k.draggableId, k.contextId, R, F, d, _, B, v],
   );
   var le = (0, j.useMemo)(
       function () {
         return {
           draggableProps: c(
-            c(c({}, I.draggable.contextId, g), I.draggable.id, n),
+            c(c({}, I.draggable.contextId, _), I.draggable.id, n),
             `style`,
             ei({ draggableDimensions: B, draggableState: D }),
           ),
@@ -3302,7 +3302,7 @@ function gi(e) {
             c(
               c(
                 c(
-                  c({ role: `button`, "aria-describedby": Xt(g) }, I.dragHandle.contextId, g),
+                  c({ role: `button`, "aria-describedby": Xt(_) }, I.dragHandle.contextId, _),
                   I.dragHandle.draggableId,
                   n,
                 ),
@@ -3318,7 +3318,7 @@ function gi(e) {
           innerRef: w,
         };
       },
-      [g, n, B, D, w],
+      [_, n, B, D, w],
     ),
     ue = mi({ draggingOver: D.draggingOver, isClone: !1, isDragging: M, mode: M ? D.mode : null }),
     de = (0, j.useMemo)(
@@ -3606,16 +3606,16 @@ function Ai(e) {
   return c ? Ei({ element: c, isForwardEdge: !0, mode: i, direction: r, contextId: a }) : null;
 }
 var ji = 4,
-  Mi = b({
+  Mi = S({
     background: `var(--ds-border-brand, #1868DB)`,
     scrollMarginTop: ji,
     scrollMarginBottom: ji + 1,
   }),
-  Ni = b({ position: `absolute`, top: 0, left: 0 }),
-  Pi = b({ opacity: 0 }),
+  Ni = S({ position: `absolute`, top: 0, left: 0 }),
+  Pi = S({ opacity: 0 }),
   Fi = {
-    horizontal: b({ width: 2, height: `100%`, marginLeft: -2 }),
-    vertical: b({ width: `100%`, height: 2, marginTop: -2 }),
+    horizontal: S({ width: 2, height: `100%`, marginLeft: -2 }),
+    vertical: S({ width: `100%`, height: 2, marginTop: -2 }),
   };
 function Ii(e) {
   var t = e.direction,
@@ -3649,8 +3649,8 @@ var Li = c({}, L.dropIndicator, ``),
       d = r((0, j.useState)(!1), 2),
       f = d[0],
       p = d[1],
-      h = yr(),
-      g = (0, j.useCallback)(
+      m = yr(),
+      h = (0, j.useCallback)(
         function (e) {
           var r = e.targetLocation,
             i = e.source,
@@ -3671,21 +3671,21 @@ var Li = c({}, L.dropIndicator, ``),
           var t = e.targetLocation,
             n = e.sourceLocation;
           return (
-            g({ targetLocation: t, destination: Yt({ start: n, target: t }), source: n }),
-            h({
+            h({ targetLocation: t, destination: Yt({ start: n, target: t }), source: n }),
+            m({
               onPrePendingDragUpdate: function (e) {
                 var t = e.update,
                   n = e.targetLocation,
                   r = t.destination,
                   i = r === void 0 ? null : r,
                   a = t.source;
-                g({ targetLocation: n, source: a, destination: i });
+                h({ targetLocation: n, source: a, destination: i });
               },
             })
           );
         }
       },
-      [a, t, o, n, h, g],
+      [a, t, o, n, m, h],
     ),
       (0, j.useLayoutEffect)(
         function () {
@@ -3699,10 +3699,10 @@ var Li = c({}, L.dropIndicator, ``),
         },
         [l, o],
       ));
-    var _ = Q[t].mainAxis,
-      y = Ii({ direction: t, dimensions: l, indicatorOffset: s.current ? s.current[_.offset] : 0 }),
-      b = n === `virtual`;
-    return v(`div`, m({ ref: s, css: [Mi, Fi[t], b && Ni, f && Pi], style: y }, Li));
+    var g = Q[t].mainAxis,
+      _ = Ii({ direction: t, dimensions: l, indicatorOffset: s.current ? s.current[g.offset] : 0 }),
+      y = n === `virtual`;
+    return v(`div`, w({ ref: s, css: [Mi, Fi[t], y && Ni, f && Pi], style: _ }, Li));
   };
 function zi(e, t) {
   var n = Object.keys(e);
@@ -3816,11 +3816,11 @@ function Wi(e) {
     f = e.getContainerForClone,
     p = e.isDropDisabled,
     m = p === void 0 ? !1 : p,
-    h = qr(m),
-    g = N(),
-    v = g.contextId,
-    y = g.droppableRegistry,
-    b = xe({ contextId: v, droppableId: n, getIsDropDisabled: h }),
+    g = qr(m),
+    _ = N(),
+    v = _.contextId,
+    y = _.droppableRegistry,
+    b = xe({ contextId: v, droppableId: n, getIsDropDisabled: g }),
     x = (0, j.useRef)(null),
     S = (0, j.useCallback)(
       function (e) {
@@ -3848,7 +3848,7 @@ function Wi(e) {
     function () {
       var e = x.current;
       return (
-        _(e instanceof HTMLElement, "innerRef must provide an `HTMLElement`"),
+        h(e instanceof HTMLElement, "innerRef must provide an `HTMLElement`"),
         U(
           y.register({
             droppableId: n,
@@ -3984,7 +3984,7 @@ function Wi(e) {
     d && j.createElement(yi, { droppableId: n, type: a, getContainerForClone: f }, d),
   );
 }
-S();
+g();
 var Gi = [`isRanking`, `isRankingItem`, `testId`],
   Ki = (0, j.forwardRef)(function (e, t) {
     var n = e.isRanking,
@@ -3992,9 +3992,9 @@ var Gi = [`isRanking`, `isRankingItem`, `testId`],
       i = e.testId,
       a = s(e, Gi);
     return j.createElement(
-      C,
-      m({ ref: t, testId: i }, a, {
-        className: g([
+      x,
+      w({ ref: t, testId: i }, a, {
+        className: p([
           n && `_1e0c1ule`,
           r && `_2rkolb4i _bfhk1bhr _16qs130s`,
           `_12y3e4h9 _mizu1v1w _ra3xnqa1`,
@@ -4002,13 +4002,13 @@ var Gi = [`isRanking`, `isRankingItem`, `testId`],
       }),
     );
   });
-S();
+g();
 var qi = [`isRanking`, `innerRef`],
   Ji = function (e) {
     var t = e.isRanking,
       n = e.innerRef,
       r = s(e, qi);
-    return j.createElement(h, m({}, r, { innerRef: n, className: g([t && `_vchhusvi`]) }));
+    return j.createElement(y, w({}, r, { innerRef: n, className: p([t && `_vchhusvi`]) }));
   },
   Yi = [`content`, `testId`];
 function Xi(e, t, n) {
@@ -4022,7 +4022,7 @@ function Zi() {
     return !!e;
   })();
 }
-var Qi = y(
+var Qi = b(
     (function (e) {
       function t() {
         return (o(this, t), Xi(this, t, arguments));
@@ -4046,16 +4046,16 @@ var Qi = y(
                 d = s(t, Yi),
                 f = n || {},
                 p = f.shouldTruncate,
-                h = f.width,
-                g = x(i, a);
+                m = f.width,
+                h = C(i, a);
               return j.createElement(
                 Ji,
-                m({}, d, {
+                w({}, d, {
                   isFixedSize: r,
                   shouldTruncate: p,
-                  width: h,
+                  width: m,
                   isRanking: i,
-                  style: g,
+                  style: h,
                   onKeyDown: function (e) {
                     return e.stopPropagation();
                   },
@@ -4109,7 +4109,7 @@ function ra() {
     return !!e;
   })();
 }
-var ia = y(
+var ia = b(
   (function (e) {
     function t() {
       var e;
@@ -4144,27 +4144,27 @@ var ia = y(
               d = t.testId,
               f = n.cells,
               p = n.testId,
-              h = n.key,
-              g = n.isHighlighted,
-              _ = s(n, $i),
-              v = x(a, o);
-            if (typeof h != `string` && !l)
+              m = n.key,
+              h = n.isHighlighted,
+              g = s(n, $i),
+              _ = C(a, o);
+            if (typeof m != `string` && !l)
               throw Error(
                 `dynamic-table: ranking is not possible because table row does not have a key. Add the key to the row or disable ranking.`,
               );
             return j.createElement(
               gi,
-              { draggableId: h || c.toString(), index: c, isDragDisabled: l },
+              { draggableId: m || c.toString(), index: c, isDragDisabled: l },
               function (t, n) {
                 return j.createElement(
                   Ki,
-                  m({}, _, t.dragHandleProps, t.draggableProps, {
+                  w({}, g, t.dragHandleProps, t.draggableProps, {
                     role: void 0,
                     "aria-labelledby": void 0,
                     "aria-describedby": t.dragHandleProps?.[`aria-describedby`],
                     ref: e.innerRef(t.innerRef),
-                    style: ta(ta({}, t.draggableProps.style), v),
-                    isHighlighted: u || g,
+                    style: ta(ta({}, t.draggableProps.style), _),
+                    isHighlighted: u || h,
                     isRanking: a,
                     isRankingItem: n.isDragging,
                     testId: p || (d && `${d}--rankable--table--body--row`),
@@ -4257,7 +4257,7 @@ var sa = function (e, t) {
                 function (e) {
                   return j.createElement(
                     `tbody`,
-                    m(
+                    w(
                       {
                         "data-testid": s,
                         ref: function (t) {
@@ -4291,9 +4291,9 @@ var sa = function (e, t) {
       ])
     );
   })(j.Component),
-  la = p(
+  la = _(
     j.forwardRef(function (e, t) {
-      return j.createElement(ca, m({}, e, { forwardedRef: t }));
+      return j.createElement(ca, w({}, e, { forwardedRef: t }));
     }),
   );
 export { la as default };
