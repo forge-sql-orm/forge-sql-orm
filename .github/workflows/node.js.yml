@@ -10,7 +10,9 @@ on:
 
 permissions:
   contents: read
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.actor == 'dependabot[bot]' && github.run_id || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 jobs:
   build:
     environment: forge-sql-orm
