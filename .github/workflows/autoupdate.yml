@@ -1,4 +1,4 @@
-name: Daily dependency autoupdate
+name: Dependency autoupdate (every 6h)
 
 on:
   schedule:
