@@ -5,9 +5,9 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-Bs5bfbS0.js",
       "./rolldown-runtime-BYbx6iT9.js",
-      "./custom-theme-BNR0HmlG.js",
+      "./custom-theme-sn1WcBwB.js",
       "./wrapNativeSuper-CMD0Ca0W.js",
-      "./body-DsjQjZvs.js",
+      "./body-Bgilszpk.js",
       "./react-dom-vendor-BHIljUNy.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -3139,7 +3139,9 @@ var wn = (function (e) {
       l(n, `fire`, function (e) {
         n.hasFired ||
           (n.handlers.forEach(function (t) {
-            return t(n, e);
+            try {
+              t(n, e);
+            } catch {}
           }),
           (n.hasFired = !0));
       }),
@@ -10582,7 +10584,7 @@ var ac = (function () {
                                       return (
                                         (e.next = 2),
                                         it(
-                                          () => import(`./custom-theme-BNR0HmlG.js`),
+                                          () => import(`./custom-theme-sn1WcBwB.js`),
                                           __vite__mapDeps([2, 3]),
                                           import.meta.url,
                                         )
@@ -17622,7 +17624,7 @@ var l_ = function (e) {
   },
   u_ = (0, x.lazy)(function () {
     return it(
-      () => import(`./body-DsjQjZvs.js`),
+      () => import(`./body-Bgilszpk.js`),
       __vite__mapDeps([4, 1, 3, 5, 6]),
       import.meta.url,
     );

@@ -1,5 +1,5 @@
-import { a as e, c as t, f as n, l as r, s as i } from "./wrapNativeSuper-BmCJ3c35.js";
-import { d as a, f as o, l as s, m as c, p as l, u } from "./index-eke5c1Co.js";
+import { a as e, d as t, i as n, l as r, n as i } from "./wrapNativeSuper-CMD0Ca0W.js";
+import { c as a, d as o, l as s, o as c, s as l, u } from "./index-D0QXmFe6.js";
 var d = {
   "color.text.brand": `#669DF1`,
   "elevation.surface.overlay": `#2B2C2F`,
@@ -349,10 +349,10 @@ function se(e) {
 }
 var Y,
   X = (function () {
-    function e(t, n, i, a, o, s, c, l, u, d) {
-      (r(this, e),
-        (this.n = t),
-        (this.aw = n),
+    function e(n, r, i, a, o, s, c, l, u, d) {
+      (t(this, e),
+        (this.n = n),
+        (this.aw = r),
         (this.nbb = i),
         (this.ncb = a),
         (this.c = o),
@@ -362,7 +362,7 @@ var Y,
         (this.fLRoot = u),
         (this.z = d));
     }
-    return t(e, null, [
+    return r(e, null, [
       {
         key: `make`,
         value: function () {
@@ -407,14 +407,14 @@ var Y,
       },
     ]);
   })();
-((Y = X), i(X, `DEFAULT`, Y.make()));
+((Y = X), e(X, `DEFAULT`, Y.make()));
 var ce = (function () {
-    function e(t) {
-      (r(this, e), (this.argb = t));
-      var n = Z.fromInt(t);
-      ((this.internalHue = n.hue), (this.internalChroma = n.chroma), (this.internalTone = W(t)));
+    function e(n) {
+      (t(this, e), (this.argb = n));
+      var r = Z.fromInt(n);
+      ((this.internalHue = r.hue), (this.internalChroma = r.chroma), (this.internalTone = W(n)));
     }
-    return t(
+    return r(
       e,
       [
         {
@@ -486,10 +486,10 @@ var ce = (function () {
     );
   })(),
   Z = (function () {
-    function e(t, n, i, a, o, s, c, l, u) {
-      (r(this, e),
-        (this.hue = t),
-        (this.chroma = n),
+    function e(n, r, i, a, o, s, c, l, u) {
+      (t(this, e),
+        (this.hue = n),
+        (this.chroma = r),
         (this.j = i),
         (this.q = a),
         (this.m = o),
@@ -498,7 +498,7 @@ var ce = (function () {
         (this.astar = l),
         (this.bstar = u));
     }
-    return t(
+    return r(
       e,
       [
         {
@@ -732,9 +732,9 @@ var ce = (function () {
   })(),
   Q = (function () {
     function e() {
-      r(this, e);
+      t(this, e);
     }
-    return t(e, null, [
+    return r(e, null, [
       {
         key: `sanitizeRadians`,
         value: function (e) {
@@ -959,18 +959,18 @@ var ce = (function () {
       },
     ]);
   })();
-(i(Q, `SCALED_DISCOUNT_FROM_LINRGB`, [
+(e(Q, `SCALED_DISCOUNT_FROM_LINRGB`, [
   [0.001200833568784504, 0.002389694492170889, 0.0002795742885861124],
   [0.0005891086651375999, 0.0029785502573438758, 0.0003270666104008398],
   [0.00010146692491640572, 0.0005364214359186694, 0.0032979401770712076],
 ]),
-  i(Q, `LINRGB_FROM_SCALED_DISCOUNT`, [
+  e(Q, `LINRGB_FROM_SCALED_DISCOUNT`, [
     [1373.2198709594231, -1100.4251190754821, -7.278681089101213],
     [-271.815969077903, 559.6580465940733, -32.46047482791194],
     [1.9622899599665666, -57.173814538844006, 308.7233197812385],
   ]),
-  i(Q, `Y_FROM_LINRGB`, [0.2126, 0.7152, 0.0722]),
-  i(
+  e(Q, `Y_FROM_LINRGB`, [0.2126, 0.7152, 0.0722]),
+  e(
     Q,
     `CRITICAL_PLANES`,
     [
@@ -1039,9 +1039,9 @@ var ce = (function () {
   ));
 var le = (function () {
   function e() {
-    r(this, e);
+    t(this, e);
   }
-  return t(e, null, [
+  return r(e, null, [
     {
       key: `ratioOfTones`,
       value: function (t, n) {
@@ -1110,36 +1110,36 @@ function ue(e, t) {
   }
   return n;
 }
-function de(e) {
-  for (var t = 1; t < arguments.length; t++) {
-    var n = arguments[t] == null ? {} : arguments[t];
-    t % 2
-      ? ue(Object(n), !0).forEach(function (t) {
-          i(e, t, n[t]);
+function de(t) {
+  for (var n = 1; n < arguments.length; n++) {
+    var r = arguments[n] == null ? {} : arguments[n];
+    n % 2
+      ? ue(Object(r), !0).forEach(function (n) {
+          e(t, n, r[n]);
         })
       : Object.getOwnPropertyDescriptors
-        ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : ue(Object(n)).forEach(function (t) {
-            Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
+        ? Object.defineProperties(t, Object.getOwnPropertyDescriptors(r))
+        : ue(Object(r)).forEach(function (e) {
+            Object.defineProperty(t, e, Object.getOwnPropertyDescriptor(r, e));
           });
   }
-  return e;
+  return t;
 }
 var fe = [1.12, 1.33, 2.03, 2.73, 3.33, 4.27, 5.2, 6.62, 12.46, 14.25],
   pe = [1.08, 1.24, 1.55, 1.99, 2.45, 3.34, 4.64, 6.1, 10.19, 12.6],
-  $ = function (t) {
-    var n = y(t)[0],
-      r = h(n, 100, 60),
-      i = p(r[0], r[1], r[2]) < 0.4 ? fe : pe,
-      a = _(t),
+  $ = function (e) {
+    var t = y(e)[0],
+      n = h(t, 100, 60),
+      r = p(n[0], n[1], n[2]) < 0.4 ? fe : pe,
+      a = _(e),
       o = ce.fromInt(oe({ r: a[0], g: a[1], b: a[2], a: a[3] })),
-      s = i.map(function (e) {
+      s = r.map(function (e) {
         var t = ae(ce.from(o.hue, o.chroma, le.darker(100, e) + 0.25).toInt());
         return m(t.r, t.g, t.b);
       }),
-      c = D(s, t),
-      l = e(s);
-    return ((l[c] = t), { ramp: l, replacedColor: s[c] });
+      c = D(s, e),
+      l = i(s);
+    return ((l[c] = e), { ramp: l, replacedColor: s[c] });
   };
 function me(e, t, n) {
   for (var r = [], i = 1; i <= t; i++)
@@ -1257,11 +1257,11 @@ var he = function (e, t, r) {
 function _e(e) {
   var t,
     n = e == null || (t = e.UNSAFE_themeOptions) == null ? void 0 : t.brandColor,
-    r = e?.colorMode || c.colorMode,
+    r = e?.colorMode || o.colorMode,
     i = a(JSON.stringify(e?.UNSAFE_themeOptions)),
-    u = $(n).ramp,
+    l = $(n).ramp,
     d = [],
-    f = ge(n, r, u);
+    f = ge(n, r, l);
   return (
     (r === `light` || r === `auto`) &&
       f.light &&
@@ -1269,9 +1269,9 @@ function _e(e) {
         id: `light`,
         attrs: { "data-theme": `light`, "data-custom-theme": i },
         css: `
-html[${l}="${i}"][${o}="light"][data-theme~="light:light"] {
+html[${u}="${i}"][${s}="light"][data-theme~="light:light"] {
   /* Branded tokens */
-    ${s(f.light, u)}
+    ${c(f.light, l)}
 }`,
       }),
     (r === `dark` || r === `auto`) &&
@@ -1280,9 +1280,9 @@ html[${l}="${i}"][${o}="light"][data-theme~="light:light"] {
         id: `dark`,
         attrs: { "data-theme": `dark`, "data-custom-theme": i },
         css: `
-html[${l}="${i}"][${o}="dark"][data-theme~="dark:dark"] {
+html[${u}="${i}"][${s}="dark"][data-theme~="dark:dark"] {
   /* Branded tokens */
-    ${s(f.dark, u)}
+    ${c(f.dark, l)}
 }`,
       }),
     d
@@ -1291,7 +1291,7 @@ html[${l}="${i}"][${o}="dark"][data-theme~="dark:dark"] {
 var ve = 10;
 function ye(e) {
   var t = _e(e);
-  (u(10),
+  (l(10),
     t.map(function (e) {
       var t = document.createElement(`style`);
       (document.head.appendChild(t),
