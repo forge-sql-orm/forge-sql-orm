@@ -1,7 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { ForgeSQLMetadata } from "./forgeDriver";
 import { ForgeSqlOperation, ExplainAnalyzeRow } from "../core";
-import {} from "../core";
 import { printQueriesWithPlan, withTimeout } from "./sqlUtils";
 import { Parser } from "node-sql-parser";
 import { PushResult, Queue } from "@forge/events";

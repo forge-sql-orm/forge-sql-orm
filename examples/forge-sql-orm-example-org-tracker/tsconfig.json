@@ -17,9 +17,11 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "rootDir": "./src",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "removeComments": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "types": ["node"]
   }
 }

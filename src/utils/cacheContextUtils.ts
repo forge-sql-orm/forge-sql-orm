@@ -97,34 +97,60 @@ export async function saveTableIfInsideCacheContext<T extends AnyMySqlTable>(
  * await saveQueryLocalCacheQuery(query, results);
  * ```
  */
+/**
+ * Returns the local cache context with its `cache` map guaranteed initialised,
+ * or `undefined` when no context is active. Centralises the context-lookup +
+ * cache-init pattern shared by the save / get / evict helpers.
+ */
+function getReadyLocalCacheContext(): LocalCacheApplicationContext | undefined {
+  const context = localCacheApplicationContext.getStore();
+  if (!context) {
+    return undefined;
+  }
+  if (!context.cache) {
+    context.cache = {};
+  }
+  return context;
+}
+
+/**
+ * Normalises a Drizzle query (or raw Query object) to something with `.toSQL()`.
+ */
+function asToSql<T>(query: T): { toSQL: () => Query } {
+  if (isQuery(query)) {
+    const q = query;
+    return { toSQL: () => q };
+  }
+  return query as { toSQL: () => Query };
+}
+
+/**
+ * Emits a structured debug line for a local-cache event when logging is enabled.
+ */
+function logLocalCacheEvent(action: "SAVE" | "HIT", q: Query, options: ForgeSqlOrmOptions): void {
+  if (!options.logCache) {
+    return;
+  }
+  // eslint-disable-next-line no-console
+  console.debug(
+    `[forge-sql-orm][local-cache][${action}] sql="${q.sql}", params=${JSON.stringify(q.params)}`,
+  );
+}
+
 export async function saveQueryLocalCacheQuery<
   T extends MySqlSelectDynamic<AnyMySqlSelectQueryBuilder>,
 >(query: T, rows: unknown[], options: ForgeSqlOrmOptions): Promise<void> {
-  const context = localCacheApplicationContext.getStore();
-  if (context) {
-    if (!context.cache) {
-      context.cache = {};
-    }
-    let sql: { toSQL: () => Query };
-    if (isQuery(query)) {
-      sql = { toSQL: () => query };
-    } else {
-      sql = query as { toSQL: () => Query };
-    }
-
-    const key = hashKey(sql.toSQL());
-    context.cache[key] = {
-      sql: sql.toSQL().sql.toLowerCase(),
-      data: rows,
-    };
-    if (options.logCache) {
-      const q = sql.toSQL();
-      // eslint-disable-next-line no-console
-      console.debug(
-        `[forge-sql-orm][local-cache][SAVE] Stored result in cache. sql="${q.sql}", params=${JSON.stringify(q.params)}`,
-      );
-    }
+  const context = getReadyLocalCacheContext();
+  if (!context) {
+    return;
   }
+
+  const toSQL = asToSql(query).toSQL();
+  context.cache[hashKey(toSQL)] = {
+    sql: toSQL.sql.toLowerCase(),
+    data: rows,
+  };
+  logLocalCacheEvent("SAVE", toSQL, options);
 }
 
 /**
@@ -148,31 +174,19 @@ export async function saveQueryLocalCacheQuery<
 export async function getQueryLocalCacheQuery<
   T extends MySqlSelectDynamic<AnyMySqlSelectQueryBuilder>,
 >(query: T, options: ForgeSqlOrmOptions): Promise<unknown[] | undefined> {
-  const context = localCacheApplicationContext.getStore();
-  if (context) {
-    if (!context.cache) {
-      context.cache = {};
-    }
-    let sql: { toSQL: () => Query };
-    if (isQuery(query)) {
-      sql = { toSQL: () => query };
-    } else {
-      sql = query as { toSQL: () => Query };
-    }
-    const toSQL = sql.toSQL();
-    const key = hashKey(toSQL);
-    if (context?.cache[key]?.sql === toSQL.sql.toLowerCase()) {
-      if (options.logCache) {
-        const q = toSQL;
-        // eslint-disable-next-line no-console
-        console.debug(
-          `[forge-sql-orm][local-cache][HIT] Returned cached result. sql="${q.sql}", params=${JSON.stringify(q.params)}`,
-        );
-      }
-      return context.cache[key].data;
-    }
+  const context = getReadyLocalCacheContext();
+  if (!context) {
+    return undefined;
   }
-  return undefined;
+
+  const toSQL = asToSql(query).toSQL();
+  const entry = context.cache[hashKey(toSQL)];
+  if (entry?.sql !== toSQL.sql.toLowerCase()) {
+    return undefined;
+  }
+
+  logLocalCacheEvent("HIT", toSQL, options);
+  return entry.data;
 }
 
 /**
@@ -194,20 +208,15 @@ export async function evictLocalCacheQuery<T extends AnyMySqlTable>(
   table: T,
   options: ForgeSqlOrmOptions,
 ): Promise<void> {
-  const context = localCacheApplicationContext.getStore();
-  if (context) {
-    if (!context.cache) {
-      context.cache = {};
-    }
-    const tableName = getTableName(table);
-    const searchString = options.cacheWrapTable ? `\`${tableName}\`` : tableName;
-    const keyToEvicts: string[] = [];
-    for (const key of Object.keys(context.cache)) {
-      if (context.cache[key].sql.includes(searchString)) {
-        keyToEvicts.push(key);
-      }
-    }
-    for (const key of keyToEvicts) {
+  const context = getReadyLocalCacheContext();
+  if (!context) {
+    return;
+  }
+
+  const tableName = getTableName(table);
+  const searchString = options.cacheWrapTable ? `\`${tableName}\`` : tableName;
+  for (const [key, entry] of Object.entries(context.cache)) {
+    if (entry.sql.includes(searchString)) {
       delete context.cache[key];
     }
   }

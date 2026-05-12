@@ -44,11 +44,11 @@ jobs:
     - run: npm run format:check
     - run: npm run test:coverage
     - name: SonarQube Scan
-      uses: SonarSource/sonarqube-scan-action@v7
+      uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7.2.1
       env:
         SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
     - name: Upload to Qlty
-      uses: qltysh/qlty-action/coverage@main
+      uses: qltysh/qlty-action/coverage@141b881236146435192435eb7b0e06ea0b70b4d9 # main as of 2026-05-12
       with:
         coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
         files: ./coverage/lcov.info

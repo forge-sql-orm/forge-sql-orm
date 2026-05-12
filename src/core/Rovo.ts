@@ -617,28 +617,35 @@ export class Rovo implements RovoIntegration {
    * @returns {string} The normalized SQL query string
    * @throws {Error} If parsing fails, query is not a SELECT statement, or multiple statements are detected
    */
+  /**
+   * Rethrows errors that already carry a domain-specific message; wraps everything
+   * else into a uniform "SQL parsing error". Centralised so the catch blocks in
+   * normalizeSqlString / normalizeQueryWithErrorHandling stay flat.
+   */
+  private rethrowAsParsingError(error: any): never {
+    const message: string | undefined = error?.message;
+    const isKnown =
+      typeof message === "string" &&
+      (message.includes("Only") ||
+        message.includes("single SELECT") ||
+        message.includes("SQL parsing error"));
+    if (isKnown) {
+      throw error;
+    }
+    throw new Error(
+      `SQL parsing error: ${message || "Invalid SQL syntax"}. Please check your query syntax.`,
+    );
+  }
+
   private normalizeSqlString(sql: string): string {
     try {
       const parser = new Parser();
       const ast = parser.astify(sql.trim());
-
       this.validateSelectAst(ast);
-
       const normalized = parser.sqlify(Array.isArray(ast) ? ast[0] : ast);
       return normalized.trim();
     } catch (error: any) {
-      if (
-        error.message &&
-        (error.message.includes("Only") || error.message.includes("single SELECT"))
-      ) {
-        throw error;
-      }
-      if (error.message?.includes("SQL parsing error")) {
-        throw error;
-      }
-      throw new Error(
-        `SQL parsing error: ${error.message || "Invalid SQL syntax"}. Please check your query syntax.`,
-      );
+      this.rethrowAsParsingError(error);
     }
   }
 
@@ -875,18 +882,7 @@ export class Rovo implements RovoIntegration {
     try {
       return this.normalizeSqlString(query);
     } catch (error: any) {
-      if (
-        error.message &&
-        (error.message.includes("Only") || error.message.includes("single SELECT"))
-      ) {
-        throw error;
-      }
-      if (error.message?.includes("SQL parsing error")) {
-        throw error;
-      }
-      throw new Error(
-        `SQL parsing error: ${error.message || "Invalid SQL syntax"}. Please check your query syntax.`,
-      );
+      this.rethrowAsParsingError(error);
     }
   }
 

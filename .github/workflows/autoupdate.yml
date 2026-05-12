@@ -1,0 +1,106 @@
+name: Dependency autoupdate (every 6h)
+
+on:
+  schedule:
+    # Every 6 hours at the top of the hour (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: "0 */6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: autoupdate
+  cancel-in-progress: true
+
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: "npm"
+
+      - name: Install ncu globally (pinned + no install scripts)
+        # Pinned version satisfies S8543; --ignore-scripts satisfies S6505.
+        run: npm install -g --ignore-scripts npm-check-updates@18.0.2
+
+      - name: Configure git as PR author
+        run: |
+          git config user.name "Vasyl Zakharchenko"
+          git config user.email "vaszakharchenko@gmail.com"
+
+      - name: Ensure label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create dependencies_updated \
+            --color "0E8A16" \
+            --description "Automated dependency updates" \
+            --force
+
+      - name: Close existing autoupdate PRs and delete their branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Gather open PRs carrying the label
+          prs=$(gh pr list --label dependencies_updated --state open --json number --jq '.[].number')
+          if [ -z "$prs" ]; then
+            echo "No existing autoupdate PRs to close."
+            exit 0
+          fi
+          for pr in $prs; do
+            echo "Closing PR #$pr"
+            gh pr close "$pr" \
+              --delete-branch \
+              --comment "Superseded by today's autoupdate run."
+          done
+
+      - name: Run autoupdate.sh
+        run: |
+          chmod +x ./autoupdate.sh
+          ./autoupdate.sh
+
+      - name: Detect changes
+        id: changes
+        run: |
+          # autoupdate.sh stages files per section; merge into one staged set
+          if git diff --cached --quiet && git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing to update."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create branch, commit, push, open PR
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          BRANCH="dependencies/auto-${DATE}"
+
+          git checkout -b "$BRANCH"
+          # Stage anything autoupdate.sh did not stage explicitly
+          git add -A
+          git commit -m "chore(deps): daily autoupdate ${DATE}"
+          git push -u origin "$BRANCH"
+
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "chore(deps): daily autoupdate ${DATE}" \
+            --body "Automated dependency update produced by \`.github/workflows/autoupdate.yml\`. Will auto-merge once required checks pass." \
+            --label dependencies_updated
