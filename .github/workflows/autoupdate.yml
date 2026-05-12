@@ -33,13 +33,14 @@ jobs:
           node-version: 24.x
           cache: "npm"
 
-      - name: Install ncu globally
-        run: npm install -g npm-check-updates
+      - name: Install ncu globally (pinned + no install scripts)
+        # Pinned version satisfies S8543; --ignore-scripts satisfies S6505.
+        run: npm install -g --ignore-scripts npm-check-updates@18.0.2
 
-      - name: Configure git
+      - name: Configure git as PR author
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "Vasyl Zakharchenko"
+          git config user.email "vaszakharchenko@gmail.com"
 
       - name: Ensure label exists
         env:
