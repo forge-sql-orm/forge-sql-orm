@@ -22,6 +22,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "removeComments": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "types": ["node"]
   }
 }
