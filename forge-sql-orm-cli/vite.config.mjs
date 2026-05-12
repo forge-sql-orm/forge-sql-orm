@@ -23,7 +23,6 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           esModule: true,
-          externalImportAttributes: true,
           exports: "named",
         },
       },
