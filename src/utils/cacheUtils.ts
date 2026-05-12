@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import * as crypto from "node:crypto";
+import * as crypto from "crypto";
 import { Query } from "drizzle-orm";
 import { AnyMySqlTable } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";

@@ -55,7 +55,8 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
     );
 
     // Build insert query
-    const queryBuilder = this.forgeOperations.insert(schema).values(preparedModels);
+
+    const queryBuilder = this.forgeOperations.insert(schema).values(preparedModels as any);
 
     // Add onDuplicateKeyUpdate if needed
     const finalQuery = updateIfExists
@@ -192,7 +193,8 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
     // Execute update query
     const queryBuilder = this.forgeOperations
       .update(schema)
-      .set(updateData)
+
+      .set(updateData as any)
       .where(and(...conditions));
 
     const result = await queryBuilder;
@@ -227,7 +229,10 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
       throw new Error("WHERE conditions must be provided");
     }
 
-    const queryBuilder = this.forgeOperations.update(schema).set(updateData).where(where);
+    const queryBuilder = this.forgeOperations
+      .update(schema)
+      .set(updateData as any)
+      .where(where);
 
     const result = await queryBuilder;
     await saveTableIfInsideCacheContext(schema);

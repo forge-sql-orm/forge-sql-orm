@@ -18,6 +18,8 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "ignoreDeprecations": "6.0",
+    "rootDir": "./src",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "removeComments": true,

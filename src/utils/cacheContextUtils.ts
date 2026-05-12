@@ -1,4 +1,4 @@
-import { AsyncLocalStorage } from "node:async_hooks";
+import { AsyncLocalStorage } from "async_hooks";
 import { AnyMySqlSelectQueryBuilder, AnyMySqlTable } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
 import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";

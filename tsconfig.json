@@ -6,11 +6,13 @@
   },
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": false,
     "module": "commonjs",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "target": "ESNext",
     "sourceMap": true,
     "strict": true,
@@ -18,7 +20,8 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["node"]
   },
   "include": ["src"]
 }
