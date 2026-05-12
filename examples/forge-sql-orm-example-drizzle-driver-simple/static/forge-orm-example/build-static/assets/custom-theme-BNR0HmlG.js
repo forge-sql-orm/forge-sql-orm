@@ -1,5 +1,5 @@
 import { a as e, d as t, i as n, l as r, n as i } from "./wrapNativeSuper-CMD0Ca0W.js";
-import { a, c as o, l as s, o as c, s as l, u } from "./index-C496aa98.js";
+import { c as a, d as o, l as s, o as c, s as l, u } from "./index-CusmR9iP.js";
 var d = {
   "color.text.brand": `#669DF1`,
   "elevation.surface.overlay": `#2B2C2F`,
@@ -1257,11 +1257,11 @@ var he = function (e, t, r) {
 function _e(e) {
   var t,
     n = e == null || (t = e.UNSAFE_themeOptions) == null ? void 0 : t.brandColor,
-    r = e?.colorMode || u.colorMode,
-    i = l(JSON.stringify(e?.UNSAFE_themeOptions)),
-    c = $(n).ramp,
+    r = e?.colorMode || o.colorMode,
+    i = a(JSON.stringify(e?.UNSAFE_themeOptions)),
+    l = $(n).ramp,
     d = [],
-    f = ge(n, r, c);
+    f = ge(n, r, l);
   return (
     (r === `light` || r === `auto`) &&
       f.light &&
@@ -1269,9 +1269,9 @@ function _e(e) {
         id: `light`,
         attrs: { "data-theme": `light`, "data-custom-theme": i },
         css: `
-html[${s}="${i}"][${o}="light"][data-theme~="light:light"] {
+html[${u}="${i}"][${s}="light"][data-theme~="light:light"] {
   /* Branded tokens */
-    ${a(f.light, c)}
+    ${c(f.light, l)}
 }`,
       }),
     (r === `dark` || r === `auto`) &&
@@ -1280,9 +1280,9 @@ html[${s}="${i}"][${o}="light"][data-theme~="light:light"] {
         id: `dark`,
         attrs: { "data-theme": `dark`, "data-custom-theme": i },
         css: `
-html[${s}="${i}"][${o}="dark"][data-theme~="dark:dark"] {
+html[${u}="${i}"][${s}="dark"][data-theme~="dark:dark"] {
   /* Branded tokens */
-    ${a(f.dark, c)}
+    ${c(f.dark, l)}
 }`,
       }),
     d
@@ -1291,7 +1291,7 @@ html[${s}="${i}"][${o}="dark"][data-theme~="dark:dark"] {
 var ve = 10;
 function ye(e) {
   var t = _e(e);
-  (c(10),
+  (l(10),
     t.map(function (e) {
       var t = document.createElement(`style`);
       (document.head.appendChild(t),
