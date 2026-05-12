@@ -4484,7 +4484,9 @@ var Oi = (function (e) {
       U(n, `fire`, function (e) {
         n.hasFired ||
           (n.handlers.forEach(function (t) {
-            return t(n, e);
+            try {
+              t(n, e);
+            } catch {}
           }),
           (n.hasFired = !0));
       }),
@@ -11701,7 +11703,7 @@ var hu = (function () {
                                       return (
                                         (e.next = 2),
                                         Ge(
-                                          () => import(`./custom-theme-CZJZXVxx.js`),
+                                          () => import(`./custom-theme-BtNmRSVi.js`),
                                           [],
                                           import.meta.url,
                                         )

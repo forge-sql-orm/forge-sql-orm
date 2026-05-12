@@ -3,11 +3,11 @@ const __vite__mapDeps = (
   m = __vite__mapDeps,
   d = m.f ||
     (m.f = [
-      "./custom-theme-D7_bHyUx.js",
+      "./custom-theme-DfPy4Bvj.js",
       "./wrapNativeSuper-BmCJ3c35.js",
       "./iframe-resizer-DTa1qiDm.js",
       "./rolldown-runtime-BM3Ffeng.js",
-      "./body-C9OHSfWu.js",
+      "./body-D12Bgx7k.js",
       "./react-dom-vendor-0VJF9GAl.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -5102,7 +5102,9 @@ var rr = (function (e) {
         x(n, `fire`, function (e) {
           n.hasFired ||
             (n.handlers.forEach(function (t) {
-              return t(n, e);
+              try {
+                t(n, e);
+              } catch {}
             }),
             (n.hasFired = !0));
         }),
@@ -6792,7 +6794,7 @@ var zi = (function () {
                                       return (
                                         (e.next = 2),
                                         pi(
-                                          () => import(`./custom-theme-D7_bHyUx.js`),
+                                          () => import(`./custom-theme-DfPy4Bvj.js`),
                                           __vite__mapDeps([0, 1]),
                                           import.meta.url,
                                         )
@@ -19485,7 +19487,7 @@ var Dy = function (e) {
   },
   Oy = (0, E.lazy)(function () {
     return pi(
-      () => import(`./body-C9OHSfWu.js`),
+      () => import(`./body-D12Bgx7k.js`),
       __vite__mapDeps([4, 3, 1, 5, 6]),
       import.meta.url,
     );
