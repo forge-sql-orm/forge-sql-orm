@@ -55,17 +55,26 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Gather open PRs carrying the label
+          # 1) Close PRs carrying the label (auto-deletes the head branch).
           prs=$(gh pr list --label dependencies_updated --state open --json number --jq '.[].number')
-          if [ -z "$prs" ]; then
+          if [ -n "$prs" ]; then
+            for pr in $prs; do
+              echo "Closing PR #$pr"
+              gh pr close "$pr" \
+                --delete-branch \
+                --comment "Superseded by today's autoupdate run."
+            done
+          else
             echo "No existing autoupdate PRs to close."
-            exit 0
           fi
-          for pr in $prs; do
-            echo "Closing PR #$pr"
-            gh pr close "$pr" \
-              --delete-branch \
-              --comment "Superseded by today's autoupdate run."
+
+          # 2) Sweep up orphan dependencies/auto-* branches (pushed but never
+          #    PR'd — e.g. when a previous run failed before gh pr create).
+          orphans=$(gh api -X GET repos/${{ github.repository }}/branches \
+            --paginate --jq '.[].name' | grep '^dependencies/auto-' || true)
+          for b in $orphans; do
+            echo "Deleting orphan branch $b"
+            git push origin --delete "$b" || true
           done
 
       - name: Run autoupdate.sh
@@ -96,7 +105,10 @@ jobs:
           # Stage anything autoupdate.sh did not stage explicitly
           git add -A
           git commit -m "chore(deps): daily autoupdate ${DATE}"
-          git push -u origin "$BRANCH"
+          # Force-push as a safety net: the orphan-branch sweep above usually
+          # clears any pre-existing remote ref, but a same-day re-run would
+          # otherwise hit non-fast-forward on the second push.
+          git push -u origin "$BRANCH" --force
 
           gh pr create \
             --base master \
