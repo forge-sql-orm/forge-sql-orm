@@ -177,13 +177,34 @@ function extractAndAddTableName(node: any, tables: Set<string>): void {
 }
 
 /**
+ * Walks a node that may be either an array or a single object, recursing into each.
+ */
+function walkNodeOrArray(value: any, tables: Set<string>): void {
+  if (Array.isArray(value)) {
+    value.forEach((item) => extractTablesFromNode(item, tables));
+  } else {
+    extractTablesFromNode(value, tables);
+  }
+}
+
+/**
+ * Normalises a WITH clause into an iterable list of CTE entries.
+ */
+function getWithClauses(node: any): any[] | null {
+  if (!node.with && !node.with_list) {
+    return null;
+  }
+  return node.with_list || (Array.isArray(node.with) ? node.with : [node.with]);
+}
+
+/**
  * Processes CTE (Common Table Expressions) - WITH clause.
  */
 function processCTE(node: any, tables: Set<string>): void {
-  if (!node.with && !node.with_list) {
+  const withClauses = getWithClauses(node);
+  if (!withClauses) {
     return;
   }
-  const withClauses = node.with_list || (Array.isArray(node.with) ? node.with : [node.with]);
   withClauses.forEach((cte: any) => {
     if (cte?.stmt) {
       extractTablesFromNode(cte.stmt, tables);
@@ -199,19 +220,10 @@ function processCTE(node: any, tables: Set<string>): void {
  */
 function processFromAndJoin(node: any, tables: Set<string>): void {
   if (node.from) {
-    if (Array.isArray(node.from)) {
-      node.from.forEach((item: any) => extractTablesFromNode(item, tables));
-    } else {
-      extractTablesFromNode(node.from, tables);
-    }
+    walkNodeOrArray(node.from, tables);
   }
-
   if (node.join) {
-    if (Array.isArray(node.join)) {
-      node.join.forEach((item: any) => extractTablesFromNode(item, tables));
-    } else {
-      extractTablesFromNode(node.join, tables);
-    }
+    walkNodeOrArray(node.join, tables);
   }
 }
 

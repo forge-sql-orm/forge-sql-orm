@@ -200,32 +200,37 @@ export function formatDateTime(
  * @param {T} table - The table schema
  * @returns {[string, AnyColumn][]} Array of primary key name and column pairs
  */
+/**
+ * Walks each PK builder and collects the [name, column] entries from `columns`
+ * whose AnyColumn matches one referenced by the builder.
+ */
+function collectPrimaryKeysFromBuilders(
+  columns: Record<string, AnyColumn>,
+  builders: PrimaryKeyBuilder[],
+): [string, AnyColumn][] {
+  const result = new Set<[string, AnyColumn]>();
+  for (const builder of builders) {
+    // @ts-ignore - PrimaryKeyBuilder has internal columns property
+    const builderColumns: AnyColumn[] = builder.columns;
+    for (const entry of Object.entries(columns)) {
+      if (builderColumns.includes(entry[1])) {
+        result.add(entry);
+      }
+    }
+  }
+  return Array.from(result);
+}
+
 export function getPrimaryKeys<T extends AnyMySqlTable>(table: T): [string, AnyColumn][] {
   const { columns, primaryKeys } = getTableMetadata(table);
 
-  // First try to find primary keys in columns
   const columnPrimaryKeys = Object.entries(columns).filter(([, column]) => column.primary);
-
   if (columnPrimaryKeys.length > 0) {
     return columnPrimaryKeys;
   }
 
-  // If no primary keys found in columns, check primary key builders
   if (Array.isArray(primaryKeys) && primaryKeys.length > 0) {
-    // Collect all primary key columns from all primary key builders
-    const primaryKeyColumns = new Set<[string, AnyColumn]>();
-
-    for (const primaryKeyBuilder of primaryKeys) {
-      // Get primary key columns from each builder
-      for (const [name, column1] of Object.entries(columns).filter(([, column]) => {
-        // @ts-ignore - PrimaryKeyBuilder has internal columns property
-        return primaryKeyBuilder.columns.includes(column);
-      })) {
-        primaryKeyColumns.add([name, column1]);
-      }
-    }
-
-    return Array.from(primaryKeyColumns);
+    return collectPrimaryKeysFromBuilders(columns, primaryKeys);
   }
 
   return [];
