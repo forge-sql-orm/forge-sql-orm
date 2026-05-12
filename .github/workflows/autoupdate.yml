@@ -104,6 +104,16 @@ jobs:
           git checkout -b "$BRANCH"
           # Stage anything autoupdate.sh did not stage explicitly
           git add -A
+
+          # Final guard: the husky pre-commit hook re-runs npm i during commit,
+          # which can regenerate package-lock.json deterministically and
+          # collapse the diff that Detect changes saw. If nothing remains
+          # staged after the final add -A, exit cleanly — no PR needed.
+          if git diff --cached --quiet; then
+            echo "Nothing staged to commit after final add -A. Exiting cleanly."
+            exit 0
+          fi
+
           git commit -m "chore(deps): daily autoupdate ${DATE}"
           # Force-push as a safety net: the orphan-branch sweep above usually
           # clears any pre-existing remote ref, but a same-day re-run would
