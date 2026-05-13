@@ -3,11 +3,11 @@ const __vite__mapDeps = (
   m = __vite__mapDeps,
   d = m.f ||
     (m.f = [
-      "./custom-theme-DfPy4Bvj.js",
+      "./custom-theme-BYUq6yb4.js",
       "./wrapNativeSuper-BmCJ3c35.js",
       "./iframe-resizer-DTa1qiDm.js",
       "./rolldown-runtime-BM3Ffeng.js",
-      "./body-D12Bgx7k.js",
+      "./body-DRsckay4.js",
       "./react-dom-vendor-0VJF9GAl.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -6794,7 +6794,7 @@ var zi = (function () {
                                       return (
                                         (e.next = 2),
                                         pi(
-                                          () => import(`./custom-theme-DfPy4Bvj.js`),
+                                          () => import(`./custom-theme-BYUq6yb4.js`),
                                           __vite__mapDeps([0, 1]),
                                           import.meta.url,
                                         )
@@ -10166,17 +10166,17 @@ function Sl(e) {
       if (!e || !r) return;
       var i = l.offset.gap,
         a = l.offset.crossAxisShift.value,
-        u = !!o;
-      if (_l() && !u) {
-        var d = e.style.getPropertyValue(`anchor-name`) || `--anchor-${c.replace(/:/g, ``)}`,
-          f = vl({ placement: l, offset: i }),
-          p = yl({
+        d = !!o;
+      if (_l() && !d) {
+        var f = e.style.getPropertyValue(`anchor-name`) || `--anchor-${c.replace(/:/g, ``)}`,
+          p = vl({ placement: l, offset: i }),
+          m = yl({
             placement: l,
             crossAxisShiftCssValue: a,
             direction: l.offset.crossAxisShift.direction,
           }),
-          m = [
-            { property: `position-anchor`, value: d },
+          g = [
+            { property: `position-anchor`, value: f },
             { property: `position-area`, value: ml({ placement: l }) },
             {
               property: `position-try-fallbacks`,
@@ -10185,32 +10185,32 @@ function Sl(e) {
             { property: `margin`, value: `0` },
             { property: `inset`, value: `auto` },
             { property: `min-inline-size`, value: `max-content` },
-            { property: f.property, value: f.value },
             { property: p.property, value: p.value },
+            { property: m.property, value: m.value },
           ];
-        (m.push({ property: `--ds-cross-axis-shift-margin-start`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-end`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-block-start`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-block-end`, value: `0px` }));
-        var h = yl({
+        (g.push({ property: `--ds-cross-axis-shift-margin-start`, value: `0px` }),
+          g.push({ property: `--ds-cross-axis-shift-margin-end`, value: `0px` }),
+          g.push({ property: `--ds-cross-axis-shift-margin-block-start`, value: `0px` }),
+          g.push({ property: `--ds-cross-axis-shift-margin-block-end`, value: `0px` }));
+        var _ = yl({
             placement: l,
             crossAxisShiftCssValue: a,
             direction: l.offset.crossAxisShift.direction,
           }),
-          g = {
+          v = {
             "margin-inline-start": `--ds-cross-axis-shift-margin-start`,
             "margin-inline-end": `--ds-cross-axis-shift-margin-end`,
             "margin-block-start": `--ds-cross-axis-shift-margin-block-start`,
             "margin-block-end": `--ds-cross-axis-shift-margin-block-end`,
-          }[h.property];
+          }[_.property];
         return (
-          g && m.push({ property: g, value: h.value }),
+          v && g.push({ property: v, value: _.value }),
           s &&
-            (m.push({ property: `--ds-arrow-size`, value: i }),
+            (g.push({ property: `--ds-arrow-size`, value: i }),
             r.setAttribute(`data-ds-popover-arrow`, ``)),
-          e.style.setProperty(`anchor-name`, d),
+          e.style.setProperty(`anchor-name`, f),
           cl(
-            pl({ el: r, styles: m }),
+            pl({ el: r, styles: g }),
             s
               ? function () {
                   return r.removeAttribute(`data-ds-popover-arrow`);
@@ -10219,14 +10219,14 @@ function Sl(e) {
           )
         );
       }
-      var _ = pl({
+      var y = pl({
         el: r,
         styles: [
           { property: `margin`, value: `0` },
           { property: `inset`, value: `auto` },
         ],
       });
-      function v() {
+      function b() {
         if (!(!e || !r)) {
           var t = e.getBoundingClientRect(),
             n = { width: window.innerWidth, height: window.innerHeight },
@@ -10249,31 +10249,44 @@ function Sl(e) {
             r.style.removeProperty(`opacity`));
         }
       }
-      var y = el(v),
-        b = new ResizeObserver(function () {
-          r.offsetWidth > 0 && r.offsetHeight > 0 && (v(), b.disconnect());
+      var x = el(b),
+        S = new (
+          typeof ResizeObserver < `u`
+            ? ResizeObserver
+            : (function () {
+                function e() {
+                  h(this, e);
+                }
+                return u(e, [
+                  { key: `observe`, value: function () {} },
+                  { key: `unobserve`, value: function () {} },
+                  { key: `disconnect`, value: function () {} },
+                ]);
+              })()
+        )(function () {
+          r.offsetWidth > 0 && r.offsetHeight > 0 && (b(), S.disconnect());
         });
       return (
-        gl(r) && (r.style.setProperty(`opacity`, `0`), b.observe(r)),
+        gl(r) && (r.style.setProperty(`opacity`, `0`), S.observe(r)),
         cl(
-          _,
+          y,
           (0, vi.bind)(r, {
             type: `toggle`,
             listener: function (e) {
-              e.newState === `open` && (r.style.setProperty(`opacity`, `0`), b.observe(r));
+              e.newState === `open` && (r.style.setProperty(`opacity`, `0`), S.observe(r));
             },
           }),
           function () {
-            return b.disconnect();
+            return S.disconnect();
           },
           (0, vi.bind)(window, {
             type: `scroll`,
-            listener: y,
+            listener: x,
             options: { capture: !0, passive: !0 },
           }),
-          (0, vi.bind)(window, { type: `resize`, listener: y, options: { passive: !0 } }),
+          (0, vi.bind)(window, { type: `resize`, listener: x, options: { passive: !0 } }),
           function () {
-            (y.cancel(),
+            (x.cancel(),
               r.style.removeProperty(`top`),
               r.style.removeProperty(`left`),
               r.style.removeProperty(`opacity`));
@@ -11023,11 +11036,7 @@ function mu(e) {
   return e;
 }
 var hu = $c.tooltip(),
-  gu = {
-    componentName: `tooltip`,
-    packageName: `@atlaskit/tooltip`,
-    packageVersion: `0.0.0-development`,
-  },
+  gu = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.1.0` },
   _u = { top: `bottom`, bottom: `top`, left: `right`, right: `left` },
   vu = function (e) {
     return e.split(`-`)[0];
@@ -19487,7 +19496,7 @@ var Dy = function (e) {
   },
   Oy = (0, E.lazy)(function () {
     return pi(
-      () => import(`./body-D12Bgx7k.js`),
+      () => import(`./body-DRsckay4.js`),
       __vite__mapDeps([4, 3, 1, 5, 6]),
       import.meta.url,
     );

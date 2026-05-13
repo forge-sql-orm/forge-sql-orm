@@ -5,9 +5,9 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-Bs5bfbS0.js",
       "./rolldown-runtime-BYbx6iT9.js",
-      "./custom-theme-GeODrmgd.js",
+      "./custom-theme-BUpPgAvB.js",
       "./wrapNativeSuper-CMD0Ca0W.js",
-      "./body-CTM_gIVu.js",
+      "./body-CusxkUwA.js",
       "./react-dom-vendor-BHIljUNy.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -66,7 +66,7 @@ var x = e(o()),
     __asyncGenerator: () => le,
     __asyncValues: () => M,
     __await: () => ce,
-    __awaiter: () => ee,
+    __awaiter: () => j,
     __classPrivateFieldGet: () => me,
     __classPrivateFieldIn: () => ge,
     __classPrivateFieldSet: () => he,
@@ -80,14 +80,14 @@ var x = e(o()),
     __importDefault: () => pe,
     __importStar: () => fe,
     __makeTemplateObject: () => de,
-    __metadata: () => j,
+    __metadata: () => A,
     __param: () => E,
     __propKey: () => k,
     __read: () => ie,
     __rest: () => w,
     __rewriteRelativeImportExtension: () => ye,
     __runInitializers: () => O,
-    __setFunctionName: () => A,
+    __setFunctionName: () => ee,
     __spread: () => ae,
     __spreadArray: () => se,
     __spreadArrays: () => oe,
@@ -171,17 +171,17 @@ function O(e, t, n) {
 function k(e) {
   return typeof e == `symbol` ? e : `${e}`;
 }
-function A(e, t, n) {
+function ee(e, t, n) {
   return (
     typeof t == `symbol` && (t = t.description ? `[${t.description}]` : ``),
     Object.defineProperty(e, `name`, { configurable: !0, value: n ? `${n} ${t}` : t })
   );
 }
-function j(e, t) {
+function A(e, t) {
   if (typeof Reflect == `object` && typeof Reflect.metadata == `function`)
     return Reflect.metadata(e, t);
 }
-function ee(e, t, n, r) {
+function j(e, t, n, r) {
   function i(e) {
     return e instanceof n
       ? e
@@ -636,9 +636,9 @@ var be,
         __esDecorate: D,
         __runInitializers: O,
         __propKey: k,
-        __setFunctionName: A,
-        __metadata: j,
-        __awaiter: ee,
+        __setFunctionName: ee,
+        __metadata: A,
+        __awaiter: j,
         __generator: te,
         __createBinding: Se,
         __exportStar: ne,
@@ -10487,9 +10487,9 @@ var ac = (function () {
           D,
           O,
           k,
+          ee,
           A,
           j,
-          ee,
           te = arguments;
         return R.default.wrap(
           function (e) {
@@ -10584,7 +10584,7 @@ var ac = (function () {
                                       return (
                                         (e.next = 2),
                                         it(
-                                          () => import(`./custom-theme-GeODrmgd.js`),
+                                          () => import(`./custom-theme-BUpPgAvB.js`),
                                           __vite__mapDeps([2, 3]),
                                           import.meta.url,
                                         )
@@ -10610,11 +10610,11 @@ var ac = (function () {
                 case 11:
                   ((O = Zs(S)), (k = ec(O)), (e.prev = 13), k.s());
                 case 15:
-                  if ((A = k.n()).done) {
+                  if ((ee = k.n()).done) {
                     e.next = 21;
                     break;
                   }
-                  return ((j = A.value), (e.next = 19), w(j));
+                  return ((A = ee.value), (e.next = 19), w(A));
                 case 19:
                   e.next = 15;
                   break;
@@ -10626,7 +10626,7 @@ var ac = (function () {
                 case 26:
                   return ((e.prev = 26), k.f(), e.finish(26));
                 case 29:
-                  return ((ee = qs(S)), e.abrupt(`return`, ee));
+                  return ((j = qs(S)), e.abrupt(`return`, j));
                 case 31:
                 case `end`:
                   return e.stop();
@@ -12391,9 +12391,9 @@ var Uu = function (e) {
       O = e.overlay;
     e.shouldFitContainer;
     var k = e.spacing,
-      A = k === void 0 ? `default` : k,
-      j = e.tabIndex,
-      ee = j === void 0 ? 0 : j,
+      ee = k === void 0 ? `default` : k,
+      A = e.tabIndex,
+      j = A === void 0 ? 0 : A,
       te = e.type,
       ne = te === void 0 ? (u ? void 0 : `button`) : te,
       re = e.testId,
@@ -12470,14 +12470,14 @@ var Uu = function (e) {
               onClick: ce,
               onFocus: T,
               onMouseDown: le,
-              tabIndex: v ? -1 : ee,
+              tabIndex: v ? -1 : j,
               type: ne,
             },
             zu({ isInteractive: de }),
           ),
-          m ? xu(`span`, { css: [M, Hu({ spacing: A }), Yu(c, qu)] }, m) : null,
-          Xu(c, [M, Bu({ spacing: A })]),
-          p ? xu(`span`, { css: [M, Hu({ spacing: A }), Yu(c, Ju)] }, p) : null,
+          m ? xu(`span`, { css: [M, Hu({ spacing: ee }), Yu(c, qu)] }, m) : null,
+          Xu(c, [M, Bu({ spacing: ee })]),
+          p ? xu(`span`, { css: [M, Hu({ spacing: ee }), Yu(c, Ju)] }, p) : null,
           O ? xu(`span`, { css: [Wu, fe] }, O) : null,
         ),
       )
@@ -12942,21 +12942,21 @@ function zd(e, t) {
     D = e.analyticsContext,
     O = e.testId,
     k = e.isDisabled,
-    A = f(
+    ee = f(
       Va(o, function () {
         return a || 0;
       }),
       2,
     ),
-    j = A[0],
-    ee = A[1],
+    A = ee[0],
+    j = ee[1],
     te = ji(
       Fd(
         {
           fn: function (e, t) {
             var n = e.event,
               r = e.selectedPageIndex;
-            (o === void 0 && ee(r), S && S(n, C[r], t));
+            (o === void 0 && j(r), S && S(n, C[r], t));
           },
           action: `changed`,
           actionSubject: `pageNumber`,
@@ -12975,9 +12975,9 @@ function zd(e, t) {
         key: `left-navigator`,
         component: r.Previous,
         onClick: function (e) {
-          return te({ event: e, selectedPageIndex: j - 1 });
+          return te({ event: e, selectedPageIndex: A - 1 });
         },
-        isDisabled: k || j === 0,
+        isDisabled: k || A === 0,
         iconBefore: x.createElement(Rd, { chevronDirection: `left` }),
         "aria-label": p,
         testId: O && `${O}--left-navigator`,
@@ -12987,12 +12987,12 @@ function zd(e, t) {
         { space: `space.0`, alignBlock: `baseline`, as: `ul`, xcss: Id.paginationMenu },
         jd(
           C,
-          j,
+          A,
           {
             max: y,
             ellipsis: E,
             transform: function (e, t, n) {
-              var i = C[j],
+              var i = C[A],
                 a = `${u} ${w ? w(e, t) : e}`,
                 o = e === i;
               return x.createElement(
@@ -13024,9 +13024,9 @@ function zd(e, t) {
         key: `right-navigator`,
         component: r.Next,
         onClick: function (e) {
-          return te({ event: e, selectedPageIndex: j + 1 });
+          return te({ event: e, selectedPageIndex: A + 1 });
         },
-        isDisabled: k || j === C.length - 1,
+        isDisabled: k || A === C.length - 1,
         iconBefore: x.createElement(Rd, { chevronDirection: `right` }),
         "aria-label": h,
         testId: O && `${O}--right-navigator`,
@@ -14375,15 +14375,15 @@ function nm(e) {
         D = tp(E),
         O = Dp(E) === zf,
         k = [`top`, Pf].indexOf(D) >= 0,
-        A = k ? `width` : `height`,
-        j = $p(t, { placement: E, boundary: u, rootBoundary: d, altBoundary: f, padding: l }),
-        ee = k ? (O ? Ff : If) : O ? Pf : `top`;
-      b[A] > x[A] && (ee = Lp(ee));
-      var te = Lp(ee),
+        ee = k ? `width` : `height`,
+        A = $p(t, { placement: E, boundary: u, rootBoundary: d, altBoundary: f, padding: l }),
+        j = k ? (O ? Ff : If) : O ? Pf : `top`;
+      b[ee] > x[ee] && (j = Lp(j));
+      var te = Lp(j),
         ne = [];
       if (
-        (a && ne.push(j[D] <= 0),
-        s && ne.push(j[ee] <= 0, j[te] <= 0),
+        (a && ne.push(A[D] <= 0),
+        s && ne.push(A[j] <= 0, A[te] <= 0),
         ne.every(function (e) {
           return e;
         }))
@@ -14545,31 +14545,31 @@ function mm(e) {
   if (S) {
     if (a) {
       var k = b === `y` ? `top` : If,
-        A = b === `y` ? Pf : Ff,
-        j = b === `y` ? `height` : `width`,
-        ee = S[b],
-        te = ee + g[k],
-        ne = ee - g[A],
-        re = p ? -w[j] / 2 : 0,
-        ie = v === `start` ? C[j] : w[j],
-        ae = v === `start` ? -w[j] : -C[j],
+        ee = b === `y` ? Pf : Ff,
+        A = b === `y` ? `height` : `width`,
+        j = S[b],
+        te = j + g[k],
+        ne = j - g[ee],
+        re = p ? -w[A] / 2 : 0,
+        ie = v === `start` ? C[A] : w[A],
+        ae = v === `start` ? -w[A] : -C[A],
         oe = t.elements.arrow,
         se = p && oe ? cp(oe) : { width: 0, height: 0 },
         ce = t.modifiersData[`arrow#persistent`]
           ? t.modifiersData[`arrow#persistent`].padding
           : bp(),
         le = ce[k],
-        ue = ce[A],
-        M = vp(0, C[j], se[j]),
-        de = y ? C[j] / 2 - re - M - le - E.mainAxis : ie - M - le - E.mainAxis,
-        fe = y ? -C[j] / 2 + re + M + ue + E.mainAxis : ae + M + ue + E.mainAxis,
+        ue = ce[ee],
+        M = vp(0, C[A], se[A]),
+        de = y ? C[A] / 2 - re - M - le - E.mainAxis : ie - M - le - E.mainAxis,
+        fe = y ? -C[A] / 2 + re + M + ue + E.mainAxis : ae + M + ue + E.mainAxis,
         pe = t.elements.arrow && gp(t.elements.arrow),
         me = pe ? (b === `y` ? pe.clientTop || 0 : pe.clientLeft || 0) : 0,
         he = D?.[b] ?? 0,
-        ge = ee + de - he - me,
-        _e = ee + fe - he,
-        ve = vp(p ? rp(te, ge) : te, ee, p ? np(ne, _e) : ne);
-      ((S[b] = ve), (O[b] = ve - ee));
+        ge = j + de - he - me,
+        _e = j + fe - he,
+        ve = vp(p ? rp(te, ge) : te, j, p ? np(ne, _e) : ne);
+      ((S[b] = ve), (O[b] = ve - j));
     }
     if (s) {
       var ye = b === `x` ? `top` : If,
@@ -15750,15 +15750,15 @@ function zh(e) {
         a = l.offset.crossAxisShift.value,
         u = !!o;
       if (Ph() && !u) {
-        var d = e.style.getPropertyValue(`anchor-name`) || `--anchor-${c.replace(/:/g, ``)}`,
-          f = Fh({ placement: l, offset: i }),
-          p = Ih({
+        var f = e.style.getPropertyValue(`anchor-name`) || `--anchor-${c.replace(/:/g, ``)}`,
+          m = Fh({ placement: l, offset: i }),
+          h = Ih({
             placement: l,
             crossAxisShiftCssValue: a,
             direction: l.offset.crossAxisShift.direction,
           }),
-          m = [
-            { property: `position-anchor`, value: d },
+          g = [
+            { property: `position-anchor`, value: f },
             { property: `position-area`, value: jh({ placement: l }) },
             {
               property: `position-try-fallbacks`,
@@ -15767,32 +15767,32 @@ function zh(e) {
             { property: `margin`, value: `0` },
             { property: `inset`, value: `auto` },
             { property: `min-inline-size`, value: `max-content` },
-            { property: f.property, value: f.value },
-            { property: p.property, value: p.value },
+            { property: m.property, value: m.value },
+            { property: h.property, value: h.value },
           ];
-        (m.push({ property: `--ds-cross-axis-shift-margin-start`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-end`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-block-start`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-block-end`, value: `0px` }));
-        var h = Ih({
+        (g.push({ property: `--ds-cross-axis-shift-margin-start`, value: `0px` }),
+          g.push({ property: `--ds-cross-axis-shift-margin-end`, value: `0px` }),
+          g.push({ property: `--ds-cross-axis-shift-margin-block-start`, value: `0px` }),
+          g.push({ property: `--ds-cross-axis-shift-margin-block-end`, value: `0px` }));
+        var _ = Ih({
             placement: l,
             crossAxisShiftCssValue: a,
             direction: l.offset.crossAxisShift.direction,
           }),
-          g = {
+          v = {
             "margin-inline-start": `--ds-cross-axis-shift-margin-start`,
             "margin-inline-end": `--ds-cross-axis-shift-margin-end`,
             "margin-block-start": `--ds-cross-axis-shift-margin-block-start`,
             "margin-block-end": `--ds-cross-axis-shift-margin-block-end`,
-          }[h.property];
+          }[_.property];
         return (
-          g && m.push({ property: g, value: h.value }),
+          v && g.push({ property: v, value: _.value }),
           s &&
-            (m.push({ property: `--ds-arrow-size`, value: i }),
+            (g.push({ property: `--ds-arrow-size`, value: i }),
             r.setAttribute(`data-ds-popover-arrow`, ``)),
-          e.style.setProperty(`anchor-name`, d),
+          e.style.setProperty(`anchor-name`, f),
           Th(
-            Ah({ el: r, styles: m }),
+            Ah({ el: r, styles: g }),
             s
               ? function () {
                   return r.removeAttribute(`data-ds-popover-arrow`);
@@ -15801,14 +15801,14 @@ function zh(e) {
           )
         );
       }
-      var _ = Ah({
+      var y = Ah({
         el: r,
         styles: [
           { property: `margin`, value: `0` },
           { property: `inset`, value: `auto` },
         ],
       });
-      function v() {
+      function b() {
         if (!(!e || !r)) {
           var t = e.getBoundingClientRect(),
             n = { width: window.innerWidth, height: window.innerHeight },
@@ -15831,31 +15831,44 @@ function zh(e) {
             r.style.removeProperty(`opacity`));
         }
       }
-      var y = _h(v),
-        b = new ResizeObserver(function () {
-          r.offsetWidth > 0 && r.offsetHeight > 0 && (v(), b.disconnect());
+      var x = _h(b),
+        S = new (
+          typeof ResizeObserver < `u`
+            ? ResizeObserver
+            : (function () {
+                function e() {
+                  d(this, e);
+                }
+                return p(e, [
+                  { key: `observe`, value: function () {} },
+                  { key: `unobserve`, value: function () {} },
+                  { key: `disconnect`, value: function () {} },
+                ]);
+              })()
+        )(function () {
+          r.offsetWidth > 0 && r.offsetHeight > 0 && (b(), S.disconnect());
         });
       return (
-        Nh(r) && (r.style.setProperty(`opacity`, `0`), b.observe(r)),
+        Nh(r) && (r.style.setProperty(`opacity`, `0`), S.observe(r)),
         Th(
-          _,
+          y,
           (0, Rs.bind)(r, {
             type: `toggle`,
             listener: function (e) {
-              e.newState === `open` && (r.style.setProperty(`opacity`, `0`), b.observe(r));
+              e.newState === `open` && (r.style.setProperty(`opacity`, `0`), S.observe(r));
             },
           }),
           function () {
-            return b.disconnect();
+            return S.disconnect();
           },
           (0, Rs.bind)(window, {
             type: `scroll`,
-            listener: y,
+            listener: x,
             options: { capture: !0, passive: !0 },
           }),
-          (0, Rs.bind)(window, { type: `resize`, listener: y, options: { passive: !0 } }),
+          (0, Rs.bind)(window, { type: `resize`, listener: x, options: { passive: !0 } }),
           function () {
-            (y.cancel(),
+            (x.cancel(),
               r.style.removeProperty(`top`),
               r.style.removeProperty(`left`),
               r.style.removeProperty(`opacity`));
@@ -16223,8 +16236,8 @@ var sg = vh(function () {
     (ig({ elementRef: S, role: g }), og({ elementRef: S, isOpen: m, role: g }));
     var O = i === `hint` && !sg() ? `auto` : i,
       k = (0, x.useRef)(!1),
-      A = (0, x.useRef)(`light-dismiss`),
-      j = (0, x.useCallback)(
+      ee = (0, x.useRef)(`light-dismiss`),
+      A = (0, x.useCallback)(
         function (e) {
           var t = S.current;
           if (e.newState === `open`) {
@@ -16233,8 +16246,8 @@ var sg = vh(function () {
           }
           if (e.newState === `closed`) {
             if ((t && s?.({ isOpen: !1, element: t }), k.current)) return;
-            var n = A.current;
-            ((A.current = `light-dismiss`), o({ reason: n }));
+            var n = ee.current;
+            ((ee.current = `light-dismiss`), o({ reason: n }));
           }
         },
         [o, s],
@@ -16247,17 +16260,17 @@ var sg = vh(function () {
             var t = (0, Rs.bind)(e, {
                 type: `keydown`,
                 listener: function (e) {
-                  e.key === `Escape` && (A.current = `escape`);
+                  e.key === `Escape` && (ee.current = `escape`);
                 },
                 options: { capture: !0 },
               }),
-              n = (0, Rs.bind)(e, { type: `toggle`, listener: j });
+              n = (0, Rs.bind)(e, { type: `toggle`, listener: A });
             return function () {
               (t(), n());
             };
           }
         },
-        [j],
+        [A],
       ),
       (0, x.useLayoutEffect)(
         function () {
@@ -16605,11 +16618,7 @@ function jg(e) {
   return e;
 }
 var Mg = gh.tooltip(),
-  Ng = {
-    componentName: `tooltip`,
-    packageName: `@atlaskit/tooltip`,
-    packageVersion: `0.0.0-development`,
-  },
+  Ng = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.1.0` },
   Pg = { top: `bottom`, bottom: `top`, left: `right`, right: `left` },
   Fg = function (e) {
     return e.split(`-`)[0];
@@ -16642,10 +16651,10 @@ function Ig(e) {
     D = e.analyticsContext,
     O = e.strategy,
     k = O === void 0 ? `fixed` : O,
-    A = e.ignoreTooltipPointerEvents,
-    j = A === void 0 ? !1 : A,
-    ee = e.isScreenReaderAnnouncementDisabled,
-    te = ee === void 0 ? !1 : ee,
+    ee = e.ignoreTooltipPointerEvents,
+    A = ee === void 0 ? !1 : ee,
+    j = e.isScreenReaderAnnouncementDisabled,
+    te = j === void 0 ? !1 : j,
     ne = e.shortcut,
     re = e.shouldAlwaysFadeIn,
     ie = re === void 0 ? !1 : re,
@@ -16923,7 +16932,7 @@ function Ig(e) {
               position: r,
               onMouseOut: je,
               onMouseOverTooltip: Ne,
-              ignoreTooltipPointerEvents: j,
+              ignoreTooltipPointerEvents: A,
               truncate: c,
               testId: m,
               shortcut: ne,
@@ -16974,7 +16983,7 @@ function Ig(e) {
                             {
                               ref: t,
                               className: `Tooltip ${i}`,
-                              style: jg(jg({}, n), j && { pointerEvents: `none` }),
+                              style: jg(jg({}, n), A && { pointerEvents: `none` }),
                               truncate: c,
                               placement: ce,
                               testId: He() ? m : m && `${m}--unresolved`,
@@ -17219,19 +17228,19 @@ var Kg = e(Xd()),
       D = S || c === l || o !== void 0 || T,
       O = D && v,
       k = !v || D || (v && !T),
-      A = (0, x.useCallback)(
+      ee = (0, x.useCallback)(
         function () {
           E?.(!0);
         },
         [E],
       ),
-      j = (0, x.useCallback)(
+      A = (0, x.useCallback)(
         function () {
           E?.(!1);
         },
         [E],
       ),
-      ee = (0, x.useCallback)(
+      j = (0, x.useCallback)(
         function () {
           C(!0);
         },
@@ -17245,7 +17254,7 @@ var Kg = e(Xd()),
       ),
       ne = x.createElement(
         lo,
-        { xcss: Xg.headCellContainer, onMouseEnter: ee, onMouseLeave: te, onFocus: A, onBlur: j },
+        { xcss: Xg.headCellContainer, onMouseEnter: j, onMouseLeave: te, onFocus: ee, onBlur: A },
         x.createElement(
           Ig,
           { content: o === `ASC` ? d : m },
@@ -17479,9 +17488,9 @@ var l_ = function (e) {
       D = e.isRankable,
       O = D === void 0 ? !1 : D,
       k = e.isRankingDisabled,
-      A = k === void 0 ? !1 : k,
-      j = e.onRankStart,
-      ee = j === void 0 ? pn : j,
+      ee = k === void 0 ? !1 : k,
+      A = e.onRankStart,
+      j = A === void 0 ? pn : A,
       te = e.onRankEnd,
       ne = te === void 0 ? pn : te,
       re = e.loadingSpinnerSize,
@@ -17531,7 +17540,7 @@ var l_ = function (e) {
         b(e, t);
       },
       pe = function (e) {
-        (ce(!0), ee(e));
+        (ce(!0), j(e));
       },
       me = function (e) {
         (ce(!1), M(e));
@@ -17599,7 +17608,7 @@ var l_ = function (e) {
               isRanking: se,
               onRankStart: pe,
               onRankEnd: me,
-              isRankingDisabled: A || m || !1,
+              isRankingDisabled: ee || m || !1,
             }),
         ),
       ),
@@ -17624,7 +17633,7 @@ var l_ = function (e) {
   },
   u_ = (0, x.lazy)(function () {
     return it(
-      () => import(`./body-CTM_gIVu.js`),
+      () => import(`./body-CusxkUwA.js`),
       __vite__mapDeps([4, 1, 3, 5, 6]),
       import.meta.url,
     );
@@ -17799,19 +17808,25 @@ l(m_, `defaultProps`, {
   rowsPerPage: 1 / 0,
 });
 var h_ = fn(),
-  g_ = (e, t, n, r) => {
-    let i = Object.keys(r).map((n) => ({
-      key: n,
-      content: n,
-      isSortable: t,
-      width: e ? 25 : void 0,
-    }));
+  g_ = (e, t, n) => {
+    let r = [];
+    switch (n) {
+      case `USER`:
+        (r.push({ key: `id`, content: `ID`, isSortable: !0, width: e ? 25 : void 0 }),
+          r.push({ key: `name`, content: `NAME`, isSortable: !0, width: e ? 25 : void 0 }),
+          r.push({ key: `email`, content: `EMAIL`, isSortable: !0, width: e ? 25 : void 0 }));
+        break;
+      case `DUPLICATE`:
+        (r.push({ key: `name`, content: `NAME`, isSortable: !0, width: e ? 25 : void 0 }),
+          r.push({ key: `email`, content: `EMAIL`, isSortable: !0, width: e ? 25 : void 0 }),
+          r.push({ key: `count`, content: `COUNT`, isSortable: !0, width: e ? 25 : void 0 }));
+    }
     return (
-      n && i.push({ key: `delete`, content: `Delete`, isSortable: t, width: e ? 25 : void 0 }),
-      i
+      t && r.push({ key: `delete`, content: `Delete`, isSortable: !1, width: e ? 25 : void 0 }),
+      r
     );
   },
-  __ = (e, t, n, r) => ({ cells: g_(e, t, n, r) });
+  __ = (e, t, n) => ({ cells: g_(e, t, n) });
 function q(e) {
   var t = [...arguments].slice(1);
   throw Error(
@@ -21589,42 +21604,22 @@ var rC = class {
 var iC = new rC(),
   aC = class {
     constructor() {
-      ((this.isLoading = !0), px(this));
-    }
-    saveMetadata(e) {
-      ((this.metadata = e), (this.isLoading = !1));
-    }
-    loading() {
-      this.isLoading = !0;
-    }
-    stopLoading() {
-      this.isLoading = !1;
-    }
-  };
-(nC([Y], aC.prototype, `isLoading`, void 0),
-  nC([Y], aC.prototype, `metadata`, void 0),
-  nC([kb.bound], aC.prototype, `saveMetadata`, null),
-  nC([kb], aC.prototype, `loading`, null),
-  nC([kb], aC.prototype, `stopLoading`, null));
-var oC = new aC(),
-  sC = class {
-    constructor() {
       ((this.state = `ROOT`), px(this));
     }
     saveState(e) {
       this.state = e;
     }
   };
-(nC([Y], sC.prototype, `state`, void 0), nC([kb.bound], sC.prototype, `saveState`, null));
-var cC = new sC(),
-  lC = new (class {
+(nC([Y], aC.prototype, `state`, void 0), nC([kb.bound], aC.prototype, `saveState`, null));
+var oC = new aC(),
+  sC = new (class {
     constructor() {
-      ((this.usersStore = iC), (this.usersMetadata = oC), (this.stateStore = cC));
+      ((this.usersStore = iC), (this.stateStore = oC));
     }
   })(),
-  uC = (0, x.createContext)(lC),
-  dC = () => (0, x.useContext)(uC),
-  fC = i((e) => {
+  cC = (0, x.createContext)(sC),
+  lC = () => (0, x.useContext)(cC),
+  uC = i((e) => {
     var t = o(),
       n = Symbol.for(`react.element`),
       r = Object.prototype.hasOwnProperty,
@@ -21647,19 +21642,19 @@ var cC = new sC(),
     ((e.jsx = s), (e.jsxs = s));
   }),
   $ = i((e, t) => {
-    t.exports = fC();
+    t.exports = uC();
   })(),
-  pC = XS(() => {
-    let { usersStore: e, usersMetadata: t, stateStore: n } = dC(),
-      r = __(!0, !0, !0, t.metadata.user.properties),
-      i = e.users;
-    return !i || i.length === 0
+  dC = XS(() => {
+    let { usersStore: e, stateStore: t } = lC(),
+      n = __(!0, !0, `USER`),
+      r = e.users;
+    return !r || r.length === 0
       ? (0, $.jsx)(`div`, { children: `User Table is EMPTY` })
       : (0, $.jsx)(`div`, {
           children: (0, $.jsxs)(`div`, {
             children: [
               (0, $.jsx)(m_, {
-                head: r,
+                head: n,
                 onSort: async (t) => {
                   let n = { name: t.key, sortType: t.sortOrder };
                   e.loading();
@@ -21670,10 +21665,12 @@ var cC = new sC(),
                     e.stopLoading();
                   }
                 },
-                rows: i.map((t, n) => {
-                  let r = Object.keys(t.fields).map((e) => ({ key: e, content: t.fields[e] }));
-                  return (
-                    r.push({
+                rows: r.map((t, n) => {
+                  let r = [
+                    { key: `id`, content: t.id },
+                    { key: `name`, content: t.name },
+                    { key: `email`, content: t.email },
+                    {
                       key: `delete`,
                       content: (0, $.jsx)(`div`, {
                         children: (0, $.jsx)(`button`, {
@@ -21689,9 +21686,9 @@ var cC = new sC(),
                           children: `delete`,
                         }),
                       }),
-                    }),
-                    { key: `row-${n}-${t.id}`, cells: r }
-                  );
+                    },
+                  ];
+                  return { key: `row-${n}-${t.id}`, cells: r };
                 }),
                 rowsPerPage: 5,
                 defaultPage: 1,
@@ -21705,8 +21702,8 @@ var cC = new sC(),
                 onClick: async () => {
                   e.loading();
                   try {
-                    let t = await (0, h_.invoke)(`duplicate`);
-                    (e.saveDuplicates(t), n.saveState(`DUPLICATE`));
+                    let n = await (0, h_.invoke)(`duplicate`, { sortType: e.sort });
+                    (e.saveDuplicates(n), t.saveState(`DUPLICATE`));
                   } finally {
                     e.stopLoading();
                   }
@@ -21717,66 +21714,81 @@ var cC = new sC(),
           }),
         });
   }),
-  mC = XS(() => {
-    let { usersMetadata: e, usersStore: t, stateStore: n } = dC(),
-      [r, i] = (0, x.useState)({}),
-      a = (e) => {
-        let { name: t, value: n, type: r } = e.target;
-        i((e) => ({ ...e, [t]: r === `number` ? Number(n) : n }));
+  fC = XS(() => {
+    let { usersStore: e, stateStore: t } = lC(),
+      [n, r] = (0, x.useState)({}),
+      i = (e) => {
+        let { name: t, value: n, type: i } = e.target;
+        r((e) => ({ ...e, [t]: i === `number` ? Number(n) : n }));
       };
     return (0, $.jsx)(`div`, {
       children: (0, $.jsxs)(`form`, {
-        onSubmit: async (e) => {
-          (e.preventDefault(),
-            console.log(`Form Data:`, r),
-            await (0, h_.invoke)(`create`, { data: r }),
-            t.loading());
+        onSubmit: async (r) => {
+          (r.preventDefault(), await (0, h_.invoke)(`create`, { data: n }), e.loading());
           try {
-            (t.saveUsers(await (0, h_.invoke)(`fetch`, { sortType: t.sort })), n.saveState(`ROOT`));
+            (e.saveUsers(await (0, h_.invoke)(`fetch`, { sortType: e.sort })), t.saveState(`ROOT`));
           } finally {
-            t.stopLoading();
+            e.stopLoading();
           }
         },
         children: [
-          Object.keys(e.metadata.user.properties).map((t) => {
-            let n = e.metadata.user.properties[t];
-            return (0, $.jsxs)(
-              `div`,
-              {
-                children: [
-                  (0, $.jsx)(`label`, { htmlFor: t, children: t }),
-                  (0, $.jsx)(`br`, {}),
-                  (0, $.jsx)(`input`, {
-                    type: n.type === `integer` || n.type === `smallint` ? `number` : `text`,
-                    id: t,
-                    name: t,
-                    onChange: a,
-                  }),
-                  (0, $.jsx)(`br`, {}),
-                ],
-              },
-              t,
-            );
-          }),
+          (0, $.jsxs)(
+            `div`,
+            {
+              children: [
+                (0, $.jsx)(`label`, { htmlFor: `name`, children: `Name` }),
+                (0, $.jsx)(`br`, {}),
+                (0, $.jsx)(`input`, { type: `text`, id: `name`, name: `name`, onChange: i }),
+                (0, $.jsx)(`br`, {}),
+              ],
+            },
+            `name`,
+          ),
+          (0, $.jsxs)(
+            `div`,
+            {
+              children: [
+                (0, $.jsx)(`label`, { htmlFor: `email`, children: `Email` }),
+                (0, $.jsx)(`br`, {}),
+                (0, $.jsx)(`input`, { type: `text`, id: `email`, name: `email`, onChange: i }),
+                (0, $.jsx)(`br`, {}),
+              ],
+            },
+            `email`,
+          ),
           (0, $.jsx)(`input`, { type: `submit`, value: `Submit` }),
         ],
       }),
     });
   }),
-  hC = XS(() => {
-    let { usersStore: e, usersMetadata: t } = dC(),
-      n = __(!0, !1, !1, t.metadata.duplicate.properties),
-      r = e.duplicates;
-    return !r || r.length === 0
+  pC = XS(() => {
+    let { usersStore: e } = lC(),
+      t = __(!0, !1, `DUPLICATE`),
+      n = e.duplicates;
+    return !n || n.length === 0
       ? (0, $.jsx)(`div`, { children: `Duplicate Table is EMPTY` })
       : (0, $.jsx)(`div`, {
           children: (0, $.jsxs)(`div`, {
             children: [
               (0, $.jsx)(m_, {
-                head: n,
-                rows: r.map((e, t) => {
-                  let n = Object.keys(e.fields).map((t) => ({ key: t, content: e.fields[t] }));
-                  return { key: `row-${t}-1`, cells: n };
+                head: t,
+                onSort: async (t) => {
+                  let n = { name: t.key, sortType: t.sortOrder };
+                  e.loading();
+                  try {
+                    let t = await (0, h_.invoke)(`duplicate`, { sortType: n });
+                    e.saveDuplicates(t);
+                  } finally {
+                    e.stopLoading();
+                  }
+                },
+                rows: n.map((e, t) => {
+                  let n = [
+                    { key: `name`, content: e.name },
+                    { key: `email`, content: e.email },
+                    { key: `count`, content: e.count },
+                  ];
+                  return { key: `row-${t}`, cells: n };
                 }),
                 rowsPerPage: 5,
                 defaultPage: 1,
@@ -21790,36 +21802,34 @@ var cC = new sC(),
           }),
         });
   });
-function gC() {
-  let { usersStore: e, usersMetadata: t, stateStore: n } = dC();
+function mC() {
+  let { usersStore: e, stateStore: t } = lC();
   if (
     ((0, x.useEffect)(() => {
       (async () => {
         try {
-          t.saveMetadata(await (0, h_.invoke)(`fetchMetadata`));
-          let n = await (0, h_.invoke)(`fetch`, { type: `USER`, sortType: e.sort });
-          e.saveUsers(n);
+          let t = await (0, h_.invoke)(`fetch`, { type: `USER`, sortType: e.sort });
+          e.saveUsers(t);
         } finally {
-          (t.stopLoading(), e.stopLoading());
+          e.stopLoading();
         }
       })().catch(console.error);
     }, []),
-    e.isLoading || t.isLoading)
+    e.isLoading)
   )
     return `loading....`;
-  if (!t.metadata) return (0, $.jsx)(`div`, { children: `Loading Error` });
-  switch (n.state) {
+  switch (t.state) {
     case `ROOT`:
       return (0, $.jsx)(`div`, {
         children: (0, $.jsxs)(`div`, {
           children: [
             (0, $.jsx)(`button`, {
-              onClick: () => n.saveState(`ADD_USER`),
+              onClick: () => t.saveState(`ADD_USER`),
               children: `Add a new User`,
             }),
             (0, $.jsx)(`br`, {}),
             (0, $.jsx)(`br`, {}),
-            (0, $.jsx)(pC, {}),
+            (0, $.jsx)(dC, {}),
           ],
         }),
       });
@@ -21827,10 +21837,10 @@ function gC() {
       return (0, $.jsx)(`div`, {
         children: (0, $.jsxs)(`div`, {
           children: [
-            (0, $.jsx)(`button`, { onClick: () => n.saveState(`ROOT`), children: `back` }),
+            (0, $.jsx)(`button`, { onClick: () => t.saveState(`ROOT`), children: `back` }),
             (0, $.jsx)(`br`, {}),
             (0, $.jsx)(`br`, {}),
-            (0, $.jsx)(hC, {}),
+            (0, $.jsx)(pC, {}),
           ],
         }),
       });
@@ -21838,29 +21848,29 @@ function gC() {
       return (0, $.jsx)(`div`, {
         children: (0, $.jsxs)(`div`, {
           children: [
-            (0, $.jsx)(`button`, { onClick: () => n.saveState(`ROOT`), children: `back` }),
+            (0, $.jsx)(`button`, { onClick: () => t.saveState(`ROOT`), children: `back` }),
             (0, $.jsx)(`br`, {}),
             (0, $.jsx)(`br`, {}),
-            (0, $.jsx)(mC, {}),
+            (0, $.jsx)(fC, {}),
           ],
         }),
       });
     default:
-      return (0, $.jsxs)(`div`, { children: [`ERROR: unsupprted state $`, n.state] });
+      return (0, $.jsxs)(`div`, { children: [`ERROR: unsupprted state $`, t.state] });
   }
 }
-var _C = XS(gC),
-  vC = (0, s().createRoot)(document.getElementById(`root`)),
-  yC = () => {
-    vC.render((0, $.jsx)(tC, { ...lC, children: (0, $.jsx)(_C, {}) }));
+var hC = XS(mC),
+  gC = (0, s().createRoot)(document.getElementById(`root`)),
+  _C = () => {
+    gC.render((0, $.jsx)(tC, { ...sC, children: (0, $.jsx)(hC, {}) }));
   };
 h_.view.theme
   .enable()
   .then(() => {
-    yC();
+    _C();
   })
   .catch((e) => {
-    (console.error(e.message), yC());
+    (console.error(e.message), _C());
   });
 export {
   U as _,
