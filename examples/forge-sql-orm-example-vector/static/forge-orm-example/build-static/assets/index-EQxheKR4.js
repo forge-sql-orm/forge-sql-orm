@@ -11703,7 +11703,7 @@ var hu = (function () {
                                       return (
                                         (e.next = 2),
                                         Ge(
-                                          () => import(`./custom-theme-B6KpO2OB.js`),
+                                          () => import(`./custom-theme-BT2SGvsq.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -12515,9 +12515,9 @@ var td =
             Ee && id.disabled,
             Ee && L !== `default` && L !== `subtle` && id.sharedDisabled,
             Ee && L === `default` && ad.disabled,
-            h && !Ce && id.circle,
             Te === `compact` && id.spacingCompact,
             Te === `compact` && J(`platform-dst-shape-theme-default`) && id.spacingCompactT26Shape,
+            h && !Ce && id.circle,
             x && id.fullWidth,
             _ && id.buttonIconBefore,
             y && id.buttonIconAfter,

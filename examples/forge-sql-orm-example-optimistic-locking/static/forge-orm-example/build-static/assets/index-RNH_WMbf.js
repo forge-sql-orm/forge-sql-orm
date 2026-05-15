@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-BMg8MKLf.js",
       "./rolldown-runtime-BYbx6iT9.js",
-      "./body-aNIiuZWg.js",
+      "./body-D9h5kDZ1.js",
       "./react-dom-vendor-BHIljUNy.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -14671,7 +14671,7 @@ var _m = (function () {
                                       return (
                                         (e.next = 2),
                                         Xe(
-                                          () => import(`./custom-theme-BG702zh9.js`),
+                                          () => import(`./custom-theme-WUDk5RIJ.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -21732,7 +21732,7 @@ var vC = function (e) {
     );
   },
   yC = (0, u.lazy)(function () {
-    return Xe(() => import(`./body-aNIiuZWg.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return Xe(() => import(`./body-D9h5kDZ1.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   bC = (0, u.forwardRef)(function (e, t) {
     var n = e.isRankable,
@@ -22161,9 +22161,9 @@ var FC =
             je && RC.disabled,
             je && ke !== `default` && ke !== `subtle` && RC.sharedDisabled,
             je && ke === `default` && zC.disabled,
-            h && !De && RC.circle,
             Ae === `compact` && RC.spacingCompact,
             Ae === `compact` && J(`platform-dst-shape-theme-default`) && RC.spacingCompactT26Shape,
+            h && !De && RC.circle,
             x && RC.fullWidth,
             _ && RC.buttonIconBefore,
             y && RC.buttonIconAfter,
