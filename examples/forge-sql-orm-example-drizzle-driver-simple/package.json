@@ -10,7 +10,7 @@
     "forge-sql-orm": "2.1.28"
   },
   "devDependencies": {
-    "@types/node": "^25.8.0",
+    "@types/node": "^25.9.0",
     "drizzle-kit": "^0.31.10",
     "forge-sql-orm-cli": "file:../../forge-sql-orm-cli",
     "knip": "^6.14.1",
