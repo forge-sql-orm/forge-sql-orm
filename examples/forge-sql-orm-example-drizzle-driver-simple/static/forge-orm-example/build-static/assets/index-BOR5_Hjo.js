@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-BMg8MKLf.js",
       "./rolldown-runtime-BYbx6iT9.js",
-      "./body-DzsvpRsT.js",
+      "./body-C8yLejDT.js",
       "./react-dom-vendor-BHIljUNy.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -7302,6 +7302,12 @@ var hi = `client-default-key`,
         },
       },
       {
+        key: `getTargetApp`,
+        value: function () {
+          return this.initOptions?.targetApp;
+        },
+      },
+      {
         key: `getLayer`,
         value: function (e) {
           var t = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -7447,6 +7453,7 @@ var hi = `client-default-key`,
   F(H, `updateUserWithProvider`, V.client.updateUserWithProvider.bind(V.client)),
   F(H, `updateUserWithValues`, V.client.updateUserWithValues.bind(V.client)),
   F(H, `getPackageVersion`, V.client.getPackageVersion.bind(V.client)),
+  F(H, `getTargetApp`, V.client.getTargetApp.bind(V.client)),
   F(H, `getLayer`, V.client.getLayer.bind(V.client)),
   F(H, `getLayerValue`, V.client.getLayerValue.bind(V.client)));
 var vi = H;
@@ -10831,7 +10838,7 @@ var xc = (function () {
                                       return (
                                         (e.next = 2),
                                         Ze(
-                                          () => import(`./custom-theme-CGqS_JlH.js`),
+                                          () => import(`./custom-theme-XcH-kK2p.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -17892,7 +17899,7 @@ var T_ = function (e) {
     );
   },
   E_ = (0, u.lazy)(function () {
-    return Ze(() => import(`./body-DzsvpRsT.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return Ze(() => import(`./body-C8yLejDT.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   D_ = (0, u.forwardRef)(function (e, t) {
     var n = e.isRankable,
