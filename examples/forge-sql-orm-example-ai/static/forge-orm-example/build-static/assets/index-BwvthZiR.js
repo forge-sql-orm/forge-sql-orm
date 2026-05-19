@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-CDJ7O0mA.js",
       "./rolldown-runtime-BM3Ffeng.js",
-      "./body-DW99yu1Y.js",
+      "./body-B-jtl_b_.js",
       "./react-dom-vendor-0VJF9GAl.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -2211,7 +2211,7 @@ var Je = function (e) {
       ],
     );
   })(),
-  et = `0.0.0-development`;
+  et = `5.6.0`;
 function tt(e) {
   if (e === void 0)
     throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);
@@ -3396,7 +3396,7 @@ var Xt = `client-default-key`,
                 var s = Yt(
                   {
                     targetApp: a.initOptions.targetApp,
-                    clientVersion: `0.0.0-development`,
+                    clientVersion: `5.6.0`,
                     success: r,
                     startTime: e,
                     totalTime: t,
@@ -4478,7 +4478,7 @@ if (typeof window < `u`)
     var nn =
       ((en = $t) == null || (tn = en.getPackageVersion) == null ? void 0 : tn.call(en)) ||
       `4.10.0 or earlier`;
-    if (nn !== `0.0.0-development`) {
+    if (nn !== `5.6.0`) {
       var rn = `Multiple versions of FeatureGateClients found on the current page.
       The currently bound version is ${nn} when module version ${et} was loading.`;
       console.warn(rn);
@@ -7029,7 +7029,7 @@ var Xi = (function () {
                                       return (
                                         (e.next = 2),
                                         wi(
-                                          () => import(`./custom-theme-B1-SAbXf.js`),
+                                          () => import(`./custom-theme-CvxhYWDP.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -14698,7 +14698,7 @@ var Bm = function (e) {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `23.11.5`,
         analyticsData: n,
       }),
       oe = (0, d.useCallback)(
@@ -19633,14 +19633,14 @@ var Ry = function (e) {
         action: `sorted`,
         componentName: `dynamicTable`,
         packageName: `@atlaskit/dynamic-table`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `18.4.1`,
       }),
       oe = Cr({
         fn: ee,
         action: `ranked`,
         componentName: `dynamicTable`,
         packageName: `@atlaskit/dynamic-table`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `18.4.1`,
       });
     (0, d.useEffect)(
       function () {
@@ -19757,7 +19757,7 @@ var Ry = function (e) {
     );
   },
   zy = (0, d.lazy)(function () {
-    return wi(() => import(`./body-DW99yu1Y.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return wi(() => import(`./body-B-jtl_b_.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   By = (0, d.forwardRef)(function (e, t) {
     var n = e.isRankable,
