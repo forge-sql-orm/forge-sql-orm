@@ -6421,7 +6421,7 @@ var pa = function (e) {
       ],
     );
   })(),
-  ya = `0.0.0-development`;
+  ya = `5.6.0`;
 function ba(e) {
   try {
     return Function.toString.call(e).indexOf(`[native code]`) !== -1;
@@ -7548,7 +7548,7 @@ var co = `client-default-key`,
                 var s = so(
                   {
                     targetApp: a.initOptions.targetApp,
-                    clientVersion: `0.0.0-development`,
+                    clientVersion: `5.6.0`,
                     success: r,
                     startTime: e,
                     totalTime: t,
@@ -8630,7 +8630,7 @@ if (typeof window < `u`)
     var ho =
       ((po = fo) == null || (mo = po.getPackageVersion) == null ? void 0 : mo.call(po)) ||
       `4.10.0 or earlier`;
-    if (ho !== `0.0.0-development`) {
+    if (ho !== `5.6.0`) {
       var go = `Multiple versions of FeatureGateClients found on the current page.
       The currently bound version is ${ho} when module version ${ya} was loading.`;
       console.warn(go);
@@ -9114,7 +9114,7 @@ var ds = function (e) {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `23.11.5`,
         analyticsData: n,
       }),
       se = (0, u.useCallback)(
@@ -11710,7 +11710,7 @@ var hu = (function () {
                                       return (
                                         (e.next = 2),
                                         Ge(
-                                          () => import(`./custom-theme-CK0EPelf.js`),
+                                          () => import(`./custom-theme-DuOW7jUi.js`),
                                           [],
                                           import.meta.url,
                                         )

@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-BMg8MKLf.js",
       "./rolldown-runtime-BYbx6iT9.js",
-      "./body-BMROVNgF.js",
+      "./body-BE0I-T3D.js",
       "./react-dom-vendor-BHIljUNy.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -6428,7 +6428,7 @@ var da = function (e) {
       ],
     );
   })(),
-  _a = `0.0.0-development`;
+  _a = `5.6.0`;
 function va(e) {
   try {
     return Function.toString.call(e).indexOf(`[native code]`) !== -1;
@@ -7555,7 +7555,7 @@ var oo = `client-default-key`,
                 var s = ao(
                   {
                     targetApp: a.initOptions.targetApp,
-                    clientVersion: `0.0.0-development`,
+                    clientVersion: `5.6.0`,
                     success: r,
                     startTime: e,
                     totalTime: t,
@@ -8637,7 +8637,7 @@ if (typeof window < `u`)
     var po =
       ((uo = lo) == null || (fo = uo.getPackageVersion) == null ? void 0 : fo.call(uo)) ||
       `4.10.0 or earlier`;
-    if (po !== `0.0.0-development`) {
+    if (po !== `5.6.0`) {
       var mo = `Multiple versions of FeatureGateClients found on the current page.
       The currently bound version is ${po} when module version ${_a} was loading.`;
       console.warn(mo);
@@ -9125,7 +9125,7 @@ var ds = function (e) {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `23.11.5`,
         analyticsData: n,
       }),
       oe = (0, u.useCallback)(
@@ -12679,7 +12679,7 @@ var hd = (function () {
                                       return (
                                         (e.next = 2),
                                         Ke(
-                                          () => import(`./custom-theme-Bk_tTHQ-.js`),
+                                          () => import(`./custom-theme-gy_qCgsn.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -17821,14 +17821,14 @@ var w_ = function (e) {
         action: `sorted`,
         componentName: `dynamicTable`,
         packageName: `@atlaskit/dynamic-table`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `18.4.1`,
       }),
       P = Ro({
         fn: N,
         action: `ranked`,
         componentName: `dynamicTable`,
         packageName: `@atlaskit/dynamic-table`,
-        packageVersion: `0.0.0-development`,
+        packageVersion: `18.4.1`,
       });
     (0, u.useEffect)(
       function () {
@@ -17945,7 +17945,7 @@ var w_ = function (e) {
     );
   },
   T_ = (0, u.lazy)(function () {
-    return Ke(() => import(`./body-BMROVNgF.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return Ke(() => import(`./body-BE0I-T3D.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   E_ = (0, u.forwardRef)(function (e, t) {
     var n = e.isRankable,
