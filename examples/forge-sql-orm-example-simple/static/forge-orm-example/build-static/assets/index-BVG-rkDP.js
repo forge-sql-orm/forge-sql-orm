@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-BMg8MKLf.js",
       "./rolldown-runtime-BYbx6iT9.js",
-      "./body-BxpsBdLj.js",
+      "./body-DhtF1B-u.js",
       "./react-dom-vendor-BHIljUNy.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -10838,7 +10838,7 @@ var xc = (function () {
                                       return (
                                         (e.next = 2),
                                         Ze(
-                                          () => import(`./custom-theme-Dmgp_rFh.js`),
+                                          () => import(`./custom-theme-CTovkiWR.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -16026,7 +16026,6 @@ function tg(e) {
             },
             { property: `margin`, value: `0` },
             { property: `inset`, value: `auto` },
-            { property: `min-inline-size`, value: `max-content` },
             { property: f.property, value: f.value },
             { property: p.property, value: p.value },
           ];
@@ -16878,7 +16877,7 @@ function qg(e) {
   return e;
 }
 var Jg = Mh.tooltip(),
-  Yg = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.1.0` },
+  Yg = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.2.0` },
   Xg = { top: `bottom`, bottom: `top`, left: `right`, right: `left` },
   Zg = function (e) {
     return e.split(`-`)[0];
@@ -17899,7 +17898,7 @@ var T_ = function (e) {
     );
   },
   E_ = (0, u.lazy)(function () {
-    return Ze(() => import(`./body-BxpsBdLj.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return Ze(() => import(`./body-DhtF1B-u.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   D_ = (0, u.forwardRef)(function (e, t) {
     var n = e.isRankable,

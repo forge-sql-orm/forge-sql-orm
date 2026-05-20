@@ -11710,7 +11710,7 @@ var hu = (function () {
                                       return (
                                         (e.next = 2),
                                         Ge(
-                                          () => import(`./custom-theme-DuOW7jUi.js`),
+                                          () => import(`./custom-theme-BoAF7uUA.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -15145,7 +15145,6 @@ function nh(e) {
             },
             { property: `margin`, value: `0` },
             { property: `inset`, value: `auto` },
-            { property: `min-inline-size`, value: `max-content` },
             { property: f.property, value: f.value },
             { property: p.property, value: p.value },
           ];
@@ -15997,7 +15996,7 @@ function Jh(e) {
   return e;
 }
 var Yh = Ys.tooltip(),
-  Xh = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.1.0` },
+  Xh = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.2.0` },
   Zh = { top: `bottom`, bottom: `top`, left: `right`, right: `left` },
   Qh = function (e) {
     return e.split(`-`)[0];
