@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-BMg8MKLf.js",
       "./rolldown-runtime-BYbx6iT9.js",
-      "./body-BRUql_rW.js",
+      "./body-BzXW-Mnt.js",
       "./react-dom-vendor-BHIljUNy.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -13,7 +13,7 @@ const __vite__mapDeps = (
 import { a as e, i as t, n, r, t as i } from "./rolldown-runtime-BYbx6iT9.js";
 import { n as a, r as o, t as s } from "./react-dom-vendor-BHIljUNy.js";
 import { t as c } from "./lodash-vendor-CY-a7-Db.js";
-import { t as l } from "./client-core-vendor-C5fkS-7z.js";
+import { t as l } from "./client-core-vendor-5mRMZcHE.js";
 (function () {
   let e = document.createElement(`link`).relList;
   if (e && e.supports && e.supports(`modulepreload`)) return;
@@ -14634,7 +14634,7 @@ var gm = (function () {
                                       return (
                                         (e.next = 2),
                                         Ze(
-                                          () => import(`./custom-theme-BNlWhG-_.js`),
+                                          () => import(`./custom-theme-DGd23DPV.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -19794,76 +19794,62 @@ function qx(e) {
     i = r === void 0 ? {} : r,
     a = e.forceFallbackPositioning,
     o = a === void 0 ? !1 : a,
-    s = e.arrow,
-    c = (0, u.useId)(),
-    l = Gx(i);
+    s = (0, u.useId)(),
+    c = Gx(i);
   (0, u.useLayoutEffect)(
     function () {
       var e = t.current,
         r = n.current;
       if (!e || !r) return;
-      var i = l.offset.gap,
-        a = l.offset.crossAxisShift.value,
-        u = !!o;
-      if (Hx() && !u) {
-        var d = e.style.getPropertyValue(`anchor-name`) || `--anchor-${c.replace(/:/g, ``)}`,
-          f = Ux({ placement: l, offset: i }),
-          p = Wx({
-            placement: l,
+      var i = c.offset.gap,
+        a = c.offset.crossAxisShift.value,
+        l = !!o;
+      if (Hx() && !l) {
+        var u = e.style.getPropertyValue(`anchor-name`) || `--anchor-${s.replace(/:/g, ``)}`,
+          d = Ux({ placement: c, offset: i }),
+          f = Wx({
+            placement: c,
             crossAxisShiftCssValue: a,
-            direction: l.offset.crossAxisShift.direction,
+            direction: c.offset.crossAxisShift.direction,
           }),
-          m = [
-            { property: `position-anchor`, value: d },
-            { property: `position-area`, value: zx({ placement: l }) },
-            {
-              property: `position-try-fallbacks`,
-              value: s ? s.getTryFallbacks({ placement: l }) : Bx({ placement: l }),
-            },
+          p = [
+            { property: `position-anchor`, value: u },
+            { property: `position-area`, value: zx({ placement: c }) },
+            { property: `position-try-fallbacks`, value: Bx({ placement: c }) },
             { property: `margin`, value: `0` },
             { property: `inset`, value: `auto` },
+            { property: d.property, value: d.value },
             { property: f.property, value: f.value },
-            { property: p.property, value: p.value },
           ];
-        (m.push({ property: `--ds-cross-axis-shift-margin-start`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-end`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-block-start`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-block-end`, value: `0px` }));
-        var h = Wx({
-            placement: l,
+        (p.push({ property: `--ds-cross-axis-shift-margin-start`, value: `0px` }),
+          p.push({ property: `--ds-cross-axis-shift-margin-end`, value: `0px` }),
+          p.push({ property: `--ds-cross-axis-shift-margin-block-start`, value: `0px` }),
+          p.push({ property: `--ds-cross-axis-shift-margin-block-end`, value: `0px` }));
+        var m = Wx({
+            placement: c,
             crossAxisShiftCssValue: a,
-            direction: l.offset.crossAxisShift.direction,
+            direction: c.offset.crossAxisShift.direction,
           }),
-          g = {
+          h = {
             "margin-inline-start": `--ds-cross-axis-shift-margin-start`,
             "margin-inline-end": `--ds-cross-axis-shift-margin-end`,
             "margin-block-start": `--ds-cross-axis-shift-margin-block-start`,
             "margin-block-end": `--ds-cross-axis-shift-margin-block-end`,
-          }[h.property];
+          }[m.property];
         return (
-          g && m.push({ property: g, value: h.value }),
-          s &&
-            (m.push({ property: `--ds-arrow-size`, value: i }),
-            r.setAttribute(`data-ds-popover-arrow`, ``)),
-          e.style.setProperty(`anchor-name`, d),
-          Nx(
-            Rx({ el: r, styles: m }),
-            s
-              ? function () {
-                  return r.removeAttribute(`data-ds-popover-arrow`);
-                }
-              : function () {},
-          )
+          h && p.push({ property: h, value: m.value }),
+          e.style.setProperty(`anchor-name`, u),
+          Nx(Rx({ el: r, styles: p }))
         );
       }
-      var _ = Rx({
+      var g = Rx({
         el: r,
         styles: [
           { property: `margin`, value: `0` },
           { property: `inset`, value: `auto` },
         ],
       });
-      function v() {
+      function _() {
         if (!(!e || !r)) {
           var t = e.getBoundingClientRect(),
             n = { width: window.innerWidth, height: window.innerHeight },
@@ -19871,23 +19857,23 @@ function qx(e) {
             s = Mx({
               triggerRect: t,
               popoverEl: r,
-              placement: l,
+              placement: c,
               viewport: n,
               gap: Px({ value: i, container: o }),
               crossAxisShift: {
                 value: Px({ value: a, container: o }),
-                direction: l.offset.crossAxisShift.direction,
+                direction: c.offset.crossAxisShift.direction,
               },
             }),
-            c = s.top,
+            l = s.top,
             u = s.left;
-          (r.style.setProperty(`top`, `${c}px`),
+          (r.style.setProperty(`top`, `${l}px`),
             r.style.setProperty(`left`, `${u}px`),
             r.style.removeProperty(`opacity`));
         }
       }
-      var y = Tx(v),
-        b = new (
+      var v = Tx(_),
+        y = new (
           typeof ResizeObserver < `u`
             ? ResizeObserver
             : (function () {
@@ -19901,29 +19887,29 @@ function qx(e) {
                 ]);
               })()
         )(function () {
-          r.offsetWidth > 0 && r.offsetHeight > 0 && (v(), b.disconnect());
+          r.offsetWidth > 0 && r.offsetHeight > 0 && (_(), y.disconnect());
         });
       return (
-        Vx(r) && (r.style.setProperty(`opacity`, `0`), b.observe(r)),
+        Vx(r) && (r.style.setProperty(`opacity`, `0`), y.observe(r)),
         Nx(
-          _,
+          g,
           (0, Yp.bind)(r, {
             type: `toggle`,
             listener: function (e) {
-              e.newState === `open` && (r.style.setProperty(`opacity`, `0`), b.observe(r));
+              e.newState === `open` && (r.style.setProperty(`opacity`, `0`), y.observe(r));
             },
           }),
           function () {
-            return b.disconnect();
+            return y.disconnect();
           },
           (0, Yp.bind)(window, {
             type: `scroll`,
-            listener: y,
+            listener: v,
             options: { capture: !0, passive: !0 },
           }),
-          (0, Yp.bind)(window, { type: `resize`, listener: y, options: { passive: !0 } }),
+          (0, Yp.bind)(window, { type: `resize`, listener: v, options: { passive: !0 } }),
           function () {
-            (y.cancel(),
+            (v.cancel(),
               r.style.removeProperty(`top`),
               r.style.removeProperty(`left`),
               r.style.removeProperty(`opacity`));
@@ -19931,7 +19917,7 @@ function qx(e) {
         )
       );
     },
-    [t, n, l, o, s, c],
+    [t, n, c, o, s],
   );
 }
 function Jx(e) {
@@ -20673,7 +20659,11 @@ function zS(e) {
   return e;
 }
 var BS = wx.tooltip(),
-  VS = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.2.0` },
+  VS = {
+    componentName: `tooltip`,
+    packageName: `@atlaskit/tooltip`,
+    packageVersion: `0.0.0-development`,
+  },
   HS = { top: `bottom`, bottom: `top`, left: `right`, right: `left` },
   US = function (e) {
     return e.split(`-`)[0];
@@ -21694,7 +21684,7 @@ var _C = function (e) {
     );
   },
   vC = (0, u.lazy)(function () {
-    return Ze(() => import(`./body-BRUql_rW.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return Ze(() => import(`./body-BzXW-Mnt.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   yC = (0, u.forwardRef)(function (e, t) {
     var n = e.isRankable,
