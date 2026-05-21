@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "eslint-plugin-react-hooks": "^7.1.1",
-    "forge-sql-orm-cli": "^2.1.28",
+    "forge-sql-orm-cli": "^2.1.29",
     "knip": "^6.14.1"
   },
   "dependencies": {
@@ -23,7 +23,7 @@
     "@forge/resolver": "1.8.0",
     "@forge/sql": "^3.0.24",
     "drizzle-orm": "^0.45.2",
-    "forge-sql-orm": "^2.1.28",
+    "forge-sql-orm": "^2.1.29",
     "react": "^18.2.0"
   }
 }

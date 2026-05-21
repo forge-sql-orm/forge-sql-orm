@@ -1,11 +1,11 @@
 const __vite__mapDeps = (
   i,
   m = __vite__mapDeps,
-  d = m.f || (m.f = ["./iframe-resizer-DH3rJjpY.js", "./rolldown-runtime-BYbx6iT9.js"]),
+  d = m.f || (m.f = ["./iframe-resizer-BuRnLFYJ.js", "./rolldown-runtime-Cyuzqnbw.js"]),
 ) => i.map((i) => d[i]);
-import { a as e, i as t, n, r, t as i } from "./rolldown-runtime-BYbx6iT9.js";
-import { n as a, t as o } from "./react-dom-vendor-1289Fi12.js";
-import { t as s } from "./lodash-vendor-CY-a7-Db.js";
+import { a as e, i as t, n, r, t as i } from "./rolldown-runtime-Cyuzqnbw.js";
+import { n as a, t as o } from "./react-dom-vendor-W1-U9OZj.js";
+import { t as s } from "./lodash-vendor-Bz0ThIOG.js";
 (function () {
   let e = document.createElement(`link`).relList;
   if (e && e.supports && e.supports(`modulepreload`)) return;
@@ -151,7 +151,7 @@ function g(e) {
 function _(e, t, n) {
   return (
     typeof t == `symbol` && (t = t.description ? `[${t.description}]` : ``),
-    Object.defineProperty(e, `name`, { configurable: !0, value: n ? `${n} ${t}` : t })
+    Object.defineProperty(e, "name", { configurable: !0, value: n ? `${n} ${t}` : t })
   );
 }
 function v(e, t) {
@@ -431,7 +431,7 @@ function te(e) {
   }
 }
 function ne(e, t) {
-  return (Object.defineProperty ? Object.defineProperty(e, `raw`, { value: t }) : (e.raw = t), e);
+  return (Object.defineProperty ? Object.defineProperty(e, "raw", { value: t }) : (e.raw = t), e);
 }
 function re(e) {
   if (e && e.__esModule) return e;
@@ -580,7 +580,7 @@ var j,
           }),
       (P = Object.create
         ? function (e, t) {
-            Object.defineProperty(e, `default`, { enumerable: !0, value: t });
+            Object.defineProperty(e, "default", { enumerable: !0, value: t });
           }
         : function (e, t) {
             e.default = t;
@@ -640,7 +640,7 @@ var j,
       }));
   }),
   le = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.NavigationTarget = void 0),
       (e.NavigationTarget = {
         ContentView: `contentView`,
@@ -655,12 +655,12 @@ var j,
       }));
   }),
   z = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.BridgeAPIError = void 0),
       (e.BridgeAPIError = class extends Error {}));
   }),
   B = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getCallBridge = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.getCallBridge = void 0));
     var t = z();
     function n(e) {
       return !!e?.callBridge;
@@ -675,7 +675,7 @@ var j,
     };
   }),
   V = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.withRateLimiter = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.withRateLimiter = void 0));
     var t = z();
     e.withRateLimiter = (e, n, r, i) => {
       let a = Date.now(),
@@ -689,7 +689,7 @@ var j,
     };
   }),
   ue = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.makeInvoke = e.invoke = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.makeInvoke = e.invoke = void 0));
     var t = B(),
       n = z(),
       r = V(),
@@ -717,10 +717,10 @@ var j,
     e.makeInvoke = c;
   }),
   H = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(ue(), e));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (R(), t(l)).__exportStar(ue(), e));
   }),
   U = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e._invokeEndpointFn = e.InvokeType = void 0));
     var t = B(),
       n = z(),
@@ -760,22 +760,22 @@ var j,
     };
   }),
   de = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.invokeRemote = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.invokeRemote = void 0));
     var t = U();
     e.invokeRemote = (e) => (0, t._invokeEndpointFn)(t.InvokeType.REMOTE)(e);
   }),
   fe = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.invokeService = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.invokeService = void 0));
     var t = U();
     e.invokeService = (e) => (0, t._invokeEndpointFn)(t.InvokeType.SERVICE)(e);
   }),
   pe = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
+    Object.defineProperty(e, "__esModule", { value: !0 });
     var n = (R(), t(l));
     (n.__exportStar(de(), e), n.__exportStar(fe(), e));
   }),
   me = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.submit = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.submit = void 0));
     var t = B(),
       n = z(),
       r = (0, t.getCallBridge)();
@@ -785,7 +785,7 @@ var j,
     };
   }),
   he = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.close = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.close = void 0));
     var t = B(),
       n = z(),
       r = (0, t.getCallBridge)();
@@ -799,7 +799,7 @@ var j,
     };
   }),
   ge = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.open = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.open = void 0));
     var t = B(),
       n = z(),
       r = (0, t.getCallBridge)();
@@ -813,7 +813,7 @@ var j,
     };
   }),
   _e = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.refresh = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.refresh = void 0));
     var t = B(),
       n = z(),
       r = (0, t.getCallBridge)();
@@ -823,7 +823,7 @@ var j,
     };
   }),
   ve = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.createHistory = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.createHistory = void 0));
     var t = (0, B().getCallBridge)();
     e.createHistory = async () => {
       let e = await t(`createHistory`);
@@ -836,7 +836,7 @@ var j,
     };
   }),
   W = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.FORGE_SUPPORTED_LOCALE_CODES = e.I18N_BUNDLE_FOLDER_NAME = e.I18N_INFO_FILE_NAME = void 0),
       (e.I18N_INFO_FILE_NAME = `i18n-info.json`),
       (e.I18N_BUNDLE_FOLDER_NAME = `__LOCALES__`),
@@ -846,7 +846,7 @@ var j,
         )));
   }),
   ye = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.TranslationsGetter = e.TranslationGetterError = void 0));
     var t = (e, t) => {
         e.includes(t) || e.push(t);
@@ -925,7 +925,7 @@ var j,
       }));
   }),
   G = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.getTranslationValueFromContent = e.getTranslationValue = void 0));
     var n = (R(), t(l)).__importDefault(s());
     ((e.getTranslationValue = (t, n, r) => {
@@ -942,7 +942,7 @@ var j,
       }));
   }),
   be = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.Translator = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.Translator = void 0));
     var t = G();
     e.Translator = class {
       locale;
@@ -974,7 +974,7 @@ var j,
     };
   }),
   xe = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.ensureLocale = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.ensureLocale = void 0));
     var t = W(),
       n = new Set(t.FORGE_SUPPORTED_LOCALE_CODES),
       r = { "en-UK": `en-GB`, "nb-NO": `no-NO` },
@@ -991,7 +991,7 @@ var j,
     };
   }),
   Se = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.extractI18nPropertiesFromModules =
         e.extractI18nKeysFromModules =
         e.getI18nSupportedModuleEntries =
@@ -1038,10 +1038,10 @@ var j,
       }));
   }),
   Ce = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
+    Object.defineProperty(e, "__esModule", { value: !0 });
   }),
   we = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.getI18nSupportedModuleEntries =
         e.extractI18nPropertiesFromModules =
         e.extractI18nKeysFromModules =
@@ -1053,26 +1053,26 @@ var j,
       n.__exportStar(be(), e),
       n.__exportStar(xe(), e));
     var r = G();
-    Object.defineProperty(e, `getTranslationValue`, {
+    Object.defineProperty(e, "getTranslationValue", {
       enumerable: !0,
       get: function () {
         return r.getTranslationValue;
       },
     });
     var i = Se();
-    (Object.defineProperty(e, `extractI18nKeysFromModules`, {
+    (Object.defineProperty(e, "extractI18nKeysFromModules", {
       enumerable: !0,
       get: function () {
         return i.extractI18nKeysFromModules;
       },
     }),
-      Object.defineProperty(e, `extractI18nPropertiesFromModules`, {
+      Object.defineProperty(e, "extractI18nPropertiesFromModules", {
         enumerable: !0,
         get: function () {
           return i.extractI18nPropertiesFromModules;
         },
       }),
-      Object.defineProperty(e, `getI18nSupportedModuleEntries`, {
+      Object.defineProperty(e, "getI18nSupportedModuleEntries", {
         enumerable: !0,
         get: function () {
           return i.getI18nSupportedModuleEntries;
@@ -1081,7 +1081,7 @@ var j,
       n.__exportStar(Ce(), e));
   }),
   Te = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getContext = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.getContext = void 0));
     var t = B(),
       n = we(),
       r = (0, t.getCallBridge)();
@@ -1092,7 +1092,7 @@ var j,
     };
   }),
   Ee = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.changeWindowTitle = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.changeWindowTitle = void 0));
     var t = B(),
       n = z(),
       r = (0, t.getCallBridge)();
@@ -1105,12 +1105,12 @@ var j,
     };
   }),
   De = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.theme = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.theme = void 0));
     var t = (0, B().getCallBridge)();
     e.theme = { enable: () => t(`enableTheming`) };
   }),
   K = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.blobToBase64 = e.base64ToBlob = void 0),
       (e.base64ToBlob = (e, t) => {
         if (!e) return null;
@@ -1132,7 +1132,7 @@ var j,
         })));
   }),
   Oe = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.containsSerialisedBlobs =
         e.containsBlobs =
         e.deserialiseBlobsInPayload =
@@ -1195,7 +1195,7 @@ var j,
               : !1));
   }),
   ke = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.events = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.events = void 0));
     var t = B(),
       n = Oe(),
       r = (0, t.getCallBridge)(),
@@ -1226,7 +1226,7 @@ var j,
     };
   }),
   Ae = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.emitReadyEvent = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.emitReadyEvent = void 0));
     var t = ke(),
       n = Ze(),
       r = (0, B().getCallBridge)(),
@@ -1305,7 +1305,7 @@ var j,
       }));
   }),
   Fe = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = r));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = r));
     var t,
       n = new Uint8Array(16);
     function r() {
@@ -1321,13 +1321,13 @@ var j,
     }
   }),
   Ie = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.default = void 0),
       (e.default =
         /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i));
   }),
   J = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     var t = n(Ie());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
@@ -1338,7 +1338,7 @@ var j,
     e.default = r;
   }),
   Y = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.default = void 0),
       (e.unsafeStringify = i));
     var t = n(J());
@@ -1379,7 +1379,7 @@ var j,
     e.default = a;
   }),
   Le = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     var t = r(Fe()),
       n = Y();
     function r(e) {
@@ -1428,7 +1428,7 @@ var j,
     e.default = c;
   }),
   Re = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     var t = n(J());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
@@ -1460,7 +1460,7 @@ var j,
     e.default = r;
   }),
   ze = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.URL = e.DNS = void 0),
       (e.default = s));
     var t = Y(),
@@ -1508,7 +1508,7 @@ var j,
     }
   }),
   Be = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     function t(e) {
       if (typeof e == `string`) {
         let t = unescape(encodeURIComponent(e));
@@ -1645,7 +1645,7 @@ var j,
     e.default = t;
   }),
   Ve = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     var t = r(ze()),
       n = r(Be());
     function r(e) {
@@ -1654,14 +1654,14 @@ var j,
     e.default = (0, t.default)(`v3`, 48, n.default);
   }),
   He = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.default = void 0),
       (e.default = {
         randomUUID: typeof crypto < `u` && crypto.randomUUID && crypto.randomUUID.bind(crypto),
       }));
   }),
   Ue = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     var t = i(He()),
       n = i(Fe()),
       r = Y();
@@ -1682,7 +1682,7 @@ var j,
     e.default = a;
   }),
   We = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     function t(e, t, n, r) {
       switch (e) {
         case 0:
@@ -1769,7 +1769,7 @@ var j,
     e.default = r;
   }),
   Ge = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     var t = r(ze()),
       n = r(We());
     function r(e) {
@@ -1778,12 +1778,12 @@ var j,
     e.default = (0, t.default)(`v5`, 80, n.default);
   }),
   Ke = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.default = void 0),
       (e.default = `00000000-0000-0000-0000-000000000000`));
   }),
   qe = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.default = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.default = void 0));
     var t = n(J());
     function n(e) {
       return e && e.__esModule ? e : { default: e };
@@ -1795,56 +1795,56 @@ var j,
     e.default = r;
   }),
   Je = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
-      Object.defineProperty(e, `NIL`, {
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
+      Object.defineProperty(e, "NIL", {
         enumerable: !0,
         get: function () {
           return a.default;
         },
       }),
-      Object.defineProperty(e, `parse`, {
+      Object.defineProperty(e, "parse", {
         enumerable: !0,
         get: function () {
           return l.default;
         },
       }),
-      Object.defineProperty(e, `stringify`, {
+      Object.defineProperty(e, "stringify", {
         enumerable: !0,
         get: function () {
           return c.default;
         },
       }),
-      Object.defineProperty(e, `v1`, {
+      Object.defineProperty(e, "v1", {
         enumerable: !0,
         get: function () {
           return t.default;
         },
       }),
-      Object.defineProperty(e, `v3`, {
+      Object.defineProperty(e, "v3", {
         enumerable: !0,
         get: function () {
           return n.default;
         },
       }),
-      Object.defineProperty(e, `v4`, {
+      Object.defineProperty(e, "v4", {
         enumerable: !0,
         get: function () {
           return r.default;
         },
       }),
-      Object.defineProperty(e, `v5`, {
+      Object.defineProperty(e, "v5", {
         enumerable: !0,
         get: function () {
           return i.default;
         },
       }),
-      Object.defineProperty(e, `validate`, {
+      Object.defineProperty(e, "validate", {
         enumerable: !0,
         get: function () {
           return s.default;
         },
       }),
-      Object.defineProperty(e, `version`, {
+      Object.defineProperty(e, "version", {
         enumerable: !0,
         get: function () {
           return o.default;
@@ -1865,12 +1865,12 @@ var j,
   }),
   Ye = i((t) => {
     (Pe(),
-      Object.defineProperty(t, `__esModule`, { value: !0 }),
+      Object.defineProperty(t, "__esModule", { value: !0 }),
       (t.createAdfRendererIframeProps = void 0));
     var n = Je();
     t.createAdfRendererIframeProps = async (t, r) => {
       let i = await Ne(
-          () => import(`./iframe-resizer-DH3rJjpY.js`).then((t) => e(t.default)),
+          () => import(`./iframe-resizer-BuRnLFYJ.js`).then((t) => e(t.default)),
           __vite__mapDeps([0, 1]),
           import.meta.url,
         ),
@@ -1915,7 +1915,7 @@ var j,
     };
   }),
   Xe = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.onClose = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.onClose = void 0));
     var t = B(),
       n = z(),
       r = (0, t.getCallBridge)();
@@ -1931,7 +1931,7 @@ var j,
     };
   }),
   Ze = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.view = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.view = void 0));
     var t = me(),
       n = he(),
       r = ge(),
@@ -1958,10 +1958,10 @@ var j,
     };
   }),
   X = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(Ze(), e));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (R(), t(l)).__exportStar(Ze(), e));
   }),
   Qe = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.router = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.router = void 0));
     var t = (0, B().getCallBridge)();
     e.router = {
       getUrl: async (e) => {
@@ -1988,10 +1988,10 @@ var j,
     };
   }),
   $e = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(Qe(), e));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (R(), t(l)).__exportStar(Qe(), e));
   }),
   et = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.Modal = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.Modal = void 0));
     var t = B(),
       n = z(),
       r = (0, t.getCallBridge)(),
@@ -2029,10 +2029,10 @@ var j,
     };
   }),
   tt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(et(), e));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (R(), t(l)).__exportStar(et(), e));
   }),
   nt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.productFetchApi = e.remoteFetchApi = void 0));
     var t = K(),
       n = async (e, n = !1) => {
@@ -2118,7 +2118,7 @@ var j,
   }),
   rt = i((e) => {
     var t;
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.requestRemote = e.requestBitbucket = e.requestJira = e.requestConfluence = void 0));
     var n = B(),
       r = nt();
@@ -2129,7 +2129,7 @@ var j,
       (e.requestRemote = (0, r.remoteFetchApi)((0, n.getCallBridge)()).requestRemote));
   }),
   it = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.showFlag = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.showFlag = void 0));
     var t = B(),
       n = z(),
       r = (0, t.getCallBridge)();
@@ -2140,9 +2140,9 @@ var j,
     };
   }),
   at = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.showFlag = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.showFlag = void 0));
     var t = it();
-    Object.defineProperty(e, `showFlag`, {
+    Object.defineProperty(e, "showFlag", {
       enumerable: !0,
       get: function () {
         return t.showFlag;
@@ -2150,10 +2150,10 @@ var j,
     });
   }),
   ot = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(ke(), e));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (R(), t(l)).__exportStar(ke(), e));
   }),
   st = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.realtime = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.realtime = void 0));
     var t = (0, B().getCallBridge)();
     e.realtime = {
       publish: (e, n, r) =>
@@ -2167,7 +2167,7 @@ var j,
     };
   }),
   ct = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.Bitbucket = e.Confluence = e.Jira = void 0),
       (function (e) {
         ((e.Board = `board`), (e.Issue = `issue`), (e.Project = `project`));
@@ -2180,29 +2180,29 @@ var j,
       })((e.Bitbucket ||= {})));
   }),
   lt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.Bitbucket = e.Confluence = e.Jira = e.realtime = void 0));
     var t = st();
-    Object.defineProperty(e, `realtime`, {
+    Object.defineProperty(e, "realtime", {
       enumerable: !0,
       get: function () {
         return t.realtime;
       },
     });
     var n = ct();
-    (Object.defineProperty(e, `Jira`, {
+    (Object.defineProperty(e, "Jira", {
       enumerable: !0,
       get: function () {
         return n.Jira;
       },
     }),
-      Object.defineProperty(e, `Confluence`, {
+      Object.defineProperty(e, "Confluence", {
         enumerable: !0,
         get: function () {
           return n.Confluence;
         },
       }),
-      Object.defineProperty(e, `Bitbucket`, {
+      Object.defineProperty(e, "Bitbucket", {
         enumerable: !0,
         get: function () {
           return n.Bitbucket;
@@ -2210,7 +2210,7 @@ var j,
       }));
   }),
   ut = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.open = e.OPEN_ROVO_BRIDGE_ERROR_MESSAGE = void 0));
     var t = B(),
       n = z(),
@@ -2237,21 +2237,21 @@ var j,
     };
   }),
   dt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.isEnabled = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.isEnabled = void 0));
     var t = (0, B().getCallBridge)();
     e.isEnabled = () => t(`isRovoEnabled`);
   }),
   ft = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.rovo = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.rovo = void 0));
     var t = ut(),
       n = dt();
     e.rovo = { open: t.open, isEnabled: n.isEnabled };
   }),
   pt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(ft(), e));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (R(), t(l)).__exportStar(ft(), e));
   }),
   mt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.createTranslationFunction = e.getTranslations = e.resetTranslationsCache = void 0));
     var t = we(),
       n = X(),
@@ -2282,7 +2282,7 @@ var j,
       }));
   }),
   ht = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.permissions = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.permissions = void 0));
     var t = (0, B().getCallBridge)();
     e.permissions = {
       egress: {
@@ -2298,7 +2298,7 @@ var j,
     };
   }),
   Z = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.parseUrl = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.parseUrl = void 0));
     function t(e) {
       let t = e.match(/^(.*?:)/)?.[0] ?? `https:`,
         n = e.replace(t, ``).replace(/^\/*/, ``).replace(/^\\*/, ``).split(`?`)[0].split(`#`)[0],
@@ -2308,7 +2308,7 @@ var j,
     e.parseUrl = t;
   }),
   gt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.getEgressesBasedOnToggles =
         e.sortAndGroupEgressPermissionsByDomain =
         e.EgressCategory =
@@ -2368,7 +2368,7 @@ var j,
       }));
   }),
   _t = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.EgressFilteringService = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.EgressFilteringService = void 0));
     var t = Z(),
       n = gt();
     e.EgressFilteringService = class {
@@ -2430,15 +2430,15 @@ var j,
     };
   }),
   vt = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
+    Object.defineProperty(e, "__esModule", { value: !0 });
     var n = (R(), t(l));
     (n.__exportStar(_t(), e), n.__exportStar(Z(), e), n.__exportStar(gt(), e));
   }),
   yt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (R(), t(l)).__exportStar(vt(), e));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (R(), t(l)).__exportStar(vt(), e));
   }),
   bt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.checkPermissions = e.createPermissionUtils = void 0));
     var t = yt(),
       n = X();
@@ -2551,17 +2551,17 @@ var j,
     e.checkPermissions = m;
   }),
   xt = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
+    Object.defineProperty(e, "__esModule", { value: !0 });
     var n = (R(), t(l));
     (n.__exportStar(ht(), e), n.__exportStar(bt(), e));
   }),
   St = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.BRIDGE_OBJECT_STORE_RESTRICTED_ENVIRONMENT_ERROR = void 0),
       (e.BRIDGE_OBJECT_STORE_RESTRICTED_ENVIRONMENT_ERROR = `Object Store bridge methods are restricted to Forge apps in a non-production environment. For more information please see https://developer.atlassian.com/platform/forge/cli-reference/environments/ for reference on Forge app environments.`));
   }),
   Q = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.checkRestrictedEnvironment = void 0));
     var t = z(),
       n = X(),
@@ -2573,7 +2573,7 @@ var j,
     };
   }),
   Ct = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.upload = e.createUploadPromises = void 0));
     var t = H(),
       n = z(),
@@ -2686,7 +2686,7 @@ var j,
       }));
   }),
   wt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.deleteObjects = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.deleteObjects = void 0));
     var t = H(),
       n = z(),
       r = Q(),
@@ -2708,7 +2708,7 @@ var j,
     };
   }),
   Tt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.download = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.download = void 0));
     var t = H(),
       n = z(),
       r = Q(),
@@ -2749,7 +2749,7 @@ var j,
     };
   }),
   Et = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.getMetadata = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.getMetadata = void 0));
     var t = H(),
       n = z(),
       r = Q(),
@@ -2776,10 +2776,10 @@ var j,
     };
   }),
   Dt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.createUploadPromises = e.objectStore = void 0));
     var t = Ct();
-    Object.defineProperty(e, `createUploadPromises`, {
+    Object.defineProperty(e, "createUploadPromises", {
       enumerable: !0,
       get: function () {
         return t.createUploadPromises;
@@ -2796,12 +2796,12 @@ var j,
     };
   }),
   Ot = i((e) => {
-    Object.defineProperty(e, `__esModule`, { value: !0 });
+    Object.defineProperty(e, "__esModule", { value: !0 });
     var n = (R(), t(l));
     (n.__exportStar(Dt(), e), n.__exportStar(St(), e));
   }),
   kt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.Evaluator = void 0),
       (e.Evaluator = class {
         constructor(e) {
@@ -2837,14 +2837,14 @@ var j,
       }));
   }),
   At = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+    (Object.defineProperty(e, "__esModule", { value: !0 }),
       (e.FeatureFlagEventType = void 0),
       (function (e) {
         e.CHECKFLAG = `checkFlag`;
       })((e.FeatureFlagEventType ||= {})));
   }),
   jt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.trackFeatureFlagEvent = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.trackFeatureFlagEvent = void 0));
     var t = B(),
       n = z(),
       r = V(),
@@ -2870,7 +2870,7 @@ var j,
     );
   }),
   Mt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.initFeatureFlags = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.initFeatureFlags = void 0));
     var t = B(),
       n = z(),
       r = V(),
@@ -2900,7 +2900,7 @@ var j,
     );
   }),
   Nt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.FeatureFlags = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.FeatureFlags = void 0));
     var t = kt(),
       n = jt(),
       r = Mt(),
@@ -2945,9 +2945,9 @@ var j,
     };
   }),
   Pt = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.FeatureFlags = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.FeatureFlags = void 0));
     var t = Nt();
-    Object.defineProperty(e, `FeatureFlags`, {
+    Object.defineProperty(e, "FeatureFlags", {
       enumerable: !0,
       get: function () {
         return t.FeatureFlags;
@@ -2955,10 +2955,10 @@ var j,
     });
   }),
   Ft = i((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.i18n = e.NavigationTarget = void 0));
+    (Object.defineProperty(e, "__esModule", { value: !0 }), (e.i18n = e.NavigationTarget = void 0));
     var n = (R(), t(l)),
       r = le();
-    (Object.defineProperty(e, `NavigationTarget`, {
+    (Object.defineProperty(e, "NavigationTarget", {
       enumerable: !0,
       get: function () {
         return r.NavigationTarget;
