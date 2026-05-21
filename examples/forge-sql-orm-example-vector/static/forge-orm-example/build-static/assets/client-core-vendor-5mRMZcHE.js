@@ -1,4 +1,4 @@
-import { t as e } from "./rolldown-runtime-BM3Ffeng.js";
+import { t as e } from "./rolldown-runtime-BYbx6iT9.js";
 var t = e((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.Log = e.LogLevel = void 0));
     var t = ` DEBUG `,
@@ -309,7 +309,7 @@ var t = e((e) => {
   f = e((e) => {
     (Object.defineProperty(e, `__esModule`, { value: !0 }),
       (e.StatsigMetadataProvider = e.SDK_VERSION = void 0),
-      (e.SDK_VERSION = `3.33.0`));
+      (e.SDK_VERSION = `3.33.1`));
     var t = { sdkVersion: e.SDK_VERSION, sdkType: `js-mono` };
     e.StatsigMetadataProvider = {
       get: () => t,
@@ -596,15 +596,15 @@ var t = e((e) => {
     };
   }),
   _ = e((e) => {
-    (Object.defineProperty(e, `__esModule`, { value: !0 }), (e.FlushType = void 0));
-    var t;
-    (function (e) {
-      ((e.ScheduledMaxTime = `scheduled:max_time`),
-        (e.ScheduledFullBatch = `scheduled:full_batch`),
-        (e.Limit = `limit`),
-        (e.Manual = `manual`),
-        (e.Shutdown = `shutdown`));
-    })(t || (e.FlushType = t = {}));
+    (Object.defineProperty(e, `__esModule`, { value: !0 }),
+      (e.FlushTypeValues = void 0),
+      (e.FlushTypeValues = {
+        ScheduledMaxTime: `scheduled:max_time`,
+        ScheduledFullBatch: `scheduled:full_batch`,
+        Limit: `limit`,
+        Manual: `manual`,
+        Shutdown: `shutdown`,
+      }));
   }),
   v = e((e) => {
     var t =
@@ -1661,9 +1661,11 @@ var t = e((e) => {
         return n(this, void 0, void 0, function* () {
           return (
             this._currentFlushPromise && (yield this._currentFlushPromise),
-            (this._currentFlushPromise = this._executeFlush(s.FlushType.Manual).finally(() => {
-              ((this._currentFlushPromise = null), this._scheduleNextFlush());
-            })),
+            (this._currentFlushPromise = this._executeFlush(s.FlushTypeValues.Manual).finally(
+              () => {
+                ((this._currentFlushPromise = null), this._scheduleNextFlush());
+              },
+            )),
             this._currentFlushPromise
           );
         });
@@ -1674,7 +1676,7 @@ var t = e((e) => {
             (this._isShuttingDown = !0),
             this._clearAllTimers(),
             this._currentFlushPromise && (yield this._currentFlushPromise),
-            (this._currentFlushPromise = this._executeFlush(s.FlushType.Shutdown)
+            (this._currentFlushPromise = this._executeFlush(s.FlushTypeValues.Shutdown)
               .catch((e) => {
                 u.Log.error(`Error during shutdown flush: ${e}`);
               })
@@ -1721,7 +1723,7 @@ var t = e((e) => {
         }
         this._flushInterval.markFlushAttempt();
         let n;
-        ((n = e ? s.FlushType.ScheduledFullBatch : s.FlushType.ScheduledMaxTime),
+        ((n = e ? s.FlushTypeValues.ScheduledFullBatch : s.FlushTypeValues.ScheduledMaxTime),
           (this._currentFlushPromise = this._processNextBatch(n)
             .then(() => {})
             .catch((e) => {
@@ -1743,12 +1745,12 @@ var t = e((e) => {
       }
       _processLimitFlushInternal() {
         return n(this, void 0, void 0, function* () {
-          if (yield this._processNextBatch(s.FlushType.Limit))
+          if (yield this._processNextBatch(s.FlushTypeValues.Limit))
             for (
               ;
               this._flushInterval.hasCompletelyRecoveredFromBackoff() &&
               this.containsAtLeastOneFullBatch() &&
-              (yield this._processNextBatch(s.FlushType.Limit));
+              (yield this._processNextBatch(s.FlushTypeValues.Limit));
             );
         });
       }
@@ -1839,7 +1841,7 @@ var t = e((e) => {
         return !!(d.RETRYABLE_CODES.has(e) || (e === -1 && t && x.has(t)));
       }
       _handleFailure(e, t, n, i, a, o, c) {
-        if (t === s.FlushType.Shutdown) {
+        if (t === s.FlushTypeValues.Shutdown) {
           (u.Log.warn(
             `${t} flush failed during shutdown. ${e.events.length} event(s) will be saved to storage for retry in next session.`,
           ),

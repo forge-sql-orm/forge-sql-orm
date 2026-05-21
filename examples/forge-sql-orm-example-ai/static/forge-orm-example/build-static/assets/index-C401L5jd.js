@@ -5,14 +5,14 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-CDJ7O0mA.js",
       "./rolldown-runtime-BM3Ffeng.js",
-      "./body-1vi0CqCx.js",
+      "./body-Dz8ChMG-.js",
       "./react-dom-vendor-0VJF9GAl.js",
       "./body-BMQTJ_qR.css",
     ]),
 ) => i.map((i) => d[i]);
 import { a as e, i as t, n, o as r, r as i, t as a } from "./rolldown-runtime-BM3Ffeng.js";
 import { n as o, r as s, t as c } from "./react-dom-vendor-0VJF9GAl.js";
-import { t as l } from "./client-core-vendor-CEzMfQaL.js";
+import { t as l } from "./client-core-vendor-BRub2nuf.js";
 import { t as u } from "./lodash-vendor-Bba9ebez.js";
 (function () {
   let e = document.createElement(`link`).relList;
@@ -7029,7 +7029,7 @@ var Xi = (function () {
                                       return (
                                         (e.next = 2),
                                         wi(
-                                          () => import(`./custom-theme-V8pT-bNe.js`),
+                                          () => import(`./custom-theme-CqLOXYhd.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -10391,76 +10391,62 @@ function Nl(e) {
     i = r === void 0 ? {} : r,
     a = e.forceFallbackPositioning,
     o = a === void 0 ? !1 : a,
-    s = e.arrow,
-    c = (0, d.useId)(),
-    l = jl(i);
+    s = (0, d.useId)(),
+    c = jl(i);
   (0, d.useLayoutEffect)(
     function () {
       var e = t.current,
         r = n.current;
       if (!e || !r) return;
-      var i = l.offset.gap,
-        a = l.offset.crossAxisShift.value,
-        u = !!o;
-      if (Ol() && !u) {
-        var d = e.style.getPropertyValue(`anchor-name`) || `--anchor-${c.replace(/:/g, ``)}`,
-          f = kl({ placement: l, offset: i }),
-          p = Al({
-            placement: l,
+      var i = c.offset.gap,
+        a = c.offset.crossAxisShift.value,
+        l = !!o;
+      if (Ol() && !l) {
+        var u = e.style.getPropertyValue(`anchor-name`) || `--anchor-${s.replace(/:/g, ``)}`,
+          d = kl({ placement: c, offset: i }),
+          f = Al({
+            placement: c,
             crossAxisShiftCssValue: a,
-            direction: l.offset.crossAxisShift.direction,
+            direction: c.offset.crossAxisShift.direction,
           }),
-          m = [
-            { property: `position-anchor`, value: d },
-            { property: `position-area`, value: Tl({ placement: l }) },
-            {
-              property: `position-try-fallbacks`,
-              value: s ? s.getTryFallbacks({ placement: l }) : El({ placement: l }),
-            },
+          p = [
+            { property: `position-anchor`, value: u },
+            { property: `position-area`, value: Tl({ placement: c }) },
+            { property: `position-try-fallbacks`, value: El({ placement: c }) },
             { property: `margin`, value: `0` },
             { property: `inset`, value: `auto` },
+            { property: d.property, value: d.value },
             { property: f.property, value: f.value },
-            { property: p.property, value: p.value },
           ];
-        (m.push({ property: `--ds-cross-axis-shift-margin-start`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-end`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-block-start`, value: `0px` }),
-          m.push({ property: `--ds-cross-axis-shift-margin-block-end`, value: `0px` }));
-        var h = Al({
-            placement: l,
+        (p.push({ property: `--ds-cross-axis-shift-margin-start`, value: `0px` }),
+          p.push({ property: `--ds-cross-axis-shift-margin-end`, value: `0px` }),
+          p.push({ property: `--ds-cross-axis-shift-margin-block-start`, value: `0px` }),
+          p.push({ property: `--ds-cross-axis-shift-margin-block-end`, value: `0px` }));
+        var m = Al({
+            placement: c,
             crossAxisShiftCssValue: a,
-            direction: l.offset.crossAxisShift.direction,
+            direction: c.offset.crossAxisShift.direction,
           }),
-          g = {
+          h = {
             "margin-inline-start": `--ds-cross-axis-shift-margin-start`,
             "margin-inline-end": `--ds-cross-axis-shift-margin-end`,
             "margin-block-start": `--ds-cross-axis-shift-margin-block-start`,
             "margin-block-end": `--ds-cross-axis-shift-margin-block-end`,
-          }[h.property];
+          }[m.property];
         return (
-          g && m.push({ property: g, value: h.value }),
-          s &&
-            (m.push({ property: `--ds-arrow-size`, value: i }),
-            r.setAttribute(`data-ds-popover-arrow`, ``)),
-          e.style.setProperty(`anchor-name`, d),
-          yl(
-            wl({ el: r, styles: m }),
-            s
-              ? function () {
-                  return r.removeAttribute(`data-ds-popover-arrow`);
-                }
-              : function () {},
-          )
+          h && p.push({ property: h, value: m.value }),
+          e.style.setProperty(`anchor-name`, u),
+          yl(wl({ el: r, styles: p }))
         );
       }
-      var _ = wl({
+      var g = wl({
         el: r,
         styles: [
           { property: `margin`, value: `0` },
           { property: `inset`, value: `auto` },
         ],
       });
-      function v() {
+      function _() {
         if (!(!e || !r)) {
           var t = e.getBoundingClientRect(),
             n = { width: window.innerWidth, height: window.innerHeight },
@@ -10468,23 +10454,23 @@ function Nl(e) {
             s = vl({
               triggerRect: t,
               popoverEl: r,
-              placement: l,
+              placement: c,
               viewport: n,
               gap: bl({ value: i, container: o }),
               crossAxisShift: {
                 value: bl({ value: a, container: o }),
-                direction: l.offset.crossAxisShift.direction,
+                direction: c.offset.crossAxisShift.direction,
               },
             }),
-            c = s.top,
+            l = s.top,
             u = s.left;
-          (r.style.setProperty(`top`, `${c}px`),
+          (r.style.setProperty(`top`, `${l}px`),
             r.style.setProperty(`left`, `${u}px`),
             r.style.removeProperty(`opacity`));
         }
       }
-      var y = dl(v),
-        b = new (
+      var v = dl(_),
+        y = new (
           typeof ResizeObserver < `u`
             ? ResizeObserver
             : (function () {
@@ -10498,29 +10484,29 @@ function Nl(e) {
                 ]);
               })()
         )(function () {
-          r.offsetWidth > 0 && r.offsetHeight > 0 && (v(), b.disconnect());
+          r.offsetWidth > 0 && r.offsetHeight > 0 && (_(), y.disconnect());
         });
       return (
-        Dl(r) && (r.style.setProperty(`opacity`, `0`), b.observe(r)),
+        Dl(r) && (r.style.setProperty(`opacity`, `0`), y.observe(r)),
         yl(
-          _,
+          g,
           (0, ki.bind)(r, {
             type: `toggle`,
             listener: function (e) {
-              e.newState === `open` && (r.style.setProperty(`opacity`, `0`), b.observe(r));
+              e.newState === `open` && (r.style.setProperty(`opacity`, `0`), y.observe(r));
             },
           }),
           function () {
-            return b.disconnect();
+            return y.disconnect();
           },
           (0, ki.bind)(window, {
             type: `scroll`,
-            listener: y,
+            listener: v,
             options: { capture: !0, passive: !0 },
           }),
-          (0, ki.bind)(window, { type: `resize`, listener: y, options: { passive: !0 } }),
+          (0, ki.bind)(window, { type: `resize`, listener: v, options: { passive: !0 } }),
           function () {
-            (y.cancel(),
+            (v.cancel(),
               r.style.removeProperty(`top`),
               r.style.removeProperty(`left`),
               r.style.removeProperty(`opacity`));
@@ -10528,7 +10514,7 @@ function Nl(e) {
         )
       );
     },
-    [t, n, l, o, s, c],
+    [t, n, c, o, s],
   );
 }
 function Pl(e) {
@@ -11270,7 +11256,11 @@ function Tu(e) {
   return e;
 }
 var Eu = ul.tooltip(),
-  Du = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.2.0` },
+  Du = {
+    componentName: `tooltip`,
+    packageName: `@atlaskit/tooltip`,
+    packageVersion: `0.0.0-development`,
+  },
   Ou = { top: `bottom`, bottom: `top`, left: `right`, right: `left` },
   ku = function (e) {
     return e.split(`-`)[0];
@@ -14401,31 +14391,33 @@ var xm = r(om()),
       i = r === void 0 ? `information` : r,
       a = e.actions,
       o = e.title,
-      s = e.icon,
-      c = e.isDismissible,
-      l = e.onDismiss,
-      u = e.testId,
-      f = _((0, d.useState)(!1), 2),
-      p = f[0],
-      m = f[1],
-      h = (0, d.useCallback)(
+      s = e.headingLevel,
+      c = s === void 0 ? `h2` : s,
+      l = e.icon,
+      u = e.isDismissible,
+      f = e.onDismiss,
+      p = e.testId,
+      m = _((0, d.useState)(!1), 2),
+      h = m[0],
+      g = m[1],
+      y = (0, d.useCallback)(
         function () {
-          (l?.(), m(!0));
+          (f?.(), g(!0));
         },
-        [l],
+        [f],
       ),
-      g = bm(i, s),
-      y = g.primaryIconColor,
-      b = g.backgroundColor,
-      x = g.Icon,
-      S = a && a.type === d.Fragment ? a.props.children : a,
-      C = d.Children.toArray(S);
-    return c && p
+      b = bm(i, l),
+      x = b.primaryIconColor,
+      S = b.backgroundColor,
+      C = b.Icon,
+      w = a && a.type === d.Fragment ? a.props.children : a,
+      T = d.Children.toArray(w);
+    return u && h
       ? null
       : d.createElement(
           `section`,
           {
-            "data-testid": u,
+            "data-testid": p,
             ref: t,
             className: v([
               Sm.container,
@@ -14439,50 +14431,50 @@ var xm = r(om()),
             d.createElement(
               `div`,
               { className: v([Sm.iconContainer]) },
-              d.createElement(x, {
+              d.createElement(C, {
                 size: `medium`,
-                primaryColor: y,
-                secondaryColor: b,
-                color: y,
+                primaryColor: x,
+                secondaryColor: S,
+                color: x,
                 spacing: `spacious`,
               }),
             ),
             d.createElement(
               Kn,
-              { space: `space.100`, testId: u && `${u}--content`, xcss: Sm.contentContainer },
-              !!o && d.createElement(Yp, { as: `h2`, size: `small` }, o),
+              { space: `space.100`, testId: p && `${p}--content`, xcss: Sm.contentContainer },
+              !!o && d.createElement(Yp, { as: c, size: `small` }, o),
               d.createElement(`div`, { className: v([Sm.content]) }, n),
-              C.length > 0 &&
+              T.length > 0 &&
                 d.createElement(
                   Un,
                   {
                     shouldWrap: !0,
-                    testId: u && `${u}--actions`,
+                    testId: p && `${p}--actions`,
                     separator: `·`,
                     space: `space.100`,
                     rowSpace: `space.0`,
-                    role: C.length > 1 ? `list` : void 0,
+                    role: T.length > 1 ? `list` : void 0,
                     xcss: Sm.actionsContainer,
                   },
-                  C.map(function (e, t) {
+                  T.map(function (e, t) {
                     return d.createElement(
                       Un,
-                      { role: C.length > 1 ? `listitem` : void 0, key: t },
+                      { role: T.length > 1 ? `listitem` : void 0, key: t },
                       e,
                     );
                   }),
                 ),
             ),
-            c &&
+            u &&
               d.createElement(
                 `div`,
                 { className: v([Sm.dismissButtonContainer]) },
                 d.createElement(Lu, {
-                  testId: u && `${u}--dismiss-button`,
+                  testId: p && `${p}--dismiss-button`,
                   label: `Dismiss`,
                   icon: xm.default,
                   appearance: `subtle`,
-                  onClick: h,
+                  onClick: y,
                   spacing: `compact`,
                 }),
               ),
@@ -19756,7 +19748,7 @@ var Ry = function (e) {
     );
   },
   zy = (0, d.lazy)(function () {
-    return wi(() => import(`./body-1vi0CqCx.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return wi(() => import(`./body-Dz8ChMG-.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   By = (0, d.forwardRef)(function (e, t) {
     var n = e.isRankable,

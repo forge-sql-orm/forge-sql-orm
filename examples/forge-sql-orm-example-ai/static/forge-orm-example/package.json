@@ -8,7 +8,7 @@
     "@atlaskit/css-reset": "^7.4.5",
     "@atlaskit/dynamic-table": "^18.4.2",
     "@atlaskit/primitives": "^19.0.1",
-    "@atlaskit/section-message": "^8.12.15",
+    "@atlaskit/section-message": "^8.13.0",
     "@atlaskit/spinner": "^19.1.2",
     "@atlaskit/tabs": "^19.1.0",
     "@atlaskit/textarea": "^8.3.0",
