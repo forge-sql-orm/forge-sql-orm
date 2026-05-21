@@ -1,4 +1,4 @@
-import { t as e } from "./rolldown-runtime-BYbx6iT9.js";
+import { t as e } from "./rolldown-runtime-Cyuzqnbw.js";
 var t = e((e) => {
     var t = Symbol.for(`react.element`),
       n = Symbol.for(`react.portal`),
@@ -848,7 +848,7 @@ var t = e((e) => {
             ((t = function () {
               throw Error();
             }),
-            Object.defineProperty(t.prototype, `props`, {
+            Object.defineProperty(t.prototype, "props", {
               set: function () {
                 throw Error();
               },
@@ -1467,7 +1467,7 @@ var t = e((e) => {
     if (u)
       try {
         var pt = {};
-        (Object.defineProperty(pt, `passive`, {
+        (Object.defineProperty(pt, "passive", {
           get: function () {
             ft = !0;
           },
