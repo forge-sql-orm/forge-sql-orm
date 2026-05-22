@@ -1,0 +1,81 @@
+name: LoC badges
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    # Daily at 04:00 UTC — keeps badges fresh even on quiet days.
+    - cron: "0 4 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: loc-badge
+  cancel-in-progress: true
+
+jobs:
+  loc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: master
+          fetch-depth: 1
+
+      - name: Prepare output dir
+        run: mkdir -p output
+
+      # cloc-based LoC counter; pinned to commit SHA per repo policy.
+      - name: LoC (whole repo, including examples)
+        uses: alexispurslane/GHA-LoC-Badge@811a7fa2bae9860e8f254bcb9cfb71d021931a77 # v2.0.0
+        with:
+          debug: true
+          directory: ./
+          badge: ./output/loc-full.svg
+          badge_label: "LoC (full)"
+          badge_color: "blue"
+          ignore: "node_modules|dist|dist-cli|build|build-static|coverage|.qlty|*.js|*.jsx|*.mjs|*.cjs|*.min.js|package-lock.json"
+
+      - name: LoC (library sources only, no examples)
+        uses: alexispurslane/GHA-LoC-Badge@811a7fa2bae9860e8f254bcb9cfb71d021931a77 # v2.0.0
+        with:
+          debug: true
+          directory: ./
+          badge: ./output/loc-src.svg
+          badge_label: "LoC (src)"
+          badge_color: "green"
+          ignore: "node_modules|dist|dist-cli|build|build-static|coverage|.qlty|examples|*.js|*.jsx|*.mjs|*.cjs|*.min.js|package-lock.json"
+
+      - name: Publish badges to `badges` branch
+        run: |
+          set -euo pipefail
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stash badge SVGs outside the worktree so the orphan reset
+          # below doesn't wipe them.
+          TMP=$(mktemp -d)
+          cp output/loc-full.svg "$TMP/"
+          cp output/loc-src.svg  "$TMP/"
+
+          git checkout --orphan badges
+          git rm -rf --quiet . || true
+          git clean -fdx -e output
+
+          mv "$TMP/loc-full.svg" ./loc-full.svg
+          mv "$TMP/loc-src.svg"  ./loc-src.svg
+
+          git add loc-full.svg loc-src.svg
+          if git diff --cached --quiet; then
+            echo "No badge changes — nothing to publish."
+            exit 0
+          fi
+
+          git commit -m "chore(badges): refresh LoC badges"
+          git push -f origin badges
