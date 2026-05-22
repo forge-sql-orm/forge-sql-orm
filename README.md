@@ -7,6 +7,9 @@
 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=coverage)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 
+[![LoC (full)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/loc-full.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/loc-badge.yml)
+[![LoC (src)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/loc-src.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/loc-badge.yml)
+
 [![License](https://img.shields.io/github/license/forge-sql-orm/forge-sql-orm)](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/LICENSE)
 
 [![forge-sql-orm CI](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml)
