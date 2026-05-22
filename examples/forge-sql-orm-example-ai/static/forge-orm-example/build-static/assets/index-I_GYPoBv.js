@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-BG7wQRXN.js",
       "./rolldown-runtime-CMxvf4Kt.js",
-      "./body-CxfD5OlZ.js",
+      "./body-CYoKZhBy.js",
       "./react-dom-vendor-CpxK6b1h.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -7029,7 +7029,7 @@ var Xi = (function () {
                                       return (
                                         (e.next = 2),
                                         wi(
-                                          () => import(`./custom-theme-D23x1gkZ.js`),
+                                          () => import(`./custom-theme-E18cj79k.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -11256,11 +11256,7 @@ function Tu(e) {
   return e;
 }
 var Eu = ul.tooltip(),
-  Du = {
-    componentName: `tooltip`,
-    packageName: `@atlaskit/tooltip`,
-    packageVersion: `0.0.0-development`,
-  },
+  Du = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.2.2` },
   Ou = { top: `bottom`, bottom: `top`, left: `right`, right: `left` },
   ku = function (e) {
     return e.split(`-`)[0];
@@ -14689,7 +14685,7 @@ var Bm = function (e) {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `23.11.5`,
+        packageVersion: `23.11.6`,
         analyticsData: n,
       }),
       oe = (0, d.useCallback)(
@@ -19748,7 +19744,7 @@ var Ry = function (e) {
     );
   },
   zy = (0, d.lazy)(function () {
-    return wi(() => import(`./body-CxfD5OlZ.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return wi(() => import(`./body-CYoKZhBy.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   By = (0, d.forwardRef)(function (e, t) {
     var n = e.isRankable,
@@ -19968,11 +19964,7 @@ function Ky(e) {
   }
   return e;
 }
-var qy = {
-    componentName: `textArea`,
-    packageName: `@atlaskit/textarea`,
-    packageVersion: `0.0.0-development`,
-  },
+var qy = { componentName: `textArea`, packageName: `@atlaskit/textarea`, packageVersion: `8.3.0` },
   Jy = 20,
   Yy = 16,
   Xy = 2,
