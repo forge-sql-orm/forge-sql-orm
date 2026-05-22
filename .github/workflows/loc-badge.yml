@@ -31,6 +31,7 @@ jobs:
         run: mkdir -p output
 
       # cloc-based LoC counter; pinned to commit SHA per repo policy.
+      # `loc-full` counts everything (incl. examples) minus markup/config noise.
       - name: LoC (whole repo, including examples)
         uses: alexispurslane/GHA-LoC-Badge@811a7fa2bae9860e8f254bcb9cfb71d021931a77 # v2.0.0
         with:
@@ -39,17 +40,26 @@ jobs:
           badge: ./output/loc-full.svg
           badge_label: "LoC (full)"
           badge_color: "blue"
-          ignore: "node_modules|dist|dist-cli|build|build-static|coverage|.qlty|*.js|*.jsx|*.mjs|*.cjs|*.min.js|package-lock.json"
+          ignore: "node_modules|dist|dist-cli|build|build-static|coverage|.qlty|loc-src-input|*.js|*.jsx|*.mjs|*.cjs|*.min.js|package-lock.json|*.json|*.yml|*.yaml|*.md|*.css|*.html"
 
-      - name: LoC (library sources only, no examples)
+      # `loc-src` counts only src/ + forge-sql-orm-cli/src/. The action takes
+      # one `directory:` input, so we stage both into a single tree first.
+      - name: Stage src + forge-sql-orm-cli/src for combined count
+        run: |
+          rm -rf loc-src-input
+          mkdir -p loc-src-input
+          cp -R src                  loc-src-input/lib
+          cp -R forge-sql-orm-cli/src loc-src-input/cli
+
+      - name: LoC (library + CLI sources only)
         uses: alexispurslane/GHA-LoC-Badge@811a7fa2bae9860e8f254bcb9cfb71d021931a77 # v2.0.0
         with:
           debug: true
-          directory: ./
+          directory: ./loc-src-input
           badge: ./output/loc-src.svg
           badge_label: "LoC (src)"
           badge_color: "green"
-          ignore: "node_modules|dist|dist-cli|build|build-static|coverage|.qlty|examples|*.js|*.jsx|*.mjs|*.cjs|*.min.js|package-lock.json"
+          ignore: "*.js|*.jsx|*.mjs|*.cjs"
 
       - name: Publish badges to `badges` branch
         run: |
