@@ -75,10 +75,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-dynamic"
@@ -103,10 +101,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-optimistic-locking"
@@ -131,10 +127,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-query-analyses"
@@ -159,10 +153,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-analize/*
 cd ../../..
 
 section "forge-sql-orm-example-simple"
@@ -187,10 +179,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-checklist"
@@ -215,10 +205,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-article/*
 cd ../../..
 
 section "forge-sql-orm-example-org-tracker"
@@ -243,10 +231,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-sql-executor"
@@ -271,10 +257,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-cache"
@@ -299,10 +283,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 
@@ -328,10 +310,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-vector"
@@ -356,10 +336,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-ai"
@@ -384,10 +362,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-backend-ai"
@@ -422,10 +398,8 @@ run npm i
 run npm run knip
 step "Static UI: building..."
 run npm run build
-sleep 2
-step "Staging static build..."
+step "Staging package files..."
 run git add package.json package-lock.json
-run git add -f build-static/*
 cd ../../..
 
 section "forge-sql-orm-example-ui-kit"
