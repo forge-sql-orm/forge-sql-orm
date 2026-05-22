@@ -5,7 +5,7 @@ const __vite__mapDeps = (
     (m.f = [
       "./iframe-resizer-BuRnLFYJ.js",
       "./rolldown-runtime-Cyuzqnbw.js",
-      "./body-CP5T3Knp.js",
+      "./body-Bj-tz0h5.js",
       "./react-dom-vendor-CRtau6sw.js",
       "./body-BMQTJ_qR.css",
     ]),
@@ -10838,7 +10838,7 @@ var xc = (function () {
                                       return (
                                         (e.next = 2),
                                         Ze(
-                                          () => import(`./custom-theme-PrtFPrBZ.js`),
+                                          () => import(`./custom-theme-CMoh4Trx.js`),
                                           [],
                                           import.meta.url,
                                         )
@@ -12677,7 +12677,7 @@ var ad = function (e) {
         action: `clicked`,
         componentName: `button`,
         packageName: `@atlaskit/button`,
-        packageVersion: `23.11.5`,
+        packageVersion: `23.11.6`,
         analyticsData: n,
       }),
       de = (0, u.useCallback)(
@@ -16863,11 +16863,7 @@ function qg(e) {
   return e;
 }
 var Jg = Mh.tooltip(),
-  Yg = {
-    componentName: `tooltip`,
-    packageName: `@atlaskit/tooltip`,
-    packageVersion: `0.0.0-development`,
-  },
+  Yg = { componentName: `tooltip`, packageName: `@atlaskit/tooltip`, packageVersion: `22.2.2` },
   Xg = { top: `bottom`, bottom: `top`, left: `right`, right: `left` },
   Zg = function (e) {
     return e.split(`-`)[0];
@@ -17888,7 +17884,7 @@ var T_ = function (e) {
     );
   },
   E_ = (0, u.lazy)(function () {
-    return Ze(() => import(`./body-CP5T3Knp.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
+    return Ze(() => import(`./body-Bj-tz0h5.js`), __vite__mapDeps([2, 1, 3, 4]), import.meta.url);
   }),
   D_ = (0, u.forwardRef)(function (e, t) {
     var n = e.isRankable,

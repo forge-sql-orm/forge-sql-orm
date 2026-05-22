@@ -8,44 +8,44 @@ import {
   O as s,
   S as c,
   T as l,
-  _ as u,
-  a as d,
-  b as f,
-  f as p,
-  g as m,
-  h,
-  i as g,
-  k as _,
-  m as v,
-  n as y,
-  p as ee,
-  r as b,
-  t as x,
+  b as u,
+  d,
+  f,
+  g as p,
+  h as m,
+  k as h,
+  m as g,
+  n as _,
+  p as v,
+  r as y,
+  t as b,
+  u as x,
   v as S,
   w as C,
   x as w,
-} from "./index-R1RWSCjS.js";
-function T(e, t, n) {
-  return ((t = a(t)), s(e, E() ? Reflect.construct(t, n || [], a(e).constructor) : t.apply(e, n)));
+  y as T,
+} from "./index-DnhBuF3j.js";
+function E(e, t, n) {
+  return ((t = u(t)), w(e, D() ? Reflect.construct(t, n || [], u(e).constructor) : t.apply(e, n)));
 }
-function E() {
+function D() {
   try {
     var e = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
   } catch {}
-  return (E = function () {
+  return (D = function () {
     return !!e;
   })();
 }
-var D = !0,
-  O = `Invariant failed`,
-  k = (function (e) {
+var O = !0,
+  k = `Invariant failed`,
+  A = (function (e) {
     function t(e) {
       var n;
-      return (r(this, t), (n = T(this, t)), (n.message = e), n);
+      return (l(this, t), (n = E(this, t)), (n.message = e), n);
     }
     return (
-      o(t, e),
-      _(t, [
+      T(t, e),
+      C(t, [
         {
           key: `toString`,
           value: function () {
@@ -54,54 +54,54 @@ var D = !0,
         },
       ])
     );
-  })(f(Error));
-function A(e, t) {
-  if (!e) throw D ? new k(O) : new k(`${O}: ${t || ``}`);
+  })(S(Error));
+function j(e, t) {
+  if (!e) throw O ? new A(k) : new A(`${k}: ${t || ``}`);
 }
-var j = e(n()),
-  M = (0, j.createContext)(null);
-function N() {
-  var e = (0, j.useContext)(M);
-  return (A(e !== null, `Unable to find DragDropContext context`), e);
+var M = e(n()),
+  N = (0, M.createContext)(null);
+function P() {
+  var e = (0, M.useContext)(N);
+  return (j(e !== null, `Unable to find DragDropContext context`), e);
 }
-function te(e) {
+function ee(e) {
   var t = e.children,
     n = e.contextId,
     r = e.getDragState,
     i = e.startKeyboardDrag,
     a = e.droppableRegistry,
-    o = (0, j.useMemo)(
+    o = (0, M.useMemo)(
       function () {
         return { contextId: n, getDragState: r, startKeyboardDrag: i, droppableRegistry: a };
       },
       [n, r, i, a],
     );
-  return j.createElement(M.Provider, { value: o }, t);
+  return M.createElement(N.Provider, { value: o }, t);
 }
-function P(e) {
+function F(e) {
   return { margin: window.getComputedStyle(e).margin, rect: e.getBoundingClientRect() };
 }
-function F() {
-  var e = N().getDragState,
+function I() {
+  var e = P().getDragState,
     t = e();
   return t.isDragging ? t.draggableDimensions : null;
 }
-var ne = function () {};
-function re() {
-  var e = ne;
+var te = function () {};
+function ne() {
+  var e = te;
   return {
     setCleanupFn: function (t) {
       e = t;
     },
     runCleanupFn: function () {
-      (e(), (e = ne));
+      (e(), (e = te));
     },
   };
 }
-function ie() {
-  var e = C((0, j.useState)(re), 1)[0];
+function re() {
+  var e = h((0, M.useState)(ne), 1)[0];
   return (
-    (0, j.useEffect)(
+    (0, M.useEffect)(
       function () {
         return e.runCleanupFn;
       },
@@ -110,7 +110,7 @@ function ie() {
     e
   );
 }
-var I = {
+var L = {
     draggable: { contextId: `data-rbd-draggable-context-id`, id: `data-rbd-draggable-id` },
     dragHandle: {
       contextId: `data-rbd-drag-handle-context-id`,
@@ -119,7 +119,7 @@ var I = {
     droppable: { contextId: `data-rbd-droppable-context-id`, id: `data-rbd-droppable-id` },
     placeholder: { contextId: `data-rbd-placeholder-context-id` },
   },
-  L = {
+  R = {
     draggable: {
       droppableId: `data-rbd-draggable-droppable-id`,
       index: `data-rbd-draggable-index`,
@@ -127,13 +127,13 @@ var I = {
     dropIndicator: `data-rbd-drop-indicator`,
     droppable: { direction: `data-rbd-droppable-direction`, type: `data-rbd-droppable-type` },
   };
-function R(e, t) {
+function z(e, t) {
   var n = e.getAttribute(t);
-  return (A(n !== null, `Expected '${t}' to be present`), n);
+  return (j(n !== null, `Expected '${t}' to be present`), n);
 }
-function ae(e, t) {
+function ie(e, t) {
   for (var n = 0, r = Object.entries(t); n < r.length; n++) {
-    var i = C(r[n], 2),
+    var i = h(r[n], 2),
       a = i[0],
       o = i[1];
     e.setAttribute(a, o);
@@ -145,7 +145,7 @@ function ae(e, t) {
     }
   };
 }
-function oe() {
+function ae() {
   return [...arguments]
     .map(function (e) {
       var t = e.attribute,
@@ -154,39 +154,39 @@ function oe() {
     })
     .join(``);
 }
-function z() {
-  var e = oe.apply(void 0, arguments);
+function B() {
+  var e = ae.apply(void 0, arguments);
   return document.querySelector(e);
 }
-function se() {
-  var e = oe.apply(void 0, arguments);
+function oe() {
+  var e = ae.apply(void 0, arguments);
   return Array.from(document.querySelectorAll(e));
 }
-function B() {
-  var e = z.apply(void 0, arguments);
-  return (A(e, `There is a matching HTMLElement for selector ` + oe.apply(void 0, arguments)), e);
+function V() {
+  var e = B.apply(void 0, arguments);
+  return (j(e, `There is a matching HTMLElement for selector ` + ae.apply(void 0, arguments)), e);
 }
-function ce(e) {
+function se(e) {
   var t = e.contextId,
     n = e.draggableId;
-  return z(
-    { attribute: I.dragHandle.contextId, value: t },
-    { attribute: I.dragHandle.draggableId, value: n },
+  return B(
+    { attribute: L.dragHandle.contextId, value: t },
+    { attribute: L.dragHandle.draggableId, value: n },
   );
 }
-function le(e) {
+function ce(e) {
   if (getComputedStyle(e).position === `absolute`) return e;
   var t = e.parentElement;
-  return t instanceof HTMLElement ? le(t) : null;
+  return t instanceof HTMLElement ? ce(t) : null;
 }
-function ue(e) {
+function le(e) {
   var t = e.element;
-  return e.mode === `standard` ? t : (le(t) ?? t);
+  return e.mode === `standard` ? t : (ce(t) ?? t);
 }
-function de() {
+function ue() {
   window.dispatchEvent(new DragEvent(`dragend`));
 }
-function fe(e, t) {
+function de(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var r = Object.getOwnPropertySymbols(e);
@@ -198,22 +198,22 @@ function fe(e, t) {
   }
   return n;
 }
-function pe(e) {
+function fe(e) {
   for (var t = 1; t < arguments.length; t++) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
-      ? fe(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+      ? de(Object(n), !0).forEach(function (t) {
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
-        : fe(Object(n)).forEach(function (t) {
+        : de(Object(n)).forEach(function (t) {
             Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
           });
   }
   return e;
 }
-var me = {
+var pe = {
     top: function (e, t) {
       return Math.abs(t.y - e.top);
     },
@@ -227,109 +227,109 @@ var me = {
       return Math.abs(t.x - e.left);
     },
   },
-  he = Symbol(`closestEdge`);
-function ge(e, t) {
+  me = Symbol(`closestEdge`);
+function he(e, t) {
   var n = t.element,
     r = t.input,
-    i = t.allowedEdges,
-    a = { x: r.clientX, y: r.clientY },
-    o = n.getBoundingClientRect(),
-    s =
-      i
+    a = t.allowedEdges,
+    o = { x: r.clientX, y: r.clientY },
+    s = n.getBoundingClientRect(),
+    c =
+      a
         .map(function (e) {
-          return { edge: e, value: me[e](o, a) };
+          return { edge: e, value: pe[e](s, o) };
         })
         .sort(function (e, t) {
           return e.value - t.value;
         })[0]?.edge ?? null;
-  return pe(pe({}, e), {}, l({}, he, s));
+  return fe(fe({}, e), {}, i({}, me, c));
 }
-function _e(e) {
-  return e[he] ?? null;
+function ge(e) {
+  return e[me] ?? null;
 }
-var ve = Symbol(`DraggableData`);
-function V(e) {
-  return e[ve] === !0;
+var _e = Symbol(`DraggableData`);
+function H(e) {
+  return e[_e] === !0;
 }
-function ye(e) {
+function ve(e) {
   var t = e.draggableId,
     n = e.droppableId,
     r = e.getIndex,
-    i = e.contextId,
-    a = e.type;
-  return (0, j.useMemo)(
+    a = e.contextId,
+    o = e.type;
+  return (0, M.useMemo)(
     function () {
-      return l(
-        l(
-          l(l(l(l({}, ve, !0), `draggableId`, t), `droppableId`, n), `getIndex`, r),
+      return i(
+        i(
+          i(i(i(i({}, _e, !0), `draggableId`, t), `droppableId`, n), `getIndex`, r),
           `contextId`,
-          i,
+          a,
         ),
         `type`,
-        a,
+        o,
       );
     },
-    [t, n, r, i, a],
+    [t, n, r, a, o],
   );
 }
-var be = Symbol(`DroppableData`);
-function xe(e) {
-  return e[be] === !0;
+var ye = Symbol(`DroppableData`);
+function be(e) {
+  return e[ye] === !0;
 }
-function Se(e) {
+function xe(e) {
   var t = e.contextId,
     n = e.droppableId,
     r = e.getIsDropDisabled;
-  return (0, j.useMemo)(
+  return (0, M.useMemo)(
     function () {
-      return l(l(l(l({}, be, !0), `contextId`, t), `droppableId`, n), `getIsDropDisabled`, r);
+      return i(i(i(i({}, ye, !0), `contextId`, t), `droppableId`, n), `getIsDropDisabled`, r);
     },
     [t, n, r],
   );
 }
-function Ce(e) {
+function Se(e) {
   var t = e.droppableId,
     n = e.contextId;
-  return se(
-    { attribute: I.draggable.contextId, value: n },
-    { attribute: L.draggable.droppableId, value: t },
+  return oe(
+    { attribute: L.draggable.contextId, value: n },
+    { attribute: R.draggable.droppableId, value: t },
   );
 }
-var we = [`droppableId`, `getIndex`],
-  Te = [`contextId`, `droppableId`];
-function Ee(e) {
+var Ce = [`droppableId`, `getIndex`],
+  we = [`contextId`, `droppableId`];
+function Te(e) {
   var t = e.droppableId,
     n = e.getIndex,
-    r = c(e, we),
+    r = s(e, Ce),
     i = n(),
-    a = _e(r);
+    a = ge(r);
   return ((a === `bottom` || a === `right`) && (i += 1), { droppableId: t, index: i });
 }
-function De(e) {
+function Ee(e) {
   var t = e.contextId,
     n = e.droppableId,
-    r = c(e, Te),
-    i = Ce({ contextId: t, droppableId: n });
+    r = s(e, we),
+    i = Se({ contextId: t, droppableId: n });
   if (i.length === 0) return { droppableId: n, index: 0 };
-  var a = _e(r);
+  var a = ge(r);
   return a === `top` || a === `left`
     ? { droppableId: n, index: 0 }
     : {
         droppableId: n,
         index:
           i.reduce(function (e, t) {
-            var n = parseInt(R(t, L.draggable.index), 10);
+            var n = parseInt(z(t, R.draggable.index), 10);
             return Math.max(e, n);
           }, 0) + 1,
       };
 }
-function Oe(e) {
+function De(e) {
   var t = e.dropTargets;
   if (t.length === 0) return null;
   var n = t[0];
-  return V(n.data) ? Ee(n.data) : xe(n.data) ? De(n.data) : null;
+  return H(n.data) ? Te(n.data) : be(n.data) ? Ee(n.data) : null;
 }
-function H(e, t) {
+function Oe(e, t) {
   return !(e?.droppableId !== t?.droppableId || e?.index !== t?.index);
 }
 function ke() {
@@ -357,7 +357,7 @@ function ke() {
   };
 }
 function Ae() {
-  return C((0, j.useState)(ke), 1)[0];
+  return h((0, M.useState)(ke), 1)[0];
 }
 function U() {
   var e = [...arguments];
@@ -372,7 +372,7 @@ function Me(e) {
   return e instanceof Element && e.hasAttribute(`data-pdnd-honey-pot`);
 }
 function Ne(e) {
-  var t = C(document.elementsFromPoint(e.x, e.y), 2),
+  var t = h(document.elementsFromPoint(e.x, e.y), 2),
     n = t[0],
     r = t[1];
   return n ? (Me(n) ? (r ?? null) : n) : null;
@@ -400,7 +400,7 @@ function W(e) {
 var Ie = W(function () {
     return typeof HTMLElement < `u` && typeof HTMLElement.prototype.showPopover == `function`;
   }),
-  G = p();
+  G = x();
 function Le(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -418,7 +418,7 @@ function Re(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? Le(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -648,7 +648,7 @@ function it(e) {
     pageY: e.pageY,
   };
 }
-var at = x(function (e) {
+var at = b(function (e) {
     return e();
   }),
   ot = (function () {
@@ -742,11 +742,11 @@ function ft(e) {
   var o = { current: a };
   pt({ event: t, current: a.dropTargets });
   var s = st({ source: n.payload, dispatchEvent: i, initial: a });
-  function c(e) {
+  function l(e) {
     var t = dt({ current: o.current.dropTargets, next: e.dropTargets });
     ((o.current = e), t && s.dragUpdate({ current: o.current }));
   }
-  function l(e) {
+  function u(e) {
     var t = it(e),
       i = r({
         target: Me(e.target) ? Ne({ x: t.clientX, y: t.clientY }) : e.target,
@@ -755,31 +755,31 @@ function ft(e) {
         current: o.current.dropTargets,
       });
     (i.length && (e.preventDefault(), pt({ event: e, current: i })),
-      c({ dropTargets: i, input: t }));
-  }
-  function u() {
-    (o.current.dropTargets.length && c({ dropTargets: [], input: o.current.input }),
-      s.drop({ current: o.current, updatedSourcePayload: null }),
-      d());
+      l({ dropTargets: i, input: t }));
   }
   function d() {
-    ((ct.isActive = !1), f());
+    (o.current.dropTargets.length && l({ dropTargets: [], input: o.current.input }),
+      s.drop({ current: o.current, updatedSourcePayload: null }),
+      f());
   }
-  var f = (0, G.bindAll)(
+  function f() {
+    ((ct.isActive = !1), p());
+  }
+  var p = (0, G.bindAll)(
     window,
     [
       {
         type: `dragover`,
         listener: function (e) {
-          (l(e), s.drag({ current: o.current }));
+          (u(e), s.drag({ current: o.current }));
         },
       },
-      { type: `dragenter`, listener: l },
+      { type: `dragenter`, listener: u },
       {
         type: `dragleave`,
         listener: function (e) {
           nt({ dragLeave: e }) &&
-            (c({ input: o.current.input, dropTargets: [] }), n.startedFrom === `external` && u());
+            (l({ input: o.current.input, dropTargets: [] }), n.startedFrom === `external` && d());
         },
       },
       {
@@ -789,7 +789,7 @@ function ft(e) {
             ((o.current = { dropTargets: o.current.dropTargets, input: it(e) }),
             !o.current.dropTargets.length)
           ) {
-            u();
+            d();
             return;
           }
           (e.preventDefault(),
@@ -798,16 +798,16 @@ function ft(e) {
               current: o.current,
               updatedSourcePayload: n.type === `external` ? n.getDropPayload(e) : null,
             }),
-            d());
+            f());
         },
       },
       {
         type: `dragend`,
         listener: function (e) {
-          ((o.current = { dropTargets: o.current.dropTargets, input: it(e) }), u());
+          ((o.current = { dropTargets: o.current.dropTargets, input: it(e) }), d());
         },
       },
-    ].concat(w(rt({ onDragEnd: u }))),
+    ].concat(c(rt({ onDragEnd: d }))),
     { capture: !0 },
   );
   s.start({ nativeSetDragImage: ut(t) });
@@ -869,7 +869,7 @@ function K(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? bt(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -962,33 +962,33 @@ function Tt(e) {
   function s(e) {
     return W(U(yt(e.element, { attribute: i, value: `true` }), o(e)));
   }
-  function c(e) {
+  function l(e) {
     var t = e.source,
       i = e.target,
       o = e.input,
       s = e.result,
-      l = s === void 0 ? [] : s;
-    if (i == null) return l;
+      u = s === void 0 ? [] : s;
+    if (i == null) return u;
     if (!(i instanceof Element))
-      return i instanceof Node ? c({ source: t, target: i.parentElement, input: o, result: l }) : l;
-    var u = i.closest(a);
-    if (u == null) return l;
-    var d = r.get(u);
-    if (d == null) return l;
-    var f = { input: o, source: t, element: d.element };
-    if (d.canDrop && !d.canDrop(f))
-      return c({ source: t, target: d.element.parentElement, input: o, result: l });
-    var p = d.getData?.call(d, f) ?? {},
-      m = d.getDropEffect?.call(d, f) ?? n,
-      h = { data: p, element: d.element, dropEffect: m, isActiveDueToStickiness: !1 };
-    return c({
+      return i instanceof Node ? l({ source: t, target: i.parentElement, input: o, result: u }) : u;
+    var d = i.closest(a);
+    if (d == null) return u;
+    var f = r.get(d);
+    if (f == null) return u;
+    var p = { input: o, source: t, element: f.element };
+    if (f.canDrop && !f.canDrop(p))
+      return l({ source: t, target: f.element.parentElement, input: o, result: u });
+    var m = f.getData?.call(f, p) ?? {},
+      h = f.getDropEffect?.call(f, p) ?? n,
+      g = { data: m, element: f.element, dropEffect: h, isActiveDueToStickiness: !1 };
+    return l({
       source: t,
-      target: d.element.parentElement,
+      target: f.element.parentElement,
       input: o,
-      result: [].concat(w(l), [h]),
+      result: [].concat(c(u), [g]),
     });
   }
-  function l(e) {
+  function u(e) {
     var t = e.eventName,
       n = e.payload,
       i = xt(n.location.current.dropTargets),
@@ -1007,11 +1007,11 @@ function Tt(e) {
       i.f();
     }
   }
-  var u = {
-    onGenerateDragPreview: l,
-    onDrag: l,
-    onDragStart: l,
-    onDrop: l,
+  var d = {
+    onGenerateDragPreview: u,
+    onDrag: u,
+    onDragStart: u,
+    onDrop: u,
     onDropTargetChange: function (e) {
       var t = e.payload,
         n = new Set(
@@ -1061,20 +1061,20 @@ function Tt(e) {
       }
     },
   };
-  function d(e) {
-    u[e.eventName](e);
-  }
   function f(e) {
+    d[e.eventName](e);
+  }
+  function p(e) {
     var t = e.source,
       n = e.target,
       i = e.input,
       a = e.current,
-      o = c({ source: t, target: n, input: i });
+      o = l({ source: t, target: n, input: i });
     if (o.length >= a.length) return o;
-    for (var s = wt(a), l = wt(o), u = [], d = 0; d < s.length; d++) {
+    for (var s = wt(a), c = wt(o), u = [], d = 0; d < s.length; d++) {
       var f,
         p = s[d],
-        m = l[d];
+        m = c[d];
       if (m != null) {
         u.push(m);
         continue;
@@ -1090,7 +1090,7 @@ function Tt(e) {
     }
     return wt(u);
   }
-  return { dropTargetForConsumers: s, getIsOver: f, dispatchEvent: d };
+  return { dropTargetForConsumers: s, getIsOver: p, dispatchEvent: f };
 }
 function Et(e, t) {
   var n = (typeof Symbol < `u` && e[Symbol.iterator]) || e[`@@iterator`];
@@ -1172,7 +1172,7 @@ function At(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? kt(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -1297,7 +1297,7 @@ var zt = Ye(),
                   var s = r.getInitialDataForExternal?.call(r, a) ?? null;
                   if (s)
                     for (var c = 0, l = Object.entries(s); c < l.length; c++) {
-                      var u = C(l[c], 2),
+                      var u = h(l[c], 2),
                         d = u[0],
                         f = u[1];
                       t.dataTransfer.setData(d, f ?? ``);
@@ -1339,7 +1339,7 @@ function Ut(e) {
   return W(U(Bt.registerUsage(), Rt(e), yt(e.element, { attribute: `draggable`, value: `true` })));
 }
 function Wt(e, t, n) {
-  return ((t = a(t)), s(e, Gt() ? Reflect.construct(t, n || [], a(e).constructor) : t.apply(e, n)));
+  return ((t = u(t)), w(e, Gt() ? Reflect.construct(t, n || [], u(e).constructor) : t.apply(e, n)));
 }
 function Gt() {
   try {
@@ -1352,19 +1352,19 @@ function Gt() {
 function Kt(e) {
   var t = e.children,
     n = e.dragController,
-    r = (0, j.useRef)(!1),
-    i = (0, j.useCallback)(
+    r = (0, M.useRef)(!1),
+    i = (0, M.useCallback)(
       function (e) {
         var t = n.getDragState();
         t.isDragging &&
-          (t.mode === `FLUID` && de(),
+          (t.mode === `FLUID` && ue(),
           t.mode === `SNAP` && n.stopDrag({ reason: `CANCEL` }),
-          e.error instanceof k && e.preventDefault());
+          e.error instanceof A && e.preventDefault());
       },
       [n],
     );
   return (
-    (0, j.useEffect)(
+    (0, M.useEffect)(
       function () {
         return U(
           Ht({
@@ -1385,23 +1385,23 @@ function Kt(e) {
 }
 var qt = (function (e) {
   function t() {
-    return (r(this, t), Wt(this, t, arguments));
+    return (l(this, t), Wt(this, t, arguments));
   }
   return (
-    o(t, e),
-    _(
+    T(t, e),
+    C(
       t,
       [
         {
           key: `componentDidCatch`,
           value: function (e) {
-            if (!(e instanceof k)) throw e;
+            if (!(e instanceof A)) throw e;
           },
         },
         {
           key: `render`,
           value: function () {
-            return j.createElement(
+            return M.createElement(
               Kt,
               { contextId: this.props.contextId, dragController: this.props.dragController },
               this.props.children,
@@ -1412,7 +1412,7 @@ var qt = (function (e) {
       [{ key: `getDerivedStateFromError`, value: function () {} }],
     )
   );
-})(j.Component);
+})(M.Component);
 function Jt(e, t) {
   var n = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
@@ -1430,7 +1430,7 @@ function Yt(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? Jt(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -1454,7 +1454,7 @@ function Zt(e) {
 function Qt(e) {
   var t = e.contextId,
     n = e.text;
-  (0, j.useEffect)(
+  (0, M.useEffect)(
     function () {
       var e = Zt(t),
         r = document.createElement(`div`);
@@ -1482,9 +1482,9 @@ function $t(e) {
 function en(e) {
   var t = e.contextId,
     n = e.type;
-  return se(
-    { attribute: I.droppable.contextId, value: t },
-    { attribute: L.droppable.type, value: n },
+  return oe(
+    { attribute: L.droppable.contextId, value: t },
+    { attribute: R.droppable.type, value: n },
   );
 }
 function tn(e) {
@@ -1495,14 +1495,14 @@ function tn(e) {
     a = e.droppableRegistry,
     o = en({ contextId: i, type: n }),
     s = o.findIndex(function (e) {
-      return R(e, I.droppable.id) === t;
+      return z(e, L.droppable.id) === t;
     }),
     c = o
       .filter(function (e, t) {
         return r ? t > s : t < s;
       })
       .filter(function (e) {
-        var t = R(e, I.droppable.id),
+        var t = z(e, L.droppable.id),
           n = a.getEntry({ droppableId: t });
         return n && !n.isDropDisabled;
       });
@@ -1510,10 +1510,10 @@ function tn(e) {
 }
 function nn(e, t) {
   return t
-    ? z(
-        { attribute: I.draggable.contextId, value: e },
-        { attribute: L.draggable.droppableId, value: t.droppableId },
-        { attribute: L.draggable.index, value: String(t.index) },
+    ? B(
+        { attribute: L.draggable.contextId, value: e },
+        { attribute: R.draggable.droppableId, value: t.droppableId },
+        { attribute: R.draggable.index, value: String(t.index) },
       )
     : null;
 }
@@ -1534,7 +1534,7 @@ function q(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? rn(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -1554,12 +1554,12 @@ var J = {
       var n = t.dragController;
       e.preventDefault();
       var r = n.getDragState();
-      A(r.isDragging);
+      j(r.isDragging);
       var i = r.sourceLocation,
         a = r.targetLocation;
       if (a && a.index !== 0) {
         var o = q(q({}, a), {}, { index: a.index - 1 });
-        (H(i, Xt({ start: i, target: o })) && (o.index = a.index - 2),
+        (Oe(i, Xt({ start: i, target: o })) && (o.index = a.index - 2),
           n.updateDrag({ targetLocation: o }));
       }
     },
@@ -1568,14 +1568,14 @@ var J = {
         r = t.contextId;
       e.preventDefault();
       var i = n.getDragState();
-      A(i.isDragging);
+      j(i.isDragging);
       var a = i.sourceLocation,
         o = i.targetLocation;
       if (o) {
         var s = nn(r, o);
-        if (!(!H(a, o) && !s)) {
+        if (!(!Oe(a, o) && !s)) {
           var c = q(q({}, o), {}, { index: o.index + 1 });
-          (H(a, Xt({ start: a, target: c })) && (c.index = o.index + 2),
+          (Oe(a, Xt({ start: a, target: c })) && (c.index = o.index + 2),
             n.updateDrag({ targetLocation: c }));
         }
       }
@@ -1588,7 +1588,7 @@ var J = {
         i = t.contextId;
       e.preventDefault();
       var a = n.getDragState();
-      A(a.isDragging);
+      j(a.isDragging);
       var o = a.targetLocation,
         s = a.type;
       if (o) {
@@ -1601,7 +1601,7 @@ var J = {
         });
         if (c) {
           an(c);
-          var l = { droppableId: R(c, I.droppable.id), index: 0 };
+          var l = { droppableId: z(c, L.droppable.id), index: 0 };
           n.updateDrag({ targetLocation: l });
         }
       }
@@ -1612,7 +1612,7 @@ var J = {
         i = t.contextId;
       e.preventDefault();
       var a = n.getDragState();
-      A(a.isDragging);
+      j(a.isDragging);
       var o = a.targetLocation,
         s = a.type;
       if (o) {
@@ -1625,7 +1625,7 @@ var J = {
         });
         if (c) {
           an(c);
-          var l = { droppableId: R(c, I.droppable.id), index: 0 };
+          var l = { droppableId: z(c, L.droppable.id), index: 0 };
           n.updateDrag({ targetLocation: l });
         }
       }
@@ -1664,27 +1664,27 @@ function ln(e) {
     r = e.contextId,
     i = e.setKeyboardCleanupFn;
   return {
-    startKeyboardDrag: (0, j.useCallback)(
+    startKeyboardDrag: (0, M.useCallback)(
       function (e) {
         var a = e.event,
           o = e.draggableId,
           s = e.type,
-          c = e.getSourceLocation,
-          l = e.sourceElement;
+          l = e.getSourceLocation,
+          u = e.sourceElement;
         t.startDrag({
           draggableId: o,
           type: s,
-          getSourceLocation: c,
-          sourceElement: l,
+          getSourceLocation: l,
+          sourceElement: u,
           mode: `SNAP`,
         });
-        var u = c(),
-          d = R(B({ attribute: I.droppable.id, value: u.droppableId }), L.droppable.direction);
-        A(d === `vertical` || d === `horizontal`);
-        function f() {
+        var d = l(),
+          f = z(V({ attribute: L.droppable.id, value: d.droppableId }), R.droppable.direction);
+        j(f === `vertical` || f === `horizontal`);
+        function p() {
           t.stopDrag({ reason: `CANCEL` });
         }
-        var p = [
+        var m = [
           `mousedown`,
           `mouseup`,
           `click`,
@@ -1693,7 +1693,7 @@ function ln(e) {
           `wheel`,
           `visibilitychange`,
         ].map(function (e) {
-          return { type: e, listener: f };
+          return { type: e, listener: p };
         });
         i(
           (0, G.bindAll)(
@@ -1712,12 +1712,12 @@ function ln(e) {
                       (e.preventDefault(), t.stopDrag({ reason: `CANCEL` }));
                       return;
                     }
-                    (i = (o = cn[d])[e.key]) == null ||
+                    (i = (o = cn[f])[e.key]) == null ||
                       i.call(o, e, { dragController: t, droppableRegistry: n, contextId: r });
                   }
                 },
               },
-            ].concat(w(p)),
+            ].concat(c(m)),
           ),
         );
       },
@@ -2087,7 +2087,7 @@ function Qn() {
           },
         },
         { type: `dragend`, listener: $n },
-      ].concat(w(rt({ onDragEnd: $n }))),
+      ].concat(c(rt({ onDragEnd: $n }))),
       { capture: !1 },
     )));
 }
@@ -2106,21 +2106,21 @@ var tr = { start: Qn, stop: er };
 function nr(e) {
   var t = e.dragController,
     n = e.contextId,
-    r = (0, j.useCallback)(
+    r = (0, M.useCallback)(
       function (e) {
-        t.updateDrag({ targetLocation: Oe(e.current) });
+        t.updateDrag({ targetLocation: De(e.current) });
       },
       [t],
     );
-  (0, j.useEffect)(
+  (0, M.useEffect)(
     function () {
       return Ht({
         canMonitor: function (e) {
           var t = e.initial,
             r = e.source;
-          if (!V(r.data) || r.data.contextId !== n) return !1;
+          if (!H(r.data) || r.data.contextId !== n) return !1;
           var i = t.dropTargets.find(function (e) {
-            return xe(e.data);
+            return be(e.data);
           });
           return i ? i.data.contextId === n : !0;
         },
@@ -2129,7 +2129,7 @@ function nr(e) {
             r = e.source;
           (Yn.start({ input: n.current.input }), tr.start());
           var i = r.data;
-          A(V(i));
+          j(H(i));
           var a = i.draggableId,
             o = i.droppableId,
             s = i.getIndex,
@@ -2160,21 +2160,21 @@ function nr(e) {
     [t, n, r],
   );
 }
-var rr = typeof window < `u` ? j.useLayoutEffect : j.useEffect,
+var rr = typeof window < `u` ? M.useLayoutEffect : M.useEffect,
   ir = `data-rbd-style-context-id`;
 function ar(e) {
   var t = e.selector,
     n = e.styles;
   return `${t} { ${Object.entries(n)
     .map(function (e) {
-      var t = C(e, 2);
+      var t = h(e, 2);
       return `${t[0]}: ${t[1]};`;
     })
     .join(` `)} }`;
 }
 function or(e) {
   return ar({
-    selector: `[${I.dragHandle.contextId}="${e}"]`,
+    selector: `[${L.dragHandle.contextId}="${e}"]`,
     styles: { cursor: `grab`, "-webkit-touch-callout": `none` },
   });
 }
@@ -2320,17 +2320,17 @@ function gr() {
   };
 }
 function _r() {
-  return C((0, j.useState)(gr), 1)[0];
+  return h((0, M.useState)(gr), 1)[0];
 }
-var vr = (0, j.createContext)(null);
+var vr = (0, M.createContext)(null);
 function yr(e) {
   var t = e.children,
     n = e.lifecycle,
-    r = (0, j.useCallback)(
+    r = (0, M.useCallback)(
       function (e) {
         for (var t = [], r = 0, i = Object.entries(e); r < i.length; r++) {
           var a = i[r],
-            o = C(a, 2),
+            o = h(a, 2),
             s = o[0],
             c = o[1];
           t.push(n.addResponder(s, c));
@@ -2339,11 +2339,11 @@ function yr(e) {
       },
       [n],
     );
-  return j.createElement(vr.Provider, { value: r }, t);
+  return M.createElement(vr.Provider, { value: r }, t);
 }
 function br() {
-  var e = (0, j.useContext)(vr);
-  return (A(e !== null, `useLifecycle() should only be called inside of a <DragDropContext />`), e);
+  var e = (0, M.useContext)(vr);
+  return (j(e !== null, `useLifecycle() should only be called inside of a <DragDropContext />`), e);
 }
 var xr = null,
   Z = `1px`,
@@ -2445,14 +2445,14 @@ function Mr() {
   return { schedule: t, flush: n };
 }
 function Nr() {
-  return C((0, j.useState)(Mr), 1)[0];
+  return h((0, M.useState)(Mr), 1)[0];
 }
 var Pr = 0;
 function Fr() {
   return `${Pr++}`;
 }
 function Ir(e) {
-  var t = ue(e);
+  var t = le(e);
   return { top: t.offsetTop, left: t.offsetLeft };
 }
 function Lr(e) {
@@ -2465,105 +2465,105 @@ function Lr(e) {
     s = e.onDragStart,
     c = e.onDragUpdate,
     l = e.onDragEnd,
-    u = C((0, j.useState)(Fr), 1)[0];
+    u = h((0, M.useState)(Fr), 1)[0];
   Qt({ contextId: u, text: r });
   var d = _r(),
     f = Nr(),
     p = f.schedule,
     m = f.flush,
-    h = (0, j.useRef)({ isDragging: !1 }),
-    g = (0, j.useCallback)(function () {
-      return h.current;
+    g = (0, M.useRef)({ isDragging: !1 }),
+    _ = (0, M.useCallback)(function () {
+      return g.current;
     }, []),
-    _ = Ae(),
-    v = (0, j.useCallback)(
+    v = Ae(),
+    y = (0, M.useCallback)(
       function (e) {
         for (
-          var t = e.droppableId, n = _.getEntry({ droppableId: t });
+          var t = e.droppableId, n = v.getEntry({ droppableId: t });
           n !== null && n.isDropDisabled;
         ) {
           var r = n.parentDroppableId;
-          n = r ? _.getEntry({ droppableId: r }) : null;
+          n = r ? v.getEntry({ droppableId: r }) : null;
         }
         return n === null ? null : { droppableId: n.droppableId, index: 0 };
       },
-      [_],
+      [v],
     );
-  (0, j.useEffect)(
+  (0, M.useEffect)(
     function () {
       return function () {
-        g().isDragging && de();
+        _().isDragging && ue();
       };
     },
-    [g],
+    [_],
   );
-  var y = (0, j.useCallback)(
+  var b = (0, M.useCallback)(
       function (e) {
         var t = e.targetLocation,
           n = e.isImmediate,
           r = n === void 0 ? !1 : n;
-        if (!h.current.isDragging) return;
-        var i = h.current,
+        if (!g.current.isDragging) return;
+        var i = g.current,
           a = i.prevDestination,
           o = i.draggableId,
           s = i.type,
           l = i.sourceLocation,
           u = Xt({ start: l, target: t });
-        if (H(a, u)) return;
-        Object.assign(h.current, { prevDestination: u, sourceLocation: l, targetLocation: t });
+        if (Oe(a, u)) return;
+        Object.assign(g.current, { prevDestination: u, sourceLocation: l, targetLocation: t });
         var f = {
-            mode: h.current.mode,
+            mode: g.current.mode,
             draggableId: o,
             type: s,
             source: l,
             destination: u,
             combine: null,
           },
-          m = t ? _.getEntry({ droppableId: t.droppableId }) : null;
+          m = t ? v.getEntry({ droppableId: t.droppableId }) : null;
         (d.dispatch(`onPrePendingDragUpdate`, { update: f, targetLocation: t }),
           d.dispatch(`onPendingDragUpdate`, { update: f, targetLocation: t, droppable: m }));
-        function g() {
+        function h() {
           var e = kr(`onDragUpdate`, f),
             t = e.provided,
             n = e.getMessage;
           (c?.(f, t), Tr(n()));
         }
-        r ? g() : p(g);
+        r ? h() : p(h);
       },
-      [_, d, c, p],
+      [v, d, c, p],
     ),
-    ee = (0, j.useCallback)(
+    x = (0, M.useCallback)(
       function (e) {
         var t = e.draggableId,
           n = e.type,
           r = e.getSourceLocation,
           i = e.sourceElement,
           c = e.mode;
-        if (!h.current.isDragging) {
+        if (!g.current.isDragging) {
           a?.({ draggableId: t, mode: c });
           var l = { mode: c, draggableId: t, type: n, source: r() },
             u = document.activeElement,
             f =
-              u instanceof HTMLElement && u.hasAttribute(I.dragHandle.draggableId)
-                ? R(u, I.dragHandle.draggableId)
+              u instanceof HTMLElement && u.hasAttribute(L.dragHandle.draggableId)
+                ? z(u, L.dragHandle.draggableId)
                 : null,
             m = l.source.droppableId,
-            g = _.getEntry({ droppableId: m });
-          (A(g, `should have entry for droppable '${m}'`),
-            (h.current = {
+            h = v.getEntry({ droppableId: m });
+          (j(h, `should have entry for droppable '${m}'`),
+            (g.current = {
               isDragging: !0,
               mode: c,
-              draggableDimensions: P(i),
+              draggableDimensions: F(i),
               restoreFocusTo: f,
               draggableId: t,
               type: n,
               prevDestination: l.source,
               sourceLocation: l.source,
               targetLocation: l.source,
-              draggableInitialOffsetInSourceDroppable: Ir({ element: i, mode: g.mode }),
+              draggableInitialOffsetInSourceDroppable: Ir({ element: i, mode: h.mode }),
             }),
             o?.(l),
-            d.dispatch(`onPendingDragStart`, { start: l, droppable: g }),
+            d.dispatch(`onPendingDragStart`, { start: l, droppable: h }),
             p(function () {
               var e = { mode: c, draggableId: t, type: n, source: r() },
                 i = kr(`onDragStart`, e),
@@ -2573,30 +2573,30 @@ function Lr(e) {
                 Tr(o()),
                 p(function () {
                   var t = e.source.droppableId,
-                    n = _.getEntry({ droppableId: t });
+                    n = v.getEntry({ droppableId: t });
                   n != null &&
                     n.isDropDisabled &&
-                    y({ targetLocation: v({ droppableId: t }), isImmediate: !0 });
+                    b({ targetLocation: y({ droppableId: t }), isImmediate: !0 });
                 }));
             }));
         }
       },
-      [_, v, d, a, o, s, p, y],
+      [v, y, d, a, o, s, p, b],
     ),
-    b = ie(),
-    x = (0, j.useCallback)(
+    S = re(),
+    C = (0, M.useCallback)(
       function (e) {
         var t = e.reason;
-        if (h.current.isDragging) {
-          (b.runCleanupFn(), t === `CANCEL` && y({ targetLocation: null }));
-          var n = h.current,
+        if (g.current.isDragging) {
+          (S.runCleanupFn(), t === `CANCEL` && b({ targetLocation: null }));
+          var n = g.current,
             r = n.mode,
             i = n.restoreFocusTo,
             a = n.sourceLocation,
             o = n.targetLocation,
             s = n.type,
             c = n.draggableId;
-          ((h.current = { isDragging: !1 }), m());
+          ((g.current = { isDragging: !1 }), m());
           var f = Xt({ start: a, target: o }),
             p = {
               reason: f === null ? `CANCEL` : `DROP`,
@@ -2608,55 +2608,55 @@ function Lr(e) {
               combine: null,
             };
           d.dispatch(`onBeforeDragEnd`, { draggableId: c });
-          var g = kr(`onDragEnd`, p),
-            _ = g.provided,
-            v = g.getMessage;
+          var h = kr(`onDragEnd`, p),
+            _ = h.provided,
+            v = h.getMessage;
           (l(p, _),
             Tr(v()),
             i &&
               requestAnimationFrame(function () {
-                var e = ce({ contextId: u, draggableId: c });
+                var e = se({ contextId: u, draggableId: c });
                 e && e.focus();
               }));
         }
       },
-      [u, m, b, d, l, y],
+      [u, m, S, d, l, b],
     ),
-    S = (0, j.useMemo)(
+    w = (0, M.useMemo)(
       function () {
-        return { getDragState: g, startDrag: ee, updateDrag: y, stopDrag: x };
+        return { getDragState: _, startDrag: x, updateDrag: b, stopDrag: C };
       },
-      [g, ee, x, y],
+      [_, x, C, b],
     );
-  nr({ dragController: S, contextId: u });
-  var w = ln({
-      dragController: S,
-      droppableRegistry: _,
+  nr({ dragController: w, contextId: u });
+  var T = ln({
+      dragController: w,
+      droppableRegistry: v,
       contextId: u,
-      setKeyboardCleanupFn: b.setCleanupFn,
+      setKeyboardCleanupFn: S.setCleanupFn,
     }).startKeyboardDrag,
-    T = (0, j.useCallback)(
+    E = (0, M.useCallback)(
       function (e) {
-        var t = h.current;
+        var t = g.current;
         t.isDragging &&
           e.isDropDisabled &&
           e.droppableId === t.targetLocation?.droppableId &&
-          y({ targetLocation: v({ droppableId: e.droppableId }) });
+          b({ targetLocation: y({ droppableId: e.droppableId }) });
       },
-      [v, y],
+      [y, b],
     );
   return (
-    _.setUpdateListener(T),
+    v.setUpdateListener(E),
     lr({ contextId: u, nonce: i }),
-    j.createElement(
+    M.createElement(
       qt,
-      { contextId: u, dragController: S },
-      j.createElement(
+      { contextId: u, dragController: w },
+      M.createElement(
         yr,
         { lifecycle: d },
-        j.createElement(
-          te,
-          { contextId: u, getDragState: g, startKeyboardDrag: w, droppableRegistry: _ },
+        M.createElement(
+          ee,
+          { contextId: u, getDragState: _, startKeyboardDrag: T, droppableRegistry: v },
           t,
         ),
       ),
@@ -2675,14 +2675,14 @@ function zr(e) {
   var t = e.nativeSetDragImage;
   t && Rr && t(Rr, 0, 0);
 }
-var Br = (0, j.createContext)(null),
+var Br = (0, M.createContext)(null),
   Vr = Br.Provider;
 function Hr() {
-  var e = (0, j.useContext)(Br);
-  return (A(e, `Missing <Droppable /> parent`), e);
+  var e = (0, M.useContext)(Br);
+  return (j(e, `Missing <Droppable /> parent`), e);
 }
 function Ur() {
-  var e = (0, j.useContext)(Br);
+  var e = (0, M.useContext)(Br);
   return e ? e.droppableId : null;
 }
 function Wr(e) {
@@ -2692,11 +2692,11 @@ function Wr(e) {
     i = e.contextId,
     a = e.isDropDisabled,
     o = e.type;
-  (0, j.useEffect)(
+  (0, M.useEffect)(
     function () {
       var e = t.current;
       return (
-        A(e instanceof HTMLElement),
+        j(e instanceof HTMLElement),
         Vt({
           element: e,
           getIsSticky: function () {
@@ -2704,11 +2704,11 @@ function Wr(e) {
           },
           canDrop: function (e) {
             var t = e.source;
-            return !V(t.data) || a ? !1 : t.data.type === o && t.data.contextId === i;
+            return !H(t.data) || a ? !1 : t.data.type === o && t.data.contextId === i;
           },
           getData: function (t) {
             var i = t.input;
-            return ge(n, {
+            return he(n, {
               element: e,
               input: i,
               allowedEdges: r === `vertical` ? [`top`, `bottom`] : [`left`, `right`],
@@ -2721,24 +2721,24 @@ function Wr(e) {
   );
 }
 function Gr() {
-  return { startKeyboardDrag: N().startKeyboardDrag };
+  return { startKeyboardDrag: P().startKeyboardDrag };
 }
 function Kr() {
-  return z({ attribute: L.dropIndicator });
+  return B({ attribute: R.dropIndicator });
 }
 function qr(e) {
-  return z({ attribute: I.placeholder.contextId, value: e });
+  return B({ attribute: L.placeholder.contextId, value: e });
 }
 function Jr(e) {
-  var t = (0, j.useRef)(e);
+  var t = (0, M.useRef)(e);
   return (
-    (0, j.useEffect)(
+    (0, M.useEffect)(
       function () {
         t.current = e;
       },
       [e],
     ),
-    (0, j.useCallback)(function () {
+    (0, M.useCallback)(function () {
       return t.current;
     }, [])
   );
@@ -2761,7 +2761,7 @@ function Zr(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? Xr(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -2839,7 +2839,7 @@ function oi(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? ai(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -2849,26 +2849,26 @@ function oi(e) {
   }
   return e;
 }
-var si = (0, j.memo)(
-    (0, j.forwardRef)(function (e, t) {
+var si = (0, M.memo)(
+    (0, M.forwardRef)(function (e, t) {
       var n = e.style,
-        r = F(),
-        a = N().contextId,
-        o = l({}, I.placeholder.contextId, a),
-        s = (0, j.useMemo)(
+        a = I(),
+        o = P().contextId,
+        s = i({}, L.placeholder.contextId, o),
+        c = (0, M.useMemo)(
           function () {
-            if (r) {
-              var e = r.margin,
-                t = r.rect;
+            if (a) {
+              var e = a.margin,
+                t = a.rect;
               return oi(
                 { boxSizing: `border-box`, width: t.width, height: t.height, margin: e },
                 n,
               );
             }
           },
-          [r, n],
+          [a, n],
         );
-      return j.createElement(`div`, i({ ref: t, style: s }, o));
+      return M.createElement(`div`, r({ ref: t, style: c }, s));
     }),
   ),
   Q = {
@@ -2924,7 +2924,7 @@ function $(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? ci(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -2943,29 +2943,29 @@ var di = {
     var t = Q[e.direction],
       n = t.mainAxis,
       r = t.crossAxis;
-    return l(l({}, n.name, 0), r.name, 24);
+    return i(i({}, n.name, 0), r.name, 24);
   },
   home: function (e) {
     var t = e.droppable.direction,
       n = e.placeholderRect,
       r = e.draggableDimensions;
-    A(n, `the placeholder should exist if in home position`);
-    var i = { x: n.x - r.rect.x, y: n.y - r.rect.y },
-      a = Q[t],
-      o = a.mainAxis,
-      s = a.crossAxis;
-    return l(l({}, o.name, i[o.name]), s.name, i[s.name] + 24);
+    j(n, `the placeholder should exist if in home position`);
+    var a = { x: n.x - r.rect.x, y: n.y - r.rect.y },
+      o = Q[t],
+      s = o.mainAxis,
+      c = o.crossAxis;
+    return i(i({}, s.name, a[s.name]), c.name, a[c.name] + 24);
   },
   away: function (e) {
     var t = e.droppable.direction,
       n = e.dropIndicatorRect,
       r = e.draggableDimensions;
-    A(n, `the drop indicator should exist if in away position`);
-    var i = { x: n.x - r.rect.x, y: n.y - r.rect.y },
-      a = Q[t],
-      o = a.mainAxis,
-      s = a.crossAxis;
-    return l(l({}, o.name, i[o.name] - 0.5 * r.rect[o.style.length]), s.name, i[s.name] + 24);
+    j(n, `the drop indicator should exist if in away position`);
+    var a = { x: n.x - r.rect.x, y: n.y - r.rect.y },
+      o = Q[t],
+      s = o.mainAxis,
+      c = o.crossAxis;
+    return i(i({}, s.name, a[s.name] - 0.5 * r.rect[s.style.length]), c.name, a[c.name] + 24);
   },
 };
 function fi(e, t) {
@@ -2976,14 +2976,14 @@ function fi(e, t) {
     o = t.dropIndicatorRect;
   if (!r || !i) return e;
   var s = { droppable: r, draggableDimensions: i, placeholderRect: a, dropIndicatorRect: o },
-    c = H(n.source, n.destination ?? null) ? di.home(s) : di.away(s);
+    c = Oe(n.source, n.destination ?? null) ? di.home(s) : di.away(s);
   return c ? $($({}, e), {}, { previewOffset: c }) : e;
 }
 function pi(e, t) {
   var n = t.start,
     r = t.previewOffset;
   return (
-    A(e.type === `idle`, `The draggable is idle.`),
+    j(e.type === `idle`, `The draggable is idle.`),
     {
       type: `dragging`,
       draggingOver: n.source.droppableId,
@@ -3012,13 +3012,13 @@ function mi(e, t) {
     );
   }
   if (t.type === `UPDATE_DRAG`) {
-    A(e.type === `dragging`, `The draggable is dragging.`);
+    j(e.type === `dragging`, `The draggable is dragging.`);
     var a = t.payload.update,
       o = a.destination ? a.destination.droppableId : null;
     return o === e.draggingOver ? e : $($({}, e), {}, { draggingOver: o });
   }
   if (t.type === `UPDATE_POINTER_PREVIEW`) {
-    A(e.type === `dragging`, `The draggable is dragging.`);
+    j(e.type === `dragging`, `The draggable is dragging.`);
     var s = t.payload.pointerLocation;
     return $(
       $({}, e),
@@ -3032,14 +3032,14 @@ function mi(e, t) {
     );
   }
   return t.type === `UPDATE_KEYBOARD_PREVIEW`
-    ? (A(e.type === `dragging`, `The draggable is dragging.`),
+    ? (j(e.type === `dragging`, `The draggable is dragging.`),
       e.type === `dragging` ? fi(e, t.payload) : e)
     : t.type === `DROP`
-      ? (A(e.type === `dragging`, `The draggable is dragging.`), li)
+      ? (j(e.type === `dragging`, `The draggable is dragging.`), li)
       : t.type === `START_HIDING`
-        ? (A(e.type === `idle` || e.type === `hiding`), ui(t.payload.mode))
+        ? (j(e.type === `idle` || e.type === `hiding`), ui(t.payload.mode))
         : t.type === `STOP_HIDING`
-          ? (A(e.type === `hiding`), li)
+          ? (j(e.type === `hiding`), li)
           : e;
 }
 function hi(e) {
@@ -3047,7 +3047,7 @@ function hi(e) {
     n = e.isClone,
     r = e.isDragging,
     i = e.mode;
-  return (0, j.useMemo)(
+  return (0, M.useMemo)(
     function () {
       return {
         isClone: n,
@@ -3068,65 +3068,65 @@ function _i(e) {
   var t = e.children,
     n = e.draggableId,
     r = e.index,
-    i = e.isDragDisabled,
-    a = i === void 0 ? !1 : i,
-    o = e.disableInteractiveElementBlocking,
-    s = o === void 0 ? !1 : o,
-    c = Hr(),
-    u = c.direction,
-    d = c.droppableId,
-    f = c.type,
-    p = c.mode,
-    m = N(),
-    h = m.contextId,
-    g = m.getDragState,
-    _ = (0, j.useRef)(null),
-    v = (0, j.useRef)(null),
-    y = ie(),
-    b = y.setCleanupFn,
-    x = y.runCleanupFn,
-    S = (0, j.useCallback)(
+    a = e.isDragDisabled,
+    o = a === void 0 ? !1 : a,
+    s = e.disableInteractiveElementBlocking,
+    c = s === void 0 ? !1 : s,
+    l = Hr(),
+    u = l.direction,
+    f = l.droppableId,
+    p = l.type,
+    m = l.mode,
+    g = P(),
+    _ = g.contextId,
+    v = g.getDragState,
+    y = (0, M.useRef)(null),
+    b = (0, M.useRef)(null),
+    x = re(),
+    S = x.setCleanupFn,
+    C = x.runCleanupFn,
+    w = (0, M.useCallback)(
       function (e) {
-        (_.current && x(),
-          e && b(ae(e, l(l({}, L.draggable.droppableId, d), L.draggable.index, String(r)))),
-          (_.current = e),
-          (v.current = ce({ contextId: h, draggableId: n })));
+        (y.current && C(),
+          e && S(ie(e, i(i({}, R.draggable.droppableId, f), R.draggable.index, String(r)))),
+          (y.current = e),
+          (b.current = se({ contextId: _, draggableId: n })));
       },
-      [h, n, d, r, x, b],
+      [_, n, f, r, C, S],
     ),
-    w = Jr(r),
-    T = C((0, j.useReducer)(mi, li), 2),
-    E = T[0],
-    D = T[1],
-    O = ye({ draggableId: n, droppableId: d, getIndex: w, contextId: h, type: f }),
-    k = E.type === `dragging`,
-    M = E.type === `hiding`,
-    te = Hr(),
-    P = te.shouldRenderCloneWhileDragging,
-    ne = te.isDropDisabled,
-    re = br(),
-    R = Gr().startKeyboardDrag;
-  ((0, j.useEffect)(
+    T = Jr(r),
+    E = h((0, M.useReducer)(mi, li), 2),
+    D = E[0],
+    O = E[1],
+    k = ve({ draggableId: n, droppableId: f, getIndex: T, contextId: _, type: p }),
+    A = D.type === `dragging`,
+    N = D.type === `hiding`,
+    ee = Hr(),
+    F = ee.shouldRenderCloneWhileDragging,
+    te = ee.isDropDisabled,
+    ne = br(),
+    z = Gr().startKeyboardDrag;
+  ((0, M.useEffect)(
     function () {
-      if (E.type === `idle` && !a) {
-        var e = _.current;
-        ee(e instanceof HTMLElement);
-        var t = v.current;
+      if (D.type === `idle` && !o) {
+        var e = y.current;
+        d(e instanceof HTMLElement);
+        var t = b.current;
         return (
-          ee(t instanceof HTMLElement),
+          d(t instanceof HTMLElement),
           (0, G.bindAll)(t, [
             {
               type: `keydown`,
               listener: function (t) {
                 if (t.key === ` `) {
-                  if (t.defaultPrevented || (!s && ii(e, t))) return;
+                  if (t.defaultPrevented || (!c && ii(e, t))) return;
                   (t.preventDefault(),
-                    R({
+                    z({
                       event: t,
                       draggableId: n,
-                      type: f,
+                      type: p,
                       getSourceLocation: function () {
-                        return { droppableId: d, index: w() };
+                        return { droppableId: f, index: T() };
                       },
                       sourceElement: e,
                     }));
@@ -3137,86 +3137,86 @@ function _i(e) {
         );
       }
     },
-    [s, n, d, w, a, R, E.type, f],
+    [c, n, f, T, o, z, D.type, p],
   ),
-    (0, j.useEffect)(
+    (0, M.useEffect)(
       function () {
-        if (!M && !a) {
-          var e = _.current;
-          A(e instanceof HTMLElement);
-          var t = v.current;
+        if (!N && !o) {
+          var e = y.current;
+          j(e instanceof HTMLElement);
+          var t = b.current;
           return (
-            A(t instanceof HTMLElement),
+            j(t instanceof HTMLElement),
             Ut({
               canDrag: function (e) {
                 var n = e.input;
                 return n.ctrlKey || n.metaKey || n.shiftKey || n.altKey
                   ? !1
-                  : s
-                    ? !k
+                  : c
+                    ? !A
                     : !ri(t, Ne({ x: n.clientX, y: n.clientY }));
               },
               element: e,
               dragHandle: t,
               getInitialData: function () {
-                return O;
+                return k;
               },
               onGenerateDragPreview: zr,
             })
           );
         }
       },
-      [O, s, a, k, M],
+      [k, c, o, A, N],
     ));
-  var oe = E.type !== `idle` && p === `standard`,
-    z = (0, j.useRef)(null);
-  Wr({ elementRef: oe ? z : _, data: O, direction: u, contextId: h, isDropDisabled: ne, type: f });
-  var se = (0, j.useRef)(!0);
-  ((0, j.useEffect)(function () {
+  var ae = D.type !== `idle` && m === `standard`,
+    B = (0, M.useRef)(null);
+  Wr({ elementRef: ae ? B : y, data: k, direction: u, contextId: _, isDropDisabled: te, type: p });
+  var oe = (0, M.useRef)(!0);
+  ((0, M.useEffect)(function () {
     return (
-      (se.current = !0),
+      (oe.current = !0),
       function () {
-        se.current = !1;
+        oe.current = !1;
       }
     );
   }, []),
-    (0, j.useEffect)(
+    (0, M.useEffect)(
       function () {
-        var e = g();
-        P &&
+        var e = v();
+        F &&
           e.isDragging &&
-          e.draggableId === O.draggableId &&
-          D({ type: `START_HIDING`, payload: { mode: e.mode } });
+          e.draggableId === k.draggableId &&
+          O({ type: `START_HIDING`, payload: { mode: e.mode } });
       },
-      [O.draggableId, g, P],
+      [k.draggableId, v, F],
     ));
-  var B = F();
-  (0, j.useEffect)(
+  var V = I();
+  (0, M.useEffect)(
     function () {
-      return P
-        ? re({
+      return F
+        ? ne({
             onPendingDragStart: function (e) {
               var t = e.start;
-              O.draggableId === t.draggableId &&
-                D({ type: `START_HIDING`, payload: { mode: t.mode } });
+              k.draggableId === t.draggableId &&
+                O({ type: `START_HIDING`, payload: { mode: t.mode } });
             },
             onBeforeDragEnd: function (e) {
-              e.draggableId === O.draggableId && D({ type: `STOP_HIDING` });
+              e.draggableId === k.draggableId && O({ type: `STOP_HIDING` });
             },
           })
         : U(
-            re({
+            ne({
               onPendingDragStart: function (e) {
                 var t = e.start,
                   n = e.droppable;
-                if (O.draggableId === t.draggableId) {
+                if (k.draggableId === t.draggableId) {
                   if (t.mode === `FLUID`)
-                    return D({ type: `START_POINTER_DRAG`, payload: { start: t } });
+                    return O({ type: `START_POINTER_DRAG`, payload: { start: t } });
                   if (t.mode === `SNAP`) {
-                    var r = g();
+                    var r = v();
                     return (
-                      A(r.isDragging && r.draggableDimensions),
-                      D({
+                      j(r.isDragging && r.draggableDimensions),
+                      O({
                         type: `START_KEYBOARD_DRAG`,
                         payload: {
                           start: t,
@@ -3231,19 +3231,19 @@ function _i(e) {
               onPendingDragUpdate: function (e) {
                 var t = e.update,
                   n = e.droppable;
-                O.draggableId === t.draggableId &&
-                  (D({ type: `UPDATE_DRAG`, payload: { update: t } }),
+                k.draggableId === t.draggableId &&
+                  (O({ type: `UPDATE_DRAG`, payload: { update: t } }),
                   t.mode === `SNAP` &&
                     queueMicrotask(function () {
-                      if (g().isDragging) {
-                        var e = qr(h),
+                      if (v().isDragging) {
+                        var e = qr(_),
                           r = e ? e.getBoundingClientRect() : null,
                           i = Kr();
-                        D({
+                        O({
                           type: `UPDATE_KEYBOARD_PREVIEW`,
                           payload: {
                             update: t,
-                            draggableDimensions: B,
+                            draggableDimensions: V,
                             droppable: n,
                             placeholderRect: r,
                             dropIndicatorRect: i ? i.getBoundingClientRect() : null,
@@ -3253,40 +3253,40 @@ function _i(e) {
                     }));
               },
               onBeforeDragEnd: function (e) {
-                e.draggableId === O.draggableId &&
-                  (A(se.current, `isMounted onBeforeDragEnd`), D({ type: `DROP` }));
+                e.draggableId === k.draggableId &&
+                  (j(oe.current, `isMounted onBeforeDragEnd`), O({ type: `DROP` }));
               },
             }),
             Ht({
               canMonitor: function (e) {
                 var t = e.source;
-                return V(t.data)
-                  ? t.data.contextId === O.contextId && t.data.draggableId === O.draggableId
+                return H(t.data)
+                  ? t.data.contextId === k.contextId && t.data.draggableId === k.draggableId
                   : !1;
               },
               onDrag: function (e) {
                 var t = e.location;
-                D({ type: `UPDATE_POINTER_PREVIEW`, payload: { pointerLocation: t } });
+                O({ type: `UPDATE_POINTER_PREVIEW`, payload: { pointerLocation: t } });
               },
             }),
           );
     },
-    [O.draggableId, O.contextId, re, P, u, h, B, g],
+    [k.draggableId, k.contextId, ne, F, u, _, V, v],
   );
-  var le = (0, j.useMemo)(
+  var ce = (0, M.useMemo)(
       function () {
         return {
-          draggableProps: l(
-            l(l({}, I.draggable.contextId, h), I.draggable.id, n),
+          draggableProps: i(
+            i(i({}, L.draggable.contextId, _), L.draggable.id, n),
             `style`,
-            ti({ draggableDimensions: B, draggableState: E }),
+            ti({ draggableDimensions: V, draggableState: D }),
           ),
-          dragHandleProps: l(
-            l(
-              l(
-                l(
-                  l({ role: `button`, "aria-describedby": Zt(h) }, I.dragHandle.contextId, h),
-                  I.dragHandle.draggableId,
+          dragHandleProps: i(
+            i(
+              i(
+                i(
+                  i({ role: `button`, "aria-describedby": Zt(_) }, L.dragHandle.contextId, _),
+                  L.dragHandle.draggableId,
                   n,
                 ),
                 `tabIndex`,
@@ -3298,23 +3298,23 @@ function _i(e) {
             `onDragStart`,
             gi,
           ),
-          innerRef: S,
+          innerRef: w,
         };
       },
-      [h, n, B, E, S],
+      [_, n, V, D, w],
     ),
-    ue = hi({ draggingOver: E.draggingOver, isClone: !1, isDragging: k, mode: k ? E.mode : null }),
-    de = (0, j.useMemo)(
+    le = hi({ draggingOver: D.draggingOver, isClone: !1, isDragging: A, mode: A ? D.mode : null }),
+    ue = (0, M.useMemo)(
       function () {
-        return { draggableId: n, type: f, source: { droppableId: d, index: r } };
+        return { draggableId: n, type: p, source: { droppableId: f, index: r } };
       },
-      [n, d, r, f],
+      [n, f, r, p],
     );
-  return j.createElement(
-    j.Fragment,
+  return M.createElement(
+    M.Fragment,
     null,
-    M ? null : t(le, ue, de),
-    oe && j.createElement(si, { ref: z }),
+    N ? null : t(ce, le, ue),
+    ae && M.createElement(si, { ref: B }),
   );
 }
 function vi() {
@@ -3324,34 +3324,34 @@ function yi(e) {
   var t = e.children,
     n = e.droppableId,
     r = e.type,
-    i = e.draggableId,
-    a = e.index,
-    o = e.draggingOver,
-    s = e.style,
-    c = e.getContainerForClone,
-    u = c === void 0 ? vi : c,
+    a = e.draggableId,
+    o = e.index,
+    s = e.draggingOver,
+    c = e.style,
+    l = e.getContainerForClone,
+    u = l === void 0 ? vi : l,
     d = e.mode,
-    f = N().contextId,
-    p = (0, j.useCallback)(
+    f = P().contextId,
+    p = (0, M.useCallback)(
       function (e) {
-        e && ce({ contextId: f, draggableId: i })?.focus();
+        e && se({ contextId: f, draggableId: a })?.focus();
       },
-      [f, i],
+      [f, a],
     );
   return (0, X.createPortal)(
     t(
-      (0, j.useMemo)(
+      (0, M.useMemo)(
         function () {
           return {
             innerRef: p,
-            draggableProps: l(l(l({}, I.draggable.contextId, f), I.draggable.id, i), `style`, s),
-            dragHandleProps: l(
-              l(
-                l(
-                  l(
-                    l({ role: `button`, "aria-describedby": Zt(f) }, I.dragHandle.contextId, f),
-                    I.dragHandle.draggableId,
-                    i,
+            draggableProps: i(i(i({}, L.draggable.contextId, f), L.draggable.id, a), `style`, c),
+            dragHandleProps: i(
+              i(
+                i(
+                  i(
+                    i({ role: `button`, "aria-describedby": Zt(f) }, L.dragHandle.contextId, f),
+                    L.dragHandle.draggableId,
+                    a,
                   ),
                   `tabIndex`,
                   0,
@@ -3364,14 +3364,14 @@ function yi(e) {
             ),
           };
         },
-        [f, i, p, s],
+        [f, a, p, c],
       ),
-      hi({ draggingOver: o, isClone: !0, isDragging: !0, mode: d }),
-      (0, j.useMemo)(
+      hi({ draggingOver: s, isClone: !0, isDragging: !0, mode: d }),
+      (0, M.useMemo)(
         function () {
-          return { draggableId: i, type: r, source: { droppableId: n, index: a } };
+          return { draggableId: a, type: r, source: { droppableId: n, index: o } };
         },
-        [i, n, a, r],
+        [a, n, o, r],
       ),
     ),
     u(),
@@ -3382,16 +3382,16 @@ function bi(e) {
     n = e.droppableId,
     r = e.type,
     i = e.getContainerForClone,
-    a = N(),
+    a = P(),
     o = a.contextId,
     s = a.getDragState,
-    c = F(),
-    l = C((0, j.useReducer)(mi, li), 2),
+    c = I(),
+    l = h((0, M.useReducer)(mi, li), 2),
     u = l[0],
     d = l[1],
     f = br();
   if (
-    ((0, j.useEffect)(
+    ((0, M.useEffect)(
       function () {
         return U(
           f({
@@ -3404,7 +3404,7 @@ function bi(e) {
                 if (t.mode === `SNAP`) {
                   var i = s();
                   return (
-                    A(i.isDragging && i.draggableDimensions),
+                    j(i.isDragging && i.draggableDimensions),
                     d({
                       type: `START_KEYBOARD_DRAG`,
                       payload: {
@@ -3450,7 +3450,7 @@ function bi(e) {
           Ht({
             canMonitor: function (e) {
               var t = e.source;
-              return V(t.data) ? t.data.contextId === o && t.data.droppableId === n : !1;
+              return H(t.data) ? t.data.contextId === o && t.data.droppableId === n : !1;
             },
             onDrag: function (e) {
               var t = e.location;
@@ -3465,7 +3465,7 @@ function bi(e) {
   )
     return null;
   var p = ti({ draggableDimensions: c, draggableState: u });
-  return j.createElement(
+  return M.createElement(
     yi,
     {
       droppableId: n,
@@ -3491,12 +3491,12 @@ function Si(e) {
   return Math.max(t[r.start], n[r.start]) - Math.min(t[r.end], n[r.end]);
 }
 function Ci(e) {
-  return R(e, L.draggable.droppableId);
+  return z(e, R.draggable.droppableId);
 }
 function wi(e) {
-  var t = R(e, L.draggable.index),
+  var t = z(e, R.draggable.index),
     n = parseInt(t);
-  return (A(Number.isInteger(n), `invalid index: '${n}' is not an integer`), n);
+  return (j(Number.isInteger(n), `invalid index: '${n}' is not an integer`), n);
 }
 function Ti(e) {
   var t = e.element,
@@ -3535,7 +3535,7 @@ function Di(e) {
     o = Q[i],
     s = o.mainAxis,
     c = o.crossAxis,
-    l = ue({ element: t, mode: r }),
+    l = le({ element: t, mode: r }),
     u = Ei({ element: t, where: n ? `after` : `before`, direction: i, contextId: a }),
     d = l[s.offset] - 1;
   return {
@@ -3563,7 +3563,7 @@ function Ai(e) {
   var t = e.droppableId,
     n = e.direction;
   return {
-    mainAxis: { offset: ki({ element: B({ attribute: I.droppable.id, value: t }), direction: n }) },
+    mainAxis: { offset: ki({ element: V({ attribute: L.droppable.id, value: t }), direction: n }) },
     crossAxis: { offset: 0, length: `100%` },
   };
 }
@@ -3587,103 +3587,103 @@ function ji(e) {
   return c ? Di({ element: c, isForwardEdge: !0, mode: i, direction: r, contextId: a }) : null;
 }
 var Mi = 4,
-  Ni = g({
+  Ni = o({
     background: `var(--ds-border-brand, #1868DB)`,
     scrollMarginTop: Mi,
     scrollMarginBottom: Mi + 1,
   }),
-  Pi = g({ position: `absolute`, top: 0, left: 0 }),
-  Fi = g({ opacity: 0 }),
+  Pi = o({ position: `absolute`, top: 0, left: 0 }),
+  Fi = o({ opacity: 0 }),
   Ii = {
-    horizontal: g({ width: 2, height: `100%`, marginLeft: -2 }),
-    vertical: g({ width: `100%`, height: 2, marginTop: -2 }),
+    horizontal: o({ width: 2, height: `100%`, marginLeft: -2 }),
+    vertical: o({ width: `100%`, height: 2, marginTop: -2 }),
   };
 function Li(e) {
   var t = e.direction,
     n = e.dimensions,
     r = e.indicatorOffset;
   if (n === null) return { opacity: 0 };
-  var i = Q[t],
-    a = i.mainAxis,
-    o = i.crossAxis;
-  return l(
-    l(
-      { transform: `${a.style.transform}(${n.mainAxis.offset - r}px)` },
-      o.style.length,
+  var a = Q[t],
+    o = a.mainAxis,
+    s = a.crossAxis;
+  return i(
+    i(
+      { transform: `${o.style.transform}(${n.mainAxis.offset - r}px)` },
+      s.style.length,
       n.crossAxis.length,
     ),
-    o.style.offset,
+    s.style.offset,
     n.crossAxis.offset,
   );
 }
-var Ri = l({}, L.dropIndicator, ``),
+var Ri = i({}, R.dropIndicator, ``),
   zi = function (e) {
     var t = e.direction,
       n = e.mode,
-      r = N(),
-      a = r.contextId,
-      o = r.getDragState,
-      s = (0, j.useRef)(null),
-      c = C((0, j.useState)(null), 2),
-      l = c[0],
-      u = c[1],
-      f = C((0, j.useState)(!1), 2),
+      i = P(),
+      o = i.contextId,
+      s = i.getDragState,
+      c = (0, M.useRef)(null),
+      l = h((0, M.useState)(null), 2),
+      u = l[0],
+      d = l[1],
+      f = h((0, M.useState)(!1), 2),
       p = f[0],
       m = f[1],
-      h = br(),
-      g = (0, j.useCallback)(
+      g = br(),
+      _ = (0, M.useCallback)(
         function (e) {
           var r = e.targetLocation,
             i = e.source,
-            o = e.destination;
-          if (!r) return u(null);
-          var s = H(i, o);
+            a = e.destination;
+          if (!r) return d(null);
+          var s = Oe(i, a);
           return (
             m(s),
-            u(ji({ targetLocation: r, isInHomeLocation: s, direction: t, mode: n, contextId: a }))
+            d(ji({ targetLocation: r, isInHomeLocation: s, direction: t, mode: n, contextId: o }))
           );
         },
-        [a, t, n],
+        [o, t, n],
       );
-    ((0, j.useLayoutEffect)(
+    ((0, M.useLayoutEffect)(
       function () {
-        var e = o();
+        var e = s();
         if (e.isDragging) {
           var t = e.targetLocation,
             n = e.sourceLocation;
           return (
-            g({ targetLocation: t, destination: Xt({ start: n, target: t }), source: n }),
-            h({
+            _({ targetLocation: t, destination: Xt({ start: n, target: t }), source: n }),
+            g({
               onPrePendingDragUpdate: function (e) {
                 var t = e.update,
                   n = e.targetLocation,
                   r = t.destination,
                   i = r === void 0 ? null : r,
                   a = t.source;
-                g({ targetLocation: n, source: a, destination: i });
+                _({ targetLocation: n, source: a, destination: i });
               },
             })
           );
         }
       },
-      [a, t, o, n, h, g],
+      [o, t, s, n, g, _],
     ),
-      (0, j.useLayoutEffect)(
+      (0, M.useLayoutEffect)(
         function () {
-          if (l !== null) {
-            var e = o();
+          if (u !== null) {
+            var e = s();
             if (!(!e.isDragging || e.mode !== `SNAP`)) {
-              var t = s.current;
-              (A(t instanceof HTMLElement), t.scrollIntoView({ block: `nearest` }));
+              var t = c.current;
+              (j(t instanceof HTMLElement), t.scrollIntoView({ block: `nearest` }));
             }
           }
         },
-        [l, o],
+        [u, s],
       ));
-    var _ = Q[t].mainAxis,
-      v = Li({ direction: t, dimensions: l, indicatorOffset: s.current ? s.current[_.offset] : 0 }),
-      y = n === `virtual`;
-    return d(`div`, i({ ref: s, css: [Ni, Ii[t], y && Pi, p && Fi], style: v }, Ri));
+    var v = Q[t].mainAxis,
+      y = Li({ direction: t, dimensions: u, indicatorOffset: c.current ? c.current[v.offset] : 0 }),
+      b = n === `virtual`;
+    return a(`div`, r({ ref: c, css: [Ni, Ii[t], b && Pi, p && Fi], style: y }, Ri));
   };
 function Bi(e, t) {
   var n = Object.keys(e);
@@ -3702,7 +3702,7 @@ function Vi(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? Bi(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -3746,18 +3746,18 @@ function Wi(e) {
     r = e.type,
     i = e.direction,
     a = e.isDropDisabled,
-    o = (0, j.useRef)(null),
-    s = N(),
+    o = (0, M.useRef)(null),
+    s = P(),
     c = s.contextId,
     l = s.getDragState,
     u = l();
-  (A(u.isDragging, `The virtual placeholder should only be rendered during a drag`),
+  (j(u.isDragging, `The virtual placeholder should only be rendered during a drag`),
     Wr({
       elementRef: o,
-      data: ye({
+      data: ve({
         draggableId: t,
         droppableId: n,
-        getIndex: (0, j.useCallback)(
+        getIndex: (0, M.useCallback)(
           function () {
             return u.sourceLocation.index;
           },
@@ -3771,7 +3771,7 @@ function Wi(e) {
       isDropDisabled: a,
       type: r,
     }));
-  var d = (0, j.useMemo)(
+  var d = (0, M.useMemo)(
     function () {
       return {
         position: `absolute`,
@@ -3782,218 +3782,218 @@ function Wi(e) {
     },
     [u.draggableInitialOffsetInSourceDroppable.left, u.draggableInitialOffsetInSourceDroppable.top],
   );
-  return j.createElement(si, { ref: o, style: d });
+  return M.createElement(si, { ref: o, style: d });
 }
 function Gi(e) {
   var t = e.children,
     n = e.droppableId,
     r = e.type,
-    i = r === void 0 ? `DEFAULT` : r,
-    a = e.direction,
-    o = a === void 0 ? `vertical` : a,
-    s = e.mode,
-    c = s === void 0 ? `standard` : s,
+    a = r === void 0 ? `DEFAULT` : r,
+    o = e.direction,
+    s = o === void 0 ? `vertical` : o,
+    c = e.mode,
+    l = c === void 0 ? `standard` : c,
     u = e.renderClone,
-    d = e.getContainerForClone,
-    f = e.isDropDisabled,
-    p = f === void 0 ? !1 : f,
-    m = Jr(p),
-    h = N(),
-    g = h.contextId,
-    _ = h.droppableRegistry,
-    v = Se({ contextId: g, droppableId: n, getIsDropDisabled: m }),
-    y = (0, j.useRef)(null),
-    b = (0, j.useCallback)(
+    f = e.getContainerForClone,
+    p = e.isDropDisabled,
+    m = p === void 0 ? !1 : p,
+    g = Jr(m),
+    _ = P(),
+    v = _.contextId,
+    y = _.droppableRegistry,
+    b = xe({ contextId: v, droppableId: n, getIsDropDisabled: g }),
+    x = (0, M.useRef)(null),
+    S = (0, M.useCallback)(
       function (e) {
         (e &&
-          ae(
+          ie(
             e,
-            l(
-              l(l(l({}, L.droppable.type, i), L.droppable.direction, o), I.droppable.id, n),
-              I.droppable.contextId,
-              g,
+            i(
+              i(i(i({}, R.droppable.type, a), R.droppable.direction, s), L.droppable.id, n),
+              L.droppable.contextId,
+              v,
             ),
           ),
-          (y.current = e));
+          (x.current = e));
       },
-      [g, o, n, i],
+      [v, s, n, a],
     ),
-    x = C((0, j.useReducer)(Ui, Hi), 2),
-    S = x[0],
-    w = x[1],
-    T = S.draggingFromThisWith,
-    E = S.draggingOverWith,
-    D = S.isDraggingOver,
-    O = Ur();
-  (0, j.useEffect)(
+    C = h((0, M.useReducer)(Ui, Hi), 2),
+    w = C[0],
+    T = C[1],
+    E = w.draggingFromThisWith,
+    D = w.draggingOverWith,
+    O = w.isDraggingOver,
+    k = Ur();
+  (0, M.useEffect)(
     function () {
-      var e = y.current;
+      var e = x.current;
       return (
-        ee(e instanceof HTMLElement, "innerRef must provide an `HTMLElement`"),
+        d(e instanceof HTMLElement, "innerRef must provide an `HTMLElement`"),
         U(
-          _.register({
+          y.register({
             droppableId: n,
-            type: i,
-            isDropDisabled: p,
-            parentDroppableId: O,
+            type: a,
+            isDropDisabled: m,
+            parentDroppableId: k,
             element: e,
-            direction: o,
-            mode: c,
+            direction: s,
+            mode: l,
           }),
           Vt({
             element: e,
             getData: function (t) {
               var n = t.input;
-              return ge(v, {
+              return he(b, {
                 element: e,
                 input: n,
-                allowedEdges: o === `vertical` ? [`top`, `bottom`] : [`left`, `right`],
+                allowedEdges: s === `vertical` ? [`top`, `bottom`] : [`left`, `right`],
               });
             },
             canDrop: function (e) {
               var t = e.source;
-              return !V(t.data) || p ? !1 : t.data.contextId === g && t.data.type === i;
+              return !H(t.data) || m ? !1 : t.data.contextId === v && t.data.type === a;
             },
             onDragLeave: function () {
-              w({ type: `DRAG_CLEAR` });
+              T({ type: `DRAG_CLEAR` });
             },
           }),
         )
       );
     },
-    [v, n, g, p, i, _, O, o, c],
+    [b, n, v, m, a, y, k, s, l],
   );
-  var k = br();
-  (0, j.useEffect)(
+  var A = br();
+  (0, M.useEffect)(
     function () {
       function e(e) {
-        var t = e.type === i,
+        var t = e.type === a,
           r = e.destination?.droppableId === n;
-        return t && ((!D && r) || (D && !r));
+        return t && ((!O && r) || (O && !r));
       }
-      return k({
+      return A({
         onPendingDragStart: function (t) {
           var r = t.start;
           e({ destination: r.source, type: r.type }) &&
-            w({ type: `DRAG_START`, payload: { droppableId: n, start: r } });
+            T({ type: `DRAG_START`, payload: { droppableId: n, start: r } });
         },
         onPendingDragUpdate: function (t) {
           var r = t.update;
-          e(r) && w({ type: `DRAG_UPDATE`, payload: { droppableId: n, update: r } });
+          e(r) && T({ type: `DRAG_UPDATE`, payload: { droppableId: n, update: r } });
         },
         onBeforeDragEnd: function () {
-          w({ type: `DRAG_CLEAR` });
+          T({ type: `DRAG_CLEAR` });
         },
       });
     },
-    [n, D, k, i],
+    [n, O, A, a],
   );
-  var A = (0, j.useMemo)(
+  var j = (0, M.useMemo)(
       function () {
-        return D ? j.createElement(zi, { direction: o, mode: c }) : null;
+        return O ? M.createElement(zi, { direction: s, mode: l }) : null;
       },
-      [o, D, c],
+      [s, O, l],
     ),
-    M = (0, j.useMemo)(
-      function () {
-        return {
-          innerRef: b,
-          droppableProps: l(l({}, I.droppable.contextId, g), I.droppable.id, n),
-          placeholder: c === `standard` ? A : null,
-        };
-      },
-      [g, A, n, c, b],
-    ),
-    te = (0, j.useMemo)(
+    N = (0, M.useMemo)(
       function () {
         return {
-          draggingFromThisWith: T,
-          draggingOverWith: E,
-          isDraggingOver: D,
-          isUsingPlaceholder: D,
+          innerRef: S,
+          droppableProps: i(i({}, L.droppable.contextId, v), L.droppable.id, n),
+          placeholder: l === `standard` ? j : null,
         };
       },
-      [T, E, D],
+      [v, j, n, l, S],
     ),
-    P = y.current,
-    F = D && c === `virtual` && P;
+    ee = (0, M.useMemo)(
+      function () {
+        return {
+          draggingFromThisWith: E,
+          draggingOverWith: D,
+          isDraggingOver: O,
+          isUsingPlaceholder: O,
+        };
+      },
+      [E, D, O],
+    ),
+    F = x.current,
+    I = O && l === `virtual` && F;
   rr(
     function () {
-      if (F && window.getComputedStyle(P).position === `static`) {
-        var e = P.style.position;
+      if (I && window.getComputedStyle(F).position === `static`) {
+        var e = F.style.position;
         return (
-          (P.style.position = `relative`),
+          (F.style.position = `relative`),
           function () {
-            P.style.position = e;
+            F.style.position = e;
           }
         );
       }
     },
-    [P, F],
+    [F, I],
   );
-  var ne = !!u,
-    re = (0, j.useMemo)(
+  var te = !!u,
+    ne = (0, M.useMemo)(
       function () {
         return {
-          direction: o,
+          direction: s,
           droppableId: n,
-          shouldRenderCloneWhileDragging: ne,
-          isDropDisabled: p,
-          type: i,
-          mode: c,
+          shouldRenderCloneWhileDragging: te,
+          isDropDisabled: m,
+          type: a,
+          mode: l,
         };
       },
-      [o, n, ne, p, i, c],
+      [s, n, te, m, a, l],
     ),
-    ie = T && c === `virtual` && P;
-  return j.createElement(
+    re = E && l === `virtual` && F;
+  return M.createElement(
     Vr,
-    { value: re },
-    t(M, te),
-    F && (0, X.createPortal)(A, P),
-    ie &&
+    { value: ne },
+    t(N, ee),
+    I && (0, X.createPortal)(j, F),
+    re &&
       (0, X.createPortal)(
-        j.createElement(Wi, {
+        M.createElement(Wi, {
           droppableId: n,
-          draggableId: T,
-          type: i,
-          direction: o,
-          isDropDisabled: p,
+          draggableId: E,
+          type: a,
+          direction: s,
+          isDropDisabled: m,
         }),
-        P,
+        F,
       ),
-    u && j.createElement(bi, { droppableId: n, type: i, getContainerForClone: d }, u),
+    u && M.createElement(bi, { droppableId: n, type: a, getContainerForClone: f }, u),
   );
 }
-u();
+m();
 var Ki = [`isRanking`, `isRankingItem`, `testId`],
-  qi = (0, j.forwardRef)(function (e, t) {
+  qi = (0, M.forwardRef)(function (e, t) {
     var n = e.isRanking,
-      r = e.isRankingItem,
+      i = e.isRankingItem,
       a = e.testId,
-      o = c(e, Ki);
-    return j.createElement(
-      v,
-      i({ ref: t, testId: a }, o, {
-        className: S([
+      o = s(e, Ki);
+    return M.createElement(
+      f,
+      r({ ref: t, testId: a }, o, {
+        className: p([
           n && `_1e0c1ule`,
-          r && `_2rkolb4i _bfhk1bhr _16qs130s`,
+          i && `_2rkolb4i _bfhk1bhr _16qs130s`,
           `_12y3e4h9 _mizu1v1w _ra3xnqa1`,
         ]),
       }),
     );
   });
-u();
+m();
 var Ji = [`isRanking`, `innerRef`],
   Yi = function (e) {
     var t = e.isRanking,
       n = e.innerRef,
-      r = c(e, Ji);
-    return j.createElement(h, i({}, r, { innerRef: n, className: S([t && `_vchhusvi`]) }));
+      i = s(e, Ji);
+    return M.createElement(v, r({}, i, { innerRef: n, className: p([t && `_vchhusvi`]) }));
   },
   Xi = [`content`, `testId`];
 function Zi(e, t, n) {
-  return ((t = a(t)), s(e, Qi() ? Reflect.construct(t, n || [], a(e).constructor) : t.apply(e, n)));
+  return ((t = u(t)), w(e, Qi() ? Reflect.construct(t, n || [], u(e).constructor) : t.apply(e, n)));
 }
 function Qi() {
   try {
@@ -4003,36 +4003,36 @@ function Qi() {
     return !!e;
   })();
 }
-var $i = b(
+var $i = y(
     (function (e) {
       function t() {
-        return (r(this, t), Zi(this, t, arguments));
+        return (l(this, t), Zi(this, t, arguments));
       }
       return (
-        o(t, e),
-        _(t, [
+        T(t, e),
+        C(t, [
           {
             key: `render`,
             value: function () {
               var e = this.props,
                 t = e.cell,
                 n = e.head,
-                r = e.isFixedSize,
+                i = e.isFixedSize,
                 a = e.isRanking,
                 o = e.refWidth,
-                s = e.innerRef,
+                c = e.innerRef,
                 l = e.testId,
                 u = t.content,
                 d = t.testId,
-                f = c(t, Xi),
+                f = s(t, Xi),
                 p = n || {},
                 m = p.shouldTruncate,
                 h = p.width,
-                g = y(a, o);
-              return j.createElement(
+                g = _(a, o);
+              return M.createElement(
                 Yi,
-                i({}, f, {
-                  isFixedSize: r,
+                r({}, f, {
+                  isFixedSize: i,
                   shouldTruncate: m,
                   width: h,
                   isRanking: a,
@@ -4040,7 +4040,7 @@ var $i = b(
                   onKeyDown: function (e) {
                     return e.stopPropagation();
                   },
-                  innerRef: s,
+                  innerRef: c,
                   "data-testid": d || (l && `${l}--rankable--table--body--cell`),
                 }),
                 u,
@@ -4049,7 +4049,7 @@ var $i = b(
           },
         ])
       );
-    })(j.Component),
+    })(M.Component),
   ),
   ea = [`cells`, `testId`, `key`, `isHighlighted`];
 function ta(e, t) {
@@ -4069,7 +4069,7 @@ function na(e) {
     var n = arguments[t] == null ? {} : arguments[t];
     t % 2
       ? ta(Object(n), !0).forEach(function (t) {
-          l(e, t, n[t]);
+          i(e, t, n[t]);
         })
       : Object.getOwnPropertyDescriptors
         ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n))
@@ -4080,7 +4080,7 @@ function na(e) {
   return e;
 }
 function ra(e, t, n) {
-  return ((t = a(t)), s(e, ia() ? Reflect.construct(t, n || [], a(e).constructor) : t.apply(e, n)));
+  return ((t = u(t)), w(e, ia() ? Reflect.construct(t, n || [], u(e).constructor) : t.apply(e, n)));
 }
 function ia() {
   try {
@@ -4090,15 +4090,15 @@ function ia() {
     return !!e;
   })();
 }
-var aa = b(
+var aa = y(
   (function (e) {
     function t() {
       var e;
-      r(this, t);
+      l(this, t);
       var n = [...arguments];
       return (
         (e = ra(this, t, [].concat(n))),
-        l(e, `innerRef`, function (t) {
+        i(e, `innerRef`, function (t) {
           return function (n) {
             (t(n), typeof e.props.innerRef == `function` && e.props.innerRef(n));
           };
@@ -4107,18 +4107,18 @@ var aa = b(
       );
     }
     return (
-      o(t, e),
-      _(t, [
+      T(t, e),
+      C(t, [
         {
           key: `render`,
           value: function () {
             var e = this,
               t = this.props,
               n = t.row,
-              r = t.head,
+              i = t.head,
               a = t.isFixedSize,
               o = t.isRanking,
-              s = t.refWidth,
+              c = t.refWidth,
               l = t.rowIndex,
               u = t.isRankingDisabled,
               d = t.isHighlighted,
@@ -4127,32 +4127,32 @@ var aa = b(
               m = n.testId,
               h = n.key,
               g = n.isHighlighted,
-              _ = c(n, ea),
-              v = y(o, s);
+              v = s(n, ea),
+              y = _(o, c);
             if (typeof h != `string` && !u)
               throw Error(
                 `dynamic-table: ranking is not possible because table row does not have a key. Add the key to the row or disable ranking.`,
               );
-            return j.createElement(
+            return M.createElement(
               _i,
               { draggableId: h || l.toString(), index: l, isDragDisabled: u },
               function (t, n) {
-                return j.createElement(
+                return M.createElement(
                   qi,
-                  i({}, _, t.dragHandleProps, t.draggableProps, {
+                  r({}, v, t.dragHandleProps, t.draggableProps, {
                     role: void 0,
                     "aria-labelledby": void 0,
                     "aria-describedby": t.dragHandleProps?.[`aria-describedby`],
                     ref: e.innerRef(t.innerRef),
-                    style: na(na({}, t.draggableProps.style), v),
+                    style: na(na({}, t.draggableProps.style), y),
                     isHighlighted: d || g,
                     isRanking: o,
                     isRankingItem: n.isDragging,
                     testId: m || (f && `${f}--rankable--table--body--row`),
                   }),
                   p.map(function (e, t) {
-                    var n = (r || { cells: [] }).cells[t];
-                    return j.createElement($i, {
+                    var n = (i || { cells: [] }).cells[t];
+                    return M.createElement($i, {
                       head: n,
                       cell: e,
                       isRanking: o,
@@ -4168,10 +4168,10 @@ var aa = b(
         },
       ])
     );
-  })(j.Component),
+  })(M.Component),
 );
 function oa(e, t, n) {
-  return ((t = a(t)), s(e, sa() ? Reflect.construct(t, n || [], a(e).constructor) : t.apply(e, n)));
+  return ((t = u(t)), w(e, sa() ? Reflect.construct(t, n || [], u(e).constructor) : t.apply(e, n)));
 }
 function sa() {
   try {
@@ -4195,16 +4195,16 @@ var ca = function (e, t) {
   la = (function (e) {
     function t() {
       var e;
-      r(this, t);
+      l(this, t);
       var n = [...arguments];
       return (
         (e = oa(this, t, [].concat(n))),
-        l(e, `onBeforeDragStart`, function (t) {
+        i(e, `onBeforeDragStart`, function (t) {
           var n = t.draggableId,
             r = { index: t.source.index, key: n };
           e.props.onRankStart(r);
         }),
-        l(e, `onDragEnd`, function (t) {
+        i(e, `onDragEnd`, function (t) {
           var n = e.props,
             r = n.pageRows,
             i = n.onRankEnd,
@@ -4215,30 +4215,30 @@ var ca = function (e, t) {
       );
     }
     return (
-      o(t, e),
-      _(t, [
+      T(t, e),
+      C(t, [
         {
           key: `render`,
           value: function () {
             var e = this.props,
               t = e.highlightedRowIndex,
               n = e.pageRows,
-              r = e.head,
+              i = e.head,
               a = e.isFixedSize,
               o = e.isRanking,
               s = e.isRankingDisabled,
               c = e.testId,
               l = e.forwardedRef;
-            return j.createElement(
+            return M.createElement(
               Lr,
               { onBeforeDragStart: this.onBeforeDragStart, onDragEnd: this.onDragEnd },
-              j.createElement(
+              M.createElement(
                 Gi,
                 { droppableId: `dynamic-table-droppable`, isDropDisabled: s },
                 function (e) {
-                  return j.createElement(
+                  return M.createElement(
                     `tbody`,
-                    i(
+                    r(
                       {
                         "data-testid": c,
                         ref: function (t) {
@@ -4249,8 +4249,8 @@ var ca = function (e, t) {
                       e.droppableProps,
                     ),
                     n.map(function (e, n) {
-                      return j.createElement(aa, {
-                        head: r,
+                      return M.createElement(aa, {
+                        head: i,
                         isRanking: o,
                         isFixedSize: a,
                         key: e.key,
@@ -4271,10 +4271,10 @@ var ca = function (e, t) {
         },
       ])
     );
-  })(j.Component),
-  ua = m(
-    j.forwardRef(function (e, t) {
-      return j.createElement(la, i({}, e, { forwardedRef: t }));
+  })(M.Component),
+  ua = g(
+    M.forwardRef(function (e, t) {
+      return M.createElement(la, r({}, e, { forwardedRef: t }));
     }),
   );
 export { ua as default };

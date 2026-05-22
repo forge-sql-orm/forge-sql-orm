@@ -1,16 +1,16 @@
 import {
-  A as e,
-  T as t,
-  c as n,
-  d as r,
-  k as i,
-  l as a,
+  a as e,
+  c as t,
+  d as n,
+  i as r,
+  l as i,
+  n as a,
   o,
-  s,
-  u as c,
-  w as l,
-  x as u,
-} from "./index-R1RWSCjS.js";
+  r as s,
+  s as c,
+  t as l,
+  u,
+} from "./index-B6kxJtn_.js";
 var d = {
   "color.text.brand": `#669DF1`,
   "elevation.surface.overlay": `#2B2C2F`,
@@ -360,24 +360,24 @@ function se(e) {
 }
 var Y,
   X = (function () {
-    function t(n, r, i, a, o, s, c, l, u, d) {
-      (e(this, t),
-        (this.n = n),
-        (this.aw = r),
-        (this.nbb = i),
-        (this.ncb = a),
-        (this.c = o),
-        (this.nc = s),
-        (this.rgbD = c),
-        (this.fl = l),
-        (this.fLRoot = u),
+    function e(t, n, r, i, a, o, s, c, l, d) {
+      (u(this, e),
+        (this.n = t),
+        (this.aw = n),
+        (this.nbb = r),
+        (this.ncb = i),
+        (this.c = a),
+        (this.nc = o),
+        (this.rgbD = s),
+        (this.fl = c),
+        (this.fLRoot = l),
         (this.z = d));
     }
-    return i(t, null, [
+    return i(e, null, [
       {
         key: `make`,
         value: function () {
-          var e = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : ie(),
+          var t = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : ie(),
             n =
               arguments.length > 1 && arguments[1] !== void 0
                 ? arguments[1]
@@ -385,7 +385,7 @@ var Y,
             r = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 50,
             i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : 2,
             a = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : !1,
-            o = e,
+            o = t,
             s = o[0] * 0.401288 + o[1] * 0.650173 + o[2] * -0.051461,
             c = o[0] * -0.250268 + o[1] * 1.204414 + o[2] * 0.045854,
             l = o[0] * -0.002079 + o[1] * 0.048952 + o[2] * 0.953127,
@@ -399,7 +399,7 @@ var Y,
             g = h * h * h * h,
             _ = 1 - g,
             v = g * n + 0.1 * _ * _ * Math.cbrt(5 * n),
-            y = G(r) / e[1],
+            y = G(r) / t[1],
             b = 1.48 + Math.sqrt(y),
             x = 0.725 / y ** 0.2,
             S = x,
@@ -413,20 +413,20 @@ var Y,
               (400 * C[1]) / (C[1] + 27.13),
               (400 * C[2]) / (C[2] + 27.13),
             ];
-          return new t(y, (2 * w[0] + w[1] + 0.05 * w[2]) * x, x, S, d, p, m, v, v ** 0.25, b);
+          return new e(y, (2 * w[0] + w[1] + 0.05 * w[2]) * x, x, S, d, p, m, v, v ** 0.25, b);
         },
       },
     ]);
   })();
 ((Y = X), t(X, `DEFAULT`, Y.make()));
 var ce = (function () {
-    function t(n) {
-      (e(this, t), (this.argb = n));
-      var r = Z.fromInt(n);
-      ((this.internalHue = r.hue), (this.internalChroma = r.chroma), (this.internalTone = W(n)));
+    function e(t) {
+      (u(this, e), (this.argb = t));
+      var n = Z.fromInt(t);
+      ((this.internalHue = n.hue), (this.internalChroma = n.chroma), (this.internalTone = W(t)));
     }
     return i(
-      t,
+      e,
       [
         {
           key: `toInt`,
@@ -473,44 +473,44 @@ var ce = (function () {
         },
         {
           key: `inViewingConditions`,
-          value: function (e) {
-            var n = Z.fromInt(this.toInt()).xyzInViewingConditions(e),
+          value: function (t) {
+            var n = Z.fromInt(this.toInt()).xyzInViewingConditions(t),
               r = Z.fromXyzInViewingConditions(n[0], n[1], n[2], X.make());
-            return t.from(r.hue, r.chroma, K(n[1]));
+            return e.from(r.hue, r.chroma, K(n[1]));
           },
         },
       ],
       [
         {
           key: `from`,
-          value: function (e, n, r) {
-            return new t(Q.solveToInt(e, n, r));
+          value: function (t, n, r) {
+            return new e(Q.solveToInt(t, n, r));
           },
         },
         {
           key: `fromInt`,
-          value: function (e) {
-            return new t(e);
+          value: function (t) {
+            return new e(t);
           },
         },
       ],
     );
   })(),
   Z = (function () {
-    function t(n, r, i, a, o, s, c, l, u) {
-      (e(this, t),
-        (this.hue = n),
-        (this.chroma = r),
-        (this.j = i),
-        (this.q = a),
-        (this.m = o),
-        (this.s = s),
-        (this.jstar = c),
-        (this.astar = l),
-        (this.bstar = u));
+    function e(t, n, r, i, a, o, s, c, l) {
+      (u(this, e),
+        (this.hue = t),
+        (this.chroma = n),
+        (this.j = r),
+        (this.q = i),
+        (this.m = a),
+        (this.s = o),
+        (this.jstar = s),
+        (this.astar = c),
+        (this.bstar = l));
     }
     return i(
-      t,
+      e,
       [
         {
           key: `distance`,
@@ -603,16 +603,16 @@ var ce = (function () {
       [
         {
           key: `fromInt`,
-          value: function (e) {
-            return t.fromIntInViewingConditions(e, X.DEFAULT);
+          value: function (t) {
+            return e.fromIntInViewingConditions(t, X.DEFAULT);
           },
         },
         {
           key: `fromIntInViewingConditions`,
-          value: function (e, n) {
-            var r = (e & 16711680) >> 16,
-              i = (e & 65280) >> 8,
-              a = e & 255,
+          value: function (t, n) {
+            var r = (t & 16711680) >> 16,
+              i = (t & 65280) >> 8,
+              a = t & 255,
               o = I(r),
               s = I(i),
               c = I(a),
@@ -655,53 +655,53 @@ var ce = (function () {
               ee = 50 * Math.sqrt((F * n.c) / (n.aw + 4)),
               z = (1.7000000000000002 * M) / (1 + 0.007 * M),
               B = (1 / 0.0228) * Math.log(1 + 0.0228 * R);
-            return new t(A, L, M, N, R, ee, z, B * Math.cos(j), B * Math.sin(j));
+            return new e(A, L, M, N, R, ee, z, B * Math.cos(j), B * Math.sin(j));
           },
         },
         {
           key: `fromJch`,
-          value: function (e, n, r) {
-            return t.fromJchInViewingConditions(e, n, r, X.DEFAULT);
+          value: function (t, n, r) {
+            return e.fromJchInViewingConditions(t, n, r, X.DEFAULT);
           },
         },
         {
           key: `fromJchInViewingConditions`,
-          value: function (e, n, r, i) {
-            var a = (4 / i.c) * Math.sqrt(e / 100) * (i.aw + 4) * i.fLRoot,
+          value: function (t, n, r, i) {
+            var a = (4 / i.c) * Math.sqrt(t / 100) * (i.aw + 4) * i.fLRoot,
               o = n * i.fLRoot,
-              s = n / Math.sqrt(e / 100),
+              s = n / Math.sqrt(t / 100),
               c = 50 * Math.sqrt((s * i.c) / (i.aw + 4)),
               l = (r * Math.PI) / 180,
-              u = (1.7000000000000002 * e) / (1 + 0.007 * e),
+              u = (1.7000000000000002 * t) / (1 + 0.007 * t),
               d = (1 / 0.0228) * Math.log(1 + 0.0228 * o);
-            return new t(r, n, e, a, o, c, u, d * Math.cos(l), d * Math.sin(l));
+            return new e(r, n, t, a, o, c, u, d * Math.cos(l), d * Math.sin(l));
           },
         },
         {
           key: `fromUcs`,
-          value: function (e, n, r) {
-            return t.fromUcsInViewingConditions(e, n, r, X.DEFAULT);
+          value: function (t, n, r) {
+            return e.fromUcsInViewingConditions(t, n, r, X.DEFAULT);
           },
         },
         {
           key: `fromUcsInViewingConditions`,
-          value: function (e, n, r, i) {
+          value: function (t, n, r, i) {
             var a = n,
               o = r,
               s = Math.sqrt(a * a + o * o),
               c = (Math.exp(s * 0.0228) - 1) / 0.0228 / i.fLRoot,
               l = (180 / Math.PI) * Math.atan2(o, a);
             l < 0 && (l += 360);
-            var u = e / (1 - (e - 100) * 0.007);
-            return t.fromJchInViewingConditions(u, c, l, i);
+            var u = t / (1 - (t - 100) * 0.007);
+            return e.fromJchInViewingConditions(u, c, l, i);
           },
         },
         {
           key: `fromXyzInViewingConditions`,
-          value: function (e, n, r, i) {
-            var a = 0.401288 * e + 0.650173 * n - 0.051461 * r,
-              o = -0.250268 * e + 1.204414 * n + 0.045854 * r,
-              s = -0.002079 * e + 0.048952 * n + 0.953127 * r,
+          value: function (t, n, r, i) {
+            var a = 0.401288 * t + 0.650173 * n - 0.051461 * r,
+              o = -0.250268 * t + 1.204414 * n + 0.045854 * r,
+              s = -0.002079 * t + 0.048952 * n + 0.953127 * r,
               c = i.rgbD[0] * a,
               l = i.rgbD[1] * o,
               u = i.rgbD[2] * s,
@@ -735,17 +735,17 @@ var ce = (function () {
               j = 50 * Math.sqrt((D * i.c) / (i.aw + 4)),
               M = (1.7000000000000002 * w) / (1 + 0.007 * w),
               N = Math.log(1 + 0.0228 * A) / 0.0228;
-            return new t(S, O, w, T, A, j, M, N * Math.cos(C), N * Math.sin(C));
+            return new e(S, O, w, T, A, j, M, N * Math.cos(C), N * Math.sin(C));
           },
         },
       ],
     );
   })(),
   Q = (function () {
-    function t() {
-      e(this, t);
+    function e() {
+      u(this, e);
     }
-    return i(t, null, [
+    return i(e, null, [
       {
         key: `sanitizeRadians`,
         value: function (e) {
@@ -769,11 +769,11 @@ var ce = (function () {
       },
       {
         key: `hueOf`,
-        value: function (e) {
-          var n = P(e, t.SCALED_DISCOUNT_FROM_LINRGB),
-            r = t.chromaticAdaptation(n[0]),
-            i = t.chromaticAdaptation(n[1]),
-            a = t.chromaticAdaptation(n[2]),
+        value: function (t) {
+          var n = P(t, e.SCALED_DISCOUNT_FROM_LINRGB),
+            r = e.chromaticAdaptation(n[0]),
+            i = e.chromaticAdaptation(n[1]),
+            a = e.chromaticAdaptation(n[2]),
             o = (11 * r + -12 * i + a) / 11,
             s = (r + i - 2 * a) / 9;
           return Math.atan2(s, o);
@@ -781,8 +781,8 @@ var ce = (function () {
       },
       {
         key: `areInCyclicOrder`,
-        value: function (e, n, r) {
-          return t.sanitizeRadians(n - e) < t.sanitizeRadians(r - e);
+        value: function (t, n, r) {
+          return e.sanitizeRadians(n - t) < e.sanitizeRadians(r - t);
         },
       },
       {
@@ -799,9 +799,9 @@ var ce = (function () {
       },
       {
         key: `setCoordinate`,
-        value: function (e, n, r, i) {
-          var a = t.intercept(e[i], n, r[i]);
-          return t.lerpPoint(e, a, r);
+        value: function (t, n, r, i) {
+          var a = e.intercept(t[i], n, r[i]);
+          return e.lerpPoint(t, a, r);
         },
       },
       {
@@ -812,43 +812,43 @@ var ce = (function () {
       },
       {
         key: `nthVertex`,
-        value: function (e, n) {
-          var r = t.Y_FROM_LINRGB[0],
-            i = t.Y_FROM_LINRGB[1],
-            a = t.Y_FROM_LINRGB[2],
+        value: function (t, n) {
+          var r = e.Y_FROM_LINRGB[0],
+            i = e.Y_FROM_LINRGB[1],
+            a = e.Y_FROM_LINRGB[2],
             o = n % 4 <= 1 ? 0 : 100,
             s = n % 2 == 0 ? 0 : 100;
           if (n < 4) {
             var c = o,
               l = s,
-              u = (e - c * i - l * a) / r;
-            return t.isBounded(u) ? [u, c, l] : [-1, -1, -1];
+              u = (t - c * i - l * a) / r;
+            return e.isBounded(u) ? [u, c, l] : [-1, -1, -1];
           } else if (n < 8) {
             var d = o,
               f = s,
-              p = (e - f * r - d * a) / i;
-            return t.isBounded(p) ? [f, p, d] : [-1, -1, -1];
+              p = (t - f * r - d * a) / i;
+            return e.isBounded(p) ? [f, p, d] : [-1, -1, -1];
           } else {
             var m = o,
               h = s,
-              g = (e - m * r - h * i) / a;
-            return t.isBounded(g) ? [m, h, g] : [-1, -1, -1];
+              g = (t - m * r - h * i) / a;
+            return e.isBounded(g) ? [m, h, g] : [-1, -1, -1];
           }
         },
       },
       {
         key: `bisectToSegment`,
-        value: function (e, n) {
+        value: function (t, n) {
           for (var r = [-1, -1, -1], i = r, a = 0, o = 0, s = !1, c = !0, l = 0; l < 12; l++) {
-            var u = t.nthVertex(e, l);
+            var u = e.nthVertex(t, l);
             if (!(u[0] < 0)) {
-              var d = t.hueOf(u);
+              var d = e.hueOf(u);
               if (!s) {
                 ((r = u), (i = u), (a = d), (o = d), (s = !0));
                 continue;
               }
-              (c || t.areInCyclicOrder(a, d, o)) &&
-                ((c = !1), t.areInCyclicOrder(a, n, d) ? ((i = u), (o = d)) : ((r = u), (a = d)));
+              (c || e.areInCyclicOrder(a, d, o)) &&
+                ((c = !1), e.areInCyclicOrder(a, n, d) ? ((i = u), (o = d)) : ((r = u), (a = d)));
             }
           }
           return [r, i];
@@ -874,9 +874,9 @@ var ce = (function () {
       },
       {
         key: `bisectToLimit`,
-        value: function (e, n) {
+        value: function (t, n) {
           for (
-            var r = t.bisectToSegment(e, n), i = r[0], a = t.hueOf(i), o = r[1], s = 0;
+            var r = e.bisectToSegment(t, n), i = r[0], a = e.hueOf(i), o = r[1], s = 0;
             s < 3;
             s++
           )
@@ -884,19 +884,19 @@ var ce = (function () {
               var c = -1,
                 l = 255;
               i[s] < o[s]
-                ? ((c = t.criticalPlaneBelow(t.trueDelinearized(i[s]))),
-                  (l = t.criticalPlaneAbove(t.trueDelinearized(o[s]))))
-                : ((c = t.criticalPlaneAbove(t.trueDelinearized(i[s]))),
-                  (l = t.criticalPlaneBelow(t.trueDelinearized(o[s]))));
+                ? ((c = e.criticalPlaneBelow(e.trueDelinearized(i[s]))),
+                  (l = e.criticalPlaneAbove(e.trueDelinearized(o[s]))))
+                : ((c = e.criticalPlaneAbove(e.trueDelinearized(i[s]))),
+                  (l = e.criticalPlaneBelow(e.trueDelinearized(o[s]))));
               for (var u = 0; u < 8 && !(Math.abs(l - c) <= 1); u++) {
                 var d = Math.floor((c + l) / 2),
-                  f = t.CRITICAL_PLANES[d],
-                  p = t.setCoordinate(i, f, o, s),
-                  m = t.hueOf(p);
-                t.areInCyclicOrder(a, n, m) ? ((o = p), (l = d)) : ((i = p), (a = m), (c = d));
+                  f = e.CRITICAL_PLANES[d],
+                  p = e.setCoordinate(i, f, o, s),
+                  m = e.hueOf(p);
+                e.areInCyclicOrder(a, n, m) ? ((o = p), (l = d)) : ((i = p), (a = m), (c = d));
               }
             }
-          return t.midpoint(i, o);
+          return e.midpoint(i, o);
         },
       },
       {
@@ -909,14 +909,14 @@ var ce = (function () {
       },
       {
         key: `findResultByJ`,
-        value: function (e, n, r) {
+        value: function (t, n, r) {
           for (
             var i = Math.sqrt(r) * 11,
               a = X.DEFAULT,
               o = 1 / (1.64 - 0.29 ** a.n) ** 0.73,
-              s = 0.25 * (Math.cos(e + 2) + 3.8) * (5e4 / 13) * a.nc * a.ncb,
-              c = Math.sin(e),
-              l = Math.cos(e),
+              s = 0.25 * (Math.cos(t + 2) + 3.8) * (5e4 / 13) * a.nc * a.ncb,
+              c = Math.sin(t),
+              l = Math.cos(t),
               u = 0;
             u < 5;
             u++
@@ -932,16 +932,16 @@ var ce = (function () {
               y = (460 * p - 220 * h - 6300 * g) / 1403,
               b = P(
                 [
-                  t.inverseChromaticAdaptation(_),
-                  t.inverseChromaticAdaptation(v),
-                  t.inverseChromaticAdaptation(y),
+                  e.inverseChromaticAdaptation(_),
+                  e.inverseChromaticAdaptation(v),
+                  e.inverseChromaticAdaptation(y),
                 ],
-                t.LINRGB_FROM_SCALED_DISCOUNT,
+                e.LINRGB_FROM_SCALED_DISCOUNT,
               );
             if (b[0] < 0 || b[1] < 0 || b[2] < 0) return 0;
-            var x = t.Y_FROM_LINRGB[0],
-              S = t.Y_FROM_LINRGB[1],
-              C = t.Y_FROM_LINRGB[2],
+            var x = e.Y_FROM_LINRGB[0],
+              S = e.Y_FROM_LINRGB[1],
+              C = e.Y_FROM_LINRGB[2],
               w = x * b[0] + S * b[1] + C * b[2];
             if (w <= 0) return 0;
             if (u === 4 || Math.abs(w - r) < 0.002)
@@ -953,19 +953,19 @@ var ce = (function () {
       },
       {
         key: `solveToInt`,
-        value: function (e, n, r) {
+        value: function (t, n, r) {
           if (n < 1e-4 || r < 1e-4 || r > 99.9999) return re(r);
-          e = N(e);
-          var i = (e / 180) * Math.PI,
+          t = N(t);
+          var i = (t / 180) * Math.PI,
             a = G(r),
-            o = t.findResultByJ(i, n, a);
-          return o === 0 ? z(t.bisectToLimit(a, i)) : o;
+            o = e.findResultByJ(i, n, a);
+          return o === 0 ? z(e.bisectToLimit(a, i)) : o;
         },
       },
       {
         key: `solveToCam`,
-        value: function (e, n, r) {
-          return Z.fromInt(t.solveToInt(e, n, r));
+        value: function (t, n, r) {
+          return Z.fromInt(e.solveToInt(t, n, r));
         },
       },
     ]);
@@ -1049,14 +1049,14 @@ var ce = (function () {
     ],
   ));
 var le = (function () {
-  function t() {
-    e(this, t);
+  function e() {
+    u(this, e);
   }
-  return i(t, null, [
+  return i(e, null, [
     {
       key: `ratioOfTones`,
-      value: function (e, n) {
-        return ((e = M(0, 100, e)), (n = M(0, 100, n)), t.ratioOfYs(G(e), G(n)));
+      value: function (t, n) {
+        return ((t = M(0, 100, t)), (n = M(0, 100, n)), e.ratioOfYs(G(t), G(n)));
       },
     },
     {
@@ -1069,11 +1069,11 @@ var le = (function () {
     },
     {
       key: `lighter`,
-      value: function (e, n) {
-        if (e < 0 || e > 100) return -1;
-        var r = G(e),
+      value: function (t, n) {
+        if (t < 0 || t > 100) return -1;
+        var r = G(t),
           i = n * (r + 5) - 5,
-          a = t.ratioOfYs(i, r),
+          a = e.ratioOfYs(i, r),
           o = Math.abs(a - n);
         if (a < n && o > 0.04) return -1;
         var s = K(i) + 0.4;
@@ -1082,11 +1082,11 @@ var le = (function () {
     },
     {
       key: `darker`,
-      value: function (e, n) {
-        if (e < 0 || e > 100) return -1;
-        var r = G(e),
+      value: function (t, n) {
+        if (t < 0 || t > 100) return -1;
+        var r = G(t),
           i = (r + 5) / n - 5,
-          a = t.ratioOfYs(r, i),
+          a = e.ratioOfYs(r, i),
           o = Math.abs(a - n);
         if (a < n && o > 0.04) return -1;
         var s = K(i) - 0.4;
@@ -1095,15 +1095,15 @@ var le = (function () {
     },
     {
       key: `lighterUnsafe`,
-      value: function (e, n) {
-        var r = t.lighter(e, n);
+      value: function (t, n) {
+        var r = e.lighter(t, n);
         return r < 0 ? 100 : r;
       },
     },
     {
       key: `darkerUnsafe`,
-      value: function (e, n) {
-        var r = t.darker(e, n);
+      value: function (t, n) {
+        var r = e.darker(t, n);
         return r < 0 ? 0 : r;
       },
     },
@@ -1149,49 +1149,49 @@ var fe = [1.12, 1.33, 2.03, 2.73, 3.33, 4.27, 5.2, 6.62, 12.46, 14.25],
         return m(t.r, t.g, t.b);
       }),
       s = D(o, e),
-      c = u(o);
-    return ((c[s] = e), { ramp: c, replacedColor: o[s] });
+      l = c(o);
+    return ((l[s] = e), { ramp: l, replacedColor: o[s] });
   };
 function me(e, t, n) {
   for (var r = [], i = 1; i <= t; i++)
     e + i < n.length ? r.push(e + i) : r.push(e - (i - (n.length - 1 - e)));
   return r;
 }
-var he = function (e, t, n) {
-    var r = $(e),
-      i = r.ramp,
-      a = r.replacedColor,
-      o = n || i,
-      s = D(o, e),
-      c = {},
+var he = function (e, t, r) {
+    var i = $(e),
+      a = i.ramp,
+      o = i.replacedColor,
+      s = r || a,
+      c = D(s, e),
+      l = {},
       u = {},
       f = b(e, `#FFFFFF`);
     if (f >= 4.5) {
-      var p = l(me(s, 2, o), 2),
+      var p = n(me(c, 2, s), 2),
         m = p[0],
         h = p[1],
-        g = s;
-      f < 5.4 && f >= 4.8 && s === 6 && (g = s + 1);
-      var _ = l(me(g, 1, o), 1)[0];
-      c = {
+        g = c;
+      f < 5.4 && f >= 4.8 && c === 6 && (g = c + 1);
+      var _ = n(me(g, 1, s), 1)[0];
+      l = {
         "color.text.brand": g,
-        "color.icon.brand": s,
+        "color.icon.brand": c,
         "color.background.brand.subtlest": 0,
         "color.background.brand.subtlest.hovered": 1,
         "color.background.brand.subtlest.pressed": 2,
-        "color.background.brand.bold": s,
+        "color.background.brand.bold": c,
         "color.background.brand.bold.hovered": m,
         "color.background.brand.bold.pressed": h,
         "color.background.brand.boldest": 9,
         "color.background.brand.boldest.hovered": 8,
         "color.background.brand.boldest.pressed": 7,
-        "color.border.brand": s,
+        "color.border.brand": c,
         "color.text.selected": g,
-        "color.icon.selected": s,
-        "color.background.selected.bold": s,
+        "color.icon.selected": c,
+        "color.background.selected.bold": c,
         "color.background.selected.bold.hovered": m,
         "color.background.selected.bold.pressed": h,
-        "color.border.selected": s,
+        "color.border.selected": c,
         "color.link": g,
         "color.link.pressed": _,
         "color.chart.brand": 5,
@@ -1202,8 +1202,8 @@ var he = function (e, t, n) {
       };
     } else {
       var v = 6;
-      (f < 4.5 && f >= 4 && s === 6 && (v = a),
-        (c = {
+      (f < 4.5 && f >= 4 && c === 6 && (v = o),
+        (l = {
           "color.background.brand.subtlest": 0,
           "color.background.brand.subtlest.hovered": 1,
           "color.background.brand.subtlest.pressed": 2,
@@ -1231,69 +1231,69 @@ var he = function (e, t, n) {
           "color.link.pressed": 7,
         }));
     }
-    if (t === `light`) return { light: c };
+    if (t === `light`) return { light: l };
     if (
-      (Object.entries(c).forEach(function (e) {
-        var t = l(e, 2),
-          n = t[0],
-          r = t[1];
-        u[n] = 9 - (typeof r == `string` ? s : r);
+      (Object.entries(l).forEach(function (e) {
+        var t = n(e, 2),
+          r = t[0],
+          i = t[1];
+        u[r] = 9 - (typeof i == `string` ? c : i);
       }),
       f < 4.5)
     ) {
       var y = d[`color.text.inverse`];
       b(y, e) >= 4.5 &&
-        s >= 2 &&
-        ((u[`color.background.brand.bold`] = s),
-        (u[`color.background.brand.bold.hovered`] = s - 1),
-        (u[`color.background.brand.bold.pressed`] = s - 2));
+        c >= 2 &&
+        ((u[`color.background.brand.bold`] = c),
+        (u[`color.background.brand.bold.hovered`] = c - 1),
+        (u[`color.background.brand.bold.pressed`] = c - 2));
     }
-    return t === `dark` ? { dark: u } : { light: c, dark: u };
+    return t === `dark` ? { dark: u } : { light: l, dark: u };
   },
-  ge = function (e, t, n) {
-    var r = n || $(e).ramp,
-      i = he(e, t, r),
-      a = {};
+  ge = function (e, t, r) {
+    var i = r || $(e).ramp,
+      a = he(e, t, i),
+      o = {};
     return (
-      Object.entries(i).forEach(function (e) {
-        var t = l(e, 2),
-          n = t[0],
-          i = t[1];
-        (n === `light` || n === `dark`) &&
-          (a[n] = de(de({}, i), E({ customThemeTokenMap: i, mode: n, themeRamp: r })));
+      Object.entries(a).forEach(function (e) {
+        var t = n(e, 2),
+          r = t[0],
+          a = t[1];
+        (r === `light` || r === `dark`) &&
+          (o[r] = de(de({}, a), E({ customThemeTokenMap: a, mode: r, themeRamp: i })));
       }),
-      a
+      o
     );
   };
-function _e(e) {
-  var t,
-    i = e == null || (t = e.UNSAFE_themeOptions) == null ? void 0 : t.brandColor,
-    s = e?.colorMode || r.colorMode,
-    l = n(JSON.stringify(e?.UNSAFE_themeOptions)),
+function _e(t) {
+  var n,
+    i = t == null || (n = t.UNSAFE_themeOptions) == null ? void 0 : n.brandColor,
+    a = t?.colorMode || o.colorMode,
+    c = s(JSON.stringify(t?.UNSAFE_themeOptions)),
     u = $(i).ramp,
     d = [],
-    f = ge(i, s, u);
+    f = ge(i, a, u);
   return (
-    (s === `light` || s === `auto`) &&
+    (a === `light` || a === `auto`) &&
       f.light &&
       d.push({
         id: `light`,
-        attrs: { "data-theme": `light`, "data-custom-theme": l },
+        attrs: { "data-theme": `light`, "data-custom-theme": c },
         css: `
-html[${c}="${l}"][${a}="light"][data-theme~="light:light"] {
+html[${e}="${c}"][${r}="light"][data-theme~="light:light"] {
   /* Branded tokens */
-    ${o(f.light, u)}
+    ${l(f.light, u)}
 }`,
       }),
-    (s === `dark` || s === `auto`) &&
+    (a === `dark` || a === `auto`) &&
       f.dark &&
       d.push({
         id: `dark`,
-        attrs: { "data-theme": `dark`, "data-custom-theme": l },
+        attrs: { "data-theme": `dark`, "data-custom-theme": c },
         css: `
-html[${c}="${l}"][${a}="dark"][data-theme~="dark:dark"] {
+html[${e}="${c}"][${r}="dark"][data-theme~="dark:dark"] {
   /* Branded tokens */
-    ${o(f.dark, u)}
+    ${l(f.dark, u)}
 }`,
       }),
     d
@@ -1302,7 +1302,7 @@ html[${c}="${l}"][${a}="dark"][data-theme~="dark:dark"] {
 var ve = 10;
 function ye(e) {
   var t = _e(e);
-  (s(10),
+  (a(10),
     t.map(function (e) {
       var t = document.createElement(`style`);
       (document.head.appendChild(t),
