@@ -1,7 +1,5 @@
 name: Metrics
 on:
-  # Schedule daily updates
-  schedule: [{cron: "0 0 * * *"}]
   # (optional) Run workflow manually
   workflow_dispatch:
   # (optional) Run workflow when pushing on master/main
@@ -15,7 +13,7 @@ jobs:
       contents: write
     steps:
       - name: Using graph charts
-        uses: lowlighter/metricsv3.34
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6
         with:
          template: repository
          filename: metrics.repository.svg
