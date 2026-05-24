@@ -7,7 +7,7 @@
     "@atlaskit/dynamic-table": "^18.4.2",
     "@forge/bridge": "^5.16.1",
     "forge-sql-orm": "^2.1.29",
-    "mobx": "6.15.3",
+    "mobx": "6.15.4",
     "mobx-react": "9.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
