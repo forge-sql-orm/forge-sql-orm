@@ -15,7 +15,7 @@ jobs:
       contents: write
     steps:
       - name: Using graph charts
-        uses: lowlighter/metrics@366f8b9dfe3a59656c67d5dcad9950f59c9bc96d
+        uses: lowlighter/metricsv3.34
         with:
          template: repository
          filename: metrics.repository.svg
