@@ -15,12 +15,11 @@ jobs:
       contents: write
     steps:
       - name: Using graph charts
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@master
         with:
          template: repository
          filename: metrics.repository.svg
          token: ${{ secrets.METRICS_TOKEN }}
-         user: vzakharchenko
          repo: forge-sql-orm
          plugin_lines: yes
          plugin_followup: yes
