@@ -5,11 +5,11 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@forge/api": "^7.2.0",
-    "@forge/events": "^2.1.5",
-    "@forge/kvs": "^1.6.3",
+    "@forge/api": "^7.2.1",
+    "@forge/events": "^2.1.6",
+    "@forge/kvs": "^1.6.4",
     "@forge/resolver": "1.8.0",
-    "@forge/sql": "^3.0.24",
+    "@forge/sql": "^3.0.25",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "^2.1.29"
   },

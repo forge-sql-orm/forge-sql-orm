@@ -4,15 +4,15 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@atlaskit/button": "^23.11.7",
+    "@atlaskit/button": "^23.11.8",
     "@atlaskit/css-reset": "^7.4.5",
     "@atlaskit/dynamic-table": "^18.4.2",
     "@atlaskit/primitives": "^19.0.1",
     "@atlaskit/section-message": "^8.13.0",
     "@atlaskit/tabs": "^19.1.0",
-    "@atlaskit/textarea": "^8.3.1",
+    "@atlaskit/textarea": "^8.3.2",
     "@atlaskit/textfield": "^8.3.2",
-    "@forge/bridge": "^5.16.1",
+    "@forge/bridge": "^5.16.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
