@@ -47,7 +47,7 @@
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "^2.1.29",
-    "inquirer": "^13.4.3",
+    "inquirer": "^14.0.0",
     "mysql2": "^3.22.3",
     "reflect-metadata": "^0.2.2",
     "uuid": "^14.0.0"
