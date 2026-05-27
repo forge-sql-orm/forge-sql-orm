@@ -1,6 +1,10 @@
 # Logs
 logs
 *.log
+.qlty
+.qlty/**
+.claude
+.claude/**
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
