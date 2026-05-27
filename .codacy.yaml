@@ -1,0 +1,5 @@
+---
+exclude_paths:
+  - "examples/**"
+  - "__tests__/**"
+  - "vitest.config.mjs"
