@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ForgeSQLAnalyseOperation } from "../../../src/core/ForgeSQLAnalyseOperations";
 import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";

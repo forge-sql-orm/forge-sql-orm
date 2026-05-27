@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { DateTime } from "luxon";
 import { ForgeSqlOrmOptions } from "../../../src/core/ForgeSQLQueryBuilder";

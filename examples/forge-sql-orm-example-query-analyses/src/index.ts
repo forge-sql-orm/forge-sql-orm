@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import Resolver from "@forge/resolver";
 import { Queue } from "@forge/events";
 import { v4 } from "uuid";

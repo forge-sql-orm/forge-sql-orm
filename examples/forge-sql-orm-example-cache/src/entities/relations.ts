@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { relations } from "drizzle-orm/relations";
 import { demoUsers, demoOrders } from "./schema";
 

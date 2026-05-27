@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 export interface ExplainAnalyzeRow {
   id: string;
   estRows?: string;

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { sql } from "@forge/sql";
 import { getTables, forgeSystemTables, migrations } from "../../../src/core/SystemTables";

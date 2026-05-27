@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import React from "react";
 import { invoke } from "@forge/bridge";
 import { observer } from "mobx-react";

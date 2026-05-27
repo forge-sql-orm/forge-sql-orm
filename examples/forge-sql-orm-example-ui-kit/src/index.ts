@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { applySchemaMigrations, dropSchemaMigrations, fetchSchemaWebTrigger } from "forge-sql-orm";
 import migration from "./database/migration";
 

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import React, { createContext, useContext } from "react";
 import type { VectorBuilder } from "./ai";
 

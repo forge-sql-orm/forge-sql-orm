@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { int, mysqlTable, primaryKey, varchar } from "drizzle-orm/mysql-core";
 
 export const testEntityJoin2 = mysqlTable(

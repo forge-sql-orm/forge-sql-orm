@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import React, { useEffect, useState } from "react";
 import SectionMessage from "@atlaskit/section-message";
 import Spinner from "@atlaskit/spinner";
