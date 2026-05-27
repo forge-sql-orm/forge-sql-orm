@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import {execSync} from  'child_process'
 import path from "path";
 import { fileURLToPath } from 'url';

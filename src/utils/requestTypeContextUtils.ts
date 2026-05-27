@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { AsyncLocalStorage } from "node:async_hooks";
 export type OperationType = "DML" | "DDL";
 

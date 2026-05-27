@@ -83,6 +83,11 @@
     "@forge/events": "^2.1.4"
   },
   "lint-staged": {
+    "{src,forge-sql-orm-cli/src}/**/*.{ts,tsx,mts,cts}": [
+      "node scripts/add-spdx-header.mjs",
+      "prettier --write",
+      "eslint --fix"
+    ],
     "*.{ts,tsx,css,scss,md}": [
       "prettier --write",
       "eslint --fix"

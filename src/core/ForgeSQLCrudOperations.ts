@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { ForgeSqlOrmOptions } from "..";
 import { VerioningModificationForgeSQL, ForgeSqlOperation } from "./ForgeSQLQueryBuilder";
 import { AnyMySqlTable } from "drizzle-orm/mysql-core";

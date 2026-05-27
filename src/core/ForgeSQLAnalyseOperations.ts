@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { ForgeSqlOperation, SchemaAnalyzeForgeSql } from "./ForgeSQLQueryBuilder";
 import { Query } from "drizzle-orm";
 import {

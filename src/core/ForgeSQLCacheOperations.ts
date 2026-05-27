@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { MySqlSelectDynamic } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { AnyMySqlSelectQueryBuilder, AnyMySqlTable } from "drizzle-orm/mysql-core";
 import { CacheForgeSQL, ForgeSqlOperation, ForgeSqlOrmOptions } from "./ForgeSQLQueryBuilder";

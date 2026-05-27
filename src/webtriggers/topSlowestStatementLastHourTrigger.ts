@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { ForgeSqlOperation } from "../core/ForgeSQLQueryBuilder";
 import { slowQuerySchedulerTrigger, TriggerResponse } from "./";
 import { OperationType } from "../utils/requestTypeContextUtils";

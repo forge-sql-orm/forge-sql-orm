@@ -40,6 +40,8 @@ jobs:
     - run: npm install -g @forge/cli && forge settings set usage-analytics true
     - run: echo APPLICATION
     - run: npm ci --ignore-scripts
+    - name: REUSE / SPDX compliance
+      uses: fsfe/reuse-action@v5
     - run: npm run knip
     - run: npm run lint
     - run: npm run build
