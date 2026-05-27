@@ -1,0 +1,5 @@
+---
+exclude_paths:
+  - "**"
+  - "!src/**"
+  - "!forge-sql-orm-cli/src/**"
