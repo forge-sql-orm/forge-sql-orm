@@ -1,0 +1,10 @@
+# Exclude every top-level path by default.
+/*
+
+# Allow only src/ for the root package.
+!/src
+
+# Allow only src/ inside forge-sql-orm-cli.
+!/forge-sql-orm-cli
+/forge-sql-orm-cli/*
+!/forge-sql-orm-cli/src
