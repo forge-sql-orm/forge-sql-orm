@@ -14,8 +14,13 @@ for (const file of process.argv.slice(2)) {
   let body = original;
   if (body.startsWith("#!")) {
     const nl = body.indexOf("\n");
-    prefix = body.slice(0, nl + 1);
-    body = body.slice(nl + 1);
+    if (nl === -1) {
+      prefix = `${body}\n`;
+      body = "";
+    } else {
+      prefix = body.slice(0, nl + 1);
+      body = body.slice(nl + 1);
+    }
   }
 
   const separator = body.startsWith("\n") ? "" : "\n";
