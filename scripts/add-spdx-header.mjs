@@ -23,4 +23,4 @@ for (const file of process.argv.slice(2)) {
   touched++;
 }
 
-if (touched > 0) console.log(`SPDX: added headers to ${touched} file(s)`);
+if (touched > 0) process.stdout.write(`SPDX: added headers to ${touched} file(s)\n`);
