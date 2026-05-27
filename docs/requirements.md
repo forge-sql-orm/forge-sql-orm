@@ -116,7 +116,7 @@ Each requirement maps to documentation in [README.md](../README.md) unless noted
 | NFR-1 | **Type safety:** Public APIs are typed in TypeScript; `tsc` build must pass in CI.                                                                                                                                                                             |
 | NFR-2 | **Test coverage:** Library `src/` maintains Vitest coverage ≥ 80% statements/lines/functions and ≥ 75% branches ([CONTRIBUTING.md](../CONTRIBUTING.md)). Integration with Forge SQL is exercised via `@forge/sql` mocks (§8.1), not live cloud DB tests in CI. |
 | NFR-3 | **Static analysis:** CI runs ESLint, Knip, SonarCloud, and related checks on every PR to `master`.                                                                                                                                                             |
-| NFR-4 | **Code review:** Every pull request is reviewed by automated tools (e.g. CodeRabbit, Codacy AI, Qlty, SonarQube) and merged by a maintainer only after required checks pass.                                                                                   |
+| NFR-4 | **Code review:** Every pull request is reviewed by an automated pipeline (CodeRabbit, Codacy AI Reviewer, SonarCloud, Qlty, DeepScan, Snyk, REUSE). **All bot comments are mandatory** and must be resolved by a human maintainer before merge. See §8.2.      |
 | NFR-5 | **Releases:** Semantic versioning; release notes in [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases) and [CHANGELOG.md](../CHANGELOG.md).                                                                                            |
 | NFR-6 | **License:** MIT ([LICENSE](../LICENSE)).                                                                                                                                                                                                                      |
 | NFR-7 | **Security:** Vulnerabilities reported per [SECURITY.md](../SECURITY.md), not via public issues.                                                                                                                                                               |
@@ -261,6 +261,36 @@ This approach satisfies **integration-style coverage** of the ORM stack (Drizzle
 | TEST-1 | Core SQL generation and CRUD/SELECT behavior must be covered by Vitest suites that mock `@forge/sql`, not by requiring a live Forge SQL instance in CI.                |
 | TEST-2 | New query shapes or Forge SQL interactions should extend the mock-based suites above (or add analogous tests) with assertions on generated SQL and `bindParams` usage. |
 
+### 8.2 Code review and comment resolution
+
+Forge SQL ORM is solo-maintained. To keep review discipline at the level a quality rubric expects without a second human reviewer, every pull request to `master` is reviewed by an **automated pipeline** whose comments are treated as binding review items.
+
+**Pipeline (runs on every PR):**
+
+| Tool                                                            | Role                                                           | Operating mode                                   |
+| --------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------ |
+| [CodeRabbit](https://www.coderabbit.ai/)                        | AI line-level review of correctness, style, and likely defects | **Free tier** — rate-limited but covers every PR |
+| [Codacy AI Reviewer](https://www.codacy.com/)                   | Additional AI comments on security, duplication, best practice | Comments posted on the PR                        |
+| [SonarCloud Quality Gate](https://sonarcloud.io/)               | Coverage, code smells, vulnerabilities, security hotspots      | Blocks merge if the Quality Gate fails           |
+| [Qlty](https://qlty.sh/)                                        | Maintainability score, coverage tracking                       | Comments + bot tracking on coverage delta        |
+| [DeepScan](https://deepscan.io/), [Snyk](https://snyk.io/)      | Static security and runtime-defect scanning                    | Comments on PR / dashboard alerts                |
+| [REUSE / SPDX](https://reuse.software/) via `fsfe/reuse-action` | License-header compliance for every source file                | Blocking CI step                                 |
+
+**Comment resolution policy:**
+
+- Every comment posted by any of the tools above is a **mandatory review item**, regardless of severity (info/minor included).
+- A **human maintainer must resolve every comment** before merge — by fixing the code, by replying with explicit reasoning that the comment is wrong or inapplicable and marking it resolved, or by filing a follow-up issue if the concern is out of scope.
+- Auto-merge is enabled **only after** the pipeline passes _and_ every outstanding bot comment has been resolved by a human.
+- PRs with unresolved bot comments will not be merged.
+
+This pipeline, combined with mandatory human-driven comment resolution, satisfies the "code review" quality dimension on a solo-maintained project. See [CONTRIBUTING.md — Pull Request Review Policy](../CONTRIBUTING.md#pull-request-review-policy) for the contributor-facing version of this policy.
+
+| ID    | Requirement                                                                                                                                                                                                |
+| ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| REV-1 | Every PR to `master` must be reviewed by the automated pipeline above. Auto-merge is gated on all required checks passing.                                                                                 |
+| REV-2 | Every comment produced by any bot in the pipeline is mandatory and must be resolved by a human maintainer (fix, reasoned dismissal, or follow-up issue) before merge. Unresolved bot comments block merge. |
+| REV-3 | If a tool from the pipeline is removed or replaced, NFR-4 and §8.2 must be updated in the same PR.                                                                                                         |
+
 ---
 
 ## 9. Document maintenance
@@ -272,4 +302,4 @@ This approach satisfies **integration-style coverage** of the ORM stack (Drizzle
 | Platform limit change by Atlassian | Update §5 and README warnings                                            |
 | New quality gate                   | Update CONTRIBUTING and §4                                               |
 
-**Last updated:** 2026-05-27
+**Last updated:** 2026-05-27 (added §8.2 Code review and comment resolution)

@@ -71,6 +71,30 @@ Please ensure that any new logic includes corresponding unit tests.
 3. Ensure strict coverage thresholds are met.
 4. Issue that pull request!
 
+## Pull Request Review Policy
+
+Forge SQL ORM is a solo-maintained open-source project. To keep review discipline strong without a team of human reviewers, every PR goes through an **automated review pipeline** whose comments are treated as binding review items.
+
+**Review tools that run on every PR to `master`:**
+
+| Tool                                                       | Role                                                                                                                            |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [CodeRabbit](https://www.coderabbit.ai/)                   | AI line-level review (correctness, style, likely defects). Operates under the **free tier** — rate-limited but covers every PR. |
+| [Codacy AI Reviewer](https://www.codacy.com/)              | AI comments on security, duplication, and best practices.                                                                       |
+| [SonarCloud Quality Gate](https://sonarcloud.io/)          | Coverage, code smells, vulnerabilities, security hotspots. Blocks merge if the Quality Gate fails.                              |
+| [Qlty](https://qlty.sh/)                                   | Maintainability score, coverage tracking.                                                                                       |
+| [DeepScan](https://deepscan.io/), [Snyk](https://snyk.io/) | Static defect and vulnerability analysis.                                                                                       |
+| [REUSE / SPDX](https://reuse.software/)                    | License-header compliance, enforced via `fsfe/reuse-action` in CI.                                                              |
+
+**Comment resolution is mandatory:**
+
+- Every comment posted by any tool above is a **blocking review item**, regardless of severity.
+- A **human maintainer must explicitly resolve each comment** — by applying a fix, replying with reasoning that the comment is wrong/inapplicable and marking it resolved, or filing a follow-up issue if it is out of scope.
+- Auto-merge is enabled **only after** the pipeline passes _and_ every outstanding comment has been resolved by a human.
+- PRs with unresolved bot comments will not be merged.
+
+This replaces, by design, the need for a second human reviewer on a solo-maintained project. See [docs/requirements.md §8.2](docs/requirements.md#82-code-review-and-comment-resolution) for the corresponding requirements-level definition.
+
 ## Styleguides
 
 - Use the present tense ("Add feature" not "Added feature").
