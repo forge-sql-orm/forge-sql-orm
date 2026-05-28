@@ -119,7 +119,7 @@
 
 ### 📚 Reference
 
-- [Product requirements](docs/requirements.md) — scope, platform limits (Forge SQL / KVS), traceability
+- [Product requirements](REQUIREMENTS.md) — scope, platform limits (Forge SQL / KVS), traceability
 - [ForgeSqlOrmOptions](#forgesqlormoptions)
 - [Migration Guide](#migration-guide)
 

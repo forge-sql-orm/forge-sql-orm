@@ -4,7 +4,7 @@ First off, thanks for taking the time to contribute! 🎉
 
 The following is a set of guidelines for contributing to Forge SQL ORM.
 
-For product scope, platform limits, and documentation obligations, see [docs/requirements.md](docs/requirements.md).
+For product scope, platform limits, and documentation obligations, see [REQUIREMENTS.md](REQUIREMENTS.md).
 
 ## Code of Conduct
 
@@ -93,7 +93,7 @@ Forge SQL ORM is a solo-maintained open-source project. To keep review disciplin
 - Auto-merge is enabled **only after** the pipeline passes _and_ every outstanding comment has been resolved by a human.
 - PRs with unresolved bot comments will not be merged.
 
-This replaces, by design, the need for a second human reviewer on a solo-maintained project. See [docs/requirements.md §8.2](docs/requirements.md#82-code-review-and-comment-resolution) for the corresponding requirements-level definition.
+This replaces, by design, the need for a second human reviewer on a solo-maintained project. See [REQUIREMENTS.md §8.2](REQUIREMENTS.md#82-code-review-and-comment-resolution) for the corresponding requirements-level definition.
 
 ## Styleguides
 
