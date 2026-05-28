@@ -416,7 +416,7 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
       return {} as ClusterStatementRowCamelCase;
     }
 
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     const rawPlan = input["PLAN"];
     result.parsedPlan = this.decodedPlan(typeof rawPlan === "string" ? rawPlan : "");
     for (const key in input) {
@@ -424,7 +424,7 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
       result[camelKey] = input[key];
     }
 
-    return result as ClusterStatementRowCamelCase;
+    return result as unknown as ClusterStatementRowCamelCase;
   }
 
   /**

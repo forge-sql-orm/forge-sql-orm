@@ -4,7 +4,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { AnyMySqlSelectQueryBuilder, AnyMySqlTable } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
-import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
+import { ForgeSqlOrmOptions } from "../core";
 import { MySqlSelectDynamic } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { hashKey } from "./cacheUtils";
 import { Query } from "drizzle-orm/sql/sql";
@@ -38,12 +38,12 @@ export interface LocalCacheApplicationContext {
   >;
 }
 
-function isQuery(obj: any): obj is Query {
+function isQuery(obj: unknown): obj is Query {
   return (
     typeof obj === "object" &&
     obj !== null &&
-    typeof obj.sql === "string" &&
-    Array.isArray(obj.params)
+    typeof (obj as { sql?: unknown }).sql === "string" &&
+    Array.isArray((obj as { params?: unknown }).params)
   );
 }
 

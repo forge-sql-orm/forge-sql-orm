@@ -58,6 +58,7 @@ import { Rovo } from "./Rovo";
  */
 class ForgeSQLORMImpl implements ForgeSqlOperation {
   private static instance: ForgeSQLORMImpl | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MySqlRemoteDatabase's schema generic is a Drizzle internal type; this driver is schema-agnostic at this layer
   private readonly drizzle: MySqlRemoteDatabase<any> & {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;

@@ -3,7 +3,7 @@
 
 import { forgeDriver } from "./forgeDriver";
 import { injectSqlHints, SqlHints } from "./sqlHints";
-import { ForgeSqlOperation } from "../core/ForgeSQLQueryBuilder";
+import { ForgeSqlOperation } from "../core";
 import { handleErrorsWithPlan } from "./sqlUtils";
 
 /**
@@ -22,9 +22,10 @@ const STATEMENTS_SUMMARY_DELAY_MS = 200;
 /**
  * Checks if error is a timeout or out-of-memory error.
  */
-function isQueryError(error: any): { isTimeout: boolean; isOutOfMemory: boolean } {
-  const isTimeout = error?.code === QUERY_ERROR_CODES.TIMEOUT;
-  const isOutOfMemory = error?.context?.debug?.errno === QUERY_ERROR_CODES.OUT_OF_MEMORY_ERRNO;
+function isQueryError(error: unknown): { isTimeout: boolean; isOutOfMemory: boolean } {
+  const err = error as { code?: string; context?: { debug?: { errno?: number } } };
+  const isTimeout = err?.code === QUERY_ERROR_CODES.TIMEOUT;
+  const isOutOfMemory = err?.context?.debug?.errno === QUERY_ERROR_CODES.OUT_OF_MEMORY_ERRNO;
   return { isTimeout, isOutOfMemory };
 }
 
@@ -69,10 +70,10 @@ export function createForgeDriverProxy(
 ) {
   return async (
     query: string,
-    params: any[],
+    params: unknown[],
     method: "all" | "execute",
   ): Promise<{
-    rows: any[];
+    rows: unknown[];
     insertId?: number;
     affectedRows?: number;
   }> => {

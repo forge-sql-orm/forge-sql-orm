@@ -65,8 +65,8 @@ export function isUpdateQueryResponse(obj: unknown): obj is UpdateQueryResponse 
   return (
     obj !== null &&
     typeof obj === "object" &&
-    typeof (obj as any).affectedRows === "number" &&
-    typeof (obj as any).insertId === "number"
+    typeof (obj as { affectedRows?: unknown }).affectedRows === "number" &&
+    typeof (obj as { insertId?: unknown }).insertId === "number"
   );
 }
 
@@ -83,7 +83,7 @@ async function processDDLResult(
   query: string,
   params: unknown[],
   method: QueryMethod,
-  result: any,
+  result: { metadata?: unknown; rows?: unknown },
 ): Promise<ForgeDriverResult> {
   if (result.metadata) {
     await saveMetaDataToContext(query, params, result.metadata as ForgeSQLMetadata);
@@ -102,7 +102,9 @@ async function processDDLResult(
     if (method === "execute") {
       return { rows: [result.rows] };
     } else {
-      const rows = (result.rows as any[]).map((r) => Object.values(r as Record<string, unknown>));
+      const rows = (result.rows as unknown[]).map((r) =>
+        Object.values(r as Record<string, unknown>),
+      );
       return { rows };
     }
   }
@@ -160,7 +162,7 @@ async function processAllMethod(
     return { rows: [] };
   }
 
-  const rows = (result.rows as any[]).map((r) => Object.values(r as Record<string, unknown>));
+  const rows = (result.rows as unknown[]).map((r) => Object.values(r as Record<string, unknown>));
 
   return { rows };
 }

@@ -2,6 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 // qlty-ignore: +qlty:file-complexity
+/* eslint-disable @typescript-eslint/no-explicit-any --
+ * Reflection over Drizzle ORM's internal symbol-keyed table metadata (Name,
+ * Columns, ForeignKeys, ExtraConfigBuilder) and constructor-name-based
+ * builder discovery. These shapes are not part of Drizzle's public type
+ * surface; declaring concrete types here would couple us to private
+ * implementation details and break on Drizzle upgrades.
+ */
 import {
   and,
   AnyColumn,

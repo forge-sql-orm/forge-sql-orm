@@ -30,13 +30,13 @@ export class ForgeSQLSelectOperations implements SchemaSqlForgeSql {
    *
    * @template T - The type of the query builder
    * @param {T} query - The Drizzle query to execute
-   * @returns {Promise<Awaited<T> extends Array<any> ? Awaited<T>[number] | undefined : Awaited<T> | undefined>} A single result object or undefined
+   * @returns {Promise<Awaited<T> extends unknown[] ? Awaited<T>[number] | undefined : Awaited<T> | undefined>} A single result object or undefined
    * @throws {Error} If more than one record is returned
    */
   async executeQueryOnlyOne<T extends MySqlSelectDynamic<AnyMySqlSelectQueryBuilder>>(
     query: T,
   ): Promise<
-    Awaited<T> extends Array<any> ? Awaited<T>[number] | undefined : Awaited<T> | undefined
+    Awaited<T> extends unknown[] ? Awaited<T>[number] | undefined : Awaited<T> | undefined
   > {
     const results: Awaited<T> = await query;
     const datas = results as unknown[];
@@ -47,7 +47,7 @@ export class ForgeSQLSelectOperations implements SchemaSqlForgeSql {
       throw new Error(`Expected 1 record but returned ${datas.length}`);
     }
 
-    return datas[0] as Awaited<T> extends Array<any> ? Awaited<T>[number] : Awaited<T>;
+    return datas[0] as Awaited<T> extends unknown[] ? Awaited<T>[number] : Awaited<T>;
   }
 
   /**
