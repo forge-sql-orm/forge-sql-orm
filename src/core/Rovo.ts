@@ -422,7 +422,9 @@ export class Rovo implements RovoIntegration {
       ast = parser.astify(sqlQuery);
     } catch (parseError) {
       const message = parseError instanceof Error ? parseError.message : "Invalid SQL syntax";
-      throw new Error(`SQL parsing error: ${message}. Please check your query syntax.`);
+      throw new Error(`SQL parsing error: ${message}. Please check your query syntax.`, {
+        cause: parseError,
+      });
     }
 
     // Validate that query is a SELECT statement
