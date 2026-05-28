@@ -442,10 +442,13 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
 
   /**
    * Calculates new version value based on field type.
+   * Coerces `currentVersion` via `Number()` so DECIMAL columns returned as
+   * strings increment instead of concatenating; non-numeric inputs propagate
+   * as `NaN` (matching prior behavior for missing/invalid versions).
    */
   private calculateNewVersionValue(fieldType: string, currentVersion: unknown): Date | number {
     const dateTimeTypes = ["datetime", "timestamp"];
-    return dateTimeTypes.includes(fieldType) ? new Date() : (currentVersion as number) + 1;
+    return dateTimeTypes.includes(fieldType) ? new Date() : Number(currentVersion) + 1;
   }
 
   /**

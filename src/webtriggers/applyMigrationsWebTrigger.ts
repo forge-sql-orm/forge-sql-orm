@@ -3,6 +3,7 @@
 
 import { migrationRunner, sql } from "@forge/sql";
 import { MigrationRunner } from "@forge/sql/out/migration";
+import { extractSqlErrorMessage } from "../utils/errorUtils";
 
 /**
  * Web trigger for applying database schema migrations in Atlassian Forge SQL.
@@ -66,18 +67,7 @@ export const applySchemaMigrations = async (
       body: "Migrations successfully executed",
     };
   } catch (error) {
-    const err = error as {
-      message?: string;
-      cause?: { context?: { debug?: { sqlMessage?: string; message?: string } } };
-      debug?: { context?: { sqlMessage?: string; message?: string } };
-    };
-    const errorMessage =
-      err?.cause?.context?.debug?.sqlMessage ??
-      err?.cause?.context?.debug?.message ??
-      err?.debug?.context?.sqlMessage ??
-      err?.debug?.context?.message ??
-      err?.message ??
-      "Unknown error occurred";
+    const errorMessage = extractSqlErrorMessage(error);
     // eslint-disable-next-line no-console
     console.error("Error during migration:", errorMessage);
     return {

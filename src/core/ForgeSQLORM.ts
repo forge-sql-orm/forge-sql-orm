@@ -48,6 +48,7 @@ import {
   MetadataQueryOptions,
 } from "../utils/metadataContextUtils";
 import { operationTypeQueryContext } from "../utils/requestTypeContextUtils";
+import { getErrorMessage } from "../utils/errorUtils";
 import type { MySqlQueryResultKind } from "drizzle-orm/mysql-core/session";
 import { Rovo } from "./Rovo";
 
@@ -276,13 +277,12 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
             );
           }
         } catch (e) {
-          const err = e instanceof Error ? e : undefined;
           // eslint-disable-next-line no-console
           console.error(
             "[ForgeSQLORM][executeWithMetadata] Failed to run onMetadata callback",
             {
-              errorMessage: err?.message,
-              errorStack: err?.stack,
+              errorMessage: getErrorMessage(e),
+              errorStack: e instanceof Error ? e.stack : undefined,
               totalDbExecutionTime: metadata?.totalDbExecutionTime,
               totalResponseSize: metadata?.totalResponseSize,
               beginTime: metadata?.beginTime,

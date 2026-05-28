@@ -8,6 +8,7 @@ import {
 } from "../utils/sqlUtils";
 import { getHttpResponse, TriggerResponse } from "./index";
 import { getTables } from "../core/SystemTables";
+import { extractSqlErrorMessage } from "../utils/errorUtils";
 
 /**
  * ⚠️ DEVELOPMENT ONLY WEB TRIGGER ⚠️
@@ -56,9 +57,7 @@ export async function dropTableSchemaMigrations(): Promise<TriggerResponse<strin
       "⚠️ All data in these tables has been permanently deleted. This operation cannot be undone.",
     );
   } catch (error) {
-    const err = error as { message?: string; debug?: { sqlMessage?: string; message?: string } };
-    const errorMessage =
-      err?.debug?.sqlMessage ?? err?.debug?.message ?? err?.message ?? "Unknown error occurred";
+    const errorMessage = extractSqlErrorMessage(error);
     // eslint-disable-next-line no-console
     console.error(errorMessage);
     return getHttpResponse<string>(500, errorMessage);

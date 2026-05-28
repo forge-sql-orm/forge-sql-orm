@@ -16,3 +16,41 @@ export function getErrorMessage(error: unknown, fallback: string = "Unknown erro
   }
   return error == null ? fallback : String(error);
 }
+
+/**
+ * Shape of error objects thrown by `@forge/sql`. Both nested `cause.context`
+ * (apply-migrations path) and direct `debug` (DDL / scheduler path) variants
+ * are documented in Atlassian's Forge SQL error contract.
+ */
+interface ForgeSqlErrorShape {
+  message?: string;
+  cause?: { context?: { debug?: { sqlMessage?: string; message?: string } } };
+  debug?: {
+    sqlMessage?: string;
+    message?: string;
+    context?: { sqlMessage?: string; message?: string };
+  };
+}
+
+/**
+ * Extracts the most specific SQL message from a `@forge/sql` error.
+ * Walks the known well-known paths in order of specificity and falls back
+ * to the value of `Error.message` (or the provided fallback) when none
+ * of them are populated.
+ */
+export function extractSqlErrorMessage(
+  error: unknown,
+  fallback: string = "Unknown error occurred",
+): string {
+  const err = error as ForgeSqlErrorShape;
+  return (
+    err?.cause?.context?.debug?.sqlMessage ??
+    err?.cause?.context?.debug?.message ??
+    err?.debug?.context?.sqlMessage ??
+    err?.debug?.context?.message ??
+    err?.debug?.sqlMessage ??
+    err?.debug?.message ??
+    err?.message ??
+    fallback
+  );
+}
