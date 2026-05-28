@@ -6,6 +6,7 @@ import { getHttpResponse, TriggerResponse } from "./index";
 import { forgeSystemTables, getTables } from "../core/SystemTables";
 import { getTableName } from "drizzle-orm/table";
 import { checkProductionEnvironment } from "../utils/sqlUtils";
+import { extractSqlErrorMessage } from "../utils/errorUtils";
 
 interface CreateTableRow {
   Table: string;
@@ -50,12 +51,8 @@ export async function fetchSchemaWebTrigger(): Promise<TriggerResponse<string>> 
     const sqlStatements = wrapWithForeignKeyChecks(createTableStatements);
 
     return getHttpResponse<string>(200, sqlStatements.join(";\n"));
-  } catch (error: any) {
-    const errorMessage =
-      error?.debug?.sqlMessage ??
-      error?.debug?.message ??
-      error.message ??
-      "Unknown error occurred";
+  } catch (error) {
+    const errorMessage = extractSqlErrorMessage(error);
     // eslint-disable-next-line no-console
     console.error(errorMessage);
     return getHttpResponse<string>(500, errorMessage);

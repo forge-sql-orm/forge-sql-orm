@@ -16,7 +16,7 @@ import {
   type SelectedFields,
 } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { InferInsertModel, Query, SQL } from "drizzle-orm";
-import { parseDateTime, formatDateTime } from "../utils/sqlUtils";
+import { parseDateTime, formatDateTime } from "../utils";
 import {
   MySqlRemoteDatabase,
   MySqlRemotePreparedQueryHKT,
@@ -77,6 +77,7 @@ export type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
       [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
     }[K];
   }[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle's MySqlSelectBase final generic is an internal column-map type whose public shape is not exported
   any
 >;
 import type { MySqlQueryResultKind } from "drizzle-orm/mysql-core/session";
@@ -945,14 +946,14 @@ export interface SchemaSqlForgeSql {
    * Executes a Drizzle query and returns a single result.
    * @template T - The type of the query builder
    * @param {T} query - The Drizzle query to execute
-   * @returns {Promise<Awaited<T> extends Array<any> ? Awaited<T>[number] | undefined : Awaited<T> | undefined>} A single result object or undefined
+   * @returns {Promise<Awaited<T> extends unknown[] ? Awaited<T>[number] | undefined : Awaited<T> | undefined>} A single result object or undefined
    * @throws {Error} If more than one record is returned
    * @throws {Error} If the query execution fails
    */
   executeQueryOnlyOne<T extends MySqlSelectDynamic<AnyMySqlSelectQueryBuilder>>(
     query: T,
   ): Promise<
-    Awaited<T> extends Array<any> ? Awaited<T>[number] | undefined : Awaited<T> | undefined
+    Awaited<T> extends unknown[] ? Awaited<T>[number] | undefined : Awaited<T> | undefined
   >;
 
   /**

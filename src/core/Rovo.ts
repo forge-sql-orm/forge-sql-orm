@@ -14,6 +14,7 @@ import { Result, sql } from "@forge/sql";
 import { Parser, Select } from "node-sql-parser";
 import { AnyMySqlTable, MySqlColumn } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
+import { getErrorMessage } from "../utils/errorUtils";
 
 /**
  * Configuration for RovoIntegrationSettingImpl.
@@ -420,10 +421,11 @@ export class Rovo implements RovoIntegration {
     let ast;
     try {
       ast = parser.astify(sqlQuery);
-    } catch (parseError: any) {
-      throw new Error(
-        `SQL parsing error: ${parseError.message || "Invalid SQL syntax"}. Please check your query syntax.`,
-      );
+    } catch (parseError) {
+      const message = getErrorMessage(parseError, "Invalid SQL syntax");
+      throw new Error(`SQL parsing error: ${message}. Please check your query syntax.`, {
+        cause: parseError,
+      });
     }
 
     // Validate that query is a SELECT statement
@@ -448,8 +450,10 @@ export class Rovo implements RovoIntegration {
    * @param {any} items - Array of AST nodes or single AST node
    * @param {string[]} tables - Accumulator array for collecting table names (modified in place)
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
   private extractTablesFromItems(items: any, tables: string[]): void {
     if (Array.isArray(items)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
       items.forEach((item: any) => {
         tables.push(...this.extractTables(item));
       });
@@ -464,6 +468,7 @@ export class Rovo implements RovoIntegration {
    * @param {any} node - AST node with table information
    * @returns {string | null} Table name in uppercase, or null if not applicable (e.g., 'dual' table)
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
   private extractTableName(node: any): string | null {
     if (!node.table) {
       return null;
@@ -479,6 +484,7 @@ export class Rovo implements RovoIntegration {
    * @param {any} node - AST node to extract tables from
    * @returns {string[]} Array of table names in uppercase
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
   private extractTables(node: any): string[] {
     const tables: string[] = [];
 
@@ -510,6 +516,7 @@ export class Rovo implements RovoIntegration {
    * @param {any} node - AST node to check for subqueries
    * @returns {boolean} True if node contains scalar subquery, false otherwise
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
   private hasScalarSubquery(node: any): boolean {
     if (!node) return false;
 
@@ -600,6 +607,7 @@ export class Rovo implements RovoIntegration {
   /**
    * Validates that AST represents a single SELECT statement.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
   private validateSelectAst(ast: any): void {
     if (Array.isArray(ast)) {
       if (ast.length !== 1 || ast[0].type !== "select") {
@@ -625,19 +633,18 @@ export class Rovo implements RovoIntegration {
    * else into a uniform "SQL parsing error". Centralised so the catch blocks in
    * normalizeSqlString / normalizeQueryWithErrorHandling stay flat.
    */
-  private rethrowAsParsingError(error: any): never {
-    const message: string | undefined = error?.message;
+  private rethrowAsParsingError(error: unknown): never {
+    const message = getErrorMessage(error, "Invalid SQL syntax");
     const isKnown =
-      typeof message === "string" &&
-      (message.includes("Only") ||
-        message.includes("single SELECT") ||
-        message.includes("SQL parsing error"));
+      message.includes("Only") ||
+      message.includes("single SELECT") ||
+      message.includes("SQL parsing error");
     if (isKnown) {
       throw error;
     }
-    throw new Error(
-      `SQL parsing error: ${message || "Invalid SQL syntax"}. Please check your query syntax.`,
-    );
+    throw new Error(`SQL parsing error: ${message}. Please check your query syntax.`, {
+      cause: error,
+    });
   }
 
   private normalizeSqlString(sql: string): string {
@@ -647,7 +654,7 @@ export class Rovo implements RovoIntegration {
       this.validateSelectAst(ast);
       const normalized = parser.sqlify(Array.isArray(ast) ? ast[0] : ast);
       return normalized.trim();
-    } catch (error: any) {
+    } catch (error) {
       this.rethrowAsParsingError(error);
     }
   }
@@ -695,6 +702,7 @@ export class Rovo implements RovoIntegration {
    */
   private validateNoSubqueriesInColumns(selectAst: Select): void {
     if (selectAst.columns && Array.isArray(selectAst.columns)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST column nodes are untyped
       const hasSubqueryInColumns = selectAst.columns.some((col: any) => {
         if (col.expr) {
           return this.hasScalarSubquery(col.expr);
@@ -884,7 +892,7 @@ export class Rovo implements RovoIntegration {
   private normalizeQueryWithErrorHandling(query: string): string {
     try {
       return this.normalizeSqlString(query);
-    } catch (error: any) {
+    } catch (error) {
       this.rethrowAsParsingError(error);
     }
   }

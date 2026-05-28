@@ -8,6 +8,7 @@ import { printQueriesWithPlan, withTimeout } from "./sqlUtils";
 import { Parser } from "node-sql-parser";
 import { PushResult, Queue } from "@forge/events";
 import { AsyncEventPrintQuery } from "../async";
+import { getErrorMessage } from "./errorUtils";
 
 const TIMEOUT_ASYNC_EVENT_SENT = 1200;
 const DEFAULT_WINDOW_SIZE = 15 * 1000;
@@ -353,10 +354,10 @@ export async function saveMetaDataToContext(
           `[Performance Analysis] Query degradation event queued for async processing | Job ID: ${eventInfo.jobId} | Total DB time: ${context.totalDbExecutionTime}ms | Queries: ${context.statistics.length} | Look for consumer log with jobId: ${eventInfo.jobId}`,
         );
         return;
-      } catch (e: any) {
+      } catch (e) {
         // eslint-disable-next-line no-console
         console.warn(
-          "Async printing failed — falling back to synchronous execution: " + e.message,
+          "Async printing failed — falling back to synchronous execution: " + getErrorMessage(e),
           e,
         );
       }

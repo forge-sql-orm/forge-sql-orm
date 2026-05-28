@@ -5,7 +5,7 @@ import { ForgeSqlOrmOptions } from "..";
 import { VerioningModificationForgeSQL, ForgeSqlOperation } from "./ForgeSQLQueryBuilder";
 import { AnyMySqlTable } from "drizzle-orm/mysql-core";
 import { and, AnyColumn, eq, InferInsertModel, SQL } from "drizzle-orm";
-import { getPrimaryKeys, getTableMetadata } from "../utils/sqlUtils";
+import { getPrimaryKeys, getTableMetadata } from "../utils";
 import { saveTableIfInsideCacheContext } from "../utils/cacheContextUtils";
 
 /**
@@ -59,13 +59,16 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
 
     // Build insert query
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle's .values() expects InferInsertModel<T>[] but `preparedModels` is a partial map for batch insert
     const queryBuilder = this.forgeOperations.insert(schema).values(preparedModels as any);
 
     // Add onDuplicateKeyUpdate if needed
     const finalQuery = updateIfExists
       ? queryBuilder.onDuplicateKeyUpdate({
           set: Object.fromEntries(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle MySqlTable columns are exposed only via symbol-indexed internal types
             Object.keys(preparedModels[0]).map((key) => [key, (schema as any)[key]]),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle's onDuplicateKeyUpdate.set expects a typed assignment object that is not exported
           ) as any,
         })
       : queryBuilder;
@@ -115,7 +118,9 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
           versionMetadata.fieldName,
           versionField,
         ]);
-        conditions.push(eq(versionField, (oldModel as any)[versionMetadata.fieldName]));
+        conditions.push(
+          eq(versionField, (oldModel as Record<string, unknown>)[versionMetadata.fieldName]),
+        );
       }
     }
 
@@ -197,6 +202,7 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
     const queryBuilder = this.forgeOperations
       .update(schema)
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle's .set() type is generic over the table's update model, which our Partial<InferInsertModel<T>> with optional version field doesn't satisfy precisely
       .set(updateData as any)
       .where(and(...conditions));
 
@@ -234,6 +240,7 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
 
     const queryBuilder = this.forgeOperations
       .update(schema)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle's .set() type is generic over the table's update model
       .set(updateData as any)
       .where(where);
 
@@ -394,7 +401,7 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
       [versionMetadata.fieldName, versionField],
     );
 
-    return (oldModel as any)[versionMetadata.fieldName];
+    return (oldModel as Record<string, unknown>)[versionMetadata.fieldName];
   }
 
   /**
@@ -427,19 +434,21 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
     const fieldType = versionField.getSQLType();
     const dateTimeTypes = ["datetime", "timestamp"];
     const versionValue = dateTimeTypes.includes(fieldType) ? new Date() : 1;
-    modelWithVersion[fieldName as keyof typeof modelWithVersion] = versionValue as any;
+    modelWithVersion[fieldName as keyof typeof modelWithVersion] =
+      versionValue as (typeof modelWithVersion)[keyof typeof modelWithVersion];
 
     return modelWithVersion as InferInsertModel<T>;
   }
 
   /**
    * Calculates new version value based on field type.
+   * Coerces `currentVersion` via `Number()` so DECIMAL columns returned as
+   * strings increment instead of concatenating; non-numeric inputs propagate
+   * as `NaN` (matching prior behavior for missing/invalid versions).
    */
-  private calculateNewVersionValue(fieldType: string, currentVersion: unknown): any {
+  private calculateNewVersionValue(fieldType: string, currentVersion: unknown): Date | number {
     const dateTimeTypes = ["datetime", "timestamp"];
-    return dateTimeTypes.includes(fieldType)
-      ? new Date()
-      : (((currentVersion as number) + 1) as any);
+    return dateTimeTypes.includes(fieldType) ? new Date() : Number(currentVersion) + 1;
   }
 
   /**
@@ -464,7 +473,10 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
       if (versionField) {
         const fieldType = versionField.getSQLType();
         updateData[versionMetadata.fieldName as keyof typeof updateData] =
-          this.calculateNewVersionValue(fieldType, currentVersion);
+          this.calculateNewVersionValue(
+            fieldType,
+            currentVersion,
+          ) as (typeof updateData)[keyof typeof updateData];
       }
     }
 
@@ -477,7 +489,7 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
    * @param {Record<string, unknown>} primaryKeyValues - The primary key values
    * @param {T} schema - The table schema
    * @param {[string, AnyColumn]} versionField - The version field name and column
-   * @returns {Promise<Awaited<T> extends Array<any> ? Awaited<T>[number] | undefined : Awaited<T> | undefined>} The existing model
+   * @returns {Promise<Awaited<T> extends unknown[] ? Awaited<T>[number] | undefined : Awaited<T> | undefined>} The existing model
    * @throws {Error} If the record is not found
    */
   private async getOldModel<T extends AnyMySqlTable>(
@@ -485,7 +497,7 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
     schema: T,
     versionField: [string, AnyColumn],
   ): Promise<
-    Awaited<T> extends Array<any> ? Awaited<T>[number] | undefined : Awaited<T> | undefined
+    Awaited<T> extends unknown[] ? Awaited<T>[number] | undefined : Awaited<T> | undefined
   > {
     const [versionFieldName, versionFieldColumn] = versionField;
     const primaryKeys = this.getPrimaryKeys(schema);
@@ -493,7 +505,9 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
 
     const resultQuery = this.forgeOperations
       .select({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle .select() requires SQLWrapper-typed columns; AnyColumn from getPrimaryKeys/columns isn't structurally accepted here
         [primaryKeyName]: primaryKeyColumn as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle .select() requires SQLWrapper-typed columns; AnyColumn from getPrimaryKeys/columns isn't structurally accepted here
         [versionFieldName]: versionFieldColumn as any,
       })
       .from(schema)
@@ -505,6 +519,6 @@ export class ForgeSQLCrudOperations implements VerioningModificationForgeSQL {
       throw new Error(`Record not found in table ${schema}`);
     }
 
-    return model as Awaited<T> extends Array<any> ? Awaited<T>[number] : Awaited<T>;
+    return model as Awaited<T> extends unknown[] ? Awaited<T>[number] : Awaited<T>;
   }
 }

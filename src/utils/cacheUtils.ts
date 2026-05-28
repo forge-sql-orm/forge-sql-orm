@@ -10,6 +10,7 @@ import { Filter, FilterConditions, kvs, WhereConditions } from "@forge/kvs";
 import { ForgeSqlOrmOptions } from "../core";
 import { cacheApplicationContext, isTableContainsTableInCacheContext } from "./cacheContextUtils";
 import { extractBacktickedValues } from "./cacheTableUtils";
+import { getErrorMessage } from "./errorUtils";
 
 // Constants for better maintainability
 const CACHE_CONSTANTS = {
@@ -228,14 +229,15 @@ async function executeWithRetry<T>(operation: () => Promise<T>, operationName: s
   while (attempt < CACHE_CONSTANTS.MAX_RETRY_ATTEMPTS) {
     try {
       return await operation();
-    } catch (err: any) {
+    } catch (err) {
+      const message = getErrorMessage(err);
       // eslint-disable-next-line no-console
-      console.warn(`Error during ${operationName}: ${err.message}, retry ${attempt}`, err);
+      console.warn(`Error during ${operationName}: ${message}, retry ${attempt}`, err);
       attempt++;
 
       if (attempt >= CACHE_CONSTANTS.MAX_RETRY_ATTEMPTS) {
         // eslint-disable-next-line no-console
-        console.error(`Error during ${operationName}: ${err.message}`, err);
+        console.error(`Error during ${operationName}: ${message}`, err);
         throw err;
       }
 
@@ -371,9 +373,9 @@ export async function getFromCache<T>(
         );
       }
     }
-  } catch (error: any) {
+  } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Error getting from cache: ${error.message}`, error);
+    console.error(`Error getting from cache: ${getErrorMessage(error)}`, error);
   }
 
   return undefined;
@@ -437,8 +439,8 @@ export async function setCacheResult(
       .execute();
 
     debugLog(`Store value to cache, cacheKey: ${key}`, options);
-  } catch (error: any) {
+  } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Error setting cache: ${error.message}`, error);
+    console.error(`Error setting cache: ${getErrorMessage(error)}`, error);
   }
 }

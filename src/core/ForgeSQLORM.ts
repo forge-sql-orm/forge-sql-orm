@@ -48,6 +48,7 @@ import {
   MetadataQueryOptions,
 } from "../utils/metadataContextUtils";
 import { operationTypeQueryContext } from "../utils/requestTypeContextUtils";
+import { getErrorMessage } from "../utils/errorUtils";
 import type { MySqlQueryResultKind } from "drizzle-orm/mysql-core/session";
 import { Rovo } from "./Rovo";
 
@@ -58,6 +59,7 @@ import { Rovo } from "./Rovo";
  */
 class ForgeSQLORMImpl implements ForgeSqlOperation {
   private static instance: ForgeSQLORMImpl | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MySqlRemoteDatabase's schema generic is a Drizzle internal type; this driver is schema-agnostic at this layer
   private readonly drizzle: MySqlRemoteDatabase<any> & {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
@@ -274,13 +276,13 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
               metadata.printQueriesWithPlan,
             );
           }
-        } catch (e: any) {
+        } catch (e) {
           // eslint-disable-next-line no-console
           console.error(
             "[ForgeSQLORM][executeWithMetadata] Failed to run onMetadata callback",
             {
-              errorMessage: e?.message,
-              errorStack: e?.stack,
+              errorMessage: getErrorMessage(e),
+              errorStack: e instanceof Error ? e.stack : undefined,
               totalDbExecutionTime: metadata?.totalDbExecutionTime,
               totalResponseSize: metadata?.totalResponseSize,
               beginTime: metadata?.beginTime,

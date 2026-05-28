@@ -2,6 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 // qlty-ignore: +qlty:file-complexity
+/* eslint-disable @typescript-eslint/no-explicit-any --
+ * Drizzle ORM extension internals: this file augments Drizzle's
+ * MySqlRemoteDatabase prototype with cache-aware select/insert/update/delete
+ * variants. Reproducing the exact 9+ generic chain of MySqlSelectBase /
+ * MySqlInsertBuilder / MySqlUpdateBuilder for every wrapper would tightly
+ * couple us to private Drizzle types. The `any`s here are deliberate at the
+ * Drizzle/ORM boundary; tightening would not improve runtime safety.
+ */
 import {
   MySqlRawQueryResult,
   MySqlRemoteDatabase,

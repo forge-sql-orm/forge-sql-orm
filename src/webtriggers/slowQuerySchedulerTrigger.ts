@@ -4,6 +4,7 @@
 import { getHttpResponse, TriggerResponse } from "./index";
 import { slowQueryPerHours } from "../utils/sqlUtils";
 import { ForgeSqlOperation } from "../core/ForgeSQLQueryBuilder";
+import { extractSqlErrorMessage } from "../utils/errorUtils";
 
 /**
  * Scheduler trigger for analyzing slow queries from the last specified number of hours.
@@ -79,12 +80,8 @@ export async function slowQuerySchedulerTrigger(
         await slowQueryPerHours(forgeSQLORM, options?.hours ?? 1, options?.timeout ?? 3000),
       ),
     );
-  } catch (error: any) {
-    const errorMessage =
-      error?.debug?.sqlMessage ??
-      error?.debug?.message ??
-      error.message ??
-      "Unknown error occurred";
+  } catch (error) {
+    const errorMessage = extractSqlErrorMessage(error);
     // eslint-disable-next-line no-console
     console.error(errorMessage);
     return getHttpResponse<string>(500, errorMessage);

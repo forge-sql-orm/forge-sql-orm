@@ -22,6 +22,7 @@ export default [
       "no-console": "error",
       "@typescript-eslint/no-unused-vars": ["error"],
       "no-unused-vars": ["off"],
+      "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/explicit-function-return-type": "off",
       "vitest/no-disabled-tests": "warn",
       "vitest/no-focused-tests": "error",

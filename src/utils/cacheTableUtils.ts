@@ -2,6 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 // qlty-ignore: +qlty:file-complexity
+/* eslint-disable @typescript-eslint/no-explicit-any --
+ * Generic AST traversal for node-sql-parser output. The upstream library
+ * exposes its AST as plain objects without static types — every visited node
+ * is shape-checked at runtime in the helpers below. A structural `AstNode`
+ * type would force casts on every property access without adding safety.
+ */
 import { Parser } from "node-sql-parser";
 import { ForgeSqlOrmOptions } from "../core";
 
