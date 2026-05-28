@@ -14,6 +14,7 @@ import { Result, sql } from "@forge/sql";
 import { Parser, Select } from "node-sql-parser";
 import { AnyMySqlTable, MySqlColumn } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
+import { getErrorMessage } from "../utils/errorUtils";
 
 /**
  * Configuration for RovoIntegrationSettingImpl.
@@ -421,7 +422,7 @@ export class Rovo implements RovoIntegration {
     try {
       ast = parser.astify(sqlQuery);
     } catch (parseError) {
-      const message = parseError instanceof Error ? parseError.message : "Invalid SQL syntax";
+      const message = getErrorMessage(parseError, "Invalid SQL syntax");
       throw new Error(`SQL parsing error: ${message}. Please check your query syntax.`, {
         cause: parseError,
       });
@@ -633,20 +634,17 @@ export class Rovo implements RovoIntegration {
    * normalizeSqlString / normalizeQueryWithErrorHandling stay flat.
    */
   private rethrowAsParsingError(error: unknown): never {
-    const message: string | undefined =
-      error instanceof Error ? error.message : (error as { message?: string })?.message;
+    const message = getErrorMessage(error, "Invalid SQL syntax");
     const isKnown =
-      typeof message === "string" &&
-      (message.includes("Only") ||
-        message.includes("single SELECT") ||
-        message.includes("SQL parsing error"));
+      message.includes("Only") ||
+      message.includes("single SELECT") ||
+      message.includes("SQL parsing error");
     if (isKnown) {
       throw error;
     }
-    throw new Error(
-      `SQL parsing error: ${message || "Invalid SQL syntax"}. Please check your query syntax.`,
-      { cause: error },
-    );
+    throw new Error(`SQL parsing error: ${message}. Please check your query syntax.`, {
+      cause: error,
+    });
   }
 
   private normalizeSqlString(sql: string): string {
