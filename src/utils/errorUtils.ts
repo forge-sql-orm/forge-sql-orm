@@ -6,12 +6,23 @@
  * and returning the provided fallback instead. Kept private so the public
  * helpers stay free of the try/catch and stay below the cyclomatic limit.
  */
-function safeStringify(value: unknown, fallback: string): string {
+function safeStringify(value: object, fallback: string): string {
   try {
     return JSON.stringify(value) ?? fallback;
   } catch {
     return fallback;
   }
+}
+
+/**
+ * Renders a non-Error, non-null thrown value. Objects go through JSON to
+ * avoid the `[object Object]` default; everything else falls back to
+ * `String()`. Kept separate from {@link getErrorMessage} so the public
+ * function stays under the many-returns and `[object Object]` analyzers.
+ */
+function renderNonErrorValue(value: NonNullable<unknown>, fallback: string): string {
+  if (typeof value === "object") return safeStringify(value, fallback);
+  return String(value);
 }
 
 /**
@@ -24,7 +35,7 @@ export function getErrorMessage(error: unknown, fallback: string = "Unknown erro
   if (error instanceof Error) return error.message;
   if (typeof error === "string") return error;
   if (error == null) return fallback;
-  return typeof error === "object" ? safeStringify(error, fallback) : String(error);
+  return renderNonErrorValue(error, fallback);
 }
 
 /**
@@ -42,13 +53,19 @@ const SQL_ERROR_PATHS: readonly (readonly string[])[] = [
 ];
 
 /**
- * Walks a dotted property path on an unknown object and returns the value at
- * the leaf if and only if it is a non-empty string; otherwise `undefined`.
+ * Walks a property path on an unknown object and returns the value at the
+ * leaf when it is a string; otherwise `undefined`.
+ *
+ * Uses `Object.hasOwn` so the traversal stays on own properties and cannot
+ * walk into `Object.prototype` (e.g. via `__proto__` / `constructor`), which
+ * defuses the prototype-pollution scanner without needing a separate
+ * forbidden-keys list.
  */
 function readStringPath(source: unknown, path: readonly string[]): string | undefined {
   let current: unknown = source;
   for (const key of path) {
     if (current == null || typeof current !== "object") return undefined;
+    if (!Object.hasOwn(current, key)) return undefined;
     current = (current as Record<string, unknown>)[key];
   }
   return typeof current === "string" ? current : undefined;
