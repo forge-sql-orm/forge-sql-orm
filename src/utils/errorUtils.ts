@@ -6,7 +6,7 @@
  * and returning the provided fallback instead. Kept private so the public
  * helpers stay free of the try/catch and stay below the cyclomatic limit.
  */
-function safeStringify(value: object, fallback: string): string {
+function safeStringify(value: unknown, fallback: string): string {
   try {
     return JSON.stringify(value) ?? fallback;
   } catch {
@@ -15,14 +15,17 @@ function safeStringify(value: object, fallback: string): string {
 }
 
 /**
- * Renders a non-Error, non-null thrown value. Objects go through JSON to
- * avoid the `[object Object]` default; everything else falls back to
- * `String()`. Kept separate from {@link getErrorMessage} so the public
- * function stays under the many-returns and `[object Object]` analyzers.
+ * Renders a non-Error, non-null thrown value. Objects and functions go
+ * through JSON to avoid the `[object Object]` default; the remaining
+ * primitives are cast to a concrete union before reaching `String()` so
+ * Sonar's S6551 (`[object Object]` coercion) sees a guaranteed-primitive
+ * input rather than the wider `NonNullable<unknown>`.
  */
 function renderNonErrorValue(value: NonNullable<unknown>, fallback: string): string {
-  if (typeof value === "object") return safeStringify(value, fallback);
-  return String(value);
+  if (typeof value === "object" || typeof value === "function") {
+    return safeStringify(value, fallback);
+  }
+  return String(value as string | number | boolean | bigint | symbol);
 }
 
 /**
@@ -39,49 +42,64 @@ export function getErrorMessage(error: unknown, fallback: string = "Unknown erro
 }
 
 /**
- * Property paths that `@forge/sql` is known to populate when raising an
- * error. Walked in order of specificity by `extractSqlErrorMessage`.
+ * Shape of error objects thrown by `@forge/sql`. Both nested `cause.context`
+ * (apply-migrations path) and direct `debug` (DDL / scheduler path) variants
+ * are documented in Atlassian's Forge SQL error contract.
  */
-const SQL_ERROR_PATHS: readonly (readonly string[])[] = [
-  ["cause", "context", "debug", "sqlMessage"],
-  ["cause", "context", "debug", "message"],
-  ["debug", "context", "sqlMessage"],
-  ["debug", "context", "message"],
-  ["debug", "sqlMessage"],
-  ["debug", "message"],
-  ["message"],
-];
-
-/**
- * Walks a property path on an unknown object and returns the value at the
- * leaf when it is a string; otherwise `undefined`.
- *
- * Uses `Object.hasOwn` so the traversal stays on own properties and cannot
- * walk into `Object.prototype` (e.g. via `__proto__` / `constructor`), which
- * defuses the prototype-pollution scanner without needing a separate
- * forbidden-keys list.
- */
-function readStringPath(source: unknown, path: readonly string[]): string | undefined {
-  let current: unknown = source;
-  for (const key of path) {
-    if (current == null || typeof current !== "object") return undefined;
-    if (!Object.hasOwn(current, key)) return undefined;
-    current = (current as Record<string, unknown>)[key];
-  }
-  return typeof current === "string" ? current : undefined;
+interface ForgeSqlErrorShape {
+  message?: string;
+  cause?: { context?: { debug?: { sqlMessage?: string; message?: string } } };
+  debug?: {
+    sqlMessage?: string;
+    message?: string;
+    context?: { sqlMessage?: string; message?: string };
+  };
 }
 
 /**
+ * Returns `value` when it is a string, `undefined` otherwise. Tiny helper
+ * shared by the SQL-error getters below so each one stays a single
+ * expression and the public function keeps its `for-of` loop flat.
+ */
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+type SqlErrorGetter = (e: ForgeSqlErrorShape | null | undefined) => string | undefined;
+
+/**
+ * Static accessors for the property paths that `@forge/sql` is known to
+ * populate when raising an error, in order of specificity.
+ *
+ * Each path is hard-coded as an optional-chain expression instead of being
+ * walked dynamically as a string array — this keeps the scanner happy
+ * (`obj[var]` in a loop trips Opengrep's prototype-pollution rule even
+ * when guarded) and surfaces typos at compile time.
+ */
+const SQL_ERROR_GETTERS: readonly SqlErrorGetter[] = [
+  (e) => asString(e?.cause?.context?.debug?.sqlMessage),
+  (e) => asString(e?.cause?.context?.debug?.message),
+  (e) => asString(e?.debug?.context?.sqlMessage),
+  (e) => asString(e?.debug?.context?.message),
+  (e) => asString(e?.debug?.sqlMessage),
+  (e) => asString(e?.debug?.message),
+  (e) => asString(e?.message),
+];
+
+/**
  * Extracts the most specific SQL message from a `@forge/sql` error.
- * Walks {@link SQL_ERROR_PATHS} in order and falls back to the provided
- * default when none of them yield a non-empty string.
+ * Runs {@link SQL_ERROR_GETTERS} in order and falls back to the provided
+ * default when none of them yield a string.
  */
 export function extractSqlErrorMessage(
   error: unknown,
   fallback: string = "Unknown error occurred",
 ): string {
-  for (const path of SQL_ERROR_PATHS) {
-    const value = readStringPath(error, path);
+  const err = (
+    typeof error === "object" && error !== null ? error : null
+  ) as ForgeSqlErrorShape | null;
+  for (const get of SQL_ERROR_GETTERS) {
+    const value = get(err);
     if (value !== undefined) return value;
   }
   return fallback;
