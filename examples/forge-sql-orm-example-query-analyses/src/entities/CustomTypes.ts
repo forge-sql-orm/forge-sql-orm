@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { customType } from "drizzle-orm/mysql-core";
 import { stringify as uuidStringify } from "uuid";
 import { sql } from "drizzle-orm";

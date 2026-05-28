@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it, vi, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
 import {
   formatLimitOffset,

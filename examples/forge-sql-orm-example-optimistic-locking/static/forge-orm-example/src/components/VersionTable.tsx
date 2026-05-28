@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { CreatedResponseDataType, UPDATE_TYPE } from "../utils/Constants";
 import DynamicTable from "@atlaskit/dynamic-table";
 import { createHead } from "../utils/TableUtils";

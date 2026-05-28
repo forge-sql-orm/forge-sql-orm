@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { defineConfig, type LibraryFormats, type SSROptions, UserConfig } from "vite";
 import path from "path";
 import copy from "rollup-plugin-copy";

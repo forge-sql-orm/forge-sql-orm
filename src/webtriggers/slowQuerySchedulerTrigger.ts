@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { getHttpResponse, TriggerResponse } from "./index";
 import { slowQueryPerHours } from "../utils/sqlUtils";
 import { ForgeSqlOperation } from "../core/ForgeSQLQueryBuilder";

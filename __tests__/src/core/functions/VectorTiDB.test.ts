@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from "vitest";
 import { getTableColumns } from "drizzle-orm";
 import { sql as dsql } from "drizzle-orm";

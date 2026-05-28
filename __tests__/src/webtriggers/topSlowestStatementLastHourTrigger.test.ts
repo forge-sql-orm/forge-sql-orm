@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { topSlowestStatementLastHourTrigger } from "../../../src/webtriggers/topSlowestStatementLastHourTrigger";
 import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";

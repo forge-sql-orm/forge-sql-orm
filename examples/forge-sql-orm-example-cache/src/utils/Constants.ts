@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { demoOrders, demoUsers } from "../entities";
 

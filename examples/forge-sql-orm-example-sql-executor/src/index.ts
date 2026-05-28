@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import Resolver, { Request } from "@forge/resolver";
 import { spawn } from "child_process";
 import ForgeSQL from "forge-sql-orm";

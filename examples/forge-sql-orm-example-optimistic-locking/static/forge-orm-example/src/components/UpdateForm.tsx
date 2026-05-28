@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { observer } from "mobx-react";
 import { useRootStore } from "../store";
 import { useState } from "react";

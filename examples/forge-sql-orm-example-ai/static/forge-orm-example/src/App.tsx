@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import React, { useCallback, useEffect, useState } from "react";
 import { invoke } from "@forge/bridge";
 import Button from "@atlaskit/button";

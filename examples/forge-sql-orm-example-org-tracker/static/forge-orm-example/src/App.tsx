@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import React, { useEffect, useState } from "react";
 import { invoke } from "@forge/bridge";
 import styles from "./App.module.css";

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 // qlty-ignore: +qlty:file-complexity
 import { Parser } from "node-sql-parser";
 import { ForgeSqlOrmOptions } from "../core";

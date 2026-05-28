@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 const getCells = (withWidth: boolean, type: "SLOW_QUERY" | "PLAN" | "HISTORY") => {
   const columns: {
     key: string;

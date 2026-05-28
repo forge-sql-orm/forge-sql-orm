@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { action, makeObservable, observable } from "mobx";
 
 type APP_STATE = "ROOT" | "ADD_USER" | "DUPLICATE";

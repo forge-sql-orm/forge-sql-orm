@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { AsyncLocalStorage } from "node:async_hooks";
 import { ForgeSQLMetadata } from "./forgeDriver";
 import { ForgeSqlOperation, ExplainAnalyzeRow } from "../core";

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { int, mysqlTable, primaryKey, text, varchar } from "drizzle-orm/mysql-core";
 import { vectorTiDBType } from "forge-sql-orm";
 

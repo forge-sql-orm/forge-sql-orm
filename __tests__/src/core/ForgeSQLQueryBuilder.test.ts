@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { mysqlTable, int } from "drizzle-orm/mysql-core";
 import {

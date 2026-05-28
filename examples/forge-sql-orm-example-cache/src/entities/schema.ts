@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { forgeTimestampString } from "forge-sql-orm";
 
 import { mysqlTable, index, primaryKey, int, varchar } from "drizzle-orm/mysql-core";

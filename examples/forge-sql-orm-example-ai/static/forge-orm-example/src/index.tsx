@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import React from "react";
 import "@atlaskit/css-reset/dist/bundle.css";
 import Root from "./Root";

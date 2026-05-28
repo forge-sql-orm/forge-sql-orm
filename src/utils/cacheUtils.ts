@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
 import { DateTime } from "luxon";
 import * as crypto from "node:crypto";
 import { Query } from "drizzle-orm";
