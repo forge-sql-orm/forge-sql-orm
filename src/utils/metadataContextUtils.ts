@@ -353,10 +353,11 @@ export async function saveMetaDataToContext(
           `[Performance Analysis] Query degradation event queued for async processing | Job ID: ${eventInfo.jobId} | Total DB time: ${context.totalDbExecutionTime}ms | Queries: ${context.statistics.length} | Look for consumer log with jobId: ${eventInfo.jobId}`,
         );
         return;
-      } catch (e: any) {
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
         // eslint-disable-next-line no-console
         console.warn(
-          "Async printing failed — falling back to synchronous execution: " + e.message,
+          "Async printing failed — falling back to synchronous execution: " + message,
           e,
         );
       }

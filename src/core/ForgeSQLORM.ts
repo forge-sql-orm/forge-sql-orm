@@ -274,13 +274,14 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
               metadata.printQueriesWithPlan,
             );
           }
-        } catch (e: any) {
+        } catch (e) {
+          const err = e instanceof Error ? e : undefined;
           // eslint-disable-next-line no-console
           console.error(
             "[ForgeSQLORM][executeWithMetadata] Failed to run onMetadata callback",
             {
-              errorMessage: e?.message,
-              errorStack: e?.stack,
+              errorMessage: err?.message,
+              errorStack: err?.stack,
               totalDbExecutionTime: metadata?.totalDbExecutionTime,
               totalResponseSize: metadata?.totalResponseSize,
               beginTime: metadata?.beginTime,

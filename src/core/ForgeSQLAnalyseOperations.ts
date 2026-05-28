@@ -408,16 +408,17 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
 
   /**
    * Converts a cluster statement row to camelCase format.
-   * @param {Record<string, any>} input - The input row data
+   * @param {Record<string, unknown>} input - The input row data
    * @returns {ClusterStatementRowCamelCase} The converted row data
    */
-  mapToCamelCaseClusterStatement(input: Record<string, any>): ClusterStatementRowCamelCase {
+  mapToCamelCaseClusterStatement(input: Record<string, unknown>): ClusterStatementRowCamelCase {
     if (!input) {
       return {} as ClusterStatementRowCamelCase;
     }
 
     const result: any = {};
-    result.parsedPlan = this.decodedPlan(input["PLAN"] ?? "");
+    const rawPlan = input["PLAN"];
+    result.parsedPlan = this.decodedPlan(typeof rawPlan === "string" ? rawPlan : "");
     for (const key in input) {
       const camelKey = key.toLowerCase().replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
       result[camelKey] = input[key];
@@ -443,7 +444,9 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
       .executeRawSQL<ClusterStatementRow>(
         this.buildClusterStatementQuery(tables ?? [], fromDate, toDate),
       );
-    return results.map((r) => this.mapToCamelCaseClusterStatement(r));
+    return results.map((r) =>
+      this.mapToCamelCaseClusterStatement(r as unknown as Record<string, unknown>),
+    );
   }
 
   /**

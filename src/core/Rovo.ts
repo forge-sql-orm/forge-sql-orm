@@ -420,10 +420,9 @@ export class Rovo implements RovoIntegration {
     let ast;
     try {
       ast = parser.astify(sqlQuery);
-    } catch (parseError: any) {
-      throw new Error(
-        `SQL parsing error: ${parseError.message || "Invalid SQL syntax"}. Please check your query syntax.`,
-      );
+    } catch (parseError) {
+      const message = parseError instanceof Error ? parseError.message : "Invalid SQL syntax";
+      throw new Error(`SQL parsing error: ${message}. Please check your query syntax.`);
     }
 
     // Validate that query is a SELECT statement
@@ -647,7 +646,7 @@ export class Rovo implements RovoIntegration {
       this.validateSelectAst(ast);
       const normalized = parser.sqlify(Array.isArray(ast) ? ast[0] : ast);
       return normalized.trim();
-    } catch (error: any) {
+    } catch (error) {
       this.rethrowAsParsingError(error);
     }
   }
@@ -884,7 +883,7 @@ export class Rovo implements RovoIntegration {
   private normalizeQueryWithErrorHandling(query: string): string {
     try {
       return this.normalizeSqlString(query);
-    } catch (error: any) {
+    } catch (error) {
       this.rethrowAsParsingError(error);
     }
   }

@@ -55,12 +55,10 @@ export async function dropSchemaMigrations(): Promise<TriggerResponse<string>> {
       200,
       "⚠️ All data in these tables has been permanently deleted. This operation cannot be undone.",
     );
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as { message?: string; debug?: { sqlMessage?: string; message?: string } };
     const errorMessage =
-      error?.debug?.sqlMessage ??
-      error?.debug?.message ??
-      error.message ??
-      "Unknown error occurred";
+      err?.debug?.sqlMessage ?? err?.debug?.message ?? err?.message ?? "Unknown error occurred";
     // eslint-disable-next-line no-console
     console.error(errorMessage);
     return getHttpResponse<string>(500, errorMessage);

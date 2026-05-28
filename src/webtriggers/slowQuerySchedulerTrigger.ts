@@ -79,12 +79,10 @@ export async function slowQuerySchedulerTrigger(
         await slowQueryPerHours(forgeSQLORM, options?.hours ?? 1, options?.timeout ?? 3000),
       ),
     );
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as { message?: string; debug?: { sqlMessage?: string; message?: string } };
     const errorMessage =
-      error?.debug?.sqlMessage ??
-      error?.debug?.message ??
-      error.message ??
-      "Unknown error occurred";
+      err?.debug?.sqlMessage ?? err?.debug?.message ?? err?.message ?? "Unknown error occurred";
     // eslint-disable-next-line no-console
     console.error(errorMessage);
     return getHttpResponse<string>(500, errorMessage);

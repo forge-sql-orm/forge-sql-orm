@@ -50,12 +50,10 @@ export async function fetchSchemaWebTrigger(): Promise<TriggerResponse<string>> 
     const sqlStatements = wrapWithForeignKeyChecks(createTableStatements);
 
     return getHttpResponse<string>(200, sqlStatements.join(";\n"));
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as { message?: string; debug?: { sqlMessage?: string; message?: string } };
     const errorMessage =
-      error?.debug?.sqlMessage ??
-      error?.debug?.message ??
-      error.message ??
-      "Unknown error occurred";
+      err?.debug?.sqlMessage ?? err?.debug?.message ?? err?.message ?? "Unknown error occurred";
     // eslint-disable-next-line no-console
     console.error(errorMessage);
     return getHttpResponse<string>(500, errorMessage);

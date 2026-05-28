@@ -228,14 +228,15 @@ async function executeWithRetry<T>(operation: () => Promise<T>, operationName: s
   while (attempt < CACHE_CONSTANTS.MAX_RETRY_ATTEMPTS) {
     try {
       return await operation();
-    } catch (err: any) {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
       // eslint-disable-next-line no-console
-      console.warn(`Error during ${operationName}: ${err.message}, retry ${attempt}`, err);
+      console.warn(`Error during ${operationName}: ${message}, retry ${attempt}`, err);
       attempt++;
 
       if (attempt >= CACHE_CONSTANTS.MAX_RETRY_ATTEMPTS) {
         // eslint-disable-next-line no-console
-        console.error(`Error during ${operationName}: ${err.message}`, err);
+        console.error(`Error during ${operationName}: ${message}`, err);
         throw err;
       }
 
@@ -371,9 +372,10 @@ export async function getFromCache<T>(
         );
       }
     }
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     // eslint-disable-next-line no-console
-    console.error(`Error getting from cache: ${error.message}`, error);
+    console.error(`Error getting from cache: ${message}`, error);
   }
 
   return undefined;
@@ -437,8 +439,9 @@ export async function setCacheResult(
       .execute();
 
     debugLog(`Store value to cache, cacheKey: ${key}`, options);
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     // eslint-disable-next-line no-console
-    console.error(`Error setting cache: ${error.message}`, error);
+    console.error(`Error setting cache: ${message}`, error);
   }
 }

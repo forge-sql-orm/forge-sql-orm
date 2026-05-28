@@ -89,7 +89,7 @@ export function createForgeDriverProxy(
     try {
       // Execute the query with injected hints
       return await forgeDriver(modifiedQuery, params, method);
-    } catch (error: any) {
+    } catch (error) {
       const { isTimeout, isOutOfMemory } = isQueryError(error);
 
       if (isTimeout || isOutOfMemory) {

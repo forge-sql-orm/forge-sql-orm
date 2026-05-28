@@ -65,13 +65,18 @@ export const applySchemaMigrations = async (
       statusText: "OK",
       body: "Migrations successfully executed",
     };
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as {
+      message?: string;
+      cause?: { context?: { debug?: { sqlMessage?: string; message?: string } } };
+      debug?: { context?: { sqlMessage?: string; message?: string } };
+    };
     const errorMessage =
-      error?.cause?.context?.debug?.sqlMessage ??
-      error?.cause?.context?.debug?.message ??
-      error?.debug?.context?.sqlMessage ??
-      error?.debug?.context?.message ??
-      error.message ??
+      err?.cause?.context?.debug?.sqlMessage ??
+      err?.cause?.context?.debug?.message ??
+      err?.debug?.context?.sqlMessage ??
+      err?.debug?.context?.message ??
+      err?.message ??
       "Unknown error occurred";
     // eslint-disable-next-line no-console
     console.error("Error during migration:", errorMessage);
