@@ -16,16 +16,16 @@ function safeStringify(value: unknown, fallback: string): string {
 
 /**
  * Renders a non-Error, non-null thrown value. Objects and functions go
- * through JSON to avoid the `[object Object]` default; the remaining
- * primitives are cast to a concrete union before reaching `String()` so
- * Sonar's S6551 (`[object Object]` coercion) sees a guaranteed-primitive
- * input rather than the wider `NonNullable<unknown>`.
+ * through JSON to avoid the `[object Object]` default; what reaches the
+ * final `String()` is narrowed by the prior `typeof` check to
+ * `string | number | boolean | bigint | symbol`, none of which use the
+ * default `[object Object]` coercion.
  */
 function renderNonErrorValue(value: NonNullable<unknown>, fallback: string): string {
   if (typeof value === "object" || typeof value === "function") {
     return safeStringify(value, fallback);
   }
-  return String(value as string | number | boolean | bigint | symbol);
+  return String(value);
 }
 
 /**
