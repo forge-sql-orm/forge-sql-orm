@@ -162,7 +162,7 @@ async function processAllMethod(
     return { rows: [] };
   }
 
-  const rows = (result.rows as unknown[]).map((r) => Object.values(r as Record<string, unknown>));
+  const rows = result.rows.map((r) => Object.values(r as Record<string, unknown>));
 
   return { rows };
 }

@@ -14,7 +14,17 @@ export function getErrorMessage(error: unknown, fallback: string = "Unknown erro
   if (typeof error === "string") {
     return error;
   }
-  return error == null ? fallback : String(error);
+  if (error == null) {
+    return fallback;
+  }
+  if (typeof error === "object") {
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return fallback;
+    }
+  }
+  return String(error);
 }
 
 /**
