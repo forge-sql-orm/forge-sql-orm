@@ -2,65 +2,70 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Extracts a human-readable message from an unknown thrown value.
- *
- * Centralised so that `catch (e) { ... e.message ... }` sites do not need to
- * inline the `instanceof Error` ternary, which inflates cyclomatic complexity.
+ * JSON-stringifies a value, swallowing `TypeError` from circular structures
+ * and returning the provided fallback instead. Kept private so the public
+ * helpers stay free of the try/catch and stay below the cyclomatic limit.
  */
-export function getErrorMessage(error: unknown, fallback: string = "Unknown error"): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  if (typeof error === "string") {
-    return error;
-  }
-  if (error == null) {
+function safeStringify(value: unknown, fallback: string): string {
+  try {
+    return JSON.stringify(value) ?? fallback;
+  } catch {
     return fallback;
   }
-  if (typeof error === "object") {
-    try {
-      return JSON.stringify(error);
-    } catch {
-      return fallback;
-    }
-  }
-  return String(error);
 }
 
 /**
- * Shape of error objects thrown by `@forge/sql`. Both nested `cause.context`
- * (apply-migrations path) and direct `debug` (DDL / scheduler path) variants
- * are documented in Atlassian's Forge SQL error contract.
+ * Extracts a human-readable message from an unknown thrown value.
+ *
+ * Centralised so that `catch (e) { ... e.message ... }` sites do not need to
+ * inline an `instanceof Error` ternary, which inflates cyclomatic complexity.
  */
-interface ForgeSqlErrorShape {
-  message?: string;
-  cause?: { context?: { debug?: { sqlMessage?: string; message?: string } } };
-  debug?: {
-    sqlMessage?: string;
-    message?: string;
-    context?: { sqlMessage?: string; message?: string };
-  };
+export function getErrorMessage(error: unknown, fallback: string = "Unknown error"): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  if (error == null) return fallback;
+  return typeof error === "object" ? safeStringify(error, fallback) : String(error);
+}
+
+/**
+ * Property paths that `@forge/sql` is known to populate when raising an
+ * error. Walked in order of specificity by `extractSqlErrorMessage`.
+ */
+const SQL_ERROR_PATHS: readonly (readonly string[])[] = [
+  ["cause", "context", "debug", "sqlMessage"],
+  ["cause", "context", "debug", "message"],
+  ["debug", "context", "sqlMessage"],
+  ["debug", "context", "message"],
+  ["debug", "sqlMessage"],
+  ["debug", "message"],
+  ["message"],
+];
+
+/**
+ * Walks a dotted property path on an unknown object and returns the value at
+ * the leaf if and only if it is a non-empty string; otherwise `undefined`.
+ */
+function readStringPath(source: unknown, path: readonly string[]): string | undefined {
+  let current: unknown = source;
+  for (const key of path) {
+    if (current == null || typeof current !== "object") return undefined;
+    current = (current as Record<string, unknown>)[key];
+  }
+  return typeof current === "string" ? current : undefined;
 }
 
 /**
  * Extracts the most specific SQL message from a `@forge/sql` error.
- * Walks the known well-known paths in order of specificity and falls back
- * to the value of `Error.message` (or the provided fallback) when none
- * of them are populated.
+ * Walks {@link SQL_ERROR_PATHS} in order and falls back to the provided
+ * default when none of them yield a non-empty string.
  */
 export function extractSqlErrorMessage(
   error: unknown,
   fallback: string = "Unknown error occurred",
 ): string {
-  const err = error as ForgeSqlErrorShape;
-  return (
-    err?.cause?.context?.debug?.sqlMessage ??
-    err?.cause?.context?.debug?.message ??
-    err?.debug?.context?.sqlMessage ??
-    err?.debug?.context?.message ??
-    err?.debug?.sqlMessage ??
-    err?.debug?.message ??
-    err?.message ??
-    fallback
-  );
+  for (const path of SQL_ERROR_PATHS) {
+    const value = readStringPath(error, path);
+    if (value !== undefined) return value;
+  }
+  return fallback;
 }
