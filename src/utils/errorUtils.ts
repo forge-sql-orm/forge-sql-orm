@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * JSON-stringifies a value, swallowing `TypeError` from circular structures
- * and returning the provided fallback instead. Kept private so the public
- * helpers stay free of the try/catch and stay below the cyclomatic limit.
+ * Safely serializes `value` to JSON; returns `fallback` on failure
+ * (circular references, etc.).
+ *
+ * @param value - Value to serialize.
+ * @param fallback - String returned when serialization fails.
  */
 function safeStringify(value: unknown, fallback: string): string {
   try {
@@ -15,11 +17,11 @@ function safeStringify(value: unknown, fallback: string): string {
 }
 
 /**
- * Renders a non-Error, non-null thrown value. Objects and functions go
- * through JSON to avoid the `[object Object]` default; what reaches the
- * final `String()` is narrowed by the prior `typeof` check to
- * `string | number | boolean | bigint | symbol`, none of which use the
- * default `[object Object]` coercion.
+ * Converts a non-Error, non-null value to a string. Objects and functions
+ * are JSON-stringified; primitives go through `String()`.
+ *
+ * @param value - Thrown value (already filtered of `Error`, string, and nullish).
+ * @param fallback - String returned when JSON serialization fails.
  */
 function renderNonErrorValue(value: NonNullable<unknown>, fallback: string): string {
   if (typeof value === "object" || typeof value === "function") {
@@ -29,10 +31,10 @@ function renderNonErrorValue(value: NonNullable<unknown>, fallback: string): str
 }
 
 /**
- * Extracts a human-readable message from an unknown thrown value.
+ * Extracts a human-readable message from a thrown value of unknown type.
  *
- * Centralised so that `catch (e) { ... e.message ... }` sites do not need to
- * inline an `instanceof Error` ternary, which inflates cyclomatic complexity.
+ * @param error - The caught value.
+ * @param fallback - Returned when `error` is `null` or `undefined`. Defaults to `"Unknown error"`.
  */
 export function getErrorMessage(error: unknown, fallback: string = "Unknown error"): string {
   if (error instanceof Error) return error.message;
@@ -42,9 +44,7 @@ export function getErrorMessage(error: unknown, fallback: string = "Unknown erro
 }
 
 /**
- * Shape of error objects thrown by `@forge/sql`. Both nested `cause.context`
- * (apply-migrations path) and direct `debug` (DDL / scheduler path) variants
- * are documented in Atlassian's Forge SQL error contract.
+ * Shape of error objects thrown by `@forge/sql`.
  */
 interface ForgeSqlErrorShape {
   message?: string;
@@ -57,9 +57,9 @@ interface ForgeSqlErrorShape {
 }
 
 /**
- * Returns `value` when it is a string, `undefined` otherwise. Tiny helper
- * shared by the SQL-error getters below so each one stays a single
- * expression and the public function keeps its `for-of` loop flat.
+ * Returns `value` if it is a string, otherwise `undefined`.
+ *
+ * @param value - Value to check.
  */
 function asString(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
@@ -68,13 +68,8 @@ function asString(value: unknown): string | undefined {
 type SqlErrorGetter = (e: ForgeSqlErrorShape | null | undefined) => string | undefined;
 
 /**
- * Static accessors for the property paths that `@forge/sql` is known to
- * populate when raising an error, in order of specificity.
- *
- * Each path is hard-coded as an optional-chain expression instead of being
- * walked dynamically as a string array — this keeps the scanner happy
- * (`obj[var]` in a loop trips Opengrep's prototype-pollution rule even
- * when guarded) and surfaces typos at compile time.
+ * Ordered accessors for the known message fields on a `@forge/sql` error,
+ * from most specific to least.
  */
 const SQL_ERROR_GETTERS: readonly SqlErrorGetter[] = [
   (e) => asString(e?.cause?.context?.debug?.sqlMessage),
@@ -88,8 +83,9 @@ const SQL_ERROR_GETTERS: readonly SqlErrorGetter[] = [
 
 /**
  * Extracts the most specific SQL message from a `@forge/sql` error.
- * Runs {@link SQL_ERROR_GETTERS} in order and falls back to the provided
- * default when none of them yield a string.
+ *
+ * @param error - The caught value.
+ * @param fallback - Returned when no known message field is populated. Defaults to `"Unknown error occurred"`.
  */
 export function extractSqlErrorMessage(
   error: unknown,
