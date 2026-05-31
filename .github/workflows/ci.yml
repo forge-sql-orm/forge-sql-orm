@@ -51,6 +51,8 @@ jobs:
       - name: REUSE / SPDX compliance
         uses: fsfe/reuse-action@bb774aa972c2a89ff34781233d275075cbddf542 # v5
       - run: npm run knip
+      - name: License compliance (no GPL/LGPL/AGPL/copyleft)
+        run: npm run license:check
       - run: npm run lint
       - run: npm run build
       - run: npm run format:check

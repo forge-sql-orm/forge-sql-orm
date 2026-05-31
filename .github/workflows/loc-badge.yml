@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-  schedule:
-    # Daily at 04:00 UTC — keeps badges fresh even on quiet days.
-    - cron: "0 4 * * *"
   workflow_dispatch: {}
 
 permissions:

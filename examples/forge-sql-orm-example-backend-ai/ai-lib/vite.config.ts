@@ -83,7 +83,7 @@ export default defineConfig((config: UserConfig) => {
         fileName: "index",
         formats: ["es"] as LibraryFormats[],
       },
-      minify: "esbuild" as const,
+      minify: "esbuild",
       rollupOptions: {
         external: [/^node:.*$/],
         output: {
@@ -92,7 +92,7 @@ export default defineConfig((config: UserConfig) => {
         },
       },
       ssr: true,
-      target: "node24" as const,
+      target: "node24",
     },
   };
 });
