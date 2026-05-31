@@ -21,10 +21,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.actor == 'dependabot[bot]' && github.run_id || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
-env:
-  # push -> production, manual dispatch -> chosen input, anything else (PR) -> development
-  FORGE_ENV: ${{ github.event_name == 'push' && 'production' || (github.event_name == 'workflow_dispatch' && inputs.environment || 'development') }}
-
 jobs:
   # --- Quality gate: core library lint / build / tests / coverage scanners ---
   quality:
@@ -117,6 +113,22 @@ jobs:
           cache: 'npm'
       - run: npm install -g @forge/cli && forge settings set usage-analytics true
 
+      # push / dispatch-production -> "production"; everything else (PRs,
+      # dispatch-development) -> per-actor env named after the sanitized actor.
+      - name: Resolve Forge environment
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_ENV: ${{ inputs.environment }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          if [ "$EVENT_NAME" = "push" ] || { [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$INPUT_ENV" = "production" ]; }; then
+            forge_env="production"
+          else
+            forge_env="$(echo "$ACTOR" | tr -cd '[:alnum:]')"
+          fi
+          echo "FORGE_ENV=$forge_env" >> "$GITHUB_ENV"
+          echo "Resolved FORGE_ENV=$forge_env"
+
       - name: Install example deps
         run: cd examples/${{ matrix.dir }} && npm ci --ignore-scripts
       - name: Knip (example)
@@ -144,13 +156,38 @@ jobs:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
         run: cd examples/${{ matrix.dir }} && forge deploy --non-interactive -e $FORGE_ENV
+      # Existing install on this site+environment -> --upgrade; otherwise a
+      # fresh install. The install list is parsed inline with Node.js.
       - name: Forge Install (${{ env.FORGE_ENV }})
         if: github.actor != 'dependabot[bot]'
         env:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
           FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-        run: cd examples/${{ matrix.dir }} && forge install -e $FORGE_ENV -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+        run: |
+          cd "examples/${{ matrix.dir }}"
+          installs="$(forge install list --json 2>/dev/null || echo '[]')"
+          already_installed="$(FORGE_INSTALLS="$installs" node -e '
+            const raw = process.env.FORGE_INSTALLS || "[]";
+            let data;
+            try { data = JSON.parse(raw); } catch { data = []; }
+            const list = Array.isArray(data) ? data : (data.installations || data.result || data.data || []);
+            const host = (process.env.FORGE_HOSTNAME || "").toLowerCase();
+            const envName = (process.env.FORGE_ENV || "").toLowerCase();
+            const found = list.some((i) => {
+              const site = String(i.site || i.siteUrl || i.host || i.hostname || "").toLowerCase();
+              const env = String(i.environmentKey || i.environment || i.environmentType || "").toLowerCase();
+              return site.includes(host) && env === envName;
+            });
+            process.stdout.write(found ? "yes" : "no");
+          ')"
+          if [ "$already_installed" = "yes" ]; then
+            echo "Found existing installation on $FORGE_HOSTNAME ($FORGE_ENV) -> upgrading"
+            forge install -e "$FORGE_ENV" -s "$FORGE_HOSTNAME" -p Jira --confirm-scopes --non-interactive --upgrade
+          else
+            echo "No installation on $FORGE_HOSTNAME ($FORGE_ENV) -> fresh install"
+            forge install -e "$FORGE_ENV" -s "$FORGE_HOSTNAME" -p Jira --confirm-scopes --non-interactive
+          fi
 
   build:
     if: always()
