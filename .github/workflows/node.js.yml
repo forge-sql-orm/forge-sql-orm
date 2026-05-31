@@ -151,3 +151,19 @@ jobs:
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
           FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
         run: cd examples/${{ matrix.dir }} && forge install -e $FORGE_ENV -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+
+  build:
+    if: always()
+    needs: [quality, cli, examples]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.x]
+    steps:
+      - name: Fail if any dependency failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "One or more jobs did not succeed: ${{ join(needs.*.result, ', ') }}"
+          exit 1
+      - name: All required jobs passed
+        run: echo "quality, cli and all examples succeeded"
