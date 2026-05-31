@@ -184,7 +184,13 @@ jobs:
         run: |
           cd "examples/${{ matrix.dir }}"
           install_once() {
-            installs="$(forge install list --json 2>/dev/null || echo '[]')"
+            # Don't mask failures: if the list call fails (e.g. transient
+            # network error) return non-zero so the loop retries the whole
+            # sequence, instead of silently assuming "not installed".
+            if ! installs="$(forge install list --json)"; then
+              echo "::warning::forge install list failed for ${{ matrix.dir }}"
+              return 1
+            fi
             already_installed="$(FORGE_INSTALLS="$installs" node -e '
               const raw = process.env.FORGE_INSTALLS || "[]";
               let data;
