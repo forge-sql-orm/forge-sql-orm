@@ -4,4 +4,3 @@ exclude_paths:
   - "__tests__/**"
   - "forge-sql-orm-cli/**"
   - "vitest.config.mjs"
-  - ".github/workflows/ci.yml"
