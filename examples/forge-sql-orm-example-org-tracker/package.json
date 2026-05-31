@@ -23,7 +23,7 @@
   "devDependencies": {
     "@types/node": "^25.9.1",
     "forge-sql-orm-cli": "^2.1.29",
-    "knip": "^6.14.2",
+    "knip": "^6.15.0",
     "typescript": "^6.0.3"
   },
   "overrides": {
