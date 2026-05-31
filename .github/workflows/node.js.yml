@@ -1,565 +1,153 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
+# CI split into jobs: quality gate + CLI + examples matrix (built/deployed in parallel).
 name: forge-sql-orm CI
 on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Forge environment to deploy to
+        type: choice
+        default: development
+        options:
+          - development
+          - production
 
 permissions:
   contents: read
 concurrency:
   group: ${{ github.workflow }}-${{ github.actor == 'dependabot[bot]' && github.run_id || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+env:
+  # push -> production, manual dispatch -> chosen input, anything else (PR) -> development
+  FORGE_ENV: ${{ github.event_name == 'push' && 'production' || (github.event_name == 'workflow_dispatch' && inputs.environment || 'development') }}
+
 jobs:
-  build:
-    environment: forge-sql-orm
+  # --- Quality gate: core library lint / build / tests / coverage scanners ---
+  quality:
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-    runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [24.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Clear npm cache
-      run: npm cache clean --force
-    - run: npm install -g @forge/cli && forge settings set usage-analytics true
-    - run: echo APPLICATION
-    - run: npm ci --ignore-scripts
-    - name: REUSE / SPDX compliance
-      uses: fsfe/reuse-action@bb774aa972c2a89ff34781233d275075cbddf542 # v5
-    - name: License compliance (no GPL/LGPL/AGPL/copyleft)
-      run: npm run license:check
-    - run: npm run knip
-    - run: npm run lint
-    - run: npm run build
-    - run: npm run format:check
-    - run: npm run test:coverage
-    - name: SonarQube Scan
-      uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7.2.1
-      env:
-        SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-    - name: Upload to Qlty
-      uses: qltysh/qlty-action/coverage@141b881236146435192435eb7b0e06ea0b70b4d9 # main as of 2026-05-12
-      with:
-        coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-        files: ./coverage/lcov.info
-    - run: echo BUILD CLI
-    - run: cd forge-sql-orm-cli && npm ci --ignore-scripts
-    - run: cd forge-sql-orm-cli && npm run knip
-    - run: cd forge-sql-orm-cli && npm run lint
-    - run: cd forge-sql-orm-cli && npm run build
-    - run: echo BUILD EXAMPLES
-    - run: cd examples/forge-sql-orm-example-dynamic && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-dynamic && npm run knip
-    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm run build
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Clear npm cache
+        run: npm cache clean --force
+      - run: npm ci --ignore-scripts
+      - name: REUSE / SPDX compliance
+        uses: fsfe/reuse-action@bb774aa972c2a89ff34781233d275075cbddf542 # v5
+      - run: npm run knip
+      - name: License compliance (no GPL/LGPL/AGPL/copyleft)
+        run: npm run license:check
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run format:check
+      - run: npm run test:coverage
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7.2.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+      - name: Upload to Qlty
+        uses: qltysh/qlty-action/coverage@141b881236146435192435eb7b0e06ea0b70b4d9 # main as of 2026-05-12
+        with:
+          coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: ./coverage/lcov.info
 
-    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple && npm run knip
-    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-drizzle-driver-simple/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-drizzle-driver-simple && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-drizzle-driver-simple && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-drizzle-driver-simple && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-drizzle-driver-simple && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+  # --- CLI package (depends on published forge-sql-orm, not the local build) ---
+  cli:
+    needs: quality
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: cd forge-sql-orm-cli && npm ci --ignore-scripts
+      - run: cd forge-sql-orm-cli && npm run knip
+      - run: cd forge-sql-orm-cli && npm run lint
+      - run: cd forge-sql-orm-cli && npm run build
 
-    - run: cd examples/forge-sql-orm-example-simple && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-simple && npm run knip
-    - run: cd examples/forge-sql-orm-example-simple && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-simple/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-simple/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-simple/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-simple && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-simple && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-simple && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-simple && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+  # --- Examples: one matrix entry per example, built & deployed in parallel ---
+  examples:
+    needs: quality
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'push' && 'production' || (github.event_name == 'workflow_dispatch' && inputs.environment || 'development') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # static: true-> has static/forge-orm-example frontend
+          # ai_lib: true-> has ai-lib that needs build:arm64
+          - { dir: forge-sql-orm-example-drizzle-driver-simple, static: true }
+          - { dir: forge-sql-orm-example-simple,                static: true }
+          - { dir: forge-sql-orm-example-optimistic-locking,    static: true }
+          - { dir: forge-sql-orm-example-query-analyses,        static: true }
+          - { dir: forge-sql-orm-example-checklist,             static: true }
+          - { dir: forge-sql-orm-example-org-tracker,           static: true }
+          - { dir: forge-sql-orm-example-dynamic,               static: true }
+          - { dir: forge-sql-orm-example-sql-executor,          static: true }
+          - { dir: forge-sql-orm-example-cache,                 static: true }
+          - { dir: forge-sql-orm-example-atlascamp,             static: true }
+          - { dir: forge-sql-orm-example-vector,                static: true }
+          - { dir: forge-sql-orm-example-ai,                    static: true }
+          - { dir: forge-sql-orm-example-backend-ai,            static: true, ai_lib: true }
+          - { dir: forge-sql-orm-example-ui-kit }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: 'npm'
+      - run: npm install -g @forge/cli && forge settings set usage-analytics true
 
-    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm run knip
-    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-optimistic-locking && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-optimistic-locking && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-optimistic-locking && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-optimistic-locking && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+      - name: Install example deps
+        run: cd examples/${{ matrix.dir }} && npm ci --ignore-scripts
+      - name: Knip (example)
+        run: cd examples/${{ matrix.dir }} && npm run knip
+      - name: Build example
+        run: cd examples/${{ matrix.dir }} && npm run build:ci
 
-    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm run knip
-    - run: cd examples/forge-sql-orm-example-optimistic-locking && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-optimistic-locking/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-optimistic-locking && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-optimistic-locking && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-optimistic-locking && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-optimistic-locking && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+      - name: Build ai-lib (arm64)
+        if: matrix.ai_lib
+        run: cd examples/${{ matrix.dir }}/ai-lib && npm ci --ignore-scripts && npm run build:arm64
 
-    - run: cd examples/forge-sql-orm-example-query-analyses && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-query-analyses && npm run knip
-    - run: cd examples/forge-sql-orm-example-query-analyses && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-query-analyses/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-query-analyses/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-query-analyses/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-query-analyses && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-query-analyses && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-query-analyses && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-query-analyses && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+      - name: Install frontend deps
+        if: matrix.static
+        run: cd examples/${{ matrix.dir }}/static/forge-orm-example && npm ci --ignore-scripts
+      - name: Knip (frontend)
+        if: matrix.static
+        run: cd examples/${{ matrix.dir }}/static/forge-orm-example && npm run knip
+      - name: Build frontend
+        if: matrix.static
+        run: cd examples/${{ matrix.dir }}/static/forge-orm-example && npm run build
 
-    - run: cd examples/forge-sql-orm-example-checklist && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-checklist && npm run knip
-    - run: cd examples/forge-sql-orm-example-checklist && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-checklist/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-checklist/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-checklist/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-checklist && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-checklist && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-checklist && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-checklist && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-    - run: cd examples/forge-sql-orm-example-org-tracker && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-org-tracker && npm run knip
-    - run: cd examples/forge-sql-orm-example-org-tracker && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-org-tracker/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-org-tracker/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-org-tracker/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-org-tracker && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-org-tracker && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-org-tracker && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-org-tracker && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-    - run: cd examples/forge-sql-orm-example-dynamic && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-dynamic && npm run knip
-    - run: cd examples/forge-sql-orm-example-dynamic && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-dynamic/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-dynamic && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-dynamic && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-dynamic && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-dynamic && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-    - run: cd examples/forge-sql-orm-example-sql-executor && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-sql-executor && npm run knip
-    - run: cd examples/forge-sql-orm-example-sql-executor && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-sql-executor/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-sql-executor/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-sql-executor/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-sql-executor && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-sql-executor && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-sql-executor && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-sql-executor && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-    - run: cd examples/forge-sql-orm-example-cache && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-cache && npm run knip
-    - run: cd examples/forge-sql-orm-example-cache && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-cache/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-cache/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-cache/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-cache && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-cache && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-cache && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-cache && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-    - run: cd examples/forge-sql-orm-example-atlascamp && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-atlascamp && npm run knip
-    - run: cd examples/forge-sql-orm-example-atlascamp && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-atlascamp/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-atlascamp && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-atlascamp && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-atlascamp && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-atlascamp && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-
-    - run: cd examples/forge-sql-orm-example-vector && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-vector && npm run knip
-    - run: cd examples/forge-sql-orm-example-vector && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-vector/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-vector/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-vector/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-vector && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-vector && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-vector && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-vector && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-    - run: cd examples/forge-sql-orm-example-ai && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-ai && npm run knip
-    - run: cd examples/forge-sql-orm-example-ai && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-ai/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-ai/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-ai/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-ai && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-ai && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-ai && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-ai && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-    - run: cd examples/forge-sql-orm-example-backend-ai && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-backend-ai && npm run knip
-    - run: cd examples/forge-sql-orm-example-backend-ai && npm run build:ci
-    - run: cd examples/forge-sql-orm-example-backend-ai/ai-lib && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-backend-ai/ai-lib && npm run build:arm64
-    - run: cd examples/forge-sql-orm-example-backend-ai/static/forge-orm-example && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-backend-ai/static/forge-orm-example && npm run knip
-    - run: cd examples/forge-sql-orm-example-backend-ai/static/forge-orm-example && npm run build
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-backend-ai && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-backend-ai && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-backend-ai && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-backend-ai && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-
-    - run: cd examples/forge-sql-orm-example-ui-kit && npm ci --ignore-scripts
-    - run: cd examples/forge-sql-orm-example-ui-kit && npm run knip
-    - run: cd examples/forge-sql-orm-example-ui-kit && npm run build:ci
-    - name: Forge Deploy (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-ui-kit && forge deploy --non-interactive -e production
-    - name: Forge Deploy (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-      run: cd examples/forge-sql-orm-example-ui-kit && forge deploy --non-interactive -e development
-    - name: Forge Install (Production)
-      if: github.event_name == 'push' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-ui-kit && forge install -e production -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
-    - name: Forge Install (Development)
-      if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
-      env:
-        FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
-        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
-      run: cd examples/forge-sql-orm-example-ui-kit && forge install -e development -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
+      - name: Forge Deploy (${{ env.FORGE_ENV }})
+        if: github.actor != 'dependabot[bot]'
+        env:
+          FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+          FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+        run: cd examples/${{ matrix.dir }} && forge deploy --non-interactive -e $FORGE_ENV
+      - name: Forge Install (${{ env.FORGE_ENV }})
+        if: github.actor != 'dependabot[bot]'
+        env:
+          FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
+          FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+          FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
+        run: cd examples/${{ matrix.dir }} && forge install -e $FORGE_ENV -s $FORGE_HOSTNAME -p Jira --confirm-scopes --non-interactive --upgrade
