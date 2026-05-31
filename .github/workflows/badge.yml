@@ -1,4 +1,4 @@
-name: LoC badges
+name: Badges
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: loc-badge
+  group: badges
   cancel-in-progress: true
 
 jobs:
@@ -23,6 +23,15 @@ jobs:
         with:
           ref: master
           fetch-depth: 1
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: 'npm'
+
+      - name: Install deps (for license scan)
+        run: npm ci --ignore-scripts
 
       - name: Prepare output dir
         run: mkdir -p output
@@ -55,6 +64,22 @@ jobs:
           patterns: "src/**|forge-sql-orm-cli/src/**"
           ignore: "*.js|*.jsx|*.mjs|*.cjs|*.min.js"
 
+      # Runs the same blocklist gate as CI; the badge reflects its result.
+      # `badge` CLI ships with badge-maker (the shields.io renderer) — fetched
+      # via npx, so no extra dependency in package.json.
+      - name: License compliance badge
+        run: |
+          set +e
+          npm run license:check
+          status=$?
+          set -e
+          if [ "$status" -eq 0 ]; then
+            message="no copyleft"; color=":brightgreen"
+          else
+            message="copyleft found"; color=":red"
+          fi
+          npx --yes -p badge-maker badge licenses "$message" "$color" @flat > output/license-compliance.svg
+
       - name: Publish badges to `badges` branch
         run: |
           set -euo pipefail
@@ -65,21 +90,23 @@ jobs:
           # Stash badge SVGs outside the worktree so the orphan reset
           # below doesn't wipe them.
           TMP=$(mktemp -d)
-          cp output/loc-full.svg "$TMP/"
-          cp output/loc-src.svg  "$TMP/"
+          cp output/loc-full.svg            "$TMP/"
+          cp output/loc-src.svg             "$TMP/"
+          cp output/license-compliance.svg  "$TMP/"
 
           git checkout --orphan badges
           git rm -rf --quiet . || true
           git clean -fdx -e output
 
-          mv "$TMP/loc-full.svg" ./loc-full.svg
-          mv "$TMP/loc-src.svg"  ./loc-src.svg
+          mv "$TMP/loc-full.svg"            ./loc-full.svg
+          mv "$TMP/loc-src.svg"             ./loc-src.svg
+          mv "$TMP/license-compliance.svg"  ./license-compliance.svg
 
-          git add loc-full.svg loc-src.svg
+          git add loc-full.svg loc-src.svg license-compliance.svg
           if git diff --cached --quiet; then
             echo "No badge changes — nothing to publish."
             exit 0
           fi
 
-          git commit -m "chore(badges): refresh LoC badges"
+          git commit -m "chore(badges): refresh repo badges"
           git push -f origin badges
