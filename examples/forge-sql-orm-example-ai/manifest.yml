@@ -47,7 +47,7 @@ resources:
 app:
   runtime:
     name: nodejs24.x
-  id: ari:cloud:ecosystem::app/cab07fdc-7bab-4cd0-bb19-82055a6395f9
+  id: ari:cloud:ecosystem::app/bdcff621-38b5-4e94-9919-ba5e81f277ca
 permissions:
   content:
     styles:

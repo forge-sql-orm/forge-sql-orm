@@ -95,6 +95,17 @@ Forge SQL ORM is a solo-maintained open-source project. To keep review disciplin
 
 This replaces, by design, the need for a second human reviewer on a solo-maintained project. See [REQUIREMENTS.md §8.2](REQUIREMENTS.md#82-code-review-and-comment-resolution) for the corresponding requirements-level definition.
 
+## Example Apps & Forge Deployment Flow
+
+The CI pipeline (`.github/workflows/node.js.yml`, job `examples`) builds **and deploys** every example app to Atlassian Forge. The target environment depends on the trigger:
+
+- **Push to `master`** → the `production` Forge environment.
+- **Pull request (or manual `development` dispatch)** → a **per-contributor Forge environment**, named after your sanitized GitHub username (`github.actor` with everything except letters/digits stripped, e.g. `Jane-Doe` → `JaneDoe`). Each example is then installed on `FORGE_HOSTNAME` for that environment.
+
+The install step is idempotent: it runs `forge install list --json`, checks whether the app already exists on `FORGE_HOSTNAME` in that environment, and either `--upgrade`s it or performs a fresh install.
+
+All deployments run under the **maintainer's** Forge credentials (`FORGE_EMAIL` / `FORGE_API_TOKEN` repository secrets) against the maintainer's apps and `FORGE_HOSTNAME` site — **you do not need any Forge account, site access, or Developer Console membership to contribute.** The per-contributor environment naming only namespaces the dev deploys so concurrent PRs don't collide.
+
 ## Styleguides
 
 - Use the present tense ("Add feature" not "Added feature").

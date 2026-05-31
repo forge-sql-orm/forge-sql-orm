@@ -111,17 +111,18 @@ Each requirement maps to documentation in [README.md](README.md) unless noted.
 
 ## 4. Non-functional requirements
 
-| ID    | Requirement                                                                                                                                                                                                                                                 |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| NFR-1 | **Type safety:** Public APIs are typed in TypeScript; `tsc` build must pass in CI.                                                                                                                                                                          |
-| NFR-2 | **Test coverage:** Library `src/` maintains Vitest coverage ≥ 80% statements/lines/functions and ≥ 75% branches ([CONTRIBUTING.md](CONTRIBUTING.md)). Integration with Forge SQL is exercised via `@forge/sql` mocks (§8.1), not live cloud DB tests in CI. |
-| NFR-3 | **Static analysis:** CI runs ESLint, Knip, SonarCloud, and related checks on every PR to `master`.                                                                                                                                                          |
-| NFR-4 | **Code review:** Every pull request is reviewed by an automated pipeline (CodeRabbit, Codacy AI Reviewer, SonarCloud, Qlty, DeepScan, Snyk, REUSE). **All bot comments are mandatory** and must be resolved by a human maintainer before merge. See §8.2.   |
-| NFR-5 | **Releases:** Semantic versioning; release notes in [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases) and [CHANGELOG.md](CHANGELOG.md).                                                                                            |
-| NFR-6 | **License:** MIT ([LICENSE](LICENSE)).                                                                                                                                                                                                                      |
-| NFR-7 | **Security:** Vulnerabilities reported per [SECURITY.md](SECURITY.md), not via public issues.                                                                                                                                                               |
-| NFR-8 | **Peer dependencies:** `drizzle-orm` and `@forge/sql` versions documented in `package.json`; consumers must align with supported ranges.                                                                                                                    |
-| NFR-9 | **Bundle discipline:** Optional/heavy dependencies (e.g. `@forge/kvs`, `node-sql-parser`, `@forge/events`) remain optional where possible to keep core installs lean.                                                                                       |
+| ID     | Requirement                                                                                                                                                                                                                                                                                                                             |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NFR-1  | **Type safety:** Public APIs are typed in TypeScript; `tsc` build must pass in CI.                                                                                                                                                                                                                                                      |
+| NFR-2  | **Test coverage:** Library `src/` maintains Vitest coverage ≥ 80% statements/lines/functions and ≥ 75% branches ([CONTRIBUTING.md](CONTRIBUTING.md)). Integration with Forge SQL is exercised via `@forge/sql` mocks (§8.1), not live cloud DB tests in CI.                                                                             |
+| NFR-3  | **Static analysis:** CI runs ESLint, Knip, SonarCloud, and related checks on every PR to `master`.                                                                                                                                                                                                                                      |
+| NFR-4  | **Code review:** Every pull request is reviewed by an automated pipeline (CodeRabbit, Codacy AI Reviewer, SonarCloud, Qlty, DeepScan, Snyk, REUSE). **All bot comments are mandatory** and must be resolved by a human maintainer before merge. See §8.2.                                                                               |
+| NFR-5  | **Releases:** Semantic versioning; release notes in [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases) and [CHANGELOG.md](CHANGELOG.md).                                                                                                                                                                        |
+| NFR-6  | **License:** MIT ([LICENSE](LICENSE)).                                                                                                                                                                                                                                                                                                  |
+| NFR-7  | **Security:** Vulnerabilities reported per [SECURITY.md](SECURITY.md), not via public issues.                                                                                                                                                                                                                                           |
+| NFR-8  | **Peer dependencies:** `drizzle-orm` and `@forge/sql` versions documented in `package.json`; consumers must align with supported ranges.                                                                                                                                                                                                |
+| NFR-9  | **Bundle discipline:** Optional/heavy dependencies (e.g. `@forge/kvs`, `node-sql-parser`, `@forge/events`) remain optional where possible to keep core installs lean.                                                                                                                                                                   |
+| NFR-10 | **Dependency license compliance:** the production dependency tree must remain free of strong/weak copyleft licenses (GPL/LGPL/AGPL/SSPL/EUPL/OSL). Enforced in CI via `npm run license:check` (`license-checker-rseidelsohn`, blocking). This complements REUSE/SPDX file-header compliance (NFR-4, §8.2), which is a separate concern. |
 
 ---
 
@@ -231,7 +232,7 @@ Example of community-reported defect tracking: [Issue #2128](https://github.com/
 Requirements in §3–§4 are verified by:
 
 - Automated tests (`__tests__/`, Vitest) with coverage thresholds
-- CI workflow [`.github/workflows/node.js.yml`](.github/workflows/node.js.yml) (lint, build, test:coverage, SonarCloud, example builds, Forge deploy smoke paths)
+- CI workflow [`.github/workflows/node.js.yml`](.github/workflows/node.js.yml) (lint, build, test:coverage, dependency license compliance (`license:check`), SonarCloud, example builds, Forge deploy smoke paths)
 - Manual review of README/CHANGELOG on each release
 - Example applications built and deployed in CI (smoke validation of packaging and Forge app lifecycle; not a substitute for automated SQL integration tests)
 
@@ -301,5 +302,6 @@ This pipeline, combined with mandatory human-driven comment resolution, satisfie
 | Breaking change                    | CHANGELOG + README migration notes; bump major if needed                 |
 | Platform limit change by Atlassian | Update §5 and README warnings                                            |
 | New quality gate                   | Update CONTRIBUTING and §4                                               |
+| Dependency-license policy change   | Update NFR-10 and the `license:check` blocklist in `package.json`        |
 
-**Last updated:** 2026-05-28 (relocated to repository root as REQUIREMENTS.md)
+**Last updated:** 2026-05-31 (added NFR-10 dependency license compliance)
