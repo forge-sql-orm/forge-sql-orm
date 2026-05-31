@@ -155,14 +155,26 @@ jobs:
         if: matrix.static
         run: cd examples/${{ matrix.dir }}/static/forge-orm-example && npm run build
 
+      # One retry: Forge deploys hit transient Atlassian-side failures.
       - name: Forge Deploy (${{ env.FORGE_ENV }})
         if: github.actor != 'dependabot[bot]'
         env:
           FORGE_EMAIL: ${{ secrets.FORGE_EMAIL }}
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
-        run: cd examples/${{ matrix.dir }} && forge deploy --non-interactive -e $FORGE_ENV
+        run: |
+          cd "examples/${{ matrix.dir }}"
+          for attempt in 1 2; do
+            if forge deploy --non-interactive -e "$FORGE_ENV"; then
+              exit 0
+            fi
+            echo "::warning::forge deploy attempt $attempt failed for ${{ matrix.dir }}"
+            [ "$attempt" -lt 2 ] && sleep $((RANDOM % 21 + 10))
+          done
+          echo "forge deploy failed after 2 attempts"
+          exit 1
       # Existing install on this site+environment -> --upgrade; otherwise a
       # fresh install. The install list is parsed inline with Node.js.
+      # One retry (re-evaluated each attempt) for transient Atlassian failures.
       - name: Forge Install (${{ env.FORGE_ENV }})
         if: github.actor != 'dependabot[bot]'
         env:
@@ -171,28 +183,39 @@ jobs:
           FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
         run: |
           cd "examples/${{ matrix.dir }}"
-          installs="$(forge install list --json 2>/dev/null || echo '[]')"
-          already_installed="$(FORGE_INSTALLS="$installs" node -e '
-            const raw = process.env.FORGE_INSTALLS || "[]";
-            let data;
-            try { data = JSON.parse(raw); } catch { data = []; }
-            const list = Array.isArray(data) ? data : (data.installations || data.result || data.data || []);
-            const host = (process.env.FORGE_HOSTNAME || "").toLowerCase();
-            const envName = (process.env.FORGE_ENV || "").toLowerCase();
-            const found = list.some((i) => {
-              const site = String(i.site || i.siteUrl || i.host || i.hostname || "").toLowerCase();
-              const env = String(i.environmentKey || i.environment || i.environmentType || "").toLowerCase();
-              return site.includes(host) && env === envName;
-            });
-            process.stdout.write(found ? "yes" : "no");
-          ')"
-          if [ "$already_installed" = "yes" ]; then
-            echo "Found existing installation on $FORGE_HOSTNAME ($FORGE_ENV) -> upgrading"
-            forge install -e "$FORGE_ENV" -s "$FORGE_HOSTNAME" -p Jira --confirm-scopes --non-interactive --upgrade
-          else
-            echo "No installation on $FORGE_HOSTNAME ($FORGE_ENV) -> fresh install"
-            forge install -e "$FORGE_ENV" -s "$FORGE_HOSTNAME" -p Jira --confirm-scopes --non-interactive
-          fi
+          install_once() {
+            installs="$(forge install list --json 2>/dev/null || echo '[]')"
+            already_installed="$(FORGE_INSTALLS="$installs" node -e '
+              const raw = process.env.FORGE_INSTALLS || "[]";
+              let data;
+              try { data = JSON.parse(raw); } catch { data = []; }
+              const list = Array.isArray(data) ? data : (data.installations || data.result || data.data || []);
+              const host = (process.env.FORGE_HOSTNAME || "").toLowerCase();
+              const envName = (process.env.FORGE_ENV || "").toLowerCase();
+              const found = list.some((i) => {
+                const site = String(i.site || i.siteUrl || i.host || i.hostname || "").toLowerCase();
+                const env = String(i.environmentKey || i.environment || i.environmentType || "").toLowerCase();
+                return site.includes(host) && env === envName;
+              });
+              process.stdout.write(found ? "yes" : "no");
+            ')"
+            if [ "$already_installed" = "yes" ]; then
+              echo "Found existing installation on $FORGE_HOSTNAME ($FORGE_ENV) -> upgrading"
+              forge install -e "$FORGE_ENV" -s "$FORGE_HOSTNAME" -p Jira --confirm-scopes --non-interactive --upgrade
+            else
+              echo "No installation on $FORGE_HOSTNAME ($FORGE_ENV) -> fresh install"
+              forge install -e "$FORGE_ENV" -s "$FORGE_HOSTNAME" -p Jira --confirm-scopes --non-interactive
+            fi
+          }
+          for attempt in 1 2; do
+            if install_once; then
+              exit 0
+            fi
+            echo "::warning::forge install attempt $attempt failed for ${{ matrix.dir }}"
+            [ "$attempt" -lt 2 ] && sleep $((RANDOM % 21 + 10))
+          done
+          echo "forge install failed after 2 attempts"
+          exit 1
 
   build:
     if: always()
