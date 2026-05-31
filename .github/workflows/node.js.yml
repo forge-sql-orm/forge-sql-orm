@@ -183,6 +183,10 @@ jobs:
           FORGE_HOSTNAME: ${{ secrets.FORGE_HOSTNAME }}
         run: |
           cd "examples/${{ matrix.dir }}"
+          if [ -z "${FORGE_HOSTNAME:-}" ]; then
+            echo "::error::FORGE_HOSTNAME secret is empty or unset — refusing to install (an empty host matches every site)"
+            exit 1
+          fi
           install_once() {
             # Don't mask failures: if the list call fails (e.g. transient
             # network error) return non-zero so the loop retries the whole
@@ -198,7 +202,7 @@ jobs:
               const list = Array.isArray(data) ? data : (data.installations || data.result || data.data || []);
               const host = (process.env.FORGE_HOSTNAME || "").toLowerCase();
               const envName = (process.env.FORGE_ENV || "").toLowerCase();
-              const found = list.some((i) => {
+              const found = !!host && list.some((i) => {
                 const site = String(i.site || i.siteUrl || i.host || i.hostname || "").toLowerCase();
                 const env = String(i.environmentKey || i.environment || i.environmentType || "").toLowerCase();
                 return site.includes(host) && env === envName;
