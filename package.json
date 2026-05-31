@@ -38,6 +38,7 @@
     "globals": "^17.6.0",
     "husky": "^9.1.7",
     "knip": "^6.14.2",
+    "license-checker-rseidelsohn": "^5.0.1",
     "prettier": "^3.8.3",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
@@ -60,6 +61,7 @@
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
     "generate:models": "ts-node scripts/generate-models.ts",
+    "license:check": "license-checker-rseidelsohn --production --failOn 'GPL-1.0;GPL-1.0-only;GPL-1.0-or-later;GPL-2.0;GPL-2.0-only;GPL-2.0-or-later;GPL-3.0;GPL-3.0-only;GPL-3.0-or-later;LGPL-2.0;LGPL-2.1;LGPL-2.1-only;LGPL-2.1-or-later;LGPL-3.0;LGPL-3.0-only;LGPL-3.0-or-later;AGPL-1.0;AGPL-3.0;AGPL-3.0-only;AGPL-3.0-or-later;SSPL-1.0;EUPL-1.1;EUPL-1.2;OSL-1.0;OSL-2.0;OSL-2.1;OSL-3.0;CC-BY-SA-4.0'",
     "prepare": "husky",
     "knip": "knip"
   },
