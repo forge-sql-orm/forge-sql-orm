@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { KnipConfig } from "knip";
-import { defaultConfig } from "../../../../knip.config";
+import { exampleConfig as defaultConfig } from "../../../knip.config";
 const config: KnipConfig = {
   ...defaultConfig,
   project: ["src/*.{ts,tsx}"],
