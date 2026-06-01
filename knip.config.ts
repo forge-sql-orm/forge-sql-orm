@@ -6,7 +6,6 @@ export const defaultConfig: KnipConfig = {
     devDependencies: "error",
     optionalPeerDependencies: "error",
     exports: "off",
-    files: "off",
     binaries: "off",
     unresolved: "error",
     unlisted: "error",
@@ -21,6 +20,6 @@ export const defaultConfig: KnipConfig = {
 const config: KnipConfig = {
   ...defaultConfig,
   project: ["src/**/*.ts"],
-  ignoreDependencies: ["uuid", "globals", "patch-package", "vite"],
+  ignoreDependencies: [],
 };
 export default config;
