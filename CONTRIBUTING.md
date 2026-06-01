@@ -106,6 +106,24 @@ The install step is idempotent: it runs `forge install list --json`, checks whet
 
 All deployments run under the **maintainer's** Forge credentials (`FORGE_EMAIL` / `FORGE_API_TOKEN` repository secrets) against the maintainer's apps and `FORGE_HOSTNAME` site — **you do not need any Forge account, site access, or Developer Console membership to contribute.** The per-contributor environment naming only namespaces the dev deploys so concurrent PRs don't collide.
 
+## Logging
+
+Diagnostic logging goes through the platform-native `console.*` API — Atlassian Forge captures `console` output from resolvers and triggers, and we deliberately avoid third-party logging frameworks to keep dependencies lean (see [REQUIREMENTS.md NFR-11](REQUIREMENTS.md#4-non-functional-requirements)).
+
+Because of this, `no-console` is configured as an **ESLint error**. You cannot just drop in a `console.log`:
+
+- Each intentional log must be opted in per line with `// eslint-disable-next-line no-console`.
+- Think before adding one — keep it intentional and minimal, and gate noisy output behind a flag where appropriate (e.g. `logRawSqlQuery`):
+
+```ts
+if (newOptions.logRawSqlQuery) {
+  // eslint-disable-next-line no-console
+  console.debug("Initializing ForgeSQLORM...");
+}
+```
+
+The explicit opt-in is intentional: it keeps every log line visible in review rather than letting console output accumulate accidentally.
+
 ## Styleguides
 
 - Use the present tense ("Add feature" not "Added feature").
