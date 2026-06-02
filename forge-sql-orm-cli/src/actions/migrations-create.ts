@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import "reflect-metadata";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import mysql from "mysql2/promise";
 import { RowDataPacket } from "mysql2";
 
@@ -184,9 +184,8 @@ async function getCreateTableStatement(
   tableName: string,
 ): Promise<string | null> {
   const [rows] = await connection.execute<CreateTableRow[]>(`SHOW CREATE TABLE \`${tableName}\``);
-  const result = rows as CreateTableRow[];
-  if (result.length > 0 && result[0]["Create Table"]) {
-    return result[0]["Create Table"];
+  if (rows.length > 0 && rows[0]["Create Table"]) {
+    return rows[0]["Create Table"];
   }
   return null;
 }

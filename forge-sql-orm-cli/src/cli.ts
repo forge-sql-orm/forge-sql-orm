@@ -5,8 +5,8 @@
 import { Command } from "commander";
 import dotenv from "dotenv";
 import inquirer from "inquirer";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { generateModels, type GenerateModelsOptions } from "./actions/generate-models";
 import { createMigration, type CreateMigrationOptions } from "./actions/migrations-create";
 import { updateMigration, type UpdateMigrationOptions } from "./actions/migrations-update";
@@ -122,7 +122,7 @@ const askMissingParams = async (
       name: "port",
       message: "Enter database port:",
       default: "3306",
-      validate: (input: string) => !isNaN(parseInt(input, 10)),
+      validate: (input: string) => !Number.isNaN(Number.parseInt(input, 10)),
     });
 
   if (!config.user)
@@ -169,7 +169,7 @@ const askMissingParams = async (
     return {
       ...config,
       ...answers,
-      port: rawPort === undefined ? undefined : parseInt(String(rawPort), 10),
+      port: rawPort === undefined ? undefined : Number.parseInt(String(rawPort), 10),
     };
   }
 
@@ -185,6 +185,16 @@ const askMissingParams = async (
  * @param customAskMissingParams - Optional function for additional prompts.
  * @returns A fully resolved configuration object.
  */
+/**
+ * Resolves the database port from the CLI flag, falling back to the environment.
+ * @param cmdPort - Raw `--port` value from the command line.
+ * @returns The parsed port number, or undefined when neither source is set.
+ */
+function resolvePort(cmdPort?: string): number | undefined {
+  const raw = cmdPort ?? process.env.FORGE_SQL_ORM_PORT;
+  return raw === undefined ? undefined : Number.parseInt(raw, 10);
+}
+
 const getConfig = async (
   cmd: CommandOptions,
   defaultOutput: string,
@@ -193,11 +203,7 @@ const getConfig = async (
 ): Promise<CliConfig> => {
   let config = {
     host: cmd.host || process.env.FORGE_SQL_ORM_HOST,
-    port: cmd.port
-      ? parseInt(cmd.port, 10)
-      : process.env.FORGE_SQL_ORM_PORT
-        ? parseInt(process.env.FORGE_SQL_ORM_PORT, 10)
-        : undefined,
+    port: resolvePort(cmd.port),
     user: cmd.user || process.env.FORGE_SQL_ORM_USER,
     password: cmd.password || process.env.FORGE_SQL_ORM_PASSWORD,
     dbName: cmd.dbName || process.env.FORGE_SQL_ORM_DBNAME,
