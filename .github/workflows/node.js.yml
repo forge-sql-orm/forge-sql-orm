@@ -58,13 +58,7 @@ jobs:
           npm run build
           npm run test:coverage
       - name: Merge library + CLI coverage into a single report
-        run: |
-          # Each package writes coverage relative to its own dir; --prepend-source-files
-          # rewrites SF paths to be repo-relative (lib -> src/..., CLI -> forge-sql-orm-cli/src/...).
-          mkdir -p coverage/merged
-          npx --yes lcov-result-merger '**/coverage/lcov.info' coverage/merged/lcov.info \
-            --prepend-source-files --ignore '**/node_modules/**'
-          cp -f coverage/merged/lcov.info coverage/lcov.info
+        run: npm run coverage:merge
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7.2.1
         env:

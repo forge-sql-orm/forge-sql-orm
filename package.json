@@ -38,6 +38,7 @@
     "globals": "^17.6.0",
     "husky": "^9.1.7",
     "knip": "^6.15.0",
+    "lcov-result-merger": "^6.0.0",
     "license-checker-rseidelsohn": "^5.0.1",
     "prettier": "^3.8.3",
     "ts-node": "^10.9.2",
@@ -50,6 +51,7 @@
     "test": "vitest --run --config vitest.config.mjs",
     "test:coverage": "vitest --run --config vitest.config.mjs --coverage",
     "test:watch": "vitest --watch",
+    "coverage:merge": "mkdir -p coverage/merged && lcov-result-merger \"**/coverage/lcov.info\" coverage/merged/lcov.info --prepend-source-files --ignore \"**/node_modules/**\" && cp -f coverage/merged/lcov.info coverage/lcov.info",
     "lint": "eslint src  --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write src examples __tests__",
@@ -79,9 +81,9 @@
     "luxon": "^3.7.2"
   },
   "optionalDependencies": {
+    "@forge/events": "^2.1.4",
     "@forge/kvs": "^1.6.2",
-    "node-sql-parser": "^5.4.0",
-    "@forge/events": "^2.1.4"
+    "node-sql-parser": "^5.4.0"
   },
   "lint-staged": {
     "{src,forge-sql-orm-cli/src,__tests__,examples}/**/*.{ts,tsx,mts,cts}": [

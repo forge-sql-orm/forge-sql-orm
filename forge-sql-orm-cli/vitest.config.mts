@@ -17,6 +17,6 @@ export default defineConfig({
         lines: 80,
       },
     },
-    include: ["__test__/**/*.test.ts"],
+    include: ["__tests__/**/*.test.ts"],
   },
 });

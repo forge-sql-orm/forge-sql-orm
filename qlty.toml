@@ -4,7 +4,7 @@ exclude_patterns = [
     "**/dist-cli/**",
     "examples/**",
     "__tests__/**",
-    "forge-sql-orm-cli/__test__/**"
+    "forge-sql-orm-cli/__tests__/**"
 ]
 [smells.function_complexity]
 threshold = 8
