@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import "reflect-metadata";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { MySqlTable, TableConfig } from "drizzle-orm/mysql-core";
 import { getTableMetadata, generateDropTableStatements } from "forge-sql-orm";
 

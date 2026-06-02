@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import "reflect-metadata";
-import fs from "fs";
-import path from "path";
-import { execSync } from "child_process";
+import fs from "node:fs";
+import path from "node:path";
+import { execSync } from "node:child_process";
 
 /**
  * Options for model generation
@@ -133,84 +133,80 @@ function replaceMySQLTypes(schemaContent: string): string {
   return modifiedContent;
 }
 
+/** MySQL/Drizzle column types supported for optimistic-locking version fields. */
+const SUPPORTED_VERSION_TYPES = new Set(["datetime", "timestamp", "int", "number", "decimal"]);
+
 /**
- * Generates models for all tables in the database using drizzle-kit
- * @param options - Generation options
+ * Validates a version-field column and returns its metadata, or undefined
+ * (after logging a warning) when the column cannot be used for versioning.
  */
-export const generateModels = async (options: GenerateModelsOptions) => {
-  try {
-    // Generate models using drizzle-kit pull
-    await execSync(
-      `npx drizzle-kit pull --dialect mysql --url mysql://${options.user}:${options.password}@${options.host}:${options.port}/${options.dbName} --out ${options.output}`,
-      { encoding: "utf-8" },
+function resolveVersionField(
+  tableName: string,
+  col: ColumnMetadata,
+): TableVersionMetadata | undefined {
+  if (col.notNull && SUPPORTED_VERSION_TYPES.has(col.type)) {
+    return { tableName, versionField: { fieldName: col.name } };
+  }
+
+  if (col.notNull) {
+    console.warn(
+      `Version field "${col.name}" in table ${tableName} has unsupported type "${col.type}". ` +
+        `Only datetime, timestamp, int, and decimal types are supported for versioning. Versioning will be skipped.`,
     );
+  } else {
+    console.warn(
+      `Version field "${col.name}" in table ${tableName} is nullable. Versioning may not work correctly.`,
+    );
+  }
+  return undefined;
+}
 
-    // Process metadata to create version map
-    const metaDir = path.join(options.output, "meta");
-    const additionalMetadata: AdditionalMetadata = {};
+/**
+ * Reads the drizzle snapshot and builds the version-metadata map for all tables.
+ */
+function buildAdditionalMetadata(metaDir: string, versionFieldName: string): AdditionalMetadata {
+  const additionalMetadata: AdditionalMetadata = {};
+  const snapshotFile = path.join(metaDir, "0000_snapshot.json");
+  if (!fs.existsSync(snapshotFile)) {
+    return additionalMetadata;
+  }
 
-    if (fs.existsSync(metaDir)) {
-      const snapshotFile = path.join(metaDir, "0000_snapshot.json");
-      if (fs.existsSync(snapshotFile)) {
-        const snapshotData = JSON.parse(fs.readFileSync(snapshotFile, "utf-8"));
+  const snapshotData = JSON.parse(fs.readFileSync(snapshotFile, "utf-8"));
+  for (const [tableName, tableData] of Object.entries(snapshotData.tables)) {
+    const table = tableData as TableMetadata;
 
-        // Process each table from the snapshot
-        for (const [tableName, tableData] of Object.entries(snapshotData.tables)) {
-          const table = tableData as TableMetadata;
-
-          // Check if table name starts with 'a_' and warn about cache
-          if (tableName.toLowerCase().startsWith("a_")) {
-            console.warn(
-              `⚠️  Table "${tableName}" starts with "a_". KVS Cache will not work with this table because such tables are ignored in cache operations.`,
-            );
-          }
-
-          // Find version field in columns
-          const versionField = Object.entries(table.columns).find(
-            ([_, col]) => col.name.toLowerCase() === options.versionField,
-          );
-
-          if (versionField) {
-            const [_, col] = versionField;
-            const fieldType = col.type;
-            const isSupportedType =
-              fieldType === "datetime" ||
-              fieldType === "timestamp" ||
-              fieldType === "int" ||
-              fieldType === "number" ||
-              fieldType === "decimal";
-            if (!col.notNull) {
-              console.warn(
-                `Version field "${col.name}" in table ${tableName} is nullable. Versioning may not work correctly.`,
-              );
-            } else if (!isSupportedType) {
-              console.warn(
-                `Version field "${col.name}" in table ${tableName} has unsupported type "${fieldType}". ` +
-                  `Only datetime, timestamp, int, and decimal types are supported for versioning. Versioning will be skipped.`,
-              );
-            } else {
-              additionalMetadata[tableName] = {
-                tableName,
-                versionField: {
-                  fieldName: col.name,
-                },
-              };
-            }
-          }
-        }
-      }
+    if (tableName.toLowerCase().startsWith("a_")) {
+      console.warn(
+        `⚠️  Table "${tableName}" starts with "a_". KVS Cache will not work with this table because such tables are ignored in cache operations.`,
+      );
     }
 
-    // Create version metadata file
-    const versionMetadataContent = `/**
+    const versionEntry = Object.entries(table.columns).find(
+      ([, col]) => col.name.toLowerCase() === versionFieldName,
+    );
+    if (!versionEntry) {
+      continue;
+    }
+
+    const metadata = resolveVersionField(tableName, versionEntry[1]);
+    if (metadata) {
+      additionalMetadata[tableName] = metadata;
+    }
+  }
+  return additionalMetadata;
+}
+
+/** Renders the generated `index.ts` exporting schema, relations and version metadata. */
+function renderVersionMetadata(additionalMetadata: AdditionalMetadata): string {
+  return `/**
  * This file was auto-generated by forge-sql-orm
  * Generated at: ${new Date().toISOString()}
- * 
+ *
  * DO NOT EDIT THIS FILE MANUALLY
  * Any changes will be overwritten on next generation
  */
- 
- 
+
+
 export * from "./relations";
 export * from "./schema";
 
@@ -227,46 +223,70 @@ export type AdditionalMetadata = Record<string, TableMetadata>;
 
 export const additionalMetadata: AdditionalMetadata = ${JSON.stringify(additionalMetadata, null, 2)};
 `;
+}
 
-    fs.writeFileSync(path.join(options.output, "index.ts"), versionMetadataContent);
+/** Rewrites MySQL column types in the generated schema to forge custom types. */
+function rewriteSchemaTypes(output: string): void {
+  const schemaPath = path.join(output, "schema.ts");
+  if (!fs.existsSync(schemaPath)) {
+    return;
+  }
+  fs.writeFileSync(schemaPath, replaceMySQLTypes(fs.readFileSync(schemaPath, "utf-8")));
+  console.log(`✅ Updated schema types in: ${schemaPath}`);
+}
 
-    // Replace MySQL types in the generated schema file
-    const schemaPath = path.join(options.output, "schema.ts");
-    if (fs.existsSync(schemaPath)) {
-      const schemaContent = fs.readFileSync(schemaPath, "utf-8");
-      const modifiedContent = replaceMySQLTypes(schemaContent);
-      fs.writeFileSync(schemaPath, modifiedContent);
-      console.log(`✅ Updated schema types in: ${schemaPath}`);
-    }
+/** Removes drizzle-kit migration/meta artifacts that are not needed by forge-sql-orm. */
+function cleanupGeneratedArtifacts(output: string, metaDir: string): void {
+  const migrationDir = path.join(output, "migrations");
+  if (fs.existsSync(migrationDir)) {
+    fs.rmSync(migrationDir, { recursive: true, force: true });
+    console.log(`✅ Removed: ${migrationDir}`);
+  }
 
-    // Remove migration files and meta directory if they exist
-    const migrationDir = path.join(options.output, "migrations");
+  if (!fs.existsSync(metaDir)) {
+    return;
+  }
 
-    if (fs.existsSync(migrationDir)) {
-      fs.rmSync(migrationDir, { recursive: true, force: true });
-      console.log(`✅ Removed: ${migrationDir}`);
-    }
-
-    // Read journal and remove corresponding SQL file
-    if (fs.existsSync(metaDir)) {
-      const journalFile = path.join(metaDir, "_journal.json");
-      if (fs.existsSync(journalFile)) {
-        const journalData = JSON.parse(fs.readFileSync(journalFile, "utf-8")) as JournalData;
-
-        // Remove SQL files for each entry
-        for (const entry of journalData.entries) {
-          const sqlFile = path.join(options.output, `${entry.tag}.sql`);
-          if (fs.existsSync(sqlFile)) {
-            fs.rmSync(sqlFile, { force: true });
-            console.log(`✅ Removed SQL file: ${entry.tag}.sql`);
-          }
-        }
+  const journalFile = path.join(metaDir, "_journal.json");
+  if (fs.existsSync(journalFile)) {
+    const journalData = JSON.parse(fs.readFileSync(journalFile, "utf-8")) as JournalData;
+    for (const entry of journalData.entries) {
+      const sqlFile = path.join(output, `${entry.tag}.sql`);
+      if (fs.existsSync(sqlFile)) {
+        fs.rmSync(sqlFile, { force: true });
+        console.log(`✅ Removed SQL file: ${entry.tag}.sql`);
       }
-
-      // Remove meta directory after processing
-      fs.rmSync(metaDir, { recursive: true, force: true });
-      console.log(`✅ Removed: ${metaDir}`);
     }
+  }
+
+  fs.rmSync(metaDir, { recursive: true, force: true });
+  console.log(`✅ Removed: ${metaDir}`);
+}
+
+/**
+ * Generates models for all tables in the database using drizzle-kit
+ * @param options - Generation options
+ */
+export const generateModels = async (options: GenerateModelsOptions) => {
+  try {
+    // Generate models using drizzle-kit pull
+    execSync(
+      `npx drizzle-kit pull --dialect mysql --url mysql://${options.user}:${options.password}@${options.host}:${options.port}/${options.dbName} --out ${options.output}`,
+      { encoding: "utf-8" },
+    );
+
+    const metaDir = path.join(options.output, "meta");
+    const additionalMetadata = fs.existsSync(metaDir)
+      ? buildAdditionalMetadata(metaDir, options.versionField)
+      : {};
+
+    fs.writeFileSync(
+      path.join(options.output, "index.ts"),
+      renderVersionMetadata(additionalMetadata),
+    );
+
+    rewriteSchemaTypes(options.output);
+    cleanupGeneratedArtifacts(options.output, metaDir);
 
     console.log(`✅ Successfully generated models and version metadata`);
     process.exit(0);
