@@ -6,6 +6,7 @@ import prettierConfig from "eslint-config-prettier";
 export default [
   js.configs.recommended,
   {
+    files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
       parser: tsparser,
       sourceType: "module",
@@ -18,6 +19,7 @@ export default [
       ...prettierConfig.rules,
 
       "no-console": "off",
+      "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-vars": ["warn"],
       "no-unused-vars": ["off"],
       "@typescript-eslint/explicit-function-return-type": "off",

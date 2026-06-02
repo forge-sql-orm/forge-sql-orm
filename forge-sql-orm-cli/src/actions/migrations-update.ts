@@ -5,7 +5,7 @@ import "reflect-metadata";
 import fs from "fs";
 import path from "path";
 import mysql from "mysql2/promise";
-import { MySqlTable, TableConfig } from "drizzle-orm/mysql-core";
+import { AnyMySqlTable, MySqlTable, TableConfig } from "drizzle-orm/mysql-core";
 import { RowDataPacket } from "mysql2";
 import { getTableMetadata } from "forge-sql-orm";
 import { AnyIndexBuilder } from "drizzle-orm/mysql-core/indexes";
@@ -13,14 +13,45 @@ import { ForeignKeyBuilder } from "drizzle-orm/mysql-core/foreign-keys";
 import { UniqueConstraintBuilder } from "drizzle-orm/mysql-core/unique-constraint";
 import { v4 as uuid } from "uuid";
 
+/**
+ * Options for updating an existing migration.
+ */
+export interface UpdateMigrationOptions {
+  output: string;
+  entitiesPath: string;
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  dbName: string;
+}
+
 interface DrizzleColumn {
   type: string;
   notNull: boolean;
   autoincrement?: boolean;
-  columnType?: any;
+  columnType?: string;
   name: string;
   default?: string;
   getSQLType: () => string;
+}
+
+/**
+ * Minimal shape of a Drizzle SQL default expression that exposes `toQuery`.
+ */
+interface ToQueryable {
+  toQuery: (config: Record<string, unknown>) => { sql: string };
+}
+
+/**
+ * Type guard for default values that expose a `toQuery` method (SQL expressions).
+ */
+function isToQueryable(value: unknown): value is ToQueryable {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { toQuery?: unknown }).toQuery === "function"
+  );
 }
 
 interface DrizzleSchema {
@@ -570,7 +601,7 @@ function compareForeignKey(
 function generateSchemaChanges(
   drizzleSchema: DrizzleSchema,
   dbSchema: DatabaseSchema,
-  schemaModule: Record<string, any>,
+  schemaModule: Record<string, AnyMySqlTable>,
 ): {
   changes: { change: string; premigrationId?: string }[];
   preMigrations: Record<string, PreMigrationNotNull>;
@@ -828,10 +859,10 @@ function generateSchemaChanges(
                 change: `ALTER TABLE \`${tableName}\` DROP FOREIGN KEY  \`${fkName}\`;`,
               });
             } else {
-              // @ts-ignore
-              const columns = drizzleForeignKey.columns;
+              // @ts-ignore - Internal property access
+              const columns = drizzleForeignKey.columns as { name: string }[] | undefined;
               const columnNames = columns?.length
-                ? columns.map((c: any) => c.name).join(", ")
+                ? columns.map((c) => c.name).join(", ")
                 : "unknown columns";
               console.warn(
                 `⚠️ Drizzle model for table '${tableName}' does not provide a name for FOREIGN KEY constraint on columns: ${columnNames}`,
@@ -850,7 +881,7 @@ function generateSchemaChanges(
  * Updates an existing database migration by generating schema modifications.
  * @param options - Database connection settings and output paths.
  */
-export const updateMigration = async (options: any) => {
+export const updateMigration = async (options: UpdateMigrationOptions) => {
   try {
     let version = await loadMigrationVersion(options.output);
     const prevVersion = version;
@@ -902,7 +933,7 @@ export const updateMigration = async (options: any) => {
             columns[name] = {
               type: column.dataType,
               notNull: column.notNull,
-              autoincrement: (column as any).autoincrement,
+              autoincrement: (column as { autoIncrement?: boolean }).autoIncrement,
               columnType: column.columnType,
               name: column.name,
               default: (() => {
@@ -913,12 +944,8 @@ export const updateMigration = async (options: any) => {
                 const defaultValue = column.default;
 
                 // If default is an object with toQuery method (e.g., SQL expression)
-                if (
-                  typeof defaultValue === "object" &&
-                  defaultValue !== null &&
-                  typeof (defaultValue as any).toQuery === "function"
-                ) {
-                  return (defaultValue as any).toQuery({}).sql;
+                if (isToQueryable(defaultValue)) {
+                  return defaultValue.toQuery({}).sql;
                 }
 
                 // Otherwise, convert to string

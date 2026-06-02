@@ -169,7 +169,7 @@ ${callLines.join("\n")}
  * @returns Array of table names
  */
 async function getTables(connection: mysql.Connection): Promise<string[]> {
-  const [rows] = await connection.execute<any[]>("SHOW TABLES");
+  const [rows] = await connection.execute<RowDataPacket[]>("SHOW TABLES");
   return rows.map((row) => Object.values(row)[0] as string);
 }
 

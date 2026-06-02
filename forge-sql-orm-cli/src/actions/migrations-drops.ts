@@ -8,6 +8,14 @@ import { MySqlTable, TableConfig } from "drizzle-orm/mysql-core";
 import { getTableMetadata, generateDropTableStatements } from "forge-sql-orm";
 
 /**
+ * Options for dropping all tables.
+ */
+export interface DropMigrationOptions {
+  entitiesPath: string;
+  output: string;
+}
+
+/**
  * Generates a migration ID using current date
  * @returns Migration ID string with current date
  */
@@ -93,7 +101,7 @@ export default async (
  * Creates a full database migration.
  * @param options - Database connection settings and output paths.
  */
-export const dropMigration = async (options: any) => {
+export const dropMigration = async (options: DropMigrationOptions) => {
   try {
     // Start from version 1 if no previous migrations exist
     const version = 1;

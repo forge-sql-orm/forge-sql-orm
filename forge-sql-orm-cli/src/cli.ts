@@ -7,17 +7,64 @@ import dotenv from "dotenv";
 import inquirer from "inquirer";
 import fs from "fs";
 import path from "path";
-import { generateModels } from "./actions/generate-models";
-import { createMigration } from "./actions/migrations-create";
-import { updateMigration } from "./actions/migrations-update";
-import { dropMigration } from "./actions/migrations-drops";
-import { createSchema } from "./actions/schema-create";
+import { generateModels, type GenerateModelsOptions } from "./actions/generate-models";
+import { createMigration, type CreateMigrationOptions } from "./actions/migrations-create";
+import { updateMigration, type UpdateMigrationOptions } from "./actions/migrations-update";
+import { dropMigration, type DropMigrationOptions } from "./actions/migrations-drops";
+import { createSchema, type CreateSchemaOptions } from "./actions/schema-create";
 
 const ENV_PATH = path.resolve(process.cwd(), ".env");
 // 🔄 Load environment variables from `.env` file
 dotenv.config({ path: ENV_PATH });
 
-const saveEnvFile = (config: any) => {
+/**
+ * Resolved configuration shared across all CLI commands.
+ */
+interface CliConfig {
+  host?: string;
+  port?: number;
+  user?: string;
+  password?: string;
+  dbName?: string;
+  output?: string;
+  versionField?: string;
+  entitiesPath?: string;
+  force?: boolean;
+}
+
+/**
+ * Raw options object provided by Commander to each command action.
+ * All values arrive as strings (or booleans for flags) from the CLI.
+ */
+interface CommandOptions {
+  host?: string;
+  port?: string;
+  user?: string;
+  password?: string;
+  dbName?: string;
+  output?: string;
+  versionField?: string;
+  entitiesPath?: string;
+  force?: boolean;
+  saveEnv?: boolean;
+}
+
+/**
+ * Raw answers returned by Inquirer. Every prompted value is a string,
+ * including `port`, which is converted to a number before it reaches `CliConfig`.
+ */
+interface PromptAnswers {
+  host?: string;
+  port?: string;
+  user?: string;
+  password?: string;
+  dbName?: string;
+  output?: string;
+  versionField?: string;
+  entitiesPath?: string;
+}
+
+const saveEnvFile = (config: CliConfig) => {
   let envContent = "";
   const envFilePath = ENV_PATH;
 
@@ -28,14 +75,14 @@ const saveEnvFile = (config: any) => {
   const envVars = envContent
     .split("\n")
     .filter((line) => line.trim() !== "" && !line.startsWith("#"))
-    .reduce((acc: any, line) => {
+    .reduce<Record<string, string>>((acc, line) => {
       const [key, ...value] = line.split("=");
       acc[key] = value.join("=");
       return acc;
     }, {});
 
   Object.entries(config).forEach(([key, value]) => {
-    envVars[`FORGE_SQL_ORM_${key.toUpperCase()}`] = value;
+    envVars[`FORGE_SQL_ORM_${key.toUpperCase()}`] = String(value);
   });
 
   const updatedEnvContent = Object.entries(envVars)
@@ -55,10 +102,10 @@ const saveEnvFile = (config: any) => {
  * @returns Updated configuration with user input.
  */
 const askMissingParams = async (
-  config: any,
+  config: CliConfig,
   defaultOutput: string,
-  customAskMissingParams?: (cfg: any, questions: unknown[]) => void,
-) => {
+  customAskMissingParams?: (cfg: CliConfig, questions: unknown[]) => void,
+): Promise<CliConfig> => {
   const questions: unknown[] = [];
 
   if (!config.host)
@@ -117,8 +164,13 @@ const askMissingParams = async (
   // If there are missing parameters, prompt the user
   if (questions.length > 0) {
     // @ts-ignore - Ignore TypeScript warning for dynamic question type
-    const answers = await inquirer.prompt(questions);
-    return { ...config, ...answers, port: parseInt(config.port ?? answers.port, 10) };
+    const answers = (await inquirer.prompt(questions)) as PromptAnswers;
+    const rawPort = config.port ?? answers.port;
+    return {
+      ...config,
+      ...answers,
+      port: rawPort === undefined ? undefined : parseInt(String(rawPort), 10),
+    };
   }
 
   return config;
@@ -134,11 +186,11 @@ const askMissingParams = async (
  * @returns A fully resolved configuration object.
  */
 const getConfig = async (
-  cmd: any,
+  cmd: CommandOptions,
   defaultOutput: string,
-  customConfig?: () => any,
-  customAskMissingParams?: (cfg: any, questions: unknown[]) => void,
-) => {
+  customConfig?: () => Partial<CliConfig>,
+  customAskMissingParams?: (cfg: CliConfig, questions: unknown[]) => void,
+): Promise<CliConfig> => {
   let config = {
     host: cmd.host || process.env.FORGE_SQL_ORM_HOST,
     port: cmd.port
@@ -198,7 +250,7 @@ program
         }
       },
     );
-    await generateModels(config);
+    await generateModels(config as GenerateModelsOptions);
   });
 
 // ✅ Command: Create initial database migration
@@ -217,7 +269,7 @@ program
     const config = await getConfig(cmd, "./database/migration", () => ({
       force: cmd.force || false,
     }));
-    await createMigration(config);
+    await createMigration(config as CreateMigrationOptions);
   });
 
 // ✅ Command: Update migration for schema changes
@@ -249,7 +301,7 @@ program
           });
       },
     );
-    await updateMigration(config);
+    await updateMigration(config as UpdateMigrationOptions);
   });
 
 // ✅ Command: Drop all migrations
@@ -281,7 +333,7 @@ program
           });
       },
     );
-    await dropMigration(config);
+    await dropMigration(config as DropMigrationOptions);
   });
 
 // ✅ Command: Apply DB schema directly from Drizzle models
@@ -312,7 +364,7 @@ program
           });
       },
     );
-    await createSchema(config);
+    await createSchema(config as CreateSchemaOptions);
   });
 
 // 🔥 Execute CLI

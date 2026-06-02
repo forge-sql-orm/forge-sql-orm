@@ -8,8 +8,8 @@
     "forge-sql-orm-cli": "./dist-cli/forgeSqlOrmCLI.js"
   },
   "scripts": {
-    "lint": "eslint src  --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
     "clean": "rm -rf dist",
     "build": "npm run clean && vite build && npm run build:types",
