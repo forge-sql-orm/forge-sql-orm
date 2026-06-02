@@ -6,8 +6,8 @@ import { AnyMySqlSelectQueryBuilder, AnyMySqlTable } from "drizzle-orm/mysql-cor
 import { getTableName } from "drizzle-orm/table";
 import { ForgeSqlOrmOptions } from "../core";
 import { MySqlSelectDynamic } from "drizzle-orm/mysql-core/query-builders/select.types";
-import { hashKey } from "./cacheUtils";
 import { Query } from "drizzle-orm/sql/sql";
+import { hashKey } from "./cacheUtils";
 
 /**
  * Interface representing the cache application context.

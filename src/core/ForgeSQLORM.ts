@@ -51,6 +51,7 @@ import { operationTypeQueryContext } from "../utils/requestTypeContextUtils";
 import { getErrorMessage } from "../utils/errorUtils";
 import type { MySqlQueryResultKind } from "drizzle-orm/mysql-core/session";
 import { Rovo } from "./Rovo";
+import { KVSCache } from "../lib/cache/KVSCache";
 
 /**
  * Implementation of ForgeSQLORM that uses Drizzle ORM for query building.
@@ -93,6 +94,7 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
         cacheEntityQueryName: "sql",
         cacheEntityExpirationName: "expiration",
         cacheEntityDataName: "data",
+        cacheImplementation: new KVSCache(),
       };
       this.options = newOptions;
       if (newOptions.logRawSqlQuery) {

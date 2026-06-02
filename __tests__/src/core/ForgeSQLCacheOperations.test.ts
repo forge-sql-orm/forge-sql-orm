@@ -3,7 +3,7 @@
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ForgeSQLCacheOperations } from "../../../src/core/ForgeSQLCacheOperations";
-import { ForgeSqlOrmOptions } from "../../../src/core/ForgeSQLQueryBuilder";
+import { ForgeSqlOrmOptions } from "../../../src";
 import {
   clearCache,
   clearTablesCache,
