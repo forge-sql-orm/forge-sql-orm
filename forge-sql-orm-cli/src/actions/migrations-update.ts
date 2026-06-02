@@ -580,14 +580,21 @@ function getIndexColumns(index: AnyIndexBuilder): string[] {
   return index.columns.map((col) => col.name);
 }
 
+/** Locale-aware comparator for sorting column-name arrays deterministically. */
+function compareColumnNames(a: string, b: string): number {
+  return a.localeCompare(b);
+}
+
 function compareForeignKey(
   fk: ForeignKeyBuilder,
   { columns }: { columns: string[]; unique: boolean },
 ) {
   // @ts-ignore
   const fcolumns: string[] = fk.columns.map((c) => c.name);
-  const byName = (a: string, b: string) => a.localeCompare(b);
-  return fcolumns.toSorted(byName).join(",") === columns.toSorted(byName).join(",");
+  return (
+    fcolumns.toSorted(compareColumnNames).join(",") ===
+    columns.toSorted(compareColumnNames).join(",")
+  );
 }
 
 type SchemaChange = { change: string; premigrationId?: string };
@@ -895,8 +902,10 @@ function generateSchemaChanges(
     );
     if (table) {
       const metadata = getTableMetadata(table);
-      changes.push(...buildIndexChanges(tableName, dbTable, metadata));
-      changes.push(...buildForeignKeyChanges(tableName, dbTable, metadata));
+      changes.push(
+        ...buildIndexChanges(tableName, dbTable, metadata),
+        ...buildForeignKeyChanges(tableName, dbTable, metadata),
+      );
     }
   }
 

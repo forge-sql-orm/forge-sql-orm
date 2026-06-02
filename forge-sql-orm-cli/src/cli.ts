@@ -190,10 +190,10 @@ const askMissingParams = async (
  * @param cmdPort - Raw `--port` value from the command line.
  * @returns The parsed port number, or undefined when neither source is set.
  */
-const resolvePort = (cmdPort?: string): number | undefined => {
+function resolvePort(cmdPort?: string): number | undefined {
   const raw = cmdPort ?? process.env.FORGE_SQL_ORM_PORT;
   return raw === undefined ? undefined : Number.parseInt(raw, 10);
-};
+}
 
 const getConfig = async (
   cmd: CommandOptions,
