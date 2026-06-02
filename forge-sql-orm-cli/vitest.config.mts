@@ -8,7 +8,6 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'lcov'],
       include: ["src"],
-      exclude: ["src/forgeSqlOrmCLI.mts"],
       reportsDirectory: './coverage',
       thresholds: {
         statements: 80,
