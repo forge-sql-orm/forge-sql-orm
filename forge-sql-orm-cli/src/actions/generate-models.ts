@@ -9,7 +9,7 @@ import { execSync } from "child_process";
 /**
  * Options for model generation
  */
-interface GenerateModelsOptions {
+export interface GenerateModelsOptions {
   host: string;
   port: number;
   user: string;
@@ -37,10 +37,10 @@ interface TableMetadata {
   name: string;
   columns: Record<string, ColumnMetadata>;
   compositePrimaryKeys: Record<string, { name: string; columns: string[] }>;
-  indexes: Record<string, any>;
-  foreignKeys: Record<string, any>;
-  uniqueConstraints: Record<string, any>;
-  checkConstraint: Record<string, any>;
+  indexes: Record<string, unknown>;
+  foreignKeys: Record<string, unknown>;
+  uniqueConstraints: Record<string, unknown>;
+  checkConstraint: Record<string, unknown>;
 }
 
 /**
