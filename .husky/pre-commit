@@ -18,8 +18,6 @@ echo '➡️ run tests check'
 npm run test || { echo '❌ tests check failed.'; exit 1; }
 
 echo '🔍 Running forge-sql-orm-cli resources checks...'
-# Subshell instead of pushd/popd — pushd is a bash builtin and /bin/sh on
-# CI runners (Ubuntu /bin/sh -> dash) doesn't have it.
 (
   cd forge-sql-orm-cli || exit 1
 
@@ -28,6 +26,9 @@ echo '🔍 Running forge-sql-orm-cli resources checks...'
 
   echo '➡️ dependencies check'
   npm run knip || { echo '❌ Dependency check for forge-sql-orm-cli resources failed.'; exit 1; }
+
+  echo '➡️ run tests check'
+  npm run test || { echo '❌ tests check failed.'; exit 1; }
 
   echo '➡️ build'
   npm run build || { echo '❌ Build failed'; exit 1; }

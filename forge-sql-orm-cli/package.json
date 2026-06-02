@@ -8,6 +8,9 @@
     "forge-sql-orm-cli": "./dist-cli/forgeSqlOrmCLI.js"
   },
   "scripts": {
+    "test": "vitest --run",
+    "test:coverage": "vitest --run --coverage",
+    "test:watch": "vitest --watch",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write src",
@@ -61,7 +64,9 @@
     "knip": "^6.15.0",
     "reflect-metadata": "^0.2.2",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8",
+    "@vitest/coverage-v8": "^4.1.8"
   },
   "lint-staged": {
     "*.{ts,tsx,css,scss,md}": [
