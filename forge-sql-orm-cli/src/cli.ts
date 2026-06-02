@@ -49,6 +49,21 @@ interface CommandOptions {
   saveEnv?: boolean;
 }
 
+/**
+ * Raw answers returned by Inquirer. Every prompted value is a string,
+ * including `port`, which is converted to a number before it reaches `CliConfig`.
+ */
+interface PromptAnswers {
+  host?: string;
+  port?: string;
+  user?: string;
+  password?: string;
+  dbName?: string;
+  output?: string;
+  versionField?: string;
+  entitiesPath?: string;
+}
+
 const saveEnvFile = (config: CliConfig) => {
   let envContent = "";
   const envFilePath = ENV_PATH;
@@ -149,8 +164,13 @@ const askMissingParams = async (
   // If there are missing parameters, prompt the user
   if (questions.length > 0) {
     // @ts-ignore - Ignore TypeScript warning for dynamic question type
-    const answers = (await inquirer.prompt(questions)) as Partial<CliConfig>;
-    return { ...config, ...answers, port: parseInt(String(config.port ?? answers.port), 10) };
+    const answers = (await inquirer.prompt(questions)) as PromptAnswers;
+    const rawPort = config.port ?? answers.port;
+    return {
+      ...config,
+      ...answers,
+      port: rawPort === undefined ? undefined : parseInt(String(rawPort), 10),
+    };
   }
 
   return config;
