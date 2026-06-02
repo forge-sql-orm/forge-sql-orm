@@ -109,11 +109,15 @@ describe("cacheUtils", () => {
     })),
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-01T00:00:00Z"));
     mockKvs.batchDelete.mockResolvedValue({ failedKeys: [] });
+    // Delegate to the real KVS-backed cache so the @forge/kvs mocks are exercised.
+    // Imported dynamically so the @forge/kvs mock factory runs after mockKvs exists.
+    const { KVSCache } = await import("../../../src/lib/cache/KVSCache");
+    defaultOptions.cacheImplementation = new KVSCache();
   });
 
   afterEach(() => {
@@ -144,12 +148,12 @@ describe("cacheUtils", () => {
   });
 
   describe("getFromCache", () => {
-    it("should throw error when cacheEntityName is not configured", async () => {
+    it("should throw error when cacheImplementation is not configured", async () => {
       const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const options = { ...defaultOptions, cacheEntityName: undefined };
+      const options = { ...defaultOptions, cacheImplementation: undefined };
 
       await expect(getFromCache(mockQuery, options)).rejects.toThrow(
-        "cacheEntityName is not configured",
+        "cacheImplementation is not configured",
       );
     });
 
@@ -494,12 +498,12 @@ describe("cacheUtils", () => {
   });
 
   describe("setCacheResult", () => {
-    it("should throw error when cacheEntityName is not configured", async () => {
+    it("should throw error when cacheImplementation is not configured", async () => {
       const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const options = { ...defaultOptions, cacheEntityName: undefined };
+      const options = { ...defaultOptions, cacheImplementation: undefined };
 
       await expect(setCacheResult(mockQuery, options, { id: 1 }, 300)).rejects.toThrow(
-        "cacheEntityName is not configured",
+        "cacheImplementation is not configured",
       );
     });
 
@@ -679,12 +683,12 @@ describe("cacheUtils", () => {
   });
 
   describe("clearTablesCache", () => {
-    it("should throw error when cacheEntityName is not configured", async () => {
+    it("should throw error when cacheImplementation is not configured", async () => {
       const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
-      const options = { ...defaultOptions, cacheEntityName: undefined };
+      const options = { ...defaultOptions, cacheImplementation: undefined };
 
       await expect(clearTablesCache(["users"], options)).rejects.toThrow(
-        "cacheEntityName is not configured",
+        "cacheImplementation is not configured",
       );
     });
 
@@ -786,11 +790,13 @@ describe("cacheUtils", () => {
   });
 
   describe("clearExpiredCache", () => {
-    it("should throw error when cacheEntityName is not configured", async () => {
+    it("should throw error when cacheImplementation is not configured", async () => {
       const { clearExpiredCache } = await import("../../../src/utils/cacheUtils");
-      const options = { ...defaultOptions, cacheEntityName: undefined };
+      const options = { ...defaultOptions, cacheImplementation: undefined };
 
-      await expect(clearExpiredCache(options)).rejects.toThrow("cacheEntityName is not configured");
+      await expect(clearExpiredCache(options)).rejects.toThrow(
+        "cacheImplementation is not configured",
+      );
     });
 
     it("should clear expired cache entries", async () => {
@@ -975,7 +981,7 @@ describe("cacheUtils", () => {
       consoleSpy.mockRestore();
     });
 
-    it("should throw error after max retry attempts", async () => {
+    it("should log error after max retry attempts without rejecting", async () => {
       const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -1000,7 +1006,8 @@ describe("cacheUtils", () => {
         query: vi.fn().mockReturnValue(mockQueryBuilder),
       });
 
-      await expect(clearTablesCache(["users"], defaultOptions)).rejects.toThrow("Persistent error");
+      // cacheUtils.clearTablesCache swallows the error after KVSCache exhausts retries.
+      await expect(clearTablesCache(["users"], defaultOptions)).resolves.toBeUndefined();
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringMatching(/Error during clearing cache: Persistent error/),

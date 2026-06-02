@@ -125,7 +125,7 @@ describe("additionalActions", () => {
     disableOptimisticLocking: false,
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     resetCacheMocks();
     // Reset cache query mocks - use mockImplementation to ensure it works correctly
@@ -133,6 +133,10 @@ describe("additionalActions", () => {
     mockGetQueryLocalCacheQuery.mockClear();
     mockSaveQueryLocalCacheQuery.mockClear();
     mockSaveQueryLocalCacheQuery.mockResolvedValue(undefined);
+    // Provide the KVS-backed cache implementation (imported dynamically so the
+    // @forge/kvs mock factory runs after its mock objects are initialized).
+    const { KVSCache } = await import("../../../../../src/lib/cache/KVSCache");
+    defaultOptions.cacheImplementation = new KVSCache();
     const baseDb = drizzle(forgeDriver);
     db = patchDbWithSelectAliased(baseDb, defaultOptions);
   });

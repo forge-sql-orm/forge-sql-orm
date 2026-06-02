@@ -1820,11 +1820,16 @@ This multi-level approach provides optimal performance by checking the fastest c
 
 The caching system uses Atlassian Forge's Custom entity store to persist cache data. Each cache entry is stored as a custom entity with TTL management via Forge KVS. Note that expired data deletion is asynchronous and may take up to 48 hours. If cache growth impacts INSERT/UPDATE performance, use the Clear Cache Scheduler Trigger for proactive cleanup.
 
+The cache backend is pluggable via the `cacheImplementation` option, which accepts any implementation of the [`Cache`](src/lib/cache/Cache.ts) interface. Provide `KVSCache` to enable Forge KVS–backed global caching:
+
 ```typescript
+import { ForgeSQL, KVSCache } from "forge-sql-orm";
+
 const options = {
   cacheEntityName: "cache", // KVS Custom entity name for cache storage
   cacheTTL: 300, // Default cache TTL in seconds (5 minutes)
   cacheWrapTable: true, // Wrap table names with backticks in cache keys
+  cacheImplementation: new KVSCache(), // Forge KVS–backed cache; omit/replace to disable or customize
   additionalMetadata: {
     users: {
       tableName: "users",
@@ -1837,6 +1842,8 @@ const options = {
 
 const forgeSQL = new ForgeSQL(options);
 ```
+
+> **Migration note:** during the transition to the modular architecture the default `cacheImplementation` is `new KVSCache()`, so existing apps keep their current Forge KVS caching behavior without any code changes. To opt out of global caching, pass `cacheImplementation: new NopCache()` (a no-op cache that warns and never stores anything).
 
 ### How Caching Works with @forge/kvs
 
@@ -2473,6 +2480,7 @@ The `ForgeSqlOrmOptions` object allows customization of ORM behavior:
 | `cacheEntityName`          | `string`  | KVS Custom entity name for cache storage. Must match the `name` in your `manifest.yml` storage entities configuration. Required for caching functionality. Defaults to `"cache"`.                                                                                              |
 | `cacheTTL`                 | `number`  | Default cache TTL in seconds. Defaults to `120` (2 minutes).                                                                                                                                                                                                                   |
 | `cacheWrapTable`           | `boolean` | Whether to wrap table names with backticks in cache keys. Defaults to `true`.                                                                                                                                                                                                  |
+| `cacheImplementation`      | `Cache`   | Pluggable cache backend implementing the [`Cache`](src/lib/cache/Cache.ts) interface. Use `new KVSCache()` for Forge KVS–backed global caching, or `new NopCache()` to disable it. Defaults to `new KVSCache()`.                                                               |
 | `hints`                    | `object`  | SQL hints for query optimization. Optional configuration for advanced query tuning.                                                                                                                                                                                            |
 
 ## CLI Commands

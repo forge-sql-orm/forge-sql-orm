@@ -1,56 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { DateTime } from "luxon";
-import * as crypto from "node:crypto";
 import { Query } from "drizzle-orm";
 import { AnyMySqlTable } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
-import { Filter, FilterConditions, kvs, WhereConditions } from "@forge/kvs";
 import { ForgeSqlOrmOptions } from "../core";
-import { cacheApplicationContext, isTableContainsTableInCacheContext } from "./cacheContextUtils";
-import { extractBacktickedValues } from "./cacheTableUtils";
+import { cacheApplicationContext } from "./cacheContextUtils";
 import { getErrorMessage } from "./errorUtils";
+import * as crypto from "node:crypto";
 
-// Constants for better maintainability
-const CACHE_CONSTANTS = {
-  BATCH_SIZE: 25,
-  MAX_RETRY_ATTEMPTS: 3,
-  INITIAL_RETRY_DELAY: 1000,
-  RETRY_DELAY_MULTIPLIER: 2,
-  DEFAULT_ENTITY_QUERY_NAME: "sql",
-  DEFAULT_EXPIRATION_NAME: "expiration",
-  DEFAULT_DATA_NAME: "data",
+const SHARED_CACHE_CONSTANTS = {
   HASH_LENGTH: 32,
 } as const;
-
-// Types for better type safety
-type CacheEntity = {
-  [key: string]: string | number;
-};
-
-/**
- * Gets the current Unix timestamp in seconds.
- *
- * @returns Current timestamp as integer
- */
-function getCurrentTime(): number {
-  const dt = DateTime.now();
-  return Math.floor(dt.toSeconds());
-}
-
-/**
- * Calculates a future timestamp by adding seconds to the current time.
- * Validates that the result is within 32-bit integer range.
- *
- * @param secondsToAdd - Number of seconds to add to current time
- * @returns Future timestamp in seconds
- * @throws Error if the result is out of 32-bit integer range
- */
-function nowPlusSeconds(secondsToAdd: number): number {
-  const dt = DateTime.now().plus({ seconds: secondsToAdd });
-  return Math.floor(dt.toSeconds());
-}
 
 /**
  * Logs a message to console.debug when options.logCache is enabled.
@@ -58,195 +19,24 @@ function nowPlusSeconds(secondsToAdd: number): number {
  * @param message - Message to log
  * @param options - ForgeSQL ORM options (optional)
  */
-function debugLog(message: string, options?: ForgeSqlOrmOptions): void {
+export function debugCacheLog(message: string, options?: ForgeSqlOrmOptions): void {
   if (options?.logCache) {
     // eslint-disable-next-line no-console
     console.debug(message);
   }
-} /**
- * Logs a message to console.debug when options.logCache is enabled.
+}
+
+/**
+ * Logs a message to console.warn when options.logCache is enabled.
  *
  * @param message - Message to log
  * @param options - ForgeSQL ORM options (optional)
  */
-function warnLog(message: string, options?: ForgeSqlOrmOptions): void {
+export function warnCacheLog(message: string, options?: ForgeSqlOrmOptions): void {
   if (options?.logCache) {
     // eslint-disable-next-line no-console
     console.warn(message);
   }
-}
-
-/**
- * Generates a hash key for a query based on its SQL and parameters.
- *
- * @param query - The Drizzle query object
- * @returns 32-character hexadecimal hash
- */
-export function hashKey(query: Query): string {
-  const h = crypto.createHash("sha256");
-  h.update(query.sql.toLowerCase());
-  h.update(JSON.stringify(query.params));
-  return "CachedQuery_" + h.digest("hex").slice(0, CACHE_CONSTANTS.HASH_LENGTH);
-}
-
-/**
- * Deletes cache entries in batches to respect Forge limits and timeouts.
- *
- * @param results - Array of cache entries to delete
- * @param cacheEntityName - Name of the cache entity
- * @param options - Forge SQL ORM properties
- * @returns Promise that resolves when all deletions are complete
- */
-async function deleteCacheEntriesInBatches(
-  results: Array<{ key: string }>,
-  cacheEntityName: string,
-  options?: ForgeSqlOrmOptions,
-): Promise<void> {
-  for (let i = 0; i < results.length; i += CACHE_CONSTANTS.BATCH_SIZE) {
-    const batch = results.slice(i, i + CACHE_CONSTANTS.BATCH_SIZE);
-    const batchResult = await kvs.batchDelete(
-      batch.map((result) => ({ key: result.key, entityName: cacheEntityName })),
-    );
-    batchResult.failedKeys.forEach((failedKey) => warnLog(JSON.stringify(failedKey), options));
-  }
-}
-
-/**
- * Clears cache entries for specific tables using cursor-based pagination.
- *
- * @param tables - Array of table names to clear cache for
- * @param cursor - Pagination cursor for large result sets
- * @param options - ForgeSQL ORM options
- * @returns Total number of deleted cache entries
- */
-async function clearCursorCache(
-  tables: string[],
-  cursor: string,
-  options: ForgeSqlOrmOptions,
-): Promise<number> {
-  const cacheEntityName = options.cacheEntityName;
-  if (!cacheEntityName) {
-    throw new Error("cacheEntityName is not configured");
-  }
-
-  const entityQueryName = options.cacheEntityQueryName ?? CACHE_CONSTANTS.DEFAULT_ENTITY_QUERY_NAME;
-  let filters = new Filter<{
-    [entityQueryName]: string;
-  }>();
-
-  for (const table of tables) {
-    const wrapIfNeeded = options.cacheWrapTable ? `\`${table}\`` : table;
-    filters.or(entityQueryName, FilterConditions.contains(wrapIfNeeded?.toLowerCase()));
-  }
-
-  let entityQueryBuilder = kvs
-    .entity<{
-      [entityQueryName]: string;
-    }>(cacheEntityName)
-    .query()
-    .index(entityQueryName)
-    .filters(filters);
-
-  if (cursor) {
-    entityQueryBuilder = entityQueryBuilder.cursor(cursor);
-  }
-
-  const listResult = await entityQueryBuilder.limit(100).getMany();
-
-  debugLog(`clear cache Records: ${JSON.stringify(listResult.results.map((r) => r.key))}`, options);
-
-  await deleteCacheEntriesInBatches(listResult.results, cacheEntityName, options);
-
-  if (listResult.nextCursor) {
-    return (
-      listResult.results.length + (await clearCursorCache(tables, listResult.nextCursor, options))
-    );
-  } else {
-    return listResult.results.length;
-  }
-}
-
-/**
- * Clears expired cache entries using cursor-based pagination.
- *
- * @param cursor - Pagination cursor for large result sets
- * @param options - ForgeSQL ORM options
- * @returns Total number of deleted expired cache entries
- */
-async function clearExpirationCursorCache(
-  cursor: string,
-  options: ForgeSqlOrmOptions,
-): Promise<number> {
-  const cacheEntityName = options.cacheEntityName;
-  if (!cacheEntityName) {
-    throw new Error("cacheEntityName is not configured");
-  }
-
-  const entityExpirationName =
-    options.cacheEntityExpirationName ?? CACHE_CONSTANTS.DEFAULT_EXPIRATION_NAME;
-  let entityQueryBuilder = kvs
-    .entity<{
-      [entityExpirationName]: number;
-    }>(cacheEntityName)
-    .query()
-    .index(entityExpirationName)
-    .where(WhereConditions.lessThan(Math.floor(DateTime.now().toSeconds())));
-
-  if (cursor) {
-    entityQueryBuilder = entityQueryBuilder.cursor(cursor);
-  }
-
-  const listResult = await entityQueryBuilder.limit(100).getMany();
-
-  debugLog(
-    `clear expired Records: ${JSON.stringify(listResult.results.map((r) => r.key))}`,
-    options,
-  );
-
-  await deleteCacheEntriesInBatches(listResult.results, cacheEntityName);
-
-  if (listResult.nextCursor) {
-    return (
-      listResult.results.length + (await clearExpirationCursorCache(listResult.nextCursor, options))
-    );
-  } else {
-    return listResult.results.length;
-  }
-}
-
-/**
- * Executes a function with retry logic and exponential backoff.
- *
- * @param operation - Function to execute with retry
- * @param operationName - Name of the operation for logging
- * @param options - ForgeSQL ORM options for logging
- * @returns Promise that resolves to the operation result
- */
-async function executeWithRetry<T>(operation: () => Promise<T>, operationName: string): Promise<T> {
-  let attempt = 0;
-  let delay = CACHE_CONSTANTS.INITIAL_RETRY_DELAY;
-
-  while (attempt < CACHE_CONSTANTS.MAX_RETRY_ATTEMPTS) {
-    try {
-      return await operation();
-    } catch (err) {
-      const message = getErrorMessage(err);
-      // eslint-disable-next-line no-console
-      console.warn(`Error during ${operationName}: ${message}, retry ${attempt}`, err);
-      attempt++;
-
-      if (attempt >= CACHE_CONSTANTS.MAX_RETRY_ATTEMPTS) {
-        // eslint-disable-next-line no-console
-        console.error(`Error during ${operationName}: ${message}`, err);
-        throw err;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, delay));
-      delay *= CACHE_CONSTANTS.RETRY_DELAY_MULTIPLIER;
-    }
-  }
-
-  throw new Error(`Maximum retry attempts exceeded for ${operationName}`);
 }
 
 /**
@@ -279,21 +69,15 @@ export async function clearTablesCache(
   tables: string[],
   options: ForgeSqlOrmOptions,
 ): Promise<void> {
-  if (!options.cacheEntityName) {
-    throw new Error("cacheEntityName is not configured");
+  if (!options.cacheImplementation) {
+    throw new Error("cacheImplementation is not configured");
   }
 
-  const startTime = DateTime.now();
-  let totalRecords = 0;
-
   try {
-    totalRecords = await executeWithRetry(
-      () => clearCursorCache(tables, "", options),
-      "clearing cache",
-    );
-  } finally {
-    const duration = DateTime.now().toSeconds() - startTime.toSeconds();
-    debugLog(`Cleared ${totalRecords} cache records in ${duration} seconds`, options);
+    return await options.cacheImplementation.clearTablesCache(tables, options);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Error clear cache: ${getErrorMessage(error)}`, error);
   }
 }
 /**
@@ -304,21 +88,15 @@ export async function clearTablesCache(
  * @returns Promise that resolves when expired cache clearing is complete
  */
 export async function clearExpiredCache(options: ForgeSqlOrmOptions): Promise<void> {
-  if (!options.cacheEntityName) {
-    throw new Error("cacheEntityName is not configured");
+  if (!options.cacheImplementation) {
+    throw new Error("cacheImplementation is not configured");
   }
 
-  const startTime = DateTime.now();
-  let totalRecords = 0;
-
   try {
-    totalRecords = await executeWithRetry(
-      () => clearExpirationCursorCache("", options),
-      "clearing expired cache",
-    );
-  } finally {
-    const duration = DateTime.now().toSeconds() - startTime.toSeconds();
-    debugLog(`Cleared ${totalRecords} expired cache records in ${duration} seconds`, options);
+    return await options.cacheImplementation.clearExpiredCache(options);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Error getting from cache: ${getErrorMessage(error)}`, error);
   }
 }
 
@@ -337,42 +115,12 @@ export async function getFromCache<T>(
   query: { toSQL: () => Query },
   options: ForgeSqlOrmOptions,
 ): Promise<T | undefined> {
-  if (!options.cacheEntityName) {
-    throw new Error("cacheEntityName is not configured");
-  }
-
-  const entityQueryName = options.cacheEntityQueryName ?? CACHE_CONSTANTS.DEFAULT_ENTITY_QUERY_NAME;
-  const expirationName =
-    options.cacheEntityExpirationName ?? CACHE_CONSTANTS.DEFAULT_EXPIRATION_NAME;
-  const dataName = options.cacheEntityDataName ?? CACHE_CONSTANTS.DEFAULT_DATA_NAME;
-
-  const sqlQuery = query.toSQL();
-  const key = hashKey(sqlQuery);
-
-  // Skip cache if table is in cache context (will be cleared)
-  if (await isTableContainsTableInCacheContext(sqlQuery.sql, options)) {
-    debugLog("Context contains value to clear. Skip getting from cache", options);
-    return undefined;
+  if (!options.cacheImplementation) {
+    throw new Error("cacheImplementation is not configured");
   }
 
   try {
-    const cacheResult = await kvs.entity<CacheEntity>(options.cacheEntityName).get(key);
-
-    if (cacheResult) {
-      if (
-        (cacheResult[expirationName] as number) >= getCurrentTime() &&
-        extractBacktickedValues(sqlQuery.sql, options) === cacheResult[entityQueryName]
-      ) {
-        debugLog(`Get value from cache, cacheKey: ${key}`, options);
-        const results = cacheResult[dataName];
-        return JSON.parse(results as string);
-      } else {
-        debugLog(
-          `Expired cache entry still exists (will be automatically removed within 48 hours per Forge KVS TTL documentation), cacheKey: ${key}`,
-          options,
-        );
-      }
-    }
+    return await options.cacheImplementation.getQueryResultsFromCache(query, options);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(`Error getting from cache: ${getErrorMessage(error)}`, error);
@@ -403,44 +151,27 @@ export async function setCacheResult(
   results: unknown,
   cacheTtl: number,
 ): Promise<void> {
-  if (!options.cacheEntityName) {
-    throw new Error("cacheEntityName is not configured");
+  if (!options.cacheImplementation) {
+    throw new Error("cacheImplementation is not configured");
   }
 
   try {
-    const entityQueryName =
-      options.cacheEntityQueryName ?? CACHE_CONSTANTS.DEFAULT_ENTITY_QUERY_NAME;
-    const expirationName =
-      options.cacheEntityExpirationName ?? CACHE_CONSTANTS.DEFAULT_EXPIRATION_NAME;
-    const dataName = options.cacheEntityDataName ?? CACHE_CONSTANTS.DEFAULT_DATA_NAME;
-
-    const sqlQuery = query.toSQL();
-
-    // Skip cache if table is in cache context (will be cleared)
-    if (await isTableContainsTableInCacheContext(sqlQuery.sql, options)) {
-      debugLog("Context contains value to clear. Skip setting from cache", options);
-      return;
-    }
-
-    const key = hashKey(sqlQuery);
-
-    await kvs
-      .transact()
-      .set(
-        key,
-        {
-          [entityQueryName]: extractBacktickedValues(sqlQuery.sql, options),
-          [expirationName]: nowPlusSeconds(cacheTtl + 2),
-          [dataName]: JSON.stringify(results),
-        },
-        { entityName: options.cacheEntityName },
-        { ttl: { value: cacheTtl, unit: "SECONDS" } },
-      )
-      .execute();
-
-    debugLog(`Store value to cache, cacheKey: ${key}`, options);
+    await options.cacheImplementation.setQueryResult(options, query, results, cacheTtl);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(`Error setting cache: ${getErrorMessage(error)}`, error);
   }
+}
+
+/**
+ * Generates a stable cache key for a query based on its SQL and parameters.
+ *
+ * @param query - The Drizzle query object.
+ * @returns A `CachedQuery_`-prefixed 32-character hexadecimal hash.
+ */
+export function hashKey(query: Query): string {
+  const h = crypto.createHash("sha256");
+  h.update(query.sql.toLowerCase());
+  h.update(JSON.stringify(query.params));
+  return "CachedQuery_" + h.digest("hex").slice(0, SHARED_CACHE_CONSTANTS.HASH_LENGTH);
 }

@@ -43,6 +43,7 @@ import {
   SelectAllFromAliasedType,
   SelectAllFromCacheableAliasedType,
   UpdateAndEvictCacheType,
+  Cache,
 } from "..";
 import {
   MySqlDeleteBase,
@@ -1261,7 +1262,7 @@ export interface ForgeSqlOrmOptions {
   cacheEntityExpirationName?: string;
   /** Name of the field in cache entity that stores cached data */
   cacheEntityDataName?: string;
-
+  cacheImplementation?: Cache;
   /**
    * Additional metadata for table configuration.
    * Allows specifying table-specific settings and behaviors such as version fields for optimistic locking.
