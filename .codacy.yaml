@@ -2,5 +2,5 @@
 exclude_paths:
   - "examples/**"
   - "__tests__/**"
-  - "forge-sql-orm-cli/**"
+  - "forge-sql-orm-cli/__tests__/**"
   - "vitest.config.mjs"

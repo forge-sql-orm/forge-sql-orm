@@ -49,6 +49,16 @@ jobs:
       - run: npm run build
       - run: npm run format:check
       - run: npm run test:coverage
+      - name: CLI package (knip / lint / build / tests with coverage)
+        run: |
+          cd forge-sql-orm-cli
+          npm ci --ignore-scripts
+          npm run knip
+          npm run lint
+          npm run build
+          npm run test:coverage
+      - name: Merge library + CLI coverage into a single report
+        run: npm run coverage:merge
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7.2.1
         env:
@@ -59,28 +69,6 @@ jobs:
           coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
           files: ./coverage/lcov.info
 
-  # --- CLI package (depends on published forge-sql-orm, not the local build) ---
-  cli:
-    needs: quality
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    strategy:
-      matrix:
-        node-version: [24.x]
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: cd forge-sql-orm-cli && npm ci --ignore-scripts
-      - run: cd forge-sql-orm-cli && npm run knip
-      - run: cd forge-sql-orm-cli && npm run lint
-      - run: cd forge-sql-orm-cli && npm run build
-
   # --- Examples: one matrix entry per example, built & deployed in parallel ---
   examples:
     needs: quality
@@ -90,6 +78,7 @@ jobs:
     environment: ${{ github.event_name == 'push' && 'production' || (github.event_name == 'workflow_dispatch' && inputs.environment || 'development') }}
     strategy:
       fail-fast: false
+      max-parallel: 5
       matrix:
         include:
           # static: true-> has static/forge-orm-example frontend
@@ -229,7 +218,7 @@ jobs:
 
   build:
     if: always()
-    needs: [quality, cli, examples]
+    needs: [quality, examples]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -243,4 +232,4 @@ jobs:
           echo "One or more jobs did not succeed: ${{ join(needs.*.result, ', ') }}"
           exit 1
       - name: All required jobs passed
-        run: echo "quality, cli and all examples succeeded"
+        run: echo "quality and all examples succeeded"
