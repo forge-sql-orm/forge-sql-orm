@@ -106,9 +106,9 @@ export class KVSCache implements Cache {
       const batchResult = await kvs.batchDelete(
         batch.map((result) => ({ key: result.key, entityName: cacheEntityName })),
       );
-      batchResult.failedKeys.forEach((failedKey) =>
-        warnCacheLog(JSON.stringify(failedKey), options),
-      );
+      batchResult.failedKeys.forEach((failedKey) => {
+        warnCacheLog(JSON.stringify(failedKey), options);
+      });
     }
   }
 
