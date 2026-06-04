@@ -2,7 +2,7 @@
 exclude_paths:
   - "examples/**"
   - "__tests__/**"
-  - "forge-sql-orm-cli/__test__/**"
-  - "forge-sql-orm-extra/__test__/**"
+  - "forge-sql-orm-cli/__tests__/**"
+  - "forge-sql-orm-extra/__tests__/**"
   - "forge-sql-orm-cli/src/actions/generate-models.ts"
   - "vitest.config.mjs"
