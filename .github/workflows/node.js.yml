@@ -49,6 +49,13 @@ jobs:
       - run: npm run build
       - run: npm run format:check
       - run: npm run test:coverage
+      - name: Extra package (knip / lint / build / tests with coverage)
+        run: |
+          cd forge-sql-orm-extra
+          npm ci --ignore-scripts
+          npm run knip
+          npm run build
+          npm run test:coverage
       - name: CLI package (knip / lint / build / tests with coverage)
         run: |
           cd forge-sql-orm-cli
@@ -57,7 +64,7 @@ jobs:
           npm run lint
           npm run build
           npm run test:coverage
-      - name: Merge library + CLI coverage into a single report
+      - name: Merge library + EXTRA + CLI coverage into a single report
         run: npm run coverage:merge
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7.2.1
