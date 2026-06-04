@@ -7,6 +7,7 @@ import {
   MySqlRemoteQueryResultHKT,
 } from "drizzle-orm/mysql-proxy";
 import { ForgeSqlOperationExt, ForgeSqlOrmOptionsExtra, RovoIntegration } from "./ForgeSQLExt";
+import { resolveForgeSqlOrmOptionsExtra } from "./resolveForgeSqlOrmOptionsExtra";
 import ForgeSQL, {
   DeleteAndEvictCacheType,
   ExecuteQuery,
@@ -30,8 +31,6 @@ import ForgeSQL, {
   MetadataQueryOptions,
   ForgeSqlOperation,
 } from "forge-sql-orm";
-
-import { KVSCache } from "../cache";
 
 import {
   AnyMySqlTable,
@@ -84,17 +83,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   private constructor(options?: ForgeSqlOrmOptionsExtra) {
     try {
-      const newOptions: ForgeSqlOrmOptionsExtra = options ?? {
-        logRawSqlQuery: false,
-        logCache: false,
-        disableOptimisticLocking: false,
-        cacheWrapTable: true,
-        cacheTTL: 120,
-        cacheEntityQueryName: "sql",
-        cacheEntityExpirationName: "expiration",
-        cacheEntityDataName: "data",
-        cacheImplementation: new KVSCache(),
-      };
+      const newOptions = resolveForgeSqlOrmOptionsExtra(options);
       this.options = newOptions;
       this.forgeSQLORM = new ForgeSQL(newOptions);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MySqlRemoteDatabase's schema generic is a Drizzle internal type; this driver is schema-agnostic at this layer

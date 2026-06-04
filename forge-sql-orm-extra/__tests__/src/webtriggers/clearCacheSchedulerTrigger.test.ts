@@ -21,16 +21,9 @@ vi.mock("@forge/kvs", () => ({
 
 import { clearExpiredCache } from "forge-sql-orm";
 import { clearCacheSchedulerTrigger } from "../../../src/webtriggers/clearCacheSchedulerTrigger";
+import { resolveForgeSqlOrmOptionsExtra } from "../../../src/core/resolveForgeSqlOrmOptionsExtra";
 
-const DEFAULT_OPTIONS = {
-  logRawSqlQuery: false,
-  disableOptimisticLocking: false,
-  cacheTTL: 120,
-  cacheEntityName: "cache",
-  cacheEntityQueryName: "sql",
-  cacheEntityExpirationName: "expiration",
-  cacheEntityDataName: "data",
-};
+const DEFAULT_OPTIONS = resolveForgeSqlOrmOptionsExtra({ cacheEntityName: "cache" });
 
 describe("clearCacheSchedulerTrigger", () => {
   beforeEach(() => {
@@ -57,15 +50,19 @@ describe("clearCacheSchedulerTrigger", () => {
 
     const result = await clearCacheSchedulerTrigger(customOptions);
 
-    expect(clearExpiredCache).toHaveBeenCalledWith(customOptions);
+    expect(clearExpiredCache).toHaveBeenCalledWith(resolveForgeSqlOrmOptionsExtra(customOptions));
     expect(result.statusCode).toBe(200);
 
     const body = JSON.parse(result.body);
     expect(body.success).toBe(true);
   });
 
-  it("returns 500 when cacheEntityName is missing", async () => {
-    const result = await clearCacheSchedulerTrigger({ logRawSqlQuery: true, cacheTTL: 300 });
+  it("returns 500 when cacheEntityName is empty", async () => {
+    const result = await clearCacheSchedulerTrigger({
+      cacheEntityName: "",
+      logRawSqlQuery: true,
+      cacheTTL: 300,
+    });
 
     expect(clearExpiredCache).not.toHaveBeenCalled();
     expect(result.statusCode).toBe(500);
@@ -110,12 +107,12 @@ describe("clearCacheSchedulerTrigger", () => {
     expect(result.statusCode).toBe(200);
   });
 
-  it("passes provided options through directly", async () => {
+  it("merges partial options with defaults", async () => {
     const partialOptions = { cacheEntityName: "test_cache", logRawSqlQuery: true };
 
     const result = await clearCacheSchedulerTrigger(partialOptions);
 
-    expect(clearExpiredCache).toHaveBeenCalledWith(partialOptions);
+    expect(clearExpiredCache).toHaveBeenCalledWith(resolveForgeSqlOrmOptionsExtra(partialOptions));
     expect(result.statusCode).toBe(200);
   });
 });

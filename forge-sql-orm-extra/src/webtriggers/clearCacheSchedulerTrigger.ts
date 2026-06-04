@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { ForgeSqlOrmOptionsExtra } from "../core";
+import { ForgeSqlOrmOptionsExtra, resolveForgeSqlOrmOptionsExtra } from "../core";
 import { clearExpiredCache } from "forge-sql-orm";
 
 /**
@@ -64,15 +64,10 @@ import { clearExpiredCache } from "forge-sql-orm";
  */
 export const clearCacheSchedulerTrigger = async (options?: ForgeSqlOrmOptionsExtra) => {
   try {
-    const newOptions: ForgeSqlOrmOptionsExtra = options ?? {
-      logRawSqlQuery: false,
-      disableOptimisticLocking: false,
-      cacheTTL: 120,
-      cacheEntityName: "cache",
-      cacheEntityQueryName: "sql",
-      cacheEntityExpirationName: "expiration",
-      cacheEntityDataName: "data",
-    };
+    const newOptions = resolveForgeSqlOrmOptionsExtra({
+      ...options,
+      cacheEntityName: options?.cacheEntityName ?? "cache",
+    });
     if (!newOptions.cacheEntityName) {
       throw new Error("cacheEntityName is not configured");
     }
