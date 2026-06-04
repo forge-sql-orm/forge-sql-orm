@@ -1,0 +1,67 @@
+{
+  "name": "forge-sql-orm-extra",
+  "version": "2.2.0",
+  "description": "Optional extensions for Forge SQL ORM: @forge/kvs cache, SQL-parser based cache invalidation, and Rovo integration. Keeps the core forge-sql-orm dependency footprint minimal.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://github.com/forge-sql-orm/forge-sql-orm#readme",
+  "bugs": {
+    "url": "https://github.com/forge-sql-orm/forge-sql-orm/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forge-sql-orm/forge-sql-orm.git"
+  },
+  "keywords": [
+    "atlassian-forge",
+    "forge-sql",
+    "forge",
+    "drizzle",
+    "drizzle-orm",
+    "orm",
+    "cache",
+    "kvs",
+    "rovo",
+    "forge-sql-orm-extension"
+  ],
+  "author": "Vasyl Zakharchenko",
+  "license": "MIT",
+  "scripts": {
+    "test": "vitest --run",
+    "test:coverage": "vitest --run --coverage",
+    "test:watch": "vitest --watch",
+    "format": "prettier --write src",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && npm run build:types",
+    "build:types": "tsc",
+    "prepublish:npm": "npm run build",
+    "publish:npm": "npm publish --access public",
+    "knip": "knip"
+  },
+  "files": [
+    "dist",
+    "tsconfig.json",
+    "src",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "^4.1.8",
+    "knip": "^6.15.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,css,scss,md}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
+  "dependencies": {
+    "@forge/kvs": "^1.6.2",
+    "@forge/sql": "^3.0.25",
+    "forge-sql-orm": "file:..",
+    "luxon": "^3.7.2",
+    "node-sql-parser": "^5.4.0"
+  }
+}

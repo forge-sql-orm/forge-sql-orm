@@ -1,0 +1,20 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
+import { int, mysqlTable, primaryKey, varchar } from "drizzle-orm/mysql-core";
+import { vectorTiDBType } from "forge-sql-orm";
+
+export class TestEntity {
+  id!: number;
+  name?: string;
+}
+
+export const testEntityVector = mysqlTable(
+  "test_entity_vector",
+  {
+    id: int("id").autoincrement(),
+    name: varchar("name", { length: 255 }).notNull(),
+    embedding: vectorTiDBType("embedding", { dimension: 10 }).notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.id], name: "id" })],
+);

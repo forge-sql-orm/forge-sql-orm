@@ -771,9 +771,6 @@ const DEFAULT_OPTIONS: ForgeSqlOrmOptions = {
   disableOptimisticLocking: false,
   cacheTTL: 120,
   cacheWrapTable: true,
-  cacheEntityQueryName: "sql",
-  cacheEntityExpirationName: "expiration",
-  cacheEntityDataName: "data",
 } as const;
 
 // ============================================================================

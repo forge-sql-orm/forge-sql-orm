@@ -140,6 +140,7 @@ describe("metadataContextUtils", () => {
         summaryTableWindowTime: 15000,
         showSlowestPlans: true,
         normalizeQuery: true,
+        normalizationFunction: expect.any(Function),
         asyncQueueName: "",
       });
     });
@@ -156,6 +157,7 @@ describe("metadataContextUtils", () => {
         summaryTableWindowTime: 15000,
         showSlowestPlans: true,
         normalizeQuery: true,
+        normalizationFunction: expect.any(Function),
         asyncQueueName: "",
       });
     });
@@ -500,6 +502,7 @@ describe("metadataContextUtils", () => {
         summaryTableWindowTime: 20000,
         showSlowestPlans: false,
         normalizeQuery: true,
+        normalizationFunction: expect.any(Function),
         asyncQueueName: "",
       });
     });

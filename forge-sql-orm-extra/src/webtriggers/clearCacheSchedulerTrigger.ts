@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { clearExpiredCache } from "../utils/cacheUtils";
-import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
+import { ForgeSqlOrmOptionsExtra } from "../core";
+import { clearExpiredCache } from "forge-sql-orm";
 
 /**
  * Scheduler trigger for proactively clearing expired cache entries.
@@ -62,9 +62,9 @@ import { ForgeSqlOrmOptions } from "../core/ForgeSQLQueryBuilder";
  *
  * @see https://developer.atlassian.com/platform/forge/runtime-reference/storage-api-basic-api/#ttl
  */
-export const clearCacheSchedulerTrigger = async (options?: ForgeSqlOrmOptions) => {
+export const clearCacheSchedulerTrigger = async (options?: ForgeSqlOrmOptionsExtra) => {
   try {
-    const newOptions: ForgeSqlOrmOptions = options ?? {
+    const newOptions: ForgeSqlOrmOptionsExtra = options ?? {
       logRawSqlQuery: false,
       disableOptimisticLocking: false,
       cacheTTL: 120,

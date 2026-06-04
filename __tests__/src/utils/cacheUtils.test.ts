@@ -1,1069 +1,247 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { DateTime } from "luxon";
-import { ForgeSqlOrmOptions } from "../../../src/core/ForgeSQLQueryBuilder";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import type { ForgeSqlOrmOptions } from "../../../src/core/ForgeSQLQueryBuilder";
+import type { Cache } from "../../../src";
 
-// Mock @forge/kvs
-const mockKvs = {
-  entity: vi.fn(() => ({
-    get: vi.fn(),
-    set: vi.fn(),
-    query: vi.fn(() => ({
-      index: vi.fn(() => ({
-        filters: vi.fn(() => ({
-          cursor: vi.fn(() => ({
-            limit: vi.fn(() => ({
-              getMany: vi.fn(),
-            })),
-          })),
-        })),
-        where: vi.fn(() => ({
-          cursor: vi.fn(() => ({
-            limit: vi.fn(() => ({
-              getMany: vi.fn(),
-            })),
-          })),
-        })),
-      })),
-    })),
-  })),
-  transact: vi.fn(() => ({
-    set: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    execute: vi.fn(),
-  })),
-  batchDelete: vi.fn().mockResolvedValue({ failedKeys: [] }),
-};
-
-vi.mock("@forge/kvs", () => {
-  class MockFilter<T> {
-    or = vi.fn(() => this);
-  }
-
-  return {
-    kvs: mockKvs,
-    // Vitest 4 requires a constructable for `new Filter()`
-    Filter: MockFilter,
-    FilterConditions: {
-      contains: vi.fn((value) => ({ contains: value })),
-    },
-    WhereConditions: {
-      lessThan: vi.fn((value) => ({ lessThan: value })),
-    },
-  };
-});
-
-// Mock cacheContextUtils
+// cacheUtils is a thin SPI-delegation layer over options.cacheImplementation; the actual
+// KVS-backed behaviour lives in forge-sql-orm-extra (see KVSCache tests there).
 vi.mock("../../../src/utils/cacheContextUtils", () => ({
-  cacheApplicationContext: {
-    getStore: vi.fn(),
-  },
+  cacheApplicationContext: { getStore: vi.fn() },
   isTableContainsTableInCacheContext: vi.fn().mockResolvedValue(false),
 }));
 
-// Mock Drizzle table
-const mockTable = {
-  _: {
-    name: "users",
-    schema: undefined,
-    columns: {},
-    indexes: [],
-    foreignKeys: [],
-    primaryKeys: [],
-    uniqueConstraints: [],
-    checkConstraints: [],
-    _: {
-      name: "users",
-      schema: undefined,
-      columns: {},
-      indexes: [],
-      foreignKeys: [],
-      primaryKeys: [],
-      uniqueConstraints: [],
-      checkConstraints: [],
-    },
-  },
-} as any;
+const mockTable = { _: { name: "users" } } as any;
 
-// Mock getTableName function
 vi.mock("drizzle-orm/table", () => ({
   getTableName: vi.fn((table: any) => table._.name),
 }));
 
 describe("cacheUtils", () => {
+  const fakeCache = {
+    getQueryResultsFromCache: vi.fn(),
+    setQueryResult: vi.fn(),
+    clearTablesCache: vi.fn(),
+    clearExpiredCache: vi.fn(),
+  } satisfies Cache;
+
   const defaultOptions: ForgeSqlOrmOptions = {
     cacheEntityName: "cache",
     cacheTTL: 120,
     logCache: true,
     cacheWrapTable: true,
-    logRawSqlQuery: true,
-    disableOptimisticLocking: false,
+    cacheImplementation: fakeCache,
   };
 
   const mockQuery = {
-    toSQL: vi.fn(() => ({
-      sql: "SELECT * FROM `users` WHERE id = ?",
-      params: [1],
-    })),
+    toSQL: vi.fn(() => ({ sql: "SELECT * FROM `users` WHERE id = ?", params: [1] })),
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-01T00:00:00Z"));
-    mockKvs.batchDelete.mockResolvedValue({ failedKeys: [] });
-    // Delegate to the real KVS-backed cache so the @forge/kvs mocks are exercised.
-    // Imported dynamically so the @forge/kvs mock factory runs after mockKvs exists.
-    const { KVSCache } = await import("../../../src/lib/cache/KVSCache");
-    defaultOptions.cacheImplementation = new KVSCache();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   describe("clearCache", () => {
-    it("should add table to cache context when context exists", async () => {
+    it("adds the table to the cache context when one is active", async () => {
       const { clearCache } = await import("../../../src/utils/cacheUtils");
-      const mockContext = { tables: new Set() };
       const { cacheApplicationContext } = await import("../../../src/utils/cacheContextUtils");
-      (cacheApplicationContext.getStore as any).mockReturnValue(mockContext);
+      const store = { tables: new Set<string>() };
+      (cacheApplicationContext.getStore as any).mockReturnValue(store);
 
       await clearCache(mockTable, defaultOptions);
 
-      expect(mockContext.tables.has("users")).toBe(true);
+      expect(store.tables.has("users")).toBe(true);
+      expect(fakeCache.clearTablesCache).not.toHaveBeenCalled();
     });
 
-    it("should clear cache immediately when no context exists", async () => {
+    it("clears the table immediately when there is no cache context", async () => {
       const { clearCache } = await import("../../../src/utils/cacheUtils");
       const { cacheApplicationContext } = await import("../../../src/utils/cacheContextUtils");
-      (cacheApplicationContext.getStore as any).mockReturnValue(null);
+      (cacheApplicationContext.getStore as any).mockReturnValue(undefined);
 
-      // This test is skipped due to complex mocking requirements
-      // The actual functionality is tested in integration tests
-      expect(true).toBe(true);
+      await clearCache(mockTable, defaultOptions);
+
+      expect(fakeCache.clearTablesCache).toHaveBeenCalledWith(["users"], defaultOptions);
     });
   });
 
   describe("getFromCache", () => {
-    it("should throw error when cacheImplementation is not configured", async () => {
+    it("throws when cacheImplementation is not configured", async () => {
       const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const options = { ...defaultOptions, cacheImplementation: undefined };
-
-      await expect(getFromCache(mockQuery, options)).rejects.toThrow(
-        "cacheImplementation is not configured",
-      );
+      await expect(
+        getFromCache(mockQuery, { ...defaultOptions, cacheImplementation: undefined }),
+      ).rejects.toThrow("cacheImplementation is not configured");
     });
 
-    it("should return undefined when cache context contains table", async () => {
+    it("delegates to the cache implementation and returns its value", async () => {
       const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(true);
+      fakeCache.getQueryResultsFromCache.mockResolvedValue({ id: 1 });
+
+      const result = await getFromCache(mockQuery, defaultOptions);
+
+      expect(fakeCache.getQueryResultsFromCache).toHaveBeenCalledWith(mockQuery, defaultOptions);
+      expect(result).toEqual({ id: 1 });
+    });
+
+    it("swallows implementation errors and returns undefined", async () => {
+      const { getFromCache } = await import("../../../src/utils/cacheUtils");
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      fakeCache.getQueryResultsFromCache.mockRejectedValue(new Error("boom"));
 
       const result = await getFromCache(mockQuery, defaultOptions);
 
       expect(result).toBeUndefined();
-    });
-
-    it("should return cached data when valid and not expired", async () => {
-      const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockCacheData = {
-        sql: "`users`",
-        expiration: Math.floor(DateTime.now().plus({ hours: 1 }).toSeconds()),
-        data: JSON.stringify({ id: 1, name: "John" }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn().mockResolvedValue(mockCacheData),
-        set: vi.fn(),
-        query: vi.fn(),
-      });
-
-      const result = await getFromCache(mockQuery, defaultOptions);
-
-      expect(result).toEqual({ id: 1, name: "John" });
-    });
-
-    it("should return undefined when cache is expired", async () => {
-      const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockCacheData = {
-        sql: "`users`",
-        expiration: Math.floor(DateTime.now().minus({ hours: 1 }).toSeconds()),
-        data: JSON.stringify({ id: 1, name: "John" }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn().mockResolvedValue(mockCacheData),
-        set: vi.fn(),
-        query: vi.fn(),
-      });
-
-      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
-
-      const result = await getFromCache(mockQuery, defaultOptions);
-
-      expect(result).toBeUndefined();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringMatching(
-          /Expired cache entry still exists \(will be automatically removed within 48 hours per Forge KVS TTL documentation\), cacheKey: CachedQuery_/,
-        ),
-      );
-
-      consoleSpy.mockRestore();
-    });
-
-    it("should return undefined and log when SQL does not match (even if expiration is valid)", async () => {
-      const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      // Cache has different SQL than the query
-      const mockCacheData = {
-        sql: "`orders`", // Different table than query's `users`
-        expiration: Math.floor(DateTime.now().plus({ hours: 1 }).toSeconds()), // Valid expiration
-        data: JSON.stringify({ id: 1, name: "John" }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn().mockResolvedValue(mockCacheData),
-        set: vi.fn(),
-        query: vi.fn(),
-      });
-
-      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
-
-      const result = await getFromCache(mockQuery, defaultOptions);
-
-      expect(result).toBeUndefined();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringMatching(
-          /Expired cache entry still exists \(will be automatically removed within 48 hours per Forge KVS TTL documentation\), cacheKey: CachedQuery_/,
-        ),
-      );
-
-      consoleSpy.mockRestore();
-    });
-
-    it("should return undefined when cache get fails", async () => {
-      const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn().mockRejectedValue(new Error("Cache error")),
-        set: vi.fn(),
-        query: vi.fn(),
-      });
-
-      const result = await getFromCache(mockQuery, defaultOptions);
-
-      expect(result).toBeUndefined();
-    });
-  });
-
-  describe("extractBacktickedValues (via setCacheResult/getFromCache)", () => {
-    it("should extract single table name from backticks", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      const queryWithBackticks = {
-        toSQL: vi.fn(() => ({
-          sql: "SELECT * FROM `users` WHERE id = ?",
-          params: [1],
-        })),
-      };
-
-      await setCacheResult(queryWithBackticks, defaultOptions, { id: 1 }, 300);
-
-      expect(mockTransact.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          sql: "`users`",
-        }),
-        { entityName: "cache" },
-        { ttl: { value: 300, unit: "SECONDS" } },
-      );
-    });
-
-    it("should extract multiple table names and sort them", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      const queryWithMultipleTables = {
-        toSQL: vi.fn(() => ({
-          sql: "SELECT * FROM `test2`, `test1`, `test2` WHERE id = ?",
-          params: [1],
-        })),
-      };
-
-      await setCacheResult(queryWithMultipleTables, defaultOptions, { id: 1 }, 300);
-
-      expect(mockTransact.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          sql: "`test1`,`test2`", // Sorted and deduplicated
-        }),
-        { entityName: "cache" },
-        { ttl: { value: 300, unit: "SECONDS" } },
-      );
-    });
-
-    it("should ignore tables starting with a_ in fallback mode", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      // Use invalid SQL to trigger fallback mode where a_ filtering works
-      const queryWithA_Table = {
-        toSQL: vi.fn(() => ({
-          sql: "INVALID SQL `users` `a_temp_table` `orders`",
-          params: [1],
-        })),
-      };
-
-      await setCacheResult(queryWithA_Table, defaultOptions, { id: 1 }, 300);
-
-      expect(mockTransact.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          sql: "`orders`,`users`", // a_temp_table is filtered out in fallback mode, sorted
-        }),
-        { entityName: "cache" },
-        { ttl: { value: 300, unit: "SECONDS" } },
-      );
-    });
-
-    it("should handle case-insensitive filtering of a_ tables in fallback mode", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      // Use invalid SQL to trigger fallback mode where a_ filtering works
-      const queryWithA_TableUpperCase = {
-        toSQL: vi.fn(() => ({
-          sql: "INVALID SQL `users` `A_TEMP_TABLE` `orders`",
-          params: [1],
-        })),
-      };
-
-      await setCacheResult(queryWithA_TableUpperCase, defaultOptions, { id: 1 }, 300);
-
-      expect(mockTransact.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          sql: "`orders`,`users`", // A_TEMP_TABLE is filtered out in fallback mode (case-insensitive)
-        }),
-        { entityName: "cache" },
-        { ttl: { value: 300, unit: "SECONDS" } },
-      );
-    });
-
-    it("should extract table name even without backticks using parser", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      const queryWithoutBackticks = {
-        toSQL: vi.fn(() => ({
-          sql: "SELECT * FROM users WHERE id = ?",
-          params: [1],
-        })),
-      };
-
-      await setCacheResult(queryWithoutBackticks, defaultOptions, { id: 1 }, 300);
-
-      expect(mockTransact.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          sql: "`users`", // Parser extracts table name even without backticks
-        }),
-        { entityName: "cache" },
-        { ttl: { value: 300, unit: "SECONDS" } },
-      );
-    });
-
-    it("should return empty string when no tables found", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      const queryWithoutTables = {
-        toSQL: vi.fn(() => ({
-          sql: "SELECT 1",
-          params: [],
-        })),
-      };
-
-      await setCacheResult(queryWithoutTables, defaultOptions, { id: 1 }, 300);
-
-      // When parser finds no tables, it returns empty string, fallback also returns empty
-      const setCall = mockTransact.set.mock.calls[0];
-      expect(setCall[1].sql).toBe("");
-      expect(setCall[3]).toEqual({ ttl: { value: 300, unit: "SECONDS" } });
-    });
-
-    it("should match extracted values in getFromCache", async () => {
-      const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const queryWithMultipleTables = {
-        toSQL: vi.fn(() => ({
-          sql: "SELECT * FROM `test1`, `test2` WHERE id = ?",
-          params: [1],
-        })),
-      };
-
-      // Cache should have sorted and deduplicated values
-      const mockCacheData = {
-        sql: "`test1`,`test2`",
-        expiration: Math.floor(DateTime.now().plus({ hours: 1 }).toSeconds()),
-        data: JSON.stringify({ id: 1, name: "John" }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn().mockResolvedValue(mockCacheData),
-        set: vi.fn(),
-        query: vi.fn(),
-      });
-
-      const result = await getFromCache(queryWithMultipleTables, defaultOptions);
-
-      expect(result).toEqual({ id: 1, name: "John" });
+      expect(errorSpy).toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
   });
 
   describe("setCacheResult", () => {
-    it("should throw error when cacheImplementation is not configured", async () => {
+    it("throws when cacheImplementation is not configured", async () => {
       const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const options = { ...defaultOptions, cacheImplementation: undefined };
-
-      await expect(setCacheResult(mockQuery, options, { id: 1 }, 300)).rejects.toThrow(
-        "cacheImplementation is not configured",
-      );
-    });
-
-    it("should skip cache when table is in cache context", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(true);
-
-      const testData = { id: 1, name: "John" };
-      await setCacheResult(mockQuery, defaultOptions, testData, 300);
-
-      // Should not call kvs.transact when context contains table
-      expect(mockKvs.transact).not.toHaveBeenCalled();
-    });
-
-    it("should store data in cache successfully when not in context", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      const testData = { id: 1, name: "John" };
-      await setCacheResult(mockQuery, defaultOptions, testData, 300);
-
-      expect(mockKvs.transact).toHaveBeenCalled();
-      expect(mockTransact.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          sql: "`users`",
-          expiration: expect.any(Number),
-          data: JSON.stringify(testData),
-        }),
-        { entityName: "cache" },
-        { ttl: { value: 300, unit: "SECONDS" } },
-      );
-      expect(mockTransact.execute).toHaveBeenCalled();
-    });
-
-    it("should handle cache set errors gracefully", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockRejectedValue(new Error("Cache set error")),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      const testData = { id: 1, name: "John" };
-
-      // Should not throw error
       await expect(
-        setCacheResult(mockQuery, defaultOptions, testData, 300),
-      ).resolves.toBeUndefined();
+        setCacheResult(
+          mockQuery,
+          { ...defaultOptions, cacheImplementation: undefined },
+          { id: 1 },
+          300,
+        ),
+      ).rejects.toThrow("cacheImplementation is not configured");
     });
 
-    it("should use custom entity field names", async () => {
+    it("delegates to the cache implementation with the TTL", async () => {
       const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
+      const data = { id: 1 };
 
-      const options = {
-        ...defaultOptions,
-        cacheEntityQueryName: "query",
-        cacheEntityExpirationName: "exp",
-        cacheEntityDataName: "result",
-      };
+      await setCacheResult(mockQuery, defaultOptions, data, 300);
 
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      const testData = { id: 1, name: "John" };
-      await setCacheResult(mockQuery, options, testData, 300);
-
-      expect(mockTransact.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          query: "`users`",
-          exp: expect.any(Number),
-          result: JSON.stringify(testData),
-        }),
-        { entityName: "cache" },
-        { ttl: { value: 300, unit: "SECONDS" } },
-      );
-    });
-  });
-
-  describe("hashKey", () => {
-    it("should generate consistent hash for same query", async () => {
-      const { hashKey } = await import("../../../src/utils/cacheUtils");
-
-      const query1 = {
-        sql: "SELECT * FROM users WHERE id = ?",
-        params: [1],
-      };
-      const query2 = {
-        sql: "SELECT * FROM users WHERE id = ?",
-        params: [1],
-      };
-
-      const hash1 = hashKey(query1);
-      const hash2 = hashKey(query2);
-
-      expect(hash1).toBe(hash2);
-      expect(hash1).toMatch(/^CachedQuery_[a-f0-9]{32}$/);
+      expect(fakeCache.setQueryResult).toHaveBeenCalledWith(defaultOptions, mockQuery, data, 300);
     });
 
-    it("should generate different hashes for different queries", async () => {
-      const { hashKey } = await import("../../../src/utils/cacheUtils");
+    it("swallows implementation errors", async () => {
+      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      fakeCache.setQueryResult.mockRejectedValue(new Error("boom"));
 
-      const query1 = {
-        sql: "SELECT * FROM users WHERE id = ?",
-        params: [1],
-      };
-      const query2 = {
-        sql: "SELECT * FROM users WHERE id = ?",
-        params: [2],
-      };
-
-      const hash1 = hashKey(query1);
-      const hash2 = hashKey(query2);
-
-      expect(hash1).not.toBe(hash2);
-    });
-
-    it("should generate different hashes for different SQL", async () => {
-      const { hashKey } = await import("../../../src/utils/cacheUtils");
-
-      const query1 = {
-        sql: "SELECT * FROM users WHERE id = ?",
-        params: [1],
-      };
-      const query2 = {
-        sql: "SELECT * FROM users WHERE name = ?",
-        params: [1],
-      };
-
-      const hash1 = hashKey(query1);
-      const hash2 = hashKey(query2);
-
-      expect(hash1).not.toBe(hash2);
-    });
-
-    it("should handle case insensitive SQL", async () => {
-      const { hashKey } = await import("../../../src/utils/cacheUtils");
-
-      const query1 = {
-        sql: "SELECT * FROM users WHERE id = ?",
-        params: [1],
-      };
-      const query2 = {
-        sql: "select * from users where id = ?",
-        params: [1],
-      };
-
-      const hash1 = hashKey(query1);
-      const hash2 = hashKey(query2);
-
-      expect(hash1).toBe(hash2);
+      await expect(
+        setCacheResult(mockQuery, defaultOptions, { id: 1 }, 300),
+      ).resolves.toBeUndefined();
+      expect(errorSpy).toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
   });
 
   describe("clearTablesCache", () => {
-    it("should throw error when cacheImplementation is not configured", async () => {
+    it("throws when cacheImplementation is not configured", async () => {
       const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
-      const options = { ...defaultOptions, cacheImplementation: undefined };
-
-      await expect(clearTablesCache(["users"], options)).rejects.toThrow(
-        "cacheImplementation is not configured",
-      );
+      await expect(
+        clearTablesCache(["users"], { ...defaultOptions, cacheImplementation: undefined }),
+      ).rejects.toThrow("cacheImplementation is not configured");
     });
 
-    it("should clear cache for multiple tables", async () => {
+    it("delegates to the cache implementation", async () => {
       const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
-
-      const mockQueryBuilder = {
-        index: vi.fn().mockReturnThis(),
-        filters: vi.fn().mockReturnThis(),
-        cursor: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        getMany: vi.fn().mockResolvedValue({
-          results: [{ key: "key1" }, { key: "key2" }],
-          nextCursor: null,
-        }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn(),
-        set: vi.fn(),
-        query: vi.fn().mockReturnValue(mockQueryBuilder),
-      });
 
       await clearTablesCache(["users", "orders"], defaultOptions);
 
-      expect(mockKvs.entity).toHaveBeenCalledWith("cache");
-      expect(mockQueryBuilder.getMany).toHaveBeenCalled();
-      expect(mockKvs.batchDelete).toHaveBeenCalled();
+      expect(fakeCache.clearTablesCache).toHaveBeenCalledWith(["users", "orders"], defaultOptions);
     });
 
-    it("should handle pagination with cursor", async () => {
+    it("swallows implementation errors", async () => {
       const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      fakeCache.clearTablesCache.mockRejectedValue(new Error("boom"));
 
-      let callCount = 0;
-      const mockQueryBuilder = {
-        index: vi.fn().mockReturnThis(),
-        filters: vi.fn().mockReturnThis(),
-        cursor: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        getMany: vi.fn().mockImplementation(() => {
-          callCount++;
-          if (callCount === 1) {
-            return Promise.resolve({
-              results: [{ key: "key1" }],
-              nextCursor: "cursor1",
-            });
-          } else {
-            return Promise.resolve({
-              results: [{ key: "key2" }],
-              nextCursor: null,
-            });
-          }
-        }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn(),
-        set: vi.fn(),
-        query: vi.fn().mockReturnValue(mockQueryBuilder),
-      });
-
-      await clearTablesCache(["users"], defaultOptions);
-
-      expect(mockQueryBuilder.getMany).toHaveBeenCalledTimes(2);
-      expect(mockKvs.batchDelete).toHaveBeenCalledTimes(2);
-    });
-
-    it("should log performance metrics when logCache is enabled", async () => {
-      const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
-      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
-
-      const options = { ...defaultOptions, logCache: true };
-
-      const mockQueryBuilder = {
-        index: vi.fn().mockReturnThis(),
-        filters: vi.fn().mockReturnThis(),
-        cursor: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        getMany: vi.fn().mockResolvedValue({
-          results: [{ key: "key1" }],
-          nextCursor: null,
-        }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn(),
-        set: vi.fn(),
-        query: vi.fn().mockReturnValue(mockQueryBuilder),
-      });
-
-      await clearTablesCache(["users"], options);
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringMatching(/Cleared \d+ cache records in \d+ seconds/),
-      );
-
-      consoleSpy.mockRestore();
+      await expect(clearTablesCache(["users"], defaultOptions)).resolves.toBeUndefined();
+      expect(errorSpy).toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
   });
 
   describe("clearExpiredCache", () => {
-    it("should throw error when cacheImplementation is not configured", async () => {
+    it("throws when cacheImplementation is not configured", async () => {
       const { clearExpiredCache } = await import("../../../src/utils/cacheUtils");
-      const options = { ...defaultOptions, cacheImplementation: undefined };
-
-      await expect(clearExpiredCache(options)).rejects.toThrow(
-        "cacheImplementation is not configured",
-      );
-    });
-
-    it("should clear expired cache entries", async () => {
-      const { clearExpiredCache } = await import("../../../src/utils/cacheUtils");
-
-      const mockQueryBuilder = {
-        index: vi.fn().mockReturnThis(),
-        where: vi.fn().mockReturnThis(),
-        cursor: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        getMany: vi.fn().mockResolvedValue({
-          results: [{ key: "expired1" }, { key: "expired2" }],
-          nextCursor: null,
-        }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn(),
-        set: vi.fn(),
-        query: vi.fn().mockReturnValue(mockQueryBuilder),
-      });
-
-      await clearExpiredCache(defaultOptions);
-
-      expect(mockKvs.entity).toHaveBeenCalledWith("cache");
-      expect(mockQueryBuilder.getMany).toHaveBeenCalled();
-      expect(mockKvs.batchDelete).toHaveBeenCalled();
-    });
-
-    it("should handle pagination with cursor for expired cache", async () => {
-      const { clearExpiredCache } = await import("../../../src/utils/cacheUtils");
-
-      let callCount = 0;
-      const mockQueryBuilder = {
-        index: vi.fn().mockReturnThis(),
-        where: vi.fn().mockReturnThis(),
-        cursor: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        getMany: vi.fn().mockImplementation(() => {
-          callCount++;
-          if (callCount === 1) {
-            return Promise.resolve({
-              results: [{ key: "expired1" }],
-              nextCursor: "cursor1",
-            });
-          } else {
-            return Promise.resolve({
-              results: [{ key: "expired2" }],
-              nextCursor: null,
-            });
-          }
-        }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn(),
-        set: vi.fn(),
-        query: vi.fn().mockReturnValue(mockQueryBuilder),
-      });
-
-      await clearExpiredCache(defaultOptions);
-
-      expect(mockQueryBuilder.getMany).toHaveBeenCalledTimes(2);
-      expect(mockKvs.batchDelete).toHaveBeenCalledTimes(2);
-    });
-
-    it("should log performance metrics", async () => {
-      const { clearExpiredCache } = await import("../../../src/utils/cacheUtils");
-      const consoleSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
-
-      const mockQueryBuilder = {
-        index: vi.fn().mockReturnThis(),
-        where: vi.fn().mockReturnThis(),
-        cursor: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        getMany: vi.fn().mockResolvedValue({
-          results: [{ key: "expired1" }],
-          nextCursor: null,
-        }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn(),
-        set: vi.fn(),
-        query: vi.fn().mockReturnValue(mockQueryBuilder),
-      });
-
-      await clearExpiredCache(defaultOptions);
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringMatching(/Cleared \d+ expired cache records in \d+ seconds/),
-      );
-
-      consoleSpy.mockRestore();
-    });
-  });
-
-  describe("error handling", () => {
-    it("should handle cache get errors gracefully", async () => {
-      const { getFromCache } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn().mockRejectedValue(new Error("Cache error")),
-        set: vi.fn(),
-        query: vi.fn(),
-      });
-
-      const result = await getFromCache(mockQuery, defaultOptions);
-
-      expect(result).toBeUndefined();
-    });
-
-    it("should handle cache set errors gracefully", async () => {
-      const { setCacheResult } = await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
-
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockRejectedValue(new Error("Cache set error")),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
-
-      const testData = { id: 1, name: "John" };
-
-      // Should not throw error
       await expect(
-        setCacheResult(mockQuery, defaultOptions, testData, 300),
-      ).resolves.toBeUndefined();
+        clearExpiredCache({ ...defaultOptions, cacheImplementation: undefined }),
+      ).rejects.toThrow("cacheImplementation is not configured");
     });
 
-    it("should handle retry logic in clearTablesCache", async () => {
-      const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
-      const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    it("delegates to the cache implementation", async () => {
+      const { clearExpiredCache } = await import("../../../src/utils/cacheUtils");
 
-      // Mock setTimeout to resolve immediately
-      const mockSetTimeout = vi.fn((callback: any) => {
-        callback();
-        return 1 as any;
-      });
-      vi.stubGlobal("setTimeout", mockSetTimeout);
+      await clearExpiredCache(defaultOptions);
 
-      let attempt = 0;
-      const mockQueryBuilder = {
-        index: vi.fn().mockReturnThis(),
-        filters: vi.fn().mockReturnThis(),
-        cursor: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        getMany: vi.fn().mockImplementation(() => {
-          attempt++;
-          if (attempt < 3) {
-            throw new Error("Temporary error");
-          }
-          return Promise.resolve({
-            results: [{ key: "key1" }],
-            nextCursor: null,
-          });
-        }),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn(),
-        set: vi.fn(),
-        query: vi.fn().mockReturnValue(mockQueryBuilder),
-      });
-
-      await clearTablesCache(["users"], defaultOptions);
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringMatching(/Error during clearing cache: Temporary error, retry \d+/),
-        expect.any(Error),
-      );
-      expect(mockQueryBuilder.getMany).toHaveBeenCalledTimes(3);
-
-      // Restore original setTimeout
-      vi.unstubAllGlobals();
-      consoleSpy.mockRestore();
+      expect(fakeCache.clearExpiredCache).toHaveBeenCalledWith(defaultOptions);
     });
 
-    it("should log error after max retry attempts without rejecting", async () => {
-      const { clearTablesCache } = await import("../../../src/utils/cacheUtils");
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    it("swallows implementation errors", async () => {
+      const { clearExpiredCache } = await import("../../../src/utils/cacheUtils");
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      fakeCache.clearExpiredCache.mockRejectedValue(new Error("boom"));
 
-      // Mock setTimeout to resolve immediately
-      const mockSetTimeout = vi.fn((callback: any) => {
-        callback();
-        return 1 as any;
-      });
-      vi.stubGlobal("setTimeout", mockSetTimeout);
-
-      const mockQueryBuilder = {
-        index: vi.fn().mockReturnThis(),
-        filters: vi.fn().mockReturnThis(),
-        cursor: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockReturnThis(),
-        getMany: vi.fn().mockRejectedValue(new Error("Persistent error")),
-      };
-
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn(),
-        set: vi.fn(),
-        query: vi.fn().mockReturnValue(mockQueryBuilder),
-      });
-
-      // cacheUtils.clearTablesCache swallows the error after KVSCache exhausts retries.
-      await expect(clearTablesCache(["users"], defaultOptions)).resolves.toBeUndefined();
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringMatching(/Error during clearing cache: Persistent error/),
-        expect.any(Error),
-      );
-
-      // Restore original setTimeout
-      vi.unstubAllGlobals();
-      consoleSpy.mockRestore();
+      await expect(clearExpiredCache(defaultOptions)).resolves.toBeUndefined();
+      expect(errorSpy).toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
   });
 
-  describe("integration scenarios", () => {
-    it("should handle complete cache workflow", async () => {
-      const { getFromCache, setCacheResult, clearCache } =
-        await import("../../../src/utils/cacheUtils");
-      const { isTableContainsTableInCacheContext } =
-        await import("../../../src/utils/cacheContextUtils");
-      (isTableContainsTableInCacheContext as any).mockResolvedValue(false);
+  describe("logging", () => {
+    it("debugCacheLog logs only when logCache is enabled", async () => {
+      const { debugCacheLog } = await import("../../../src/utils/cacheUtils");
+      const debugSpy = vi.spyOn(console, "debug").mockImplementation(() => undefined);
 
-      // Test setCacheResult
-      const mockTransact = {
-        set: vi.fn().mockReturnThis(),
-        delete: vi.fn().mockReturnThis(),
-        execute: vi.fn().mockResolvedValue(undefined),
-      };
-      mockKvs.transact.mockReturnValue(mockTransact);
+      debugCacheLog("hello", { ...defaultOptions, logCache: false });
+      expect(debugSpy).not.toHaveBeenCalled();
 
-      const testData = { id: 1, name: "John" };
-      await setCacheResult(mockQuery, defaultOptions, testData, 300);
+      debugCacheLog("hello", { ...defaultOptions, logCache: true });
+      expect(debugSpy).toHaveBeenCalledWith("hello");
+      debugSpy.mockRestore();
+    });
 
-      expect(mockKvs.transact).toHaveBeenCalled();
+    it("warnCacheLog logs only when logCache is enabled", async () => {
+      const { warnCacheLog } = await import("../../../src/utils/cacheUtils");
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
-      // Test getFromCache
-      const mockCacheData = {
-        sql: "`users`",
-        expiration: Math.floor(DateTime.now().plus({ hours: 1 }).toSeconds()),
-        data: JSON.stringify(testData),
-      };
+      warnCacheLog("careful", { ...defaultOptions, logCache: false });
+      expect(warnSpy).not.toHaveBeenCalled();
 
-      mockKvs.entity.mockReturnValue({
-        get: vi.fn().mockResolvedValue(mockCacheData),
-        set: vi.fn(),
-        query: vi.fn(),
-      });
+      warnCacheLog("careful", { ...defaultOptions, logCache: true });
+      expect(warnSpy).toHaveBeenCalledWith("careful");
+      warnSpy.mockRestore();
+    });
+  });
 
-      const result = await getFromCache(mockQuery, defaultOptions);
-      expect(result).toEqual(testData);
+  describe("hashKey", () => {
+    it("generates a consistent hash for the same query", async () => {
+      const { hashKey } = await import("../../../src/utils/cacheUtils");
+      const query = { sql: "SELECT * FROM users WHERE id = ?", params: [1] };
 
-      // Test clearCache with context
-      const mockContext = { tables: new Set() };
-      const { cacheApplicationContext } = await import("../../../src/utils/cacheContextUtils");
-      (cacheApplicationContext.getStore as any).mockReturnValue(mockContext);
+      expect(hashKey(query)).toBe(hashKey({ ...query }));
+      expect(hashKey(query)).toMatch(/^CachedQuery_[a-f0-9]{32}$/);
+    });
 
-      await clearCache(mockTable, defaultOptions);
-      expect(mockContext.tables.has("users")).toBe(true);
+    it("generates different hashes for different params", async () => {
+      const { hashKey } = await import("../../../src/utils/cacheUtils");
+      const sql = "SELECT * FROM users WHERE id = ?";
+
+      expect(hashKey({ sql, params: [1] })).not.toBe(hashKey({ sql, params: [2] }));
+    });
+
+    it("generates different hashes for different SQL", async () => {
+      const { hashKey } = await import("../../../src/utils/cacheUtils");
+
+      expect(hashKey({ sql: "SELECT * FROM users WHERE id = ?", params: [1] })).not.toBe(
+        hashKey({ sql: "SELECT * FROM users WHERE name = ?", params: [1] }),
+      );
+    });
+
+    it("is case-insensitive on the SQL", async () => {
+      const { hashKey } = await import("../../../src/utils/cacheUtils");
+
+      expect(hashKey({ sql: "SELECT * FROM users", params: [] })).toBe(
+        hashKey({ sql: "select * from users", params: [] }),
+      );
     });
   });
 });

@@ -8,7 +8,6 @@ import {
   ForgeSqlOrmOptions,
   SchemaAnalyzeForgeSql,
   SchemaSqlForgeSql,
-  RovoIntegration,
 } from "./ForgeSQLQueryBuilder";
 import { ForgeSQLSelectOperations } from "./ForgeSQLSelectOperations";
 import {
@@ -20,26 +19,15 @@ import {
 import { createForgeDriverProxy } from "../utils/forgeDriverProxy";
 import type { SelectedFields } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { MySqlSelectBuilder } from "drizzle-orm/mysql-core";
-import {
-  DeleteAndEvictCacheType,
-  InsertAndEvictCacheType,
-  patchDbWithSelectAliased,
-  SelectAliasedCacheableType,
-  SelectAliasedDistinctCacheableType,
-  SelectAliasedDistinctType,
-  SelectAliasedType,
-  UpdateAndEvictCacheType,
-} from "../lib";
+import { patchDbWithSelectAliased, SelectAliasedDistinctType, SelectAliasedType } from "../lib";
 import { ForgeSQLAnalyseOperation } from "./ForgeSQLAnalyseOperations";
-import { ForgeSQLCacheOperations } from "./ForgeSQLCacheOperations";
 import { MySqlTable } from "drizzle-orm/mysql-core/table";
 import {
   MySqlDeleteBase,
   MySqlInsertBuilder,
   MySqlUpdateBuilder,
 } from "drizzle-orm/mysql-core/query-builders";
-import { cacheApplicationContext, localCacheApplicationContext } from "../utils/cacheContextUtils";
-import { clearTablesCache } from "../utils/cacheUtils";
+import { localCacheApplicationContext } from "../utils/cacheContextUtils";
 import { SQLWrapper } from "drizzle-orm/sql/sql";
 import { WithSubquery } from "drizzle-orm/subquery";
 import {
@@ -50,8 +38,7 @@ import {
 import { operationTypeQueryContext } from "../utils/requestTypeContextUtils";
 import { getErrorMessage } from "../utils/errorUtils";
 import type { MySqlQueryResultKind } from "drizzle-orm/mysql-core/session";
-import { Rovo } from "./Rovo";
-import { KVSCache } from "../lib/cache/KVSCache";
+import { NopCache } from "../lib";
 
 /**
  * Implementation of ForgeSQLORM that uses Drizzle ORM for query building.
@@ -64,20 +51,10 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
   private readonly drizzle: MySqlRemoteDatabase<any> & {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
-    selectAliasedCacheable: SelectAliasedCacheableType;
-    selectAliasedDistinctCacheable: SelectAliasedDistinctCacheableType;
-    insertWithCacheContext: InsertAndEvictCacheType;
-    insertAndEvictCache: InsertAndEvictCacheType;
-    updateAndEvictCache: UpdateAndEvictCacheType;
-    updateWithCacheContext: UpdateAndEvictCacheType;
-    deleteAndEvictCache: DeleteAndEvictCacheType;
-    deleteWithCacheContext: DeleteAndEvictCacheType;
   };
   private readonly crudOperations: VerioningModificationForgeSQL;
   private readonly fetchOperations: SchemaSqlForgeSql;
   private readonly analyzeOperations: SchemaAnalyzeForgeSql;
-  private readonly cacheOperations: ForgeSQLCacheOperations;
-  private readonly options: ForgeSqlOrmOptions;
 
   /**
    * Private constructor to enforce singleton behavior.
@@ -91,12 +68,9 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
         disableOptimisticLocking: false,
         cacheWrapTable: true,
         cacheTTL: 120,
-        cacheEntityQueryName: "sql",
-        cacheEntityExpirationName: "expiration",
-        cacheEntityDataName: "data",
-        cacheImplementation: new KVSCache(),
+        cacheImplementation: new NopCache(),
       };
-      this.options = newOptions;
+
       if (newOptions.logRawSqlQuery) {
         // eslint-disable-next-line no-console
         console.debug("Initializing ForgeSQLORM...");
@@ -114,7 +88,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
       this.crudOperations = new ForgeSQLCrudOperations(this, newOptions);
       this.fetchOperations = new ForgeSQLSelectOperations(newOptions);
       this.analyzeOperations = new ForgeSQLAnalyseOperation(this);
-      this.cacheOperations = new ForgeSQLCacheOperations(newOptions, this);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("ForgeSQLORM initialization failed:", error);
@@ -298,66 +271,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
   }
 
   /**
-   * Executes operations within a cache context that collects cache eviction events.
-   * All clearCache calls within the context are collected and executed in batch at the end.
-   * Queries executed within this context will bypass cache for tables that were marked for clearing.
-   *
-   * This is useful for:
-   * - Batch operations that affect multiple tables
-   * - Transaction-like operations where you want to clear cache only at the end
-   * - Performance optimization by reducing cache clear operations
-   *
-   * @param cacheContext - Function containing operations that may trigger cache evictions
-   * @returns Promise that resolves when all operations and cache clearing are complete
-   *
-   * @example
-   * ```typescript
-   * await forgeSQL.executeWithCacheContext(async () => {
-   *   await forgeSQL.modifyWithVersioning().insert(users, userData);
-   *   await forgeSQL.modifyWithVersioning().insert(orders, orderData);
-   *   // Cache for both users and orders tables will be cleared at the end
-   * });
-   * ```
-   */
-  executeWithCacheContext(cacheContext: () => Promise<void>): Promise<void> {
-    return this.executeWithCacheContextAndReturnValue<void>(cacheContext);
-  }
-
-  /**
-   * Executes operations within a cache context and returns a value.
-   * All clearCache calls within the context are collected and executed in batch at the end.
-   * Queries executed within this context will bypass cache for tables that were marked for clearing.
-   *
-   * @param cacheContext - Function containing operations that may trigger cache evictions
-   * @returns Promise that resolves to the return value of the cacheContext function
-   *
-   * @example
-   * ```typescript
-   * const result = await forgeSQL.executeWithCacheContextAndReturnValue(async () => {
-   *   await forgeSQL.modifyWithVersioning().insert(users, userData);
-   *   return await forgeSQL.fetch().executeQueryOnlyOne(selectUserQuery);
-   * });
-   * ```
-   */
-  async executeWithCacheContextAndReturnValue<T>(cacheContext: () => Promise<T>): Promise<T> {
-    return await this.executeWithLocalCacheContextAndReturnValue(
-      async () =>
-        await cacheApplicationContext.run(
-          cacheApplicationContext.getStore() ?? { tables: new Set<string>() },
-          async () => {
-            try {
-              return await cacheContext();
-            } finally {
-              await clearTablesCache(
-                Array.from(cacheApplicationContext.getStore()?.tables ?? []),
-                this.options,
-              );
-            }
-          },
-        ),
-    );
-  }
-  /**
    * Executes operations within a local cache context and returns a value.
    * This provides in-memory caching for select queries within a single request scope.
    *
@@ -397,35 +310,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
   ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
     return this.drizzle.insertWithCacheContext(table);
   }
-  /**
-   * Creates an insert query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned inserts, use `modifyWithVersioning().insert()` or `modifyWithVersioningAndEvictCache().insert()` instead.
-   *
-   * @param table - The table to insert into
-   * @returns Insert query builder with automatic cache eviction (no versioning)
-   */
-  insertAndEvictCache<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
-    return this.drizzle.insertAndEvictCache(table);
-  }
-
-  /**
-   * Creates an update query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned updates, use `modifyWithVersioning().updateById()` or `modifyWithVersioningAndEvictCache().updateById()` instead.
-   *
-   * @param table - The table to update
-   * @returns Update query builder with automatic cache eviction (no versioning)
-   */
-  updateAndEvictCache<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
-    return this.drizzle.updateAndEvictCache(table);
-  }
 
   /**
    * Creates an update query builder.
@@ -455,20 +339,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
     table: TTable,
   ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
     return this.drizzle.deleteWithCacheContext(table);
-  }
-  /**
-   * Creates a delete query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned deletes, use `modifyWithVersioning().deleteById()` or `modifyWithVersioningAndEvictCache().deleteById()` instead.
-   *
-   * @param table - The table to delete from
-   * @returns Delete query builder with automatic cache eviction (no versioning)
-   */
-  deleteAndEvictCache<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
-    return this.drizzle.deleteAndEvictCache(table);
   }
 
   /**
@@ -506,20 +376,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
   }
 
   /**
-   * Provides schema-level SQL operations with optimistic locking/versioning and automatic cache eviction.
-   *
-   * This method returns operations that use `modifyWithVersioning()` internally, providing:
-   * - Optimistic locking support
-   * - Automatic version field management
-   * - Cache eviction after successful operations
-   *
-   * @returns {ForgeSQLCacheOperations} Interface for executing versioned SQL operations with cache management
-   */
-  modifyWithVersioningAndEvictCache(): ForgeSQLCacheOperations {
-    return this.cacheOperations;
-  }
-
-  /**
    * Returns a Drizzle query builder instance.
    *
    * ⚠️ IMPORTANT: This method should be used ONLY for query building purposes.
@@ -531,14 +387,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
   getDrizzleQueryBuilder(): MySqlRemoteDatabase<Record<string, unknown>> & {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
-    selectAliasedCacheable: SelectAliasedCacheableType;
-    selectAliasedDistinctCacheable: SelectAliasedDistinctCacheableType;
-    insertWithCacheContext: InsertAndEvictCacheType;
-    insertAndEvictCache: InsertAndEvictCacheType;
-    updateAndEvictCache: UpdateAndEvictCacheType;
-    updateWithCacheContext: UpdateAndEvictCacheType;
-    deleteAndEvictCache: DeleteAndEvictCacheType;
-    deleteWithCacheContext: DeleteAndEvictCacheType;
   } {
     return this.drizzle;
   }
@@ -594,60 +442,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
   }
 
   /**
-   * Creates a cacheable select query with unique field aliases to prevent field name collisions in joins.
-   * This is particularly useful when working with Atlassian Forge SQL, which collapses fields with the same name in joined tables.
-   *
-   * @template TSelection - The type of the selected fields
-   * @param {TSelection} fields - Object containing the fields to select, with table schemas as values
-   * @param {number} cacheTTL - cache ttl optional default is 60 sec.
-   * @returns {MySqlSelectBuilder<TSelection, MySql2PreparedQueryHKT>} A select query builder with unique field aliases
-   * @throws {Error} If fields parameter is empty
-   * @example
-   * ```typescript
-   * await forgeSQL
-   *   .selectCacheable({user: users, order: orders},60)
-   *   .from(orders)
-   *   .innerJoin(users, eq(orders.userId, users.id));
-   * ```
-   */
-  selectCacheable<TSelection extends SelectedFields>(
-    fields: TSelection,
-    cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
-    if (!fields) {
-      throw new Error("fields is empty");
-    }
-    return this.drizzle.selectAliasedCacheable(fields, cacheTTL);
-  }
-
-  /**
-   * Creates a cacheable distinct select query with unique field aliases to prevent field name collisions in joins.
-   * This is particularly useful when working with Atlassian Forge SQL, which collapses fields with the same name in joined tables.
-   *
-   * @template TSelection - The type of the selected fields
-   * @param {TSelection} fields - Object containing the fields to select, with table schemas as values
-   * @param {number} cacheTTL - cache ttl optional default is 60 sec.
-   * @returns {MySqlSelectBuilder<TSelection, MySql2PreparedQueryHKT>} A distinct select query builder with unique field aliases
-   * @throws {Error} If fields parameter is empty
-   * @example
-   * ```typescript
-   * await forgeSQL
-   *   .selectDistinctCacheable({user: users, order: orders}, 60)
-   *   .from(orders)
-   *   .innerJoin(users, eq(orders.userId, users.id));
-   * ```
-   */
-  selectDistinctCacheable<TSelection extends SelectedFields>(
-    fields: TSelection,
-    cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
-    if (!fields) {
-      throw new Error("fields is empty");
-    }
-    return this.drizzle.selectAliasedDistinctCacheable(fields, cacheTTL);
-  }
-
-  /**
    * Creates a select query builder for all columns from a table with field aliasing support.
    * This is a convenience method that automatically selects all columns from the specified table.
    *
@@ -677,40 +471,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
    */
   selectDistinctFrom<T extends MySqlTable>(table: T) {
     return this.drizzle.selectDistinctFrom(table);
-  }
-
-  /**
-   * Creates a cacheable select query builder for all columns from a table with field aliasing and caching support.
-   * This is a convenience method that automatically selects all columns from the specified table with caching enabled.
-   *
-   * @template T - The type of the table
-   * @param table - The table to select from
-   * @param cacheTTL - Optional cache TTL override (defaults to global cache TTL)
-   * @returns Select query builder with all table columns, field aliasing, and caching support
-   * @example
-   * ```typescript
-   * const users = await forgeSQL.selectCacheableFrom(userTable, 300).where(eq(userTable.id, 1));
-   * ```
-   */
-  selectCacheableFrom<T extends MySqlTable>(table: T, cacheTTL?: number) {
-    return this.drizzle.selectFromCacheable(table, cacheTTL);
-  }
-
-  /**
-   * Creates a cacheable select distinct query builder for all columns from a table with field aliasing and caching support.
-   * This is a convenience method that automatically selects all distinct columns from the specified table with caching enabled.
-   *
-   * @template T - The type of the table
-   * @param table - The table to select from
-   * @param cacheTTL - Optional cache TTL override (defaults to global cache TTL)
-   * @returns Select distinct query builder with all table columns, field aliasing, and caching support
-   * @example
-   * ```typescript
-   * const uniqueUsers = await forgeSQL.selectDistinctCacheableFrom(userTable, 300).where(eq(userTable.status, 'active'));
-   * ```
-   */
-  selectDistinctCacheableFrom<T extends MySqlTable>(table: T, cacheTTL?: number) {
-    return this.drizzle.selectDistinctFromCacheable(table, cacheTTL);
   }
 
   /**
@@ -827,31 +587,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
   }
 
   /**
-   * Executes a raw SQL query with both local and global cache support.
-   * This method provides comprehensive caching for raw SQL queries:
-   * - Local cache: Within the current invocation context
-   * - Global cache: Cross-invocation caching using @forge/kvs
-   *
-   * @param query - The SQL query to execute (SQLWrapper or string)
-   * @param cacheTtl - Optional cache TTL override (defaults to global cache TTL)
-   * @returns Promise with query results
-   * @example
-   * ```typescript
-   * // Using SQLWrapper with custom TTL
-   * const result = await forgeSQL.executeCacheable(sql`SELECT * FROM users WHERE id = ${userId}`, 300);
-   *
-   * // Using string with default TTL
-   * const result = await forgeSQL.executeCacheable("SELECT * FROM users WHERE status = 'active'");
-   * ```
-   */
-  executeCacheable<T>(
-    query: SQLWrapper | string,
-    cacheTtl?: number,
-  ): Promise<MySqlQueryResultKind<MySqlRemoteQueryResultHKT, T>> {
-    return this.drizzle.executeQueryCacheable<T>(query, cacheTtl);
-  }
-
-  /**
    * Creates a Common Table Expression (CTE) builder for complex queries.
    * CTEs allow you to define temporary named result sets that exist within the scope of a single query.
    *
@@ -890,37 +625,6 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
    */
   with(...queries: WithSubquery[]) {
     return this.drizzle.with(...queries);
-  }
-
-  /**
-   * Provides access to Rovo integration - a secure pattern for natural-language analytics.
-   *
-   * Rovo enables secure execution of dynamic SQL queries with comprehensive security validations:
-   * - Only SELECT queries are allowed
-   * - Queries are restricted to a single table
-   * - JOINs, subqueries, and window functions are blocked
-   * - Row-Level Security (RLS) support for data isolation
-   *
-   * @returns {RovoIntegration} Rovo integration instance for secure dynamic queries
-   *
-   * @example
-   * ```typescript
-   * const rovo = forgeSQL.rovo();
-   * const settings = await rovo.rovoSettingBuilder(usersTable, accountId)
-   *   .useRLS()
-   *   .addRlsColumn(usersTable.id)
-   *   .addRlsWherePart((alias) => `${alias}.id = '${accountId}'`)
-   *   .finish()
-   *   .build();
-   *
-   * const result = await rovo.dynamicIsolatedQuery(
-   *   "SELECT id, name FROM users WHERE status = 'active'",
-   *   settings
-   * );
-   * ```
-   */
-  rovo(): RovoIntegration {
-    return new Rovo(this, this.options);
   }
 }
 
@@ -1031,20 +735,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
     return this.ormInstance.executeWithMetadata(query, onMetadata, options);
   }
 
-  selectCacheable<TSelection extends SelectedFields>(
-    fields: TSelection,
-    cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
-    return this.ormInstance.selectCacheable(fields, cacheTTL);
-  }
-
-  selectDistinctCacheable<TSelection extends SelectedFields>(
-    fields: TSelection,
-    cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
-    return this.ormInstance.selectDistinctCacheable(fields, cacheTTL);
-  }
-
   /**
    * Creates a select query builder for all columns from a table with field aliasing support.
    * This is a convenience method that automatically selects all columns from the specified table.
@@ -1078,23 +768,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
   }
 
   /**
-   * Creates a cacheable select query builder for all columns from a table with field aliasing and caching support.
-   * This is a convenience method that automatically selects all columns from the specified table with caching enabled.
-   *
-   * @template T - The type of the table
-   * @param table - The table to select from
-   * @param cacheTTL - Optional cache TTL override (defaults to global cache TTL)
-   * @returns Select query builder with all table columns, field aliasing, and caching support
-   * @example
-   * ```typescript
-   * const users = await forgeSQL.selectCacheableFrom(userTable, 300).where(eq(userTable.id, 1));
-   * ```
-   */
-  selectCacheableFrom<T extends MySqlTable>(table: T, cacheTTL?: number) {
-    return this.ormInstance.getDrizzleQueryBuilder().selectFromCacheable(table, cacheTTL);
-  }
-
-  /**
    * Creates a cacheable select distinct query builder for all columns from a table with field aliasing and caching support.
    * This is a convenience method that automatically selects all distinct columns from the specified table with caching enabled.
    *
@@ -1111,12 +784,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
     return this.ormInstance.getDrizzleQueryBuilder().selectDistinctFromCacheable(table, cacheTTL);
   }
 
-  executeWithCacheContext(cacheContext: () => Promise<void>): Promise<void> {
-    return this.ormInstance.executeWithCacheContext(cacheContext);
-  }
-  executeWithCacheContextAndReturnValue<T>(cacheContext: () => Promise<T>): Promise<T> {
-    return this.ormInstance.executeWithCacheContextAndReturnValue(cacheContext);
-  }
   /**
    * Executes operations within a local cache context.
    * This provides in-memory caching for select queries within a single request scope.
@@ -1155,21 +822,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
   }
 
   /**
-   * Creates an insert query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned inserts, use `modifyWithVersioning().insert()` or `modifyWithVersioningAndEvictCache().insert()` instead.
-   *
-   * @param table - The table to insert into
-   * @returns Insert query builder with automatic cache eviction (no versioning)
-   */
-  insertAndEvictCache<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
-    return this.ormInstance.insertAndEvictCache(table);
-  }
-
-  /**
    * Creates an update query builder.
    *
    * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
@@ -1185,21 +837,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
   }
 
   /**
-   * Creates an update query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned updates, use `modifyWithVersioning().updateById()` or `modifyWithVersioningAndEvictCache().updateById()` instead.
-   *
-   * @param table - The table to update
-   * @returns Update query builder with automatic cache eviction (no versioning)
-   */
-  updateAndEvictCache<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
-    return this.ormInstance.updateAndEvictCache(table);
-  }
-
-  /**
    * Creates a delete query builder.
    *
    * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
@@ -1212,21 +849,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
     table: TTable,
   ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
     return this.ormInstance.delete(table);
-  }
-
-  /**
-   * Creates a delete query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned deletes, use `modifyWithVersioning().deleteById()` or `modifyWithVersioningAndEvictCache().deleteById()` instead.
-   *
-   * @param table - The table to delete from
-   * @returns Delete query builder with automatic cache eviction (no versioning)
-   */
-  deleteAndEvictCache<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
-    return this.ormInstance.deleteAndEvictCache(table);
   }
 
   /**
@@ -1295,14 +917,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
    */
   analyze(): SchemaAnalyzeForgeSql {
     return this.ormInstance.analyze();
-  }
-
-  /**
-   * Provides schema-level SQL cacheable operations with type safety.
-   * @returns {ForgeSQLCacheOperations} Interface for executing schema-bound SQL queries
-   */
-  modifyWithVersioningAndEvictCache(): ForgeSQLCacheOperations {
-    return this.ormInstance.modifyWithVersioningAndEvictCache();
   }
 
   /**
@@ -1430,31 +1044,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
   }
 
   /**
-   * Executes a raw SQL query with both local and global cache support.
-   * This method provides comprehensive caching for raw SQL queries:
-   * - Local cache: Within the current invocation context
-   * - Global cache: Cross-invocation caching using @forge/kvs
-   *
-   * @param query - The SQL query to execute (SQLWrapper or string)
-   * @param cacheTtl - Optional cache TTL override (defaults to global cache TTL)
-   * @returns Promise with query results
-   * @example
-   * ```typescript
-   * // Using SQLWrapper with custom TTL
-   * const result = await forgeSQL.executeCacheable(sql`SELECT * FROM users WHERE id = ${userId}`, 300);
-   *
-   * // Using string with default TTL
-   * const result = await forgeSQL.executeCacheable("SELECT * FROM users WHERE status = 'active'");
-   * ```
-   */
-  executeCacheable<T>(
-    query: SQLWrapper | string,
-    cacheTtl?: number,
-  ): Promise<MySqlQueryResultKind<MySqlRemoteQueryResultHKT, T>> {
-    return this.ormInstance.executeCacheable(query, cacheTtl);
-  }
-
-  /**
    * Creates a Common Table Expression (CTE) builder for complex queries.
    * CTEs allow you to define temporary named result sets that exist within the scope of a single query.
    *
@@ -1493,37 +1082,6 @@ class ForgeSQLORM implements ForgeSqlOperation {
    */
   with(...queries: WithSubquery[]) {
     return this.ormInstance.getDrizzleQueryBuilder().with(...queries);
-  }
-
-  /**
-   * Provides access to Rovo integration - a secure pattern for natural-language analytics.
-   *
-   * Rovo enables secure execution of dynamic SQL queries with comprehensive security validations:
-   * - Only SELECT queries are allowed
-   * - Queries are restricted to a single table
-   * - JOINs, subqueries, and window functions are blocked
-   * - Row-Level Security (RLS) support for data isolation
-   *
-   * @returns {RovoIntegration} Rovo integration instance for secure dynamic queries
-   *
-   * @example
-   * ```typescript
-   * const rovo = forgeSQL.rovo();
-   * const settings = await rovo.rovoSettingBuilder(usersTable, accountId)
-   *   .useRLS()
-   *   .addRlsColumn(usersTable.id)
-   *   .addRlsWherePart((alias) => `${alias}.id = '${accountId}'`)
-   *   .finish()
-   *   .build();
-   *
-   * const result = await rovo.dynamicIsolatedQuery(
-   *   "SELECT id, name FROM users WHERE status = 'active'",
-   *   settings
-   * );
-   * ```
-   */
-  rovo(): RovoIntegration {
-    return this.ormInstance.rovo();
   }
 }
 

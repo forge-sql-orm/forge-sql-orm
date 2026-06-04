@@ -9,7 +9,7 @@
  * type would force casts on every property access without adding safety.
  */
 import { Parser } from "node-sql-parser";
-import { ForgeSqlOrmOptions } from "../core";
+import { ForgeSqlOrmOptionsExtra } from "../core";
 
 /**
  * Extracts table name from backticks_quote_string type.
@@ -62,9 +62,6 @@ function extractTableNameFromObject(value: any, context?: string): string | null
  * Helper function to safely convert to string and lowercase.
  */
 function normalizeTableName(value: any, context?: string): string | null {
-  if (!value) {
-    return null;
-  }
   // If it's already a string, use it
   if (typeof value === "string") {
     return value === "dual" ? null : value.toLowerCase();
@@ -314,8 +311,17 @@ function processUnionNode(unionNode: any, tables: Set<string>): void {
   ];
   const isUnionType = unionTypes.includes(unionNode.type);
 
+  if (unionNode.left) {
+    extractTablesFromNode(unionNode.left, tables);
+  }
+  if (unionNode.right) {
+    extractTablesFromNode(unionNode.right, tables);
+  }
+
   if (isUnionType) {
-    extractTablesFromNode(unionNode, tables);
+    if (!unionNode.left && !unionNode.right) {
+      extractTablesFromNode(unionNode, tables);
+    }
   } else if (unionNode.select) {
     extractTablesFromNode(unionNode.select, tables);
   } else if (unionNode.ast) {
@@ -364,7 +370,6 @@ function processUnionOperation(node: any, tables: Set<string>): void {
   if (node.right) {
     extractTablesFromNode(node.right, tables);
   }
-  extractTablesFromNode(node, tables);
 }
 
 /**
@@ -551,7 +556,7 @@ function extractTablesWithRegex(sql: string): Set<string> {
   return matches;
 }
 
-export function extractBacktickedValues(sql: string, options: ForgeSqlOrmOptions): string {
+export function extractBacktickedValues(sql: string, options: ForgeSqlOrmOptionsExtra): string {
   // Try to use node-sql-parser first
   try {
     const parser = new Parser();

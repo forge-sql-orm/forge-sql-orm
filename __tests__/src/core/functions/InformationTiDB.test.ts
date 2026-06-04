@@ -7,11 +7,16 @@ import { CasingCache } from "drizzle-orm/casing";
 import {
   connectionId,
   currentResourceGroup,
+  currentRole,
   currentUser,
   database,
+  foundRows,
   lastInsertId,
+  rowCount,
   schema,
+  sessionUser,
   sqlBenchmark,
+  systemUser,
   tidbVersion,
   user,
   version,
@@ -27,9 +32,14 @@ const mysqlQueryConfig = {
 describe("InformationTiDB SQL fragments (toQuery)", () => {
   it("zero-argument session functions", () => {
     expect(connectionId().toQuery(mysqlQueryConfig).sql).toBe("CONNECTION_ID()");
+    expect(currentRole().toQuery(mysqlQueryConfig).sql).toBe("CURRENT_ROLE()");
     expect(currentUser().toQuery(mysqlQueryConfig).sql).toBe("CURRENT_USER()");
     expect(database().toQuery(mysqlQueryConfig).sql).toBe("DATABASE()");
+    expect(foundRows().toQuery(mysqlQueryConfig).sql).toBe("FOUND_ROWS()");
+    expect(rowCount().toQuery(mysqlQueryConfig).sql).toBe("ROW_COUNT()");
     expect(schema().toQuery(mysqlQueryConfig).sql).toBe("SCHEMA()");
+    expect(sessionUser().toQuery(mysqlQueryConfig).sql).toBe("SESSION_USER()");
+    expect(systemUser().toQuery(mysqlQueryConfig).sql).toBe("SYSTEM_USER()");
     expect(user().toQuery(mysqlQueryConfig).sql).toBe("USER()");
     expect(version().toQuery(mysqlQueryConfig).sql).toBe("VERSION()");
   });

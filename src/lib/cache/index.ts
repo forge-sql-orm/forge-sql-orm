@@ -3,4 +3,3 @@
 
 export * from "./Cache";
 export * from "./NopCache";
-export * from "./KVSCache";

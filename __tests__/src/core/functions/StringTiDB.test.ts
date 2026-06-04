@@ -182,6 +182,7 @@ describe("StringTiDB SQL fragments (toQuery)", () => {
     run(exportSet(1, "a", "b", ","));
     run(field("a", "b", "a"));
     run(findInSet("a", "a,b"));
+    expect(formatSql("1.2", "2").toQuery(q).sql).toBe("FORMAT(?, ?)");
     run(formatSql("1.2", "2", "en_US"));
     run(fromBase64("YWI="));
     run(hex("ab"));

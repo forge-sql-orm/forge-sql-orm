@@ -2,19 +2,24 @@
 // SPDX-License-Identifier: MIT
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { ForgeSQLCacheOperations } from "../../../src/core/ForgeSQLCacheOperations";
-import { ForgeSqlOrmOptions } from "../../../src";
-import {
-  clearCache,
-  clearTablesCache,
-  getFromCache,
-  setCacheResult,
-} from "../../../src/utils/cacheUtils";
+import { ForgeSQLCacheOperations } from "../../../src/cache/ForgeSQLCacheOperations";
+import { clearCache, clearTablesCache, getFromCache, setCacheResult } from "forge-sql-orm";
 import { TestEntityVersion } from "../../entities/TestEntityVersion";
 import { TestEntity } from "../../entities/TestEntity";
+import { ForgeSqlOrmOptionsExtra } from "../../../src/core";
 
-// Mock cache utilities
-vi.mock("../../../src/utils/cacheUtils");
+// ForgeSQLCacheOperations pulls the cache helpers from the forge-sql-orm barrel;
+// partial-mock it so only those helpers are stubbed and the rest stays real.
+vi.mock("forge-sql-orm", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("forge-sql-orm")>();
+  return {
+    ...actual,
+    clearCache: vi.fn(),
+    clearTablesCache: vi.fn(),
+    getFromCache: vi.fn(),
+    setCacheResult: vi.fn(),
+  };
+});
 const mockClearCache = vi.mocked(clearCache);
 const mockClearTablesCache = vi.mocked(clearTablesCache);
 const mockGetFromCache = vi.mocked(getFromCache);
@@ -46,7 +51,7 @@ const mockForgeOperations = {
 
 describe("ForgeSQLCacheOperations", () => {
   let cacheOperations: ForgeSQLCacheOperations;
-  let options: ForgeSqlOrmOptions;
+  let options: ForgeSqlOrmOptionsExtra;
 
   beforeEach(() => {
     vi.clearAllMocks();

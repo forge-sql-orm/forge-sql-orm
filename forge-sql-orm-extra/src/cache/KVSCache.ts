@@ -1,15 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { Cache } from "./Cache";
-import { ForgeSqlOrmOptions } from "../..";
-import { Filter, FilterConditions, kvs, WhereConditions } from "@forge/kvs";
-import { extractBacktickedValues } from "../../utils/cacheTableUtils";
-import { Query } from "drizzle-orm";
-import { isTableContainsTableInCacheContext } from "../../utils/cacheContextUtils";
-import { debugCacheLog, warnCacheLog, hashKey } from "../../utils/cacheUtils";
 import { DateTime } from "luxon";
-import { getErrorMessage } from "../../utils/errorUtils";
+import { Filter, FilterConditions, kvs, WhereConditions } from "@forge/kvs";
+import { Query } from "drizzle-orm";
+import {
+  ForgeSqlOrmOptions,
+  Cache,
+  warnCacheLog,
+  debugCacheLog,
+  hashKey,
+  getErrorMessage,
+  isTableContainsTableInCacheContext,
+} from "forge-sql-orm";
+import { extractBacktickedValues } from "../sql/cacheTableUtils";
+import { ForgeSqlOrmOptionsExtra } from "../core";
 
 const CACHE_CONSTANTS = {
   BATCH_SIZE: 25,
@@ -71,7 +76,7 @@ export class KVSCache implements Cache {
   /**
    * Returns the configured cache entity name, throwing when caching is not configured.
    */
-  private requireEntityName(options: ForgeSqlOrmOptions): string {
+  private requireEntityName(options: ForgeSqlOrmOptionsExtra): string {
     if (!options.cacheEntityName) {
       throw new Error("cacheEntityName is not configured");
     }
@@ -81,7 +86,7 @@ export class KVSCache implements Cache {
   /**
    * Resolves the cache entity field names from options, applying defaults.
    */
-  private resolveFieldNames(options: ForgeSqlOrmOptions): ResolvedFieldNames {
+  private resolveFieldNames(options: ForgeSqlOrmOptionsExtra): ResolvedFieldNames {
     return {
       entityQueryName: options.cacheEntityQueryName ?? CACHE_CONSTANTS.DEFAULT_ENTITY_QUERY_NAME,
       expirationName: options.cacheEntityExpirationName ?? CACHE_CONSTANTS.DEFAULT_EXPIRATION_NAME,

@@ -6,6 +6,43 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
+## [2.2.0] - 2026-XX-XX
+
+🚀 What's New
+
+🧩 Pluggable Cache SPI (Level 2 Global Cache)
+
+The global cache is no longer hard-wired to Forge KVS. A small Service Provider Interface lets you choose, replace, or disable the cache backend without touching ORM code — the first step of the modular architecture work tracked in [#2321](https://github.com/forge-sql-orm/forge-sql-orm/issues/2321).
+
+- New `Cache` interface describing the cache contract (`getQueryResultsFromCache`, `setQueryResult`, `clearExpiredCache`, `clearTablesCache`).
+- New `KVSCache` — the Forge KVS-backed implementation (cursor pagination, batched deletes, retry with backoff), and `NopCache` — a no-op implementation that warns when caching is invoked.
+- New `cacheImplementation` option on `ForgeSqlOrmOptions`. Pass `new KVSCache()` for KVS caching or `new NopCache()` to disable it.
+- **Non-breaking:** the default `cacheImplementation` is `new KVSCache()`, so existing apps keep their current caching behaviour with no code changes.
+
+🧪 CLI Test Suite & Merged Coverage
+
+`forge-sql-orm-cli` now has its own test safety net, and coverage from the library and the CLI is reported together.
+
+- Added Vitest unit tests for the CLI (command wiring, model generation, migration create/update/drop, schema diffing) behind an 80% coverage gate.
+- Library and CLI `lcov` reports are merged into a single report for SonarCloud and Qlty.
+
+🧹 Quality & Static Analysis
+
+- Banned explicit `any` in the CLI (`@typescript-eslint/no-explicit-any`) and replaced `any` in catch blocks across the codebase.
+- Lowered cognitive complexity in the CLI model/migration generators and applied SonarCloud fixes (`node:` import prefixes, `Number.parseInt`, locale-aware sorting, and more).
+- Stricter Knip configuration, SPDX/REUSE license headers, and a license-compliance check that fails on GPL/LGPL/AGPL/copyleft dependencies.
+- Documented the console-based logging policy (NFR-11).
+
+🛠 CI / Release Automation
+
+- Split the monolithic pipeline into separate quality / CLI / examples jobs; example deploys are capped at `max-parallel: 5`.
+- Randomized Forge deploy/install retry backoff to ride out transient Atlassian failures.
+- Codacy `exclude_paths` tuning and a Codacy badge in the README.
+
+📦 Dependency Updates
+
+Updated npm dependencies to their latest versions to ensure improved compatibility, security, and overall performance.
+
 ## [2.1.29] - 2026-05-21
 
 🚀 What's New

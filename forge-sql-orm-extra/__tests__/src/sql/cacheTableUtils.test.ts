@@ -2,15 +2,16 @@
 // SPDX-License-Identifier: MIT
 
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { extractBacktickedValues } from "../../../src/utils/cacheTableUtils";
-import { ForgeSqlOrmOptions } from "../../../src/core/ForgeSQLQueryBuilder";
+import { Parser } from "node-sql-parser";
+import { extractBacktickedValues } from "../../../src/sql/cacheTableUtils";
+import type { ForgeSqlOrmOptionsExtra } from "../../../src/core/ForgeSQLExt";
 
 describe("cacheTableUtils", () => {
-  const defaultOptions: ForgeSqlOrmOptions = {
+  const defaultOptions: ForgeSqlOrmOptionsExtra = {
     logCache: false,
   };
 
-  const optionsWithLogging: ForgeSqlOrmOptions = {
+  const optionsWithLogging: ForgeSqlOrmOptionsExtra = {
     logCache: true,
   };
 
@@ -396,6 +397,359 @@ describe("cacheTableUtils", () => {
         expect(result).toContain("`products`");
         expect(result).toBe("`order_items`,`orders`,`products`");
       });
+    });
+  });
+
+  describe("set operations and _next chains", () => {
+    it("extracts tables from INTERSECT via _next", () => {
+      const result = extractBacktickedValues(
+        "SELECT * FROM alpha INTERSECT SELECT * FROM beta",
+        defaultOptions,
+      );
+      expect(result).toBe("`alpha`,`beta`");
+    });
+
+    it("extracts tables from EXCEPT via _next", () => {
+      const result = extractBacktickedValues(
+        "SELECT * FROM alpha EXCEPT SELECT * FROM beta",
+        defaultOptions,
+      );
+      expect(result).toBe("`alpha`,`beta`");
+    });
+
+    it("extracts tables from multiple statements", () => {
+      const result = extractBacktickedValues(
+        "SELECT * FROM first_table; SELECT * FROM second_table",
+        defaultOptions,
+      );
+      expect(result).toBe("`first_table`,`second_table`");
+    });
+  });
+
+  describe("injected AST edge cases", () => {
+    let astifySpy: ReturnType<typeof vi.spyOn>;
+
+    afterEach(() => {
+      astifySpy?.mockRestore();
+    });
+
+    it("extracts backticks_quote_string table references", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [
+          {
+            type: "table",
+            table: { type: "backticks_quote_string", value: "Users" },
+          },
+        ],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("`users`");
+    });
+
+    it("ignores dual and nested table objects", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [
+          { type: "dual" },
+          {
+            type: "table",
+            table: { type: "backticks_quote_string", value: "dual" },
+          },
+          {
+            type: "table",
+            name: { table: "nested_name_tbl" },
+          },
+        ],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("`nested_name_tbl`");
+    });
+
+    it("warns when table object shape is unrecognized", () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ type: "table", table: { unexpected: true } }],
+      } as never);
+
+      extractBacktickedValues("mock", defaultOptions);
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[cacheTableUtils] Unable to extract table name"),
+        expect.any(String),
+        expect.stringContaining("node.table"),
+      );
+      warnSpy.mockRestore();
+    });
+
+    it("warns on unexpected primitive table name types", () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ type: "table", table: 42 }],
+      } as never);
+
+      extractBacktickedValues("mock", defaultOptions);
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[cacheTableUtils] Unexpected table name type:"),
+        "number",
+        42,
+        expect.any(String),
+      );
+      warnSpy.mockRestore();
+    });
+
+    it("filters a_ prefixed names from processTableName", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ type: "table", table: "a_hidden" }],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("");
+    });
+
+    it("extracts table name from node.name when table property is absent", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ type: "table", name: "visible_tbl" }],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("`visible_tbl`");
+    });
+
+    it("processes CTE bodies from as.stmt", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        with: [
+          {
+            name: "stats",
+            as: {
+              stmt: {
+                type: "select",
+                from: [{ type: "table", table: "orders_src" }],
+              },
+            },
+          },
+        ],
+        from: [{ type: "table", table: "stats" }],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("`orders_src`,`stats`");
+    });
+
+    it("processes column subqueries, expr, ast, and object-shaped columns", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        columns: [
+          null,
+          {
+            type: "subquery",
+            from: [{ type: "table", table: "subq_tbl" }],
+          },
+          {
+            expr: {
+              type: "select",
+              from: [{ type: "table", table: "expr_tbl" }],
+            },
+          },
+          {
+            ast: {
+              type: "select",
+              from: [{ type: "table", table: "ast_tbl" }],
+            },
+          },
+          {
+            type: "select",
+            from: [{ type: "table", table: "col_obj_tbl" }],
+          },
+        ],
+        from: [{ type: "table", table: "main_tbl" }],
+      } as never);
+
+      const result = extractBacktickedValues("mock", defaultOptions);
+      expect(result).toContain("`main_tbl`");
+      expect(result).toContain("`subq_tbl`");
+      expect(result).toContain("`expr_tbl`");
+      expect(result).toContain("`ast_tbl`");
+      expect(result).toContain("`col_obj_tbl`");
+    });
+
+    it("processes union arrays and union ast branches", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ table: "base_tbl" }],
+        union: [
+          {
+            type: "select",
+            from: [{ table: "union_sel_tbl" }],
+          },
+          {
+            ast: {
+              type: "select",
+              from: [{ table: "union_ast_tbl" }],
+            },
+          },
+        ],
+      } as never);
+
+      const result = extractBacktickedValues("mock", defaultOptions);
+      expect(result).toContain("`base_tbl`");
+      expect(result).toContain("`union_sel_tbl`");
+      expect(result).toContain("`union_ast_tbl`");
+    });
+
+    it("extracts table name from object.name outside node.table context", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ table: { name: "obj_name_tbl" } }],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("`obj_name_tbl`");
+    });
+
+    it("skips falsy table values in normalizeTableName", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ table: "" }, { type: "table", table: { table: null } }, { table: "valid_tbl" }],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("`valid_tbl`");
+    });
+
+    it("ignores null union entries and uses select/ast union branches", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ table: "base_tbl" }],
+        union: [
+          null,
+          {
+            type: "wrapper",
+            select: {
+              type: "select",
+              from: [{ table: "union_select_tbl" }],
+            },
+          },
+          {
+            type: "wrapper",
+            ast: {
+              type: "select",
+              from: [{ table: "union_ast_tbl" }],
+            },
+          },
+        ],
+      } as never);
+
+      const result = extractBacktickedValues("mock", defaultOptions);
+      expect(result).toContain("`base_tbl`");
+      expect(result).toContain("`union_select_tbl`");
+      expect(result).toContain("`union_ast_tbl`");
+    });
+
+    it("processes union array entries with left and right children", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ table: "base_tbl" }],
+        union: [
+          {
+            type: "intersect",
+            left: {
+              type: "select",
+              from: [{ table: "left_tbl" }],
+            },
+            right: {
+              type: "select",
+              from: [{ table: "right_tbl" }],
+            },
+          },
+        ],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe(
+        "`base_tbl`,`left_tbl`,`right_tbl`",
+      );
+    });
+
+    it("processes union nodes via the fallback else branch", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ table: "base_tbl" }],
+        union: [
+          {
+            type: "custom_union",
+            from: [{ table: "else_union_tbl" }],
+          },
+        ],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("`base_tbl`,`else_union_tbl`");
+    });
+
+    it("processes intersect operations with left and right branches", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "intersect",
+        left: {
+          type: "select",
+          from: [{ table: "left_tbl" }],
+        },
+        right: {
+          type: "select",
+          from: [{ table: "right_tbl" }],
+        },
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe("`left_tbl`,`right_tbl`");
+    });
+
+    it("processes object union nodes and _next arrays", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        from: [{ table: "head_tbl" }],
+        union: {
+          type: "select",
+          select: {
+            type: "select",
+            from: [{ table: "union_select_tbl" }],
+          },
+        },
+        _next: [
+          {
+            type: "select",
+            from: [{ table: "next_arr_tbl" }],
+          },
+        ],
+      } as never);
+
+      const result = extractBacktickedValues("mock", defaultOptions);
+      expect(result).toContain("`head_tbl`");
+      expect(result).toContain("`union_select_tbl`");
+      expect(result).toContain("`next_arr_tbl`");
+    });
+
+    it("processes subquery nodes with ast and from branches", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "subquery",
+        ast: {
+          type: "select",
+          from: [{ type: "table", table: "inner_ast_tbl" }],
+        },
+        from: [{ type: "table", table: "inner_from_tbl" }],
+      } as never);
+
+      expect(extractBacktickedValues("mock", defaultOptions)).toBe(
+        "`inner_ast_tbl`,`inner_from_tbl`",
+      );
+    });
+
+    it("falls back to regex when parser returns no tables", () => {
+      astifySpy = vi.spyOn(Parser.prototype, "astify").mockReturnValue({
+        type: "select",
+        columns: [{ expr: { type: "number", value: 1 } }],
+      } as never);
+
+      const result = extractBacktickedValues("SELECT 1 `fallback_tbl`", defaultOptions);
+      expect(result).toBe("`fallback_tbl`");
     });
   });
 });

@@ -46,6 +46,7 @@ describe("MiscellaneousTiDB SQL fragments (toQuery)", () => {
     expect(uuidToBin("a").toQuery(mysqlQueryConfig).sql).toBe("UUID_TO_BIN(?)");
     expect(uuidToBin("a", 1).toQuery(mysqlQueryConfig).sql).toBe("UUID_TO_BIN(?, ?)");
     expect(binToUuid(cols.s).toQuery(mysqlQueryConfig).sql).toBe("BIN_TO_UUID(`misc_t`.`s`)");
+    expect(binToUuid(cols.s, 1).toQuery(mysqlQueryConfig).sql).toBe("BIN_TO_UUID(`misc_t`.`s`, ?)");
   });
 
   it("IP helper functions", () => {

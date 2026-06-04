@@ -3,18 +3,18 @@
 
 // qlty-ignore: +qlty:file-complexity
 import {
-  ForgeSqlOperation,
-  ForgeSqlOrmOptions,
+  ForgeSqlOperationExt,
+  ForgeSqlOrmOptionsExtra,
   RlsSettings,
   RovoIntegration,
   RovoIntegrationSetting,
   RovoIntegrationSettingCreator,
-} from "./ForgeSQLQueryBuilder";
+} from "../core";
 import { Result, sql } from "@forge/sql";
 import { Parser, Select } from "node-sql-parser";
 import { AnyMySqlTable, MySqlColumn } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
-import { getErrorMessage } from "../utils/errorUtils";
+import { getErrorMessage } from "forge-sql-orm";
 
 /**
  * Configuration for RovoIntegrationSettingImpl.
@@ -396,15 +396,15 @@ class RovoIntegrationSettingCreatorImpl implements RovoIntegrationSettingCreator
  * ```
  */
 export class Rovo implements RovoIntegration {
-  private readonly forgeOperations: ForgeSqlOperation;
-  private readonly options: ForgeSqlOrmOptions;
+  private readonly forgeOperations: ForgeSqlOperationExt;
+  private readonly options: ForgeSqlOrmOptionsExtra;
   /**
    * Creates a new Rovo instance.
    *
    * @param {ForgeSqlOperation} forgeSqlOperations - The ForgeSQL operations instance for query analysis and execution
    * @param {ForgeSqlOrmOptions} options - Configuration options for the ORM (e.g., logging settings)
    */
-  constructor(forgeSqlOperations: ForgeSqlOperation, options: ForgeSqlOrmOptions) {
+  constructor(forgeSqlOperations: ForgeSqlOperationExt, options: ForgeSqlOrmOptionsExtra) {
     this.forgeOperations = forgeSqlOperations;
     this.options = options;
   }

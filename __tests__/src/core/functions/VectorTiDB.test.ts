@@ -131,4 +131,11 @@ describe("VectorTiDB SQL fragments (toQuery)", () => {
     expect(text).toContain("VEC_DIMS");
     expect(text).toContain("CAST");
   });
+
+  it("vectorExpr validates finite numbers in number[] inputs", () => {
+    expect(() => vecDims([1, Number.NaN, 3])).toThrow("TiDB vector contains invalid number");
+    expect(() => vecL2Distance([1, 2], [3, Number.POSITIVE_INFINITY])).toThrow(
+      "TiDB vector contains invalid number",
+    );
+  });
 });

@@ -17,6 +17,23 @@ npm run lint || { echo '❌ lint check failed.'; exit 1; }
 echo '➡️ run tests check'
 npm run test || { echo '❌ tests check failed.'; exit 1; }
 
+echo '🔍 Running forge-sql-orm-extra resources checks...'
+(
+  cd forge-sql-orm-extra || exit 1
+
+  echo '➡️ lint-staged (forge-sql-orm-extra resources)'
+  npx lint-staged || { echo '❌ lint-staged failed for forge-sql-orm-cli resources'; exit 1; }
+
+  echo '➡️ dependencies check'
+  npm run knip || { echo '❌ Dependency check for forge-sql-orm-cli resources failed.'; exit 1; }
+
+  echo '➡️ run tests check'
+  npm run test || { echo '❌ tests check failed.'; exit 1; }
+
+  echo '➡️ build'
+  npm run build || { echo '❌ Build failed'; exit 1; }
+)
+
 echo '🔍 Running forge-sql-orm-cli resources checks...'
 (
   cd forge-sql-orm-cli || exit 1

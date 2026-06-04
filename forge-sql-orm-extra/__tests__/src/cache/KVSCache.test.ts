@@ -3,7 +3,6 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { DateTime } from "luxon";
-import { ForgeSqlOrmOptions } from "../../../../src/core/ForgeSQLQueryBuilder";
 
 // Hoisted mocks so the @forge/kvs mock factory can reference them safely.
 const { mockKvs, mockContains, mockLessThan, mockFilterOr } = vi.hoisted(() => ({
@@ -32,13 +31,16 @@ vi.mock("@forge/kvs", () => {
   };
 });
 
+// KVSCache pulls cache-context/log helpers from the forge-sql-orm barrel; partial-mock
+// it so only the cache-context check is stubbed and the rest stays real.
 const mockIsTableInContext = vi.hoisted(() => vi.fn());
-vi.mock("../../../../src/utils/cacheContextUtils", () => ({
-  isTableContainsTableInCacheContext: mockIsTableInContext,
-  cacheApplicationContext: { getStore: vi.fn() },
-}));
+vi.mock("forge-sql-orm", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("forge-sql-orm")>();
+  return { ...actual, isTableContainsTableInCacheContext: mockIsTableInContext };
+});
 
-import { KVSCache } from "../../../../src/lib/cache/KVSCache";
+import { KVSCache } from "../../../src/cache/KVSCache";
+import { ForgeSqlOrmOptionsExtra } from "../../../src/core";
 
 // Builds a query-builder mock whose terminal getMany resolves to the given pages.
 const queryBuilder = (
@@ -59,7 +61,7 @@ const queryBuilder = (
 describe("KVSCache", () => {
   let cache: KVSCache;
 
-  const defaultOptions: ForgeSqlOrmOptions = {
+  const defaultOptions: ForgeSqlOrmOptionsExtra = {
     cacheEntityName: "cache",
     cacheTTL: 120,
     logCache: true,

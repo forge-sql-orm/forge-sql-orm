@@ -3,8 +3,8 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { sql, Result } from "@forge/sql";
-import { Rovo } from "../../../src/core/Rovo";
-import { ForgeSqlOperation, ForgeSqlOrmOptions } from "../../../src/core/ForgeSQLQueryBuilder";
+import { Rovo } from "../../../src/rovo/Rovo";
+import { ForgeSqlOperation, ForgeSqlOrmOptions } from "forge-sql-orm";
 import { mysqlTable, varchar, int } from "drizzle-orm/mysql-core";
 
 // Mock test table

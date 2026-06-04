@@ -3,10 +3,18 @@
 
 import { MySqlSelectDynamic } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { AnyMySqlSelectQueryBuilder, AnyMySqlTable } from "drizzle-orm/mysql-core";
-import { CacheForgeSQL, ForgeSqlOperation, ForgeSqlOrmOptions } from "./ForgeSQLQueryBuilder";
+
 import { InferInsertModel, Query, SQL } from "drizzle-orm";
-import { clearCache, getFromCache, setCacheResult, clearTablesCache } from "../utils/cacheUtils";
+import {
+  clearCache,
+  getFromCache,
+  setCacheResult,
+  clearTablesCache,
+  VerioningModificationForgeSQL,
+} from "forge-sql-orm";
 import { getTableName } from "drizzle-orm/table";
+import { CacheForgeSQL } from "./CacheForgeSQL";
+import { ForgeSqlOperationExt, ForgeSqlOrmOptionsExtra } from "../core";
 
 /**
  * Implementation of cache operations for ForgeSQL ORM.
@@ -16,9 +24,9 @@ import { getTableName } from "drizzle-orm/table";
  * through `modifyWithVersioning()` internally. This ensures data consistency and prevents
  * concurrent modification conflicts.
  */
-export class ForgeSQLCacheOperations implements CacheForgeSQL {
-  private readonly options: ForgeSqlOrmOptions;
-  private readonly forgeOperations: ForgeSqlOperation;
+export class ForgeSQLCacheOperations implements CacheForgeSQL, VerioningModificationForgeSQL {
+  private readonly options: ForgeSqlOrmOptionsExtra;
+  private readonly forgeOperations: ForgeSqlOperationExt;
 
   /**
    * Creates a new instance of ForgeSQLCacheOperations.
@@ -26,7 +34,7 @@ export class ForgeSQLCacheOperations implements CacheForgeSQL {
    * @param options - Configuration options for the ORM
    * @param forgeOperations - The ForgeSQL operations instance
    */
-  constructor(options: ForgeSqlOrmOptions, forgeOperations: ForgeSqlOperation) {
+  constructor(options: ForgeSqlOrmOptionsExtra, forgeOperations: ForgeSqlOperationExt) {
     this.options = options;
     this.forgeOperations = forgeOperations;
   }

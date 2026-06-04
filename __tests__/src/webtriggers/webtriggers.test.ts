@@ -7,12 +7,10 @@ import {
   dropSchemaMigrations,
   applySchemaMigrations,
   dropTableSchemaMigrations,
-  clearCacheSchedulerTrigger,
   slowQuerySchedulerTrigger,
 } from "../../../src/webtriggers";
 import { getTables } from "../../../src/core/SystemTables";
 import { generateDropTableStatements, slowQueryPerHours } from "../../../src/utils/sqlUtils";
-import { clearExpiredCache } from "../../../src/utils/cacheUtils";
 import { sql } from "@forge/sql";
 import { MigrationRunner } from "@forge/sql/out/migration";
 import { getTableName } from "drizzle-orm/table";
@@ -526,141 +524,6 @@ describe("WebTriggers", () => {
 
       expect(result.statusCode).toBe(500);
       expect(result.body).toContain("migration is not a function");
-    });
-  });
-
-  describe("clearCacheSchedulerTrigger", () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
-    it("should clear expired cache successfully with default options", async () => {
-      const result = await clearCacheSchedulerTrigger();
-
-      expect(clearExpiredCache).toHaveBeenCalledWith({
-        logRawSqlQuery: false,
-        disableOptimisticLocking: false,
-        cacheTTL: 120,
-        cacheEntityName: "cache",
-        cacheEntityQueryName: "sql",
-        cacheEntityExpirationName: "expiration",
-        cacheEntityDataName: "data",
-      });
-
-      expect(result.statusCode).toBe(200);
-      expect(result.statusText).toBe("OK");
-      expect(result.headers).toEqual({ "Content-Type": ["application/json"] });
-
-      const body = JSON.parse(result.body);
-      expect(body.success).toBe(true);
-      expect(body.message).toBe("Cache cleanup completed successfully");
-      expect(body.timestamp).toBeDefined();
-    });
-
-    it("should clear expired cache successfully with custom options", async () => {
-      const customOptions = {
-        cacheEntityName: "custom_cache",
-        logRawSqlQuery: true,
-        cacheTTL: 300,
-      };
-
-      const result = await clearCacheSchedulerTrigger(customOptions);
-
-      expect(clearExpiredCache).toHaveBeenCalledWith(customOptions);
-
-      expect(result.statusCode).toBe(200);
-      expect(result.statusText).toBe("OK");
-      expect(result.headers).toEqual({ "Content-Type": ["application/json"] });
-
-      const body = JSON.parse(result.body);
-      expect(body.success).toBe(true);
-      expect(body.message).toBe("Cache cleanup completed successfully");
-      expect(body.timestamp).toBeDefined();
-    });
-
-    it("should handle missing cacheEntityName in options", async () => {
-      const invalidOptions = {
-        logRawSqlQuery: true,
-        cacheTTL: 300,
-        // cacheEntityName is missing
-      };
-
-      const result = await clearCacheSchedulerTrigger(invalidOptions);
-
-      expect(clearExpiredCache).not.toHaveBeenCalled();
-
-      expect(result.statusCode).toBe(500);
-      expect(result.statusText).toBe("Internal Server Error");
-      expect(result.headers).toEqual({ "Content-Type": ["application/json"] });
-
-      const body = JSON.parse(result.body);
-      expect(body.success).toBe(false);
-      expect(body.error).toBe("cacheEntityName is not configured");
-      expect(body.timestamp).toBeDefined();
-    });
-
-    it("should handle errors during cache cleanup", async () => {
-      const error = new Error("Cache cleanup failed");
-      (clearExpiredCache as any).mockRejectedValue(error);
-
-      const result = await clearCacheSchedulerTrigger();
-
-      expect(clearExpiredCache).toHaveBeenCalled();
-
-      expect(result.statusCode).toBe(500);
-      expect(result.statusText).toBe("Internal Server Error");
-      expect(result.headers).toEqual({ "Content-Type": ["application/json"] });
-
-      const body = JSON.parse(result.body);
-      expect(body.success).toBe(false);
-      expect(body.error).toBe("Cache cleanup failed");
-      expect(body.timestamp).toBeDefined();
-    });
-
-    it("should handle unknown errors during cache cleanup", async () => {
-      (clearExpiredCache as any).mockRejectedValue("Unknown error");
-
-      const result = await clearCacheSchedulerTrigger();
-
-      expect(clearExpiredCache).toHaveBeenCalled();
-
-      expect(result.statusCode).toBe(500);
-      expect(result.statusText).toBe("Internal Server Error");
-      expect(result.headers).toEqual({ "Content-Type": ["application/json"] });
-
-      const body = JSON.parse(result.body);
-      expect(body.success).toBe(false);
-      expect(body.error).toBe("Unknown error during cache cleanup");
-      expect(body.timestamp).toBeDefined();
-    });
-
-    it("should use default options when no options provided", async () => {
-      const result = await clearCacheSchedulerTrigger(undefined);
-
-      expect(clearExpiredCache).toHaveBeenCalledWith({
-        logRawSqlQuery: false,
-        disableOptimisticLocking: false,
-        cacheTTL: 120,
-        cacheEntityName: "cache",
-        cacheEntityQueryName: "sql",
-        cacheEntityExpirationName: "expiration",
-        cacheEntityDataName: "data",
-      });
-
-      expect(result.statusCode).toBe(200);
-    });
-
-    it("should use provided options directly", async () => {
-      const partialOptions = {
-        cacheEntityName: "test_cache",
-        logRawSqlQuery: true,
-      };
-
-      const result = await clearCacheSchedulerTrigger(partialOptions);
-
-      expect(clearExpiredCache).toHaveBeenCalledWith(partialOptions);
-
-      expect(result.statusCode).toBe(200);
     });
   });
 
