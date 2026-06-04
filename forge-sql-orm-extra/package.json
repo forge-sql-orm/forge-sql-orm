@@ -1,7 +1,7 @@
 {
   "name": "forge-sql-orm-extra",
   "version": "2.2.0",
-  "description": "Optional extensions for Forge SQL ORM: @forge/kvs cache, SQL-parser based cache invalidation, and Rovo integration. Keeps the core forge-sql-orm dependency footprint minimal.",
+  "description": "Extension package for forge-sql-orm. Use it when you need global @forge/kvs query caching (SQL-parser cache invalidation, cache contexts, cacheable reads/writes) or Rovo integration for secure dynamic analytics. Core forge-sql-orm covers Drizzle + @forge/sql only; install forge-sql-orm-extra for cache and optional service integrations.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "homepage": "https://github.com/forge-sql-orm/forge-sql-orm#readme",
@@ -22,7 +22,10 @@
     "cache",
     "kvs",
     "rovo",
-    "forge-sql-orm-extension"
+    "forge-sql-orm",
+    "forge-sql-orm-extension",
+    "forge-sql-orm-extra",
+    "extension"
   ],
   "author": "Vasyl Zakharchenko",
   "license": "MIT",

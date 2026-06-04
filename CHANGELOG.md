@@ -6,18 +6,110 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
-## [2.2.0] - 2026-XX-XX
+## [2.2.0] - IN PROGRESS
 
 🚀 What's New
 
-🧩 Pluggable Cache SPI (Level 2 Global Cache)
+📦 Modular packages ([#2321](https://github.com/forge-sql-orm/forge-sql-orm/issues/2321))
 
-The global cache is no longer hard-wired to Forge KVS. A small Service Provider Interface lets you choose, replace, or disable the cache backend without touching ORM code — the first step of the modular architecture work tracked in [#2321](https://github.com/forge-sql-orm/forge-sql-orm/issues/2321).
+Advanced capabilities are split out of the monolith so **ORM-only** apps get a smaller dependency footprint and fewer surprises from transitive packages during Forge bundling and lint (see also [#2128](https://github.com/forge-sql-orm/forge-sql-orm/issues/2128)). Keeping everything in one package with `optionalDependencies` was not sufficient: Forge often still resolves and analyzes those dependencies even when a feature is unused.
 
-- New `Cache` interface describing the cache contract (`getQueryResultsFromCache`, `setQueryResult`, `clearExpiredCache`, `clearTablesCache`).
-- New `KVSCache` — the Forge KVS-backed implementation (cursor pagination, batched deletes, retry with backoff), and `NopCache` — a no-op implementation that warns when caching is invoked.
-- New `cacheImplementation` option on `ForgeSqlOrmOptions`. Pass `new KVSCache()` for KVS caching or `new NopCache()` to disable it.
-- **Non-breaking:** the default `cacheImplementation` is `new KVSCache()`, so existing apps keep their current caching behaviour with no code changes.
+| Package                   | Responsibility                                                                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`forge-sql-orm`**       | Core ORM: Drizzle + `@forge/sql`, migrations, optimistic locking, query observability, **Level 1 local cache**, `Cache` SPI + default **`NopCache`** |
+| **`forge-sql-orm-extra`** | **Level 2** global cache (`@forge/kvs`, `KVSCache`, SQL-parser cache invalidation), Rovo, `clearCacheSchedulerTrigger`                               |
+| **`forge-sql-orm-cli`**   | Schema / migration CLI (unchanged role)                                                                                                              |
+
+The core package remains fully usable **without** installing `forge-sql-orm-extra`.
+
+🧩 Cache SPI (Level 2)
+
+- New **`Cache`** interface in core (`getQueryResultsFromCache`, `setQueryResult`, `clearExpiredCache`, `clearTablesCache`).
+- **`NopCache`** in core — default on `forge-sql-orm`; global cache methods do not persist to KVS.
+- **`KVSCache`** in **forge-sql-orm-extra** — default on `forge-sql-orm-extra`; Forge KVS backend (cursor pagination, batched deletes, retry with backoff).
+- `cacheImplementation` on `ForgeSqlOrmOptions` to plug in a custom backend or tests.
+
+**Level 1 (local / in-memory) cache** (`executeWithLocalContext`, `selectFrom`, `execute`, …) stays in **core** and works the same with either import.
+
+Manual global cache eviction is simplified:
+
+```typescript
+await forgeSQL.evictCache(["users", "orders"]);
+await forgeSQL.evictCacheEntities([Users, Orders]);
+```
+
+📖 Documentation split between [README.md](README.md) (core) and [forge-sql-orm-extra/README.md](forge-sql-orm-extra/README.md) (L2 cache + Rovo).
+
+---
+
+⚠️ Migration to 2.2.x
+
+### Why this release
+
+- **Smaller core** for users who only need SQL + Drizzle + migrations.
+- **Fewer transitive risks** (`node-sql-parser`, `@forge/kvs`, Rovo code paths) for apps that never enable those features.
+- **Clear boundaries** between core, extensions, and CLI — easier maintenance and future optional modules.
+
+### If you only use the ORM (no global KVS cache, no Rovo)
+
+**No migration required.**
+
+```bash
+npm install forge-sql-orm @forge/sql drizzle-orm -S
+```
+
+```typescript
+import ForgeSQL from "forge-sql-orm";
+const forgeSQL = new ForgeSQL();
+```
+
+Local cache, versioning, and Drizzle helpers behave as before. Core defaults to `NopCache()` for Level 2.
+
+### If you use global cache (Level 2) and/or Rovo
+
+1. Install the extension (keep core deps):
+
+   ```bash
+   npm install forge-sql-orm-extra @forge/kvs -S
+   ```
+
+2. Change the import — **logic, options, and queries stay the same**:
+
+   ```typescript
+   // Before (monolith ≤ 2.1.x)
+   import ForgeSQL from "forge-sql-orm";
+
+   // After (2.2.x)
+   import ForgeSQL from "forge-sql-orm-extra";
+   ```
+
+3. Keep existing cache configuration, for example:
+
+   ```typescript
+   const forgeSQL = new ForgeSQL({
+     cacheEntityName: "cache",
+     cacheTTL: 300,
+   });
+   ```
+
+4. Update moved imports, for example:
+
+   ```typescript
+   import { clearCacheSchedulerTrigger } from "forge-sql-orm-extra";
+   ```
+
+5. Replace manual eviction via `modifyWithVersioningAndEvictCache().evictCache*` with:
+
+   ```typescript
+   await forgeSQL.evictCache(["users", "orders"]);
+   await forgeSQL.evictCacheEntities([Users, Orders]);
+   ```
+
+`forge-sql-orm-extra` defaults to `new KVSCache()` — equivalent to the old monolith behaviour once you switch the import.
+
+Full details: [README — Breaking Changes (2.2.x)](README.md#4-breaking-changes-22x--core-vs-extra) and [forge-sql-orm-extra README](forge-sql-orm-extra/README.md).
+
+---
 
 🧪 CLI Test Suite & Merged Coverage
 

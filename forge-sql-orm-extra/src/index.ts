@@ -3,5 +3,6 @@
 
 export { default } from "./core/ForgeSQLORM";
 
+export * from "./cache";
 export * from "./webtriggers";
 export * from "./sql";
