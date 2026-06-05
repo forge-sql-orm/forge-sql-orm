@@ -129,13 +129,21 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
   }
 }
 
+function npmEnvWithoutUserConfig() {
+  const env = { ...process.env, NODE_AUTH_TOKEN: githubToken() };
+  delete env.NPM_CONFIG_USERCONFIG;
+  return env;
+}
+
 function installFromGpr(cwd, specs) {
   if (!specs.length) {
     return;
   }
+  writeNpmrc(cwd);
   execSync(`npm install ${specs.join(" ")} --ignore-scripts`, {
     cwd,
     stdio: "inherit",
+    env: npmEnvWithoutUserConfig(),
   });
 }
 
@@ -294,7 +302,6 @@ async function main() {
       break;
     }
     case "install-workspace": {
-      writeNpmrc();
       const [cwd, coreVersion, extraVersion, cliVersion] = args;
       if (!cwd || !coreVersion) {
         throw new Error("usage: install-workspace <dir> <coreVersion> [extraVersion] [cliVersion]");
@@ -309,7 +316,6 @@ async function main() {
       break;
     }
     case "install-example": {
-      writeNpmrc();
       const [exampleDir, coreVersion, extraVersion, cliVersion] = args;
       if (!exampleDir || !coreVersion) {
         throw new Error("usage: install-example <exampleDir> <coreVersion> [extraVersion] [cliVersion]");

@@ -44,7 +44,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          registry-url: https://npm.pkg.github.com
       - run: npm ci --ignore-scripts
       - name: REUSE / SPDX compliance
         uses: fsfe/reuse-action@bb774aa972c2a89ff34781233d275075cbddf542 # v5
@@ -64,6 +63,8 @@ jobs:
           node scripts/ci/github-packages.mjs publish-core
           echo "core_version=$(node scripts/ci/github-packages.mjs ci-version)" >> "$GITHUB_OUTPUT"
       - name: Extra package (knip / build / tests with coverage)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd forge-sql-orm-extra
           npm ci --ignore-scripts
@@ -82,6 +83,8 @@ jobs:
           node scripts/ci/github-packages.mjs publish-extra "${{ steps.publish_core.outputs.core_version }}"
           echo "extra_version=$(node scripts/ci/github-packages.mjs ci-version forge-sql-orm-extra)" >> "$GITHUB_OUTPUT"
       - name: CLI package (knip / lint / build / tests with coverage)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd forge-sql-orm-cli
           npm ci --ignore-scripts
@@ -149,7 +152,6 @@ jobs:
         with:
           node-version: 24.x
           cache: 'npm'
-          registry-url: https://npm.pkg.github.com
       - run: npm install -g @forge/cli && forge settings set usage-analytics true
 
       # push / dispatch-production -> "production"; everything else (PRs,
