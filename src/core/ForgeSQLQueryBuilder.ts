@@ -320,7 +320,6 @@ export interface QueryBuilderForgeSql {
    * @param options.summaryTableWindowTime - Time window in milliseconds for summary table queries (default: 15000ms). Only used when mode is 'SummaryTable'
    * @param options.topQueries - Number of top slowest queries to analyze when mode is 'TopSlowest' (default: 1)
    * @param options.showSlowestPlans - Whether to show execution plans for slowest queries in TopSlowest mode (default: true)
-   * @param options.normalizeQuery - Whether to normalize SQL queries by replacing parameter values with '?' placeholders (default: true). Set to false to disable normalization if it causes issues
    * @returns Promise with the query result
    *
    * @example
@@ -552,6 +551,28 @@ export interface QueryBuilderForgeSql {
       ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
     };
   };
+
+  /**
+   * Normalizes a SQL string for logging and slow-query analysis.
+   *
+   * Replaces literal values with `?` placeholders and canonicalizes formatting so
+   * queries with different parameters can be compared (for example when
+   * `executeWithMetadata` runs with `normalizeQuery: true`, the default).
+   *
+   * **Core (`forge-sql-orm`)** uses regex-based normalization (`normalizeSqlForLoggingRegex`).
+   * **Extra (`forge-sql-orm-extra`)** uses `node-sql-parser` for structure, then regex for literals.
+   *
+   * @param sql - Raw SQL query string
+   * @returns Normalized SQL with literals replaced by `?`
+   * @see MetadataQueryOptions.normalizeQuery
+   *
+   * @example
+   * ```typescript
+   * forgeSQL.normalizationSQL("SELECT * FROM users WHERE id = 42");
+   * // "SELECT * FROM users WHERE id = ?"
+   * ```
+   */
+  normalizationSQL(sql: string): string;
 }
 
 /**

@@ -863,9 +863,38 @@ const usersWithMetadata = await forgeSQL.executeWithMetadata(
     // Optional: Configure query plan printing
     mode: "TopSlowest", // Print top slowest queries (default)
     topQueries: 1, // Print top slowest query
+    normalizeQuery: true, // Use normalizationSQL() before printing SQL (default)
   },
 );
 ```
+
+### SQL normalization (`normalizationSQL`)
+
+`forge-sql-orm-extra` overrides `normalizationSQL()` with a **parser-based** strategy (`node-sql-parser` + regex):
+
+1. Parse and re-serialize SQL — consistent formatting and keyword casing
+2. Replace literals with `?` via the same regex pass as core
+3. Strip backticks added by the parser for cleaner log lines
+
+Used automatically when `executeWithMetadata(..., { normalizeQuery: true })` (default). On parse errors, `normalizeSqlForLogging` falls back to core regex normalization.
+
+```typescript
+import ForgeSQL from "forge-sql-orm-extra";
+
+const forgeSQL = new ForgeSQL();
+
+forgeSQL.normalizationSQL(
+  "SELECT `id`, `name` FROM `users` WHERE `id` = 42 AND `status` = 'active'",
+);
+// SELECT id, name FROM users WHERE id = ? AND status = ?
+```
+
+| Package               | `normalizationSQL` implementation            |
+| --------------------- | -------------------------------------------- |
+| `forge-sql-orm`       | Regex only (`normalizeSqlForLoggingRegex`)   |
+| `forge-sql-orm-extra` | `node-sql-parser` structure + regex literals |
+
+Set `normalizeQuery: false` in `executeWithMetadata` options if a specific query fails to parse or you need the exact SQL text in logs.
 
 ### Manual Cache Management
 

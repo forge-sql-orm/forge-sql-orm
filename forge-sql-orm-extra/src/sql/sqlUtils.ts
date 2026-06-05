@@ -1,6 +1,13 @@
 import { Parser } from "node-sql-parser";
 import { normalizeSqlForLoggingRegex } from "forge-sql-orm";
 
+/**
+ * Parser-based SQL normalization used by `forge-sql-orm-extra`.
+ * Canonicalizes structure with `node-sql-parser`, then replaces literals via regex.
+ *
+ * @param sql - Raw SQL query string
+ * @returns Normalized SQL with literals replaced by `?`
+ */
 export const normalizeFunction = (sql: string) => {
   const parser = new Parser();
   const ast = parser.astify(sql.trim());

@@ -21,9 +21,9 @@ export type MetadataQueryOptions = {
   summaryTableWindowTime?: number;
   topQueries?: number;
   showSlowestPlans?: boolean;
+  /** When true (default), slow-query logs call {@link ForgeSqlOperation.normalizationSQL} before printing. */
   normalizeQuery?: boolean;
   asyncQueueName?: string;
-  normalizationFunction?: (sql: string) => string;
 };
 
 export type MetadataQueryContext = {
@@ -49,7 +49,6 @@ function createDefaultOptions(): Required<MetadataQueryOptions> {
     summaryTableWindowTime: DEFAULT_WINDOW_SIZE,
     showSlowestPlans: true,
     normalizeQuery: true,
-    normalizationFunction: (sql) => normalizeSqlForLoggingRegex(sql),
     asyncQueueName: "",
   };
 }
@@ -68,7 +67,6 @@ function mergeOptionsWithDefaults(options?: MetadataQueryOptions): Required<Meta
     showSlowestPlans: options?.showSlowestPlans ?? defaults.showSlowestPlans,
     normalizeQuery: options?.normalizeQuery ?? defaults.normalizeQuery,
     asyncQueueName: options?.asyncQueueName ?? defaults.asyncQueueName,
-    normalizationFunction: options?.normalizationFunction ?? defaults.normalizationFunction,
   };
 }
 
@@ -114,24 +112,25 @@ export function normalizeSqlForLoggingRegex(sql: string): string {
 }
 
 /**
- * Normalizes SQL query by replacing parameter values with placeholders.
- * First attempts to use node-sql-parser for structure normalization, then applies regex for value replacement.
- * Falls back to regex-based normalization if parsing fails.
+ * Normalizes SQL for logging via {@link ForgeSqlOperation.normalizationSQL}.
+ * Falls back to {@link normalizeSqlForLoggingRegex} when normalization returns a falsy value or throws.
+ *
  * @param sql - SQL query string to normalize
- * @param options - Metadata Option
- * @returns Normalized SQL string with parameters replaced by '?'
+ * @param forgeSqlOperation - Forge SQL ORM instance that supplies the normalization strategy
+ * @returns Normalized SQL string with parameters replaced by `?`
  */
-export function normalizeSqlForLogging(sql: string, options: MetadataQueryOptions): string {
-  if (!options.normalizationFunction) {
-    // eslint-disable-next-line no-console
-    console.warn("normalizationFunction not provided, falling back to regex-based normalization");
-    return normalizeSqlForLoggingRegex(sql);
-  }
+export function normalizeSqlForLogging(sql: string, forgeSqlOperation: ForgeSqlOperation): string {
   try {
-    return options.normalizationFunction(sql);
-    //eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (e: unknown) {
-    // If parsing fails, fall back to regex-based normalization
+    const normalizedSql = forgeSqlOperation.normalizationSQL(sql);
+    if (!normalizedSql) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "normalizationSQL returned empty result, falling back to regex-based normalization",
+      );
+      return normalizeSqlForLoggingRegex(sql);
+    }
+    return normalizedSql;
+  } catch {
     return normalizeSqlForLoggingRegex(sql);
   }
 }
@@ -251,7 +250,7 @@ async function printTopQueriesPlans(
 
   for (const query of topQueries) {
     const normalizedQuery = options.normalizeQuery
-      ? normalizeSqlForLogging(query.query, options)
+      ? normalizeSqlForLogging(query.query, forgeSQLORM)
       : query.query;
     if (options.showSlowestPlans) {
       const explainAnalyzeRows = await forgeSQLORM

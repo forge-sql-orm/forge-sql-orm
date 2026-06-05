@@ -38,6 +38,7 @@ import {
   getLastestMetadata,
   metadataQueryContext,
   MetadataQueryOptions,
+  normalizeSqlForLoggingRegex,
 } from "../utils";
 import { SQLWrapper } from "drizzle-orm/sql/sql";
 import { WithSubquery } from "drizzle-orm/subquery";
@@ -120,7 +121,7 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
    * @param options.summaryTableWindowTime - Time window in milliseconds for summary table queries (default: 15000ms). Only used when mode is 'SummaryTable'
    * @param options.topQueries - Number of top slowest queries to analyze when mode is 'TopSlowest' (default: 1)
    * @param options.showSlowestPlans - Whether to show execution plans for slowest queries in TopSlowest mode (default: true)
-   * @param options.normalizeQuery - Whether to normalize SQL queries by replacing parameter values with '?' placeholders (default: true). Set to false to disable normalization if it causes issues
+   * @param options.normalizeQuery - When `true` (default), printed SQL is passed through {@link ForgeSqlOperation.normalizationSQL}. Set to `false` to log raw SQL if normalization causes issues
    * @returns Promise with the query result
    *
    * @example
@@ -630,6 +631,17 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
   with(...queries: WithSubquery[]) {
     return this.drizzle.with(...queries);
   }
+
+  /**
+   * Normalizes SQL for logging using regex-based literal replacement.
+   *
+   * @param sql - Raw SQL query string
+   * @returns Normalized SQL with literals replaced by `?`
+   * @see normalizeSqlForLoggingRegex
+   */
+  normalizationSQL(sql: string): string {
+    return normalizeSqlForLoggingRegex(sql);
+  }
 }
 
 /**
@@ -664,7 +676,7 @@ class ForgeSQLORM implements ForgeSqlOperation {
    * @param options.summaryTableWindowTime - Time window in milliseconds for summary table queries (default: 15000ms). Only used when mode is 'SummaryTable'
    * @param options.topQueries - Number of top slowest queries to analyze when mode is 'TopSlowest' (default: 1)
    * @param options.showSlowestPlans - Whether to show execution plans for slowest queries in TopSlowest mode (default: true)
-   * @param options.normalizeQuery - Whether to normalize SQL queries by replacing parameter values with '?' placeholders (default: true). Set to false to disable normalization if it causes issues
+   * @param options.normalizeQuery - When `true` (default), printed SQL is passed through {@link ForgeSqlOperation.normalizationSQL}. Set to `false` to log raw SQL if normalization causes issues
    * @returns Promise with the query result
    *
    * @example
@@ -1086,6 +1098,12 @@ class ForgeSQLORM implements ForgeSqlOperation {
    */
   with(...queries: WithSubquery[]) {
     return this.ormInstance.getDrizzleQueryBuilder().with(...queries);
+  }
+  /**
+   * @inheritdoc ForgeSqlOperation#normalizationSQL
+   */
+  normalizationSQL(sql: string): string {
+    return this.ormInstance.normalizationSQL(sql);
   }
 }
 

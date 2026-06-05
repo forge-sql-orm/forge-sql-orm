@@ -1723,7 +1723,7 @@ All options are **optional**. If not specified, default values are used. You can
 | `summaryTableWindowTime` | `number`                         | `15000`        | Time window in milliseconds for summary table queries. Only used when `mode` is `'SummaryTable'`                                                                                              |
 | `topQueries`             | `number`                         | `1`            | Number of top slowest queries to analyze when `mode` is `'TopSlowest'`                                                                                                                        |
 | `showSlowestPlans`       | `boolean`                        | `true`         | Whether to show execution plans for slowest queries in TopSlowest mode. If `false`, only SQL and execution time are printed                                                                   |
-| `normalizeQuery`         | `boolean`                        | `true`         | Whether to normalize SQL queries by replacing parameter values with `?` placeholders. Set to `false` to disable normalization if it causes issues with complex queries                        |
+| `normalizeQuery`         | `boolean`                        | `true`         | When `true`, slow-query output uses `normalizationSQL()` (regex-based in core). Set to `false` to log raw SQL if normalization causes issues with complex queries                             |
 | `asyncQueueName`         | `string`                         | `""`           | Queue name for async processing. If provided, query analysis will be queued for background processing instead of running synchronously. Requires consumer configuration in `manifest.yml`     |
 
 **Examples:**
@@ -1761,6 +1761,29 @@ await forgeSQL.executeWithMetadata(queryFn, onMetadataFn, {
    - Only works if queries are executed within the specified time window (`summaryTableWindowTime`)
    - If the time window expires, falls back to TopSlowest mode
    - Provides aggregated statistics from TiDB's system tables
+
+#### SQL normalization (`normalizationSQL`)
+
+When `normalizeQuery` is `true` (default), SQL printed by `printQueriesWithPlan()` is passed through `forgeSQL.normalizationSQL(sql)` so queries with different literal values collapse to the same shape (for example `WHERE id = 42` and `WHERE id = 7` both become `WHERE id = ?`).
+
+**Core (`forge-sql-orm`)** — regex-based normalization (`normalizeSqlForLoggingRegex`):
+
+- Lightweight, no extra dependencies
+- Replaces string, numeric, boolean, and `NULL` literals with `?`
+- Does not handle escaped quotes inside string literals (`''`); use `normalizeQuery: false` for those edge cases
+
+```typescript
+forgeSQL.normalizationSQL("SELECT * FROM users WHERE id = 42 AND name = 'Alice'");
+// SELECT * FROM users WHERE id = ? AND name = ?
+```
+
+You can call `normalizationSQL` directly for custom logging or metrics:
+
+```typescript
+const key = forgeSQL.normalizationSQL(rawSql);
+```
+
+**With `forge-sql-orm-extra`**, the same method uses `node-sql-parser` to canonicalize SQL structure first, then applies regex for literals — better for complex queries. See [forge-sql-orm-extra README](./forge-sql-orm-extra/README.md#sql-normalization-normalizationsql).
 
 #### Example: Real-World Resolver
 

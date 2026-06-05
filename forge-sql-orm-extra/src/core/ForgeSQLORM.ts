@@ -134,7 +134,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    * @param options.summaryTableWindowTime - Time window in milliseconds for summary table queries (default: 15000ms). Only used when mode is 'SummaryTable'
    * @param options.topQueries - Number of top slowest queries to analyze when mode is 'TopSlowest' (default: 1)
    * @param options.showSlowestPlans - Whether to show execution plans for slowest queries in TopSlowest mode (default: true)
-   * @param options.normalizeQuery - Whether to normalize SQL queries by replacing parameter values with '?' placeholders (default: true). Set to false to disable normalization if it causes issues
+   * @param options.normalizeQuery - When `true` (default), printed SQL is passed through {@link ForgeSqlOperation.normalizationSQL} (`node-sql-parser` + regex). Set to `false` to log raw SQL if normalization causes issues
    * @returns Promise with the query result
    *
    * @example
@@ -246,11 +246,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
     ) => Promise<void> | void,
     options?: MetadataQueryOptions,
   ): Promise<T> {
-    return this.forgeSQLORM.executeWithMetadata(
-      query,
-      onMetadata,
-      options ?? { normalizationFunction: normalizeFunction },
-    );
+    return this.forgeSQLORM.executeWithMetadata(query, onMetadata, options);
   }
 
   /**
@@ -837,6 +833,17 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
   }
 
   /**
+   * Normalizes SQL for logging using `node-sql-parser` for structure, then regex for literals.
+   *
+   * @param sql - Raw SQL query string
+   * @returns Normalized SQL with literals replaced by `?`
+   * @see normalizeFunction
+   */
+  normalizationSQL(sql: string): string {
+    return normalizeFunction(sql);
+  }
+
+  /**
    * Provides access to Rovo integration - a secure pattern for natural-language analytics.
    *
    * Rovo enables secure execution of dynamic SQL queries with comprehensive security validations:
@@ -908,7 +915,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    * @param options.summaryTableWindowTime - Time window in milliseconds for summary table queries (default: 15000ms). Only used when mode is 'SummaryTable'
    * @param options.topQueries - Number of top slowest queries to analyze when mode is 'TopSlowest' (default: 1)
    * @param options.showSlowestPlans - Whether to show execution plans for slowest queries in TopSlowest mode (default: true)
-   * @param options.normalizeQuery - Whether to normalize SQL queries by replacing parameter values with '?' placeholders (default: true). Set to false to disable normalization if it causes issues
+   * @param options.normalizeQuery - When `true` (default), printed SQL is passed through {@link ForgeSqlOperation.normalizationSQL} (`node-sql-parser` + regex). Set to `false` to log raw SQL if normalization causes issues
    * @returns Promise with the query result
    *
    * @example
@@ -1437,6 +1444,13 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   with(...queries: WithSubquery[]) {
     return this.ormInstance.getDrizzleQueryBuilder().with(...queries);
+  }
+
+  /**
+   * @inheritdoc ForgeSqlOperation#normalizationSQL
+   */
+  normalizationSQL(sql: string): string {
+    return this.ormInstance.normalizationSQL(sql);
   }
 
   /**
