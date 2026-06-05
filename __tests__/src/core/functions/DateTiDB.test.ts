@@ -89,6 +89,9 @@ describe("DateTiDB SQL fragments (toQuery)", () => {
     expect(now().toQuery(mysqlQueryConfig).sql).toBe("NOW()");
     expect(now(3).toQuery(mysqlQueryConfig).sql).toBe("NOW(?)");
     expect(unixTimestamp().toQuery(mysqlQueryConfig).sql).toBe("UNIX_TIMESTAMP()");
+    expect(unixTimestamp(cols.created).toQuery(mysqlQueryConfig).sql).toBe(
+      "UNIX_TIMESTAMP(`date_t`.`created`)",
+    );
   });
 
   it("DATE_ADD / ADDDATE / SUBDATE overloads", () => {
@@ -105,6 +108,10 @@ describe("DateTiDB SQL fragments (toQuery)", () => {
 
     const sd = subDate(cols.created, 1, "MONTH").toQuery(mysqlQueryConfig);
     expect(sd.sql).toBe("SUBDATE(`date_t`.`created`, INTERVAL ? MONTH)");
+
+    const sdDays = subDate(cols.created, 7).toQuery(mysqlQueryConfig);
+    expect(sdDays.sql).toBe("SUBDATE(`date_t`.`created`, ?)");
+    expect(sdDays.params).toEqual([7]);
   });
 
   it("TIMESTAMPADD / TIMESTAMPDIFF / EXTRACT", () => {

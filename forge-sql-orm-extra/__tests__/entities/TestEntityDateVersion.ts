@@ -1,0 +1,17 @@
+// SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
+// SPDX-License-Identifier: MIT
+
+import { forgeDateTimeString } from "forge-sql-orm";
+import { mysqlTable, int, varchar } from "drizzle-orm/mysql-core";
+
+export class TestEntityDateVersion {
+  id!: number;
+  name!: string;
+  version!: Date;
+}
+
+export const testEntityDateVersion = mysqlTable("test_entity_date_version", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  version: forgeDateTimeString("version").notNull(),
+});

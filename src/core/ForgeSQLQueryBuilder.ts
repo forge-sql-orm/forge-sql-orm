@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { Result, UpdateQueryResponse } from "@forge/sql";
+import { UpdateQueryResponse } from "@forge/sql";
 import { SqlParameters } from "@forge/sql/out/sql-statement";
 import {
   AnyMySqlSelectQueryBuilder,
@@ -9,7 +9,6 @@ import {
   customType,
   MySqlSelectBuilder,
   MySqlTable,
-  MySqlColumn,
 } from "drizzle-orm/mysql-core";
 import {
   MySqlSelectDynamic,
@@ -28,23 +27,8 @@ import {
   ExplainAnalyzeRow,
   SlowQueryNormalized,
 } from "./SystemTables";
-import { ForgeSQLCacheOperations } from "./ForgeSQLCacheOperations";
-import {
-  DeleteAndEvictCacheType,
-  ExecuteQuery,
-  ExecuteQueryCacheable,
-  InsertAndEvictCacheType,
-  SelectAliasedCacheableType,
-  SelectAliasedDistinctCacheableType,
-  SelectAliasedDistinctType,
-  SelectAliasedType,
-  SelectAllDistinctFromAliasedType,
-  SelectAllDistinctFromCacheableAliasedType,
-  SelectAllFromAliasedType,
-  SelectAllFromCacheableAliasedType,
-  UpdateAndEvictCacheType,
-  Cache,
-} from "..";
+
+import { ExecuteQuery, SelectAliasedDistinctType, SelectAliasedType, Cache } from "..";
 import {
   MySqlDeleteBase,
   MySqlInsertBuilder,
@@ -105,19 +89,6 @@ export interface ForgeSqlOperation extends QueryBuilderForgeSql {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
     executeQuery: ExecuteQuery;
-    selectAliasedCacheable: SelectAliasedCacheableType;
-    selectAliasedDistinctCacheable: SelectAliasedDistinctCacheableType;
-    executeQueryCacheable: ExecuteQueryCacheable;
-    insertWithCacheContext: InsertAndEvictCacheType;
-    insertAndEvictCache: InsertAndEvictCacheType;
-    updateAndEvictCache: UpdateAndEvictCacheType;
-    updateWithCacheContext: UpdateAndEvictCacheType;
-    deleteAndEvictCache: DeleteAndEvictCacheType;
-    deleteWithCacheContext: DeleteAndEvictCacheType;
-    selectFrom: SelectAllFromAliasedType;
-    selectDistinctFrom: SelectAllDistinctFromAliasedType;
-    selectFromCacheable: SelectAllFromCacheableAliasedType;
-    selectDistinctFromCacheable: SelectAllDistinctFromCacheableAliasedType;
   };
 
   /**
@@ -137,47 +108,6 @@ export interface ForgeSqlOperation extends QueryBuilderForgeSql {
    * @returns {SchemaAnalyzeForgeSql} Interface for analyzing query performance
    */
   analyze(): SchemaAnalyzeForgeSql;
-
-  /**
-   * Provides schema-level SQL operations with optimistic locking/versioning and automatic cache eviction.
-   *
-   * This method returns operations that use `modifyWithVersioning()` internally, providing:
-   * - Optimistic locking support
-   * - Automatic version field management
-   * - Cache eviction after successful operations
-   *
-   * @returns {ForgeSQLCacheOperations} Interface for executing versioned SQL operations with cache management
-   */
-  modifyWithVersioningAndEvictCache(): ForgeSQLCacheOperations;
-
-  /**
-   * Provides access to Rovo integration - a secure pattern for natural-language analytics.
-   *
-   * Rovo enables secure execution of dynamic SQL queries with comprehensive security validations:
-   * - Only SELECT queries are allowed
-   * - Queries are restricted to a single table
-   * - JOINs, subqueries, and window functions are blocked
-   * - Row-Level Security (RLS) support for data isolation
-   *
-   * @returns {RovoIntegration} Rovo integration instance for secure dynamic queries
-   *
-   * @example
-   * ```typescript
-   * const rovo = forgeSQL.rovo();
-   * const settings = await rovo.rovoSettingBuilder(usersTable, accountId)
-   *   .useRLS()
-   *   .addRlsColumn(usersTable.id)
-   *   .addRlsWherePart((alias) => `${alias}.id = '${accountId}'`)
-   *   .finish()
-   *   .build();
-   *
-   * const result = await rovo.dynamicIsolatedQuery(
-   *   "SELECT id, name FROM users WHERE status = 'active'",
-   *   settings
-   * );
-   * ```
-   */
-  rovo(): RovoIntegration;
 }
 
 /**
@@ -200,15 +130,6 @@ export interface QueryBuilderForgeSql {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
     executeQuery: ExecuteQuery;
-    selectAliasedCacheable: SelectAliasedCacheableType;
-    selectAliasedDistinctCacheable: SelectAliasedDistinctCacheableType;
-    executeQueryCacheable: ExecuteQueryCacheable;
-    insertWithCacheContext: InsertAndEvictCacheType;
-    insertAndEvictCache: InsertAndEvictCacheType;
-    updateAndEvictCache: UpdateAndEvictCacheType;
-    updateWithCacheContext: UpdateAndEvictCacheType;
-    deleteAndEvictCache: DeleteAndEvictCacheType;
-    deleteWithCacheContext: DeleteAndEvictCacheType;
   };
 
   /**
@@ -279,83 +200,6 @@ export interface QueryBuilderForgeSql {
   selectDistinctFrom<T extends MySqlTable>(table: T): SelectFromReturnType<T>;
 
   /**
-   * Creates a cacheable select query with unique field aliases to prevent field name collisions in joins.
-   * This is particularly useful when working with Atlassian Forge SQL, which collapses fields with the same name in joined tables.
-   *
-   * @template TSelection - The type of the selected fields
-   * @param {TSelection} fields - Object containing the fields to select, with table schemas as values
-   * @param {number} cacheTTL - cache ttl optional default is 60 sec.
-   * @returns {MySqlSelectBuilder<TSelection, MySql2PreparedQueryHKT>} A select query builder with unique field aliases
-   * @throws {Error} If fields parameter is empty
-   * @example
-   * ```typescript
-   * await forgeSQL
-   *   .selectCacheable({user: users, order: orders},60)
-   *   .from(orders)
-   *   .innerJoin(users, eq(orders.userId, users.id));
-   * ```
-   */
-  selectCacheable<TSelection extends SelectedFields>(
-    fields: TSelection,
-    cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
-
-  /**
-   * Creates a cacheable select query builder for all columns from a table with field aliasing and caching support.
-   * This is a convenience method that automatically selects all columns from the specified table with caching enabled.
-   *
-   * @template T - The type of the table
-   * @param table - The table to select from
-   * @param cacheTTL - Optional cache TTL override (defaults to global cache TTL)
-   * @returns Select query builder with all table columns, field aliasing, and caching support
-   * @example
-   * ```typescript
-   * const users = await forgeSQL.selectCacheableFrom(userTable, 300).where(eq(userTable.id, 1));
-   * ```
-   */
-  selectCacheableFrom<T extends MySqlTable>(table: T, cacheTTL?: number): SelectFromReturnType<T>;
-
-  /**
-   * Creates a cacheable distinct select query with unique field aliases to prevent field name collisions in joins.
-   * This is particularly useful when working with Atlassian Forge SQL, which collapses fields with the same name in joined tables.
-   *
-   * @template TSelection - The type of the selected fields
-   * @param {TSelection} fields - Object containing the fields to select, with table schemas as values
-   * @param {number} cacheTTL - cache ttl optional default is 60 sec.
-   * @returns {MySqlSelectBuilder<TSelection, MySql2PreparedQueryHKT>} A distinct select query builder with unique field aliases
-   * @throws {Error} If fields parameter is empty
-   * @example
-   * ```typescript
-   * await forgeSQL
-   *   .selectDistinctCacheable({user: users, order: orders}, 60)
-   *   .from(orders)
-   *   .innerJoin(users, eq(orders.userId, users.id));
-   * ```
-   */
-  selectDistinctCacheable<TSelection extends SelectedFields>(
-    fields: TSelection,
-    cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
-
-  /**
-   * Creates a cacheable select distinct query builder for all columns from a table with field aliasing and caching support.
-   * This is a convenience method that automatically selects all distinct columns from the specified table with caching enabled.
-   *
-   * @template T - The type of the table
-   * @param table - The table to select from
-   * @param cacheTTL - Optional cache TTL override (defaults to global cache TTL)
-   * @returns Select distinct query builder with all table columns, field aliasing, and caching support
-   * @example
-   * ```typescript
-   * const uniqueUsers = await forgeSQL.selectDistinctCacheableFrom(userTable, 300).where(eq(userTable.status, 'active'));
-   * ```
-   */
-  selectDistinctCacheableFrom<T extends MySqlTable>(
-    table: T,
-    cacheTTL?: number,
-  ): SelectFromReturnType<T>;
-
-  /**
    * Creates an insert query builder.
    *
    * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
@@ -365,19 +209,6 @@ export interface QueryBuilderForgeSql {
    * @returns Insert query builder (no versioning, no cache management)
    */
   insert<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
-
-  /**
-   * Creates an insert query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned inserts, use `modifyWithVersioning().insert()` or `modifyWithVersioningAndEvictCache().insert()` instead.
-   *
-   * @param table - The table to insert into
-   * @returns Insert query builder with automatic cache eviction (no versioning)
-   */
-  insertAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
   ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
 
@@ -395,19 +226,6 @@ export interface QueryBuilderForgeSql {
   ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
 
   /**
-   * Creates an update query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned updates, use `modifyWithVersioning().updateById()` or `modifyWithVersioningAndEvictCache().updateById()` instead.
-   *
-   * @param table - The table to update
-   * @returns Update query builder with automatic cache eviction (no versioning)
-   */
-  updateAndEvictCache<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
-
-  /**
    * Creates a delete query builder.
    *
    * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
@@ -419,38 +237,6 @@ export interface QueryBuilderForgeSql {
   delete<TTable extends MySqlTable>(
     table: TTable,
   ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
-  /**
-   * Creates a delete query builder that automatically evicts cache after execution.
-   *
-   * ⚠️ **IMPORTANT**: This method does NOT support optimistic locking/versioning.
-   * For versioned deletes, use `modifyWithVersioning().deleteById()` or `modifyWithVersioningAndEvictCache().deleteById()` instead.
-   *
-   * @param table - The table to delete from
-   * @returns Delete query builder with automatic cache eviction (no versioning)
-   */
-  deleteAndEvictCache<TTable extends MySqlTable>(
-    table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
-
-  /**
-   * Executes operations within a cache context that collects cache eviction events.
-   * All clearCache calls within the context are collected and executed in batch at the end.
-   * Queries executed within this context will bypass cache for tables that were marked for clearing.
-   *
-   * @param cacheContext - Function containing operations that may trigger cache evictions
-   * @returns Promise that resolves when all operations and cache clearing are complete
-   */
-  executeWithCacheContext(cacheContext: () => Promise<void>): Promise<void>;
-
-  /**
-   * Executes operations within a cache context and returns a value.
-   * All clearCache calls within the context are collected and executed in batch at the end.
-   * Queries executed within this context will bypass cache for tables that were marked for clearing.
-   *
-   * @param cacheContext - Function containing operations that may trigger cache evictions
-   * @returns Promise that resolves to the return value of the cacheContext function
-   */
-  executeWithCacheContextAndReturnValue<T>(cacheContext: () => Promise<T>): Promise<T>;
 
   /**
    * Executes operations within a local cache context that provides in-memory caching for select queries.
@@ -534,7 +320,6 @@ export interface QueryBuilderForgeSql {
    * @param options.summaryTableWindowTime - Time window in milliseconds for summary table queries (default: 15000ms). Only used when mode is 'SummaryTable'
    * @param options.topQueries - Number of top slowest queries to analyze when mode is 'TopSlowest' (default: 1)
    * @param options.showSlowestPlans - Whether to show execution plans for slowest queries in TopSlowest mode (default: true)
-   * @param options.normalizeQuery - Whether to normalize SQL queries by replacing parameter values with '?' placeholders (default: true). Set to false to disable normalization if it causes issues
    * @returns Promise with the query result
    *
    * @example
@@ -718,28 +503,6 @@ export interface QueryBuilderForgeSql {
   executeDDLActions<T>(actions: () => Promise<T>): Promise<T>;
 
   /**
-   * Executes a raw SQL query with both local and global cache support.
-   * This method provides comprehensive caching for raw SQL queries:
-   * - Local cache: Within the current invocation context
-   * - Global cache: Cross-invocation caching using @forge/kvs
-   *
-   * @param query - The SQL query to execute (SQLWrapper or string)
-   * @param cacheTtl - Optional cache TTL override (defaults to global cache TTL)
-   * @returns Promise with query results
-   * @example
-   * ```typescript
-   * // Using SQLWrapper with custom TTL
-   * const result = await forgeSQL.executeCacheable(sql`SELECT * FROM users WHERE id = ${userId}`, 300);
-   *
-   * // Using string with default TTL
-   * const result = await forgeSQL.executeCacheable("SELECT * FROM users WHERE status = 'active'");
-   * ```
-   */
-  executeCacheable<T>(
-    query: SQLWrapper | string,
-    cacheTtl?: number,
-  ): Promise<MySqlQueryResultKind<MySqlRemoteQueryResultHKT, T>>;
-  /**
    * Creates a Common Table Expression (CTE) builder for complex queries.
    * CTEs allow you to define temporary named result sets that exist within the scope of a single query.
    *
@@ -788,6 +551,28 @@ export interface QueryBuilderForgeSql {
       ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
     };
   };
+
+  /**
+   * Normalizes a SQL string for logging and slow-query analysis.
+   *
+   * Replaces literal values with `?` placeholders and canonicalizes formatting so
+   * queries with different parameters can be compared (for example when
+   * `executeWithMetadata` runs with `normalizeQuery: true`, the default).
+   *
+   * **Core (`forge-sql-orm`)** uses regex-based normalization (`normalizeSqlForLoggingRegex`).
+   * **Extra (`forge-sql-orm-extra`)** uses `node-sql-parser` for structure, then regex for literals.
+   *
+   * @param sql - Raw SQL query string
+   * @returns Normalized SQL with literals replaced by `?`
+   * @see MetadataQueryOptions.normalizeQuery
+   *
+   * @example
+   * ```typescript
+   * forgeSQL.normalizationSQL("SELECT * FROM users WHERE id = 42");
+   * // "SELECT * FROM users WHERE id = ?"
+   * ```
+   */
+  normalizationSQL(sql: string): string;
 }
 
 /**
@@ -859,11 +644,6 @@ export interface VerioningModificationForgeSQL {
     schema: T,
     where?: SQL<unknown>,
   ): Promise<number>;
-}
-
-export interface CacheForgeSQL extends VerioningModificationForgeSQL {
-  evictCache(tables: string[]): Promise<void>;
-  evictCacheEntities(tables: AnyMySqlTable[]): Promise<void>;
 }
 
 /**
@@ -979,232 +759,6 @@ export interface SchemaSqlForgeSql {
 }
 
 /**
- * Interface for Rovo integration settings.
- * Defines configuration for secure dynamic SQL query execution.
- *
- * @interface RovoIntegrationSetting
- */
-export interface RovoIntegrationSetting {
-  /**
-   * Gets the account ID of the active user.
-   *
-   * @returns {string} The account ID of the active user
-   */
-  getActiveUser(): string;
-
-  /**
-   * Gets the context parameters for query substitution.
-   *
-   * @returns {Record<string, string>} Map of parameter names to their values
-   */
-  getParameters(): Record<string, string>;
-
-  /**
-   * Gets the name of the table to query.
-   *
-   * @returns {string} The table name
-   */
-  getTableName(): string;
-
-  /**
-   * Checks if Row-Level Security is enabled.
-   *
-   * @returns {boolean} True if RLS is enabled, false otherwise
-   */
-  isUseRLS(): boolean;
-
-  /**
-   * Generates the WHERE clause for Row-Level Security filtering.
-   *
-   * @param {string} alias - The table alias to use in the WHERE clause
-   * @returns {string} SQL WHERE clause condition for RLS filtering
-   */
-  userScopeWhere(alias: string): string;
-
-  /**
-   * Gets the list of field names required for RLS validation.
-   *
-   * @returns {string[]} Array of field names that must be present in SELECT clause for RLS
-   */
-  userScopeFields(): string[];
-}
-
-/**
- * Interface for configuring Row-Level Security (RLS) settings.
- * Provides a fluent API for setting up RLS conditions, required columns, and WHERE clauses.
- *
- * @interface RlsSettings
- */
-export interface RlsSettings {
-  /**
-   * Sets a conditional function to determine if RLS should be applied.
-   *
-   * @param {() => Promise<boolean>} condition - Async function that returns true if RLS should be enabled
-   * @returns {RlsSettings} This builder instance for method chaining
-   */
-  addRlsCondition(condition: () => Promise<boolean>): RlsSettings;
-
-  /**
-   * Adds a column name that must be present in the SELECT clause for RLS validation.
-   *
-   * @param {string} columnName - The name of the column to require
-   * @returns {RlsSettings} This builder instance for method chaining
-   */
-  addRlsColumnName(columnName: string): RlsSettings;
-
-  /**
-   * Adds a Drizzle column that must be present in the SELECT clause for RLS validation.
-   *
-   * @param {MySqlColumn} column - The Drizzle column object
-   * @returns {RlsSettings} This builder instance for method chaining
-   */
-  addRlsColumn(columnName: MySqlColumn): RlsSettings;
-
-  /**
-   * Sets the WHERE clause function for RLS filtering.
-   *
-   * @param {(alias: string) => string} wherePart - Function that generates WHERE clause
-   * @returns {RlsSettings} This builder instance for method chaining
-   */
-  addRlsWherePart(wherePart: (alias: string) => string): RlsSettings;
-
-  /**
-   * Finishes RLS configuration and returns to the settings builder.
-   *
-   * @returns {RovoIntegrationSettingCreator} The parent settings builder
-   */
-  finish(): RovoIntegrationSettingCreator;
-}
-
-/**
- * Interface for building Rovo integration settings.
- * Provides a fluent API for configuring query settings including context parameters and RLS.
- *
- * @interface RovoIntegrationSettingCreator
- */
-export interface RovoIntegrationSettingCreator {
-  /**
-   * Adds a string context parameter for query substitution.
-   * The value will be wrapped in single quotes in the SQL query.
-   *
-   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{projectKey}}')
-   * @param {string} value - The string value to substitute for the parameter
-   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
-   *
-   * @example
-   * ```typescript
-   * builder.addStringContextParameter('{{projectKey}}', 'PROJ-123');
-   * // In SQL: {{projectKey}} will be replaced with 'PROJ-123'
-   * ```
-   */
-  addStringContextParameter(parameterName: string, value: string): RovoIntegrationSettingCreator;
-  /**
-   * Adds a number context parameter for query substitution.
-   * The value will be inserted as-is without quotes in the SQL query.
-   *
-   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{limit}}')
-   * @param {number} value - The numeric value to substitute for the parameter
-   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
-   *
-   * @example
-   * ```typescript
-   * builder.addNumberContextParameter('{{limit}}', 100);
-   * // In SQL: {{limit}} will be replaced with 100
-   * ```
-   */
-  addNumberContextParameter(parameterName: string, value: number): RovoIntegrationSettingCreator;
-  /**
-   * Adds a boolean context parameter for query substitution.
-   * The value will be converted to 1 (true) or 0 (false) and inserted as a number.
-   *
-   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{isActive}}')
-   * @param {boolean} value - The boolean value to substitute for the parameter
-   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
-   *
-   * @example
-   * ```typescript
-   * builder.addBooleanContextParameter('{{isActive}}', true);
-   * // In SQL: {{isActive}} will be replaced with 1
-   * ```
-   */
-  addBooleanContextParameter(parameterName: string, value: boolean): RovoIntegrationSettingCreator;
-  /**
-   * Adds a context parameter for query substitution.
-   * Context parameters are replaced in the SQL query before execution.
-   *
-   * @param {string} parameterName - The parameter name to replace in the query (e.g., '{{projectKey}}')
-   * @param {string} value - The value to substitute for the parameter
-   * @param {boolean} wrap - Whether to wrap the value in single quotes (true for strings, false for numbers)
-   * @returns {RovoIntegrationSettingCreator} This builder instance for method chaining
-   *
-   * @example
-   * ```typescript
-   * builder.addContextParameter('{{projectKey}}', 'PROJ-123', true);
-   * // In SQL: {{projectKey}} will be replaced with 'PROJ-123'
-   * ```
-   */
-  addContextParameter(
-    parameterName: string,
-    value: string,
-    wrap: boolean,
-  ): RovoIntegrationSettingCreator;
-
-  /**
-   * Enables Row-Level Security (RLS) for the query.
-   *
-   * @returns {RlsSettings} RLS settings builder for configuring security options
-   */
-  useRLS(): RlsSettings;
-
-  /**
-   * Builds and returns the RovoIntegrationSetting instance.
-   *
-   * @returns {Promise<RovoIntegrationSetting>} The configured RovoIntegrationSetting instance
-   */
-  build(): Promise<RovoIntegrationSetting>;
-}
-
-/**
- * Interface for Rovo integration - a secure pattern for natural-language analytics.
- *
- * Rovo provides secure execution of dynamic SQL queries with comprehensive security validations.
- *
- * @interface RovoIntegration
- */
-export interface RovoIntegration {
-  /**
-   * Creates a settings builder for Rovo queries using a raw table name.
-   *
-   * @param {string} tableName - The name of the table to query
-   * @param {string} accountId - The account ID of the active user
-   * @returns {RovoIntegrationSettingCreator} Builder for configuring Rovo query settings
-   */
-  rovoRawSettingBuilder(tableName: string, accountId: string): RovoIntegrationSettingCreator;
-
-  /**
-   * Creates a settings builder for Rovo queries using a Drizzle table object.
-   *
-   * @param {AnyMySqlTable} table - The Drizzle table object
-   * @param {string} accountId - The account ID of the active user
-   * @returns {RovoIntegrationSettingCreator} Builder for configuring Rovo query settings
-   */
-  rovoSettingBuilder(table: AnyMySqlTable, accountId: string): RovoIntegrationSettingCreator;
-
-  /**
-   * Executes a dynamic SQL query with comprehensive security validations.
-   *
-   * @param {string} dynamicSql - The SQL query to execute (must be a SELECT statement)
-   * @param {RovoIntegrationSetting} settings - Configuration settings for the query
-   * @returns {Promise<Result<unknown>>} Query execution result with metadata
-   * @throws {Error} If the query violates security restrictions
-   */
-  dynamicIsolatedQuery(
-    dynamicSql: string,
-    settings: RovoIntegrationSetting,
-  ): Promise<Result<unknown>>;
-}
-
-/**
  * Interface for version field metadata.
  * Defines the configuration for optimistic locking version fields.
  *
@@ -1252,16 +806,10 @@ export interface ForgeSqlOrmOptions {
   hints?: SqlHints;
   /** Default Cache TTL (Time To Live) in seconds */
   cacheTTL?: number;
-  /** Name of the KVS entity used for cache storage */
-  cacheEntityName?: string;
-  /** Name of the field in cache entity that stores SQL query */
-  cacheEntityQueryName?: string;
+
   /** Whether to wrap table names with backticks in cache keys */
   cacheWrapTable?: boolean;
-  /** Name of the field in cache entity that stores expiration timestamp */
-  cacheEntityExpirationName?: string;
-  /** Name of the field in cache entity that stores cached data */
-  cacheEntityDataName?: string;
+
   cacheImplementation?: Cache;
   /**
    * Additional metadata for table configuration.

@@ -5,7 +5,6 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { ForgeSQLMetadata } from "./forgeDriver";
 import { ForgeSqlOperation, ExplainAnalyzeRow } from "../core";
 import { printQueriesWithPlan, withTimeout } from "./sqlUtils";
-import { Parser } from "node-sql-parser";
 import { PushResult, Queue } from "@forge/events";
 import { AsyncEventPrintQuery } from "../async";
 import { getErrorMessage } from "./errorUtils";
@@ -22,6 +21,7 @@ export type MetadataQueryOptions = {
   summaryTableWindowTime?: number;
   topQueries?: number;
   showSlowestPlans?: boolean;
+  /** When true (default), slow-query logs call {@link ForgeSqlOperation.normalizationSQL} before printing. */
   normalizeQuery?: boolean;
   asyncQueueName?: string;
 };
@@ -82,61 +82,39 @@ function mergeOptionsWithDefaults(options?: MetadataQueryOptions): Required<Meta
  * @param sql - SQL query string to normalize
  * @returns Normalized SQL string with parameters replaced by '?'
  */
-function normalizeSqlForLoggingRegex(sql: string): string {
+export function normalizeSqlForLoggingRegex(sql: string): string {
   let normalized = sql;
 
-  // Replace string literals (single quotes) - using simple greedy match
-  // This avoids catastrophic backtracking by using a simple [^']* pattern
-  // Note: This does not handle SQL-style escaped quotes (doubled quotes: '')
-  // For proper handling, use the main normalizeSqlForLogging function with node-sql-parser
   normalized = normalized.replace(/'[^']*'/g, "?");
-
-  // Replace string literals (double quotes) - using simple greedy match
-  // Same safety considerations as above
   normalized = normalized.replace(/"[^"]*"/g, "?");
-
-  // Replace numeric literals - simplified pattern to avoid backtracking
-  // Match: optional minus, digits, optional decimal point and more digits
-  // Using word boundaries (\b) for safety - avoids complex lookahead/lookbehind
   normalized = normalized.replace(/\b-?\d+\.?\d*\b/g, "?");
-
-  // Replace boolean literals - safe pattern with word boundaries
-  // Simple alternation with word boundaries - no nested quantifiers
   normalized = normalized.replace(/\b(true|false)\b/gi, "?");
 
-  // Replace NULL values (but be careful not to replace in identifiers)
-  // Simple word boundary match - safe from backtracking
   normalized = normalized.replace(/\bNULL\b/gi, "?");
 
   return normalized;
 }
 
 /**
- * Normalizes SQL query by replacing parameter values with placeholders.
- * First attempts to use node-sql-parser for structure normalization, then applies regex for value replacement.
- * Falls back to regex-based normalization if parsing fails.
+ * Normalizes SQL for logging via {@link ForgeSqlOperation.normalizationSQL}.
+ * Falls back to {@link normalizeSqlForLoggingRegex} when normalization returns a falsy value or throws.
+ *
  * @param sql - SQL query string to normalize
- * @returns Normalized SQL string with parameters replaced by '?'
+ * @param forgeSqlOperation - Forge SQL ORM instance that supplies the normalization strategy
+ * @returns Normalized SQL string with parameters replaced by `?`
  */
-function normalizeSqlForLogging(sql: string): string {
+export function normalizeSqlForLogging(sql: string, forgeSqlOperation: ForgeSqlOperation): string {
   try {
-    const parser = new Parser();
-    const ast = parser.astify(sql.trim());
-
-    // Convert AST back to SQL (this normalizes structure and formatting)
-    const normalized = parser.sqlify(Array.isArray(ast) ? ast[0] : ast);
-
-    // Apply regex-based value replacement to the normalized SQL
-    // This handles the case where sqlify might preserve some literal values
-    let result = normalizeSqlForLoggingRegex(normalized.trim());
-
-    // Remove backticks added by sqlify for cleaner logging (optional - can be removed if backticks are preferred)
-    result = result.replace(/`/g, "");
-
-    return result;
-    //eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (e) {
-    // If parsing fails, fall back to regex-based normalization
+    const normalizedSql = forgeSqlOperation.normalizationSQL(sql);
+    if (!normalizedSql) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "normalizationSQL returned empty result, falling back to regex-based normalization",
+      );
+      return normalizeSqlForLoggingRegex(sql);
+    }
+    return normalizedSql;
+  } catch {
     return normalizeSqlForLoggingRegex(sql);
   }
 }
@@ -256,7 +234,7 @@ async function printTopQueriesPlans(
 
   for (const query of topQueries) {
     const normalizedQuery = options.normalizeQuery
-      ? normalizeSqlForLogging(query.query)
+      ? normalizeSqlForLogging(query.query, forgeSQLORM)
       : query.query;
     if (options.showSlowestPlans) {
       const explainAnalyzeRows = await forgeSQLORM

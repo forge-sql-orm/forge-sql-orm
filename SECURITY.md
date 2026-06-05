@@ -2,21 +2,28 @@
 
 ## Supported Versions
 
-We are committed to fixing security vulnerabilities in the latest stable release of the library.
+We are committed to fixing security vulnerabilities in the latest stable release of each published package from this repository.
 
 | Version | Supported          |
 | ------- | ------------------ |
 | 2.x.x   | :white_check_mark: |
 | < 2.0.0 | :x:                |
 
+**In scope:** npm packages published from this repository:
+
+- `forge-sql-orm` (core ORM)
+- `forge-sql-orm-extra` (extended ORM — global cache, Rovo)
+- `forge-sql-orm-cli` (schema/migration CLI)
+
 ## Reporting a Vulnerability
 
 **Please DO NOT report security vulnerabilities through public GitHub issues.**
 
-If you believe you have found a security vulnerability in `forge-sql-orm`, please report it by emailing us directly at:
+If you believe you have found a security vulnerability in any of the packages above, please report it by emailing us directly at:
 **vaszakharchenko@gmail.com**
 
 ### Our Security Pledge:
+
 1. **Response:** We will acknowledge your email within 48 hours.
 2. **Investigation:** We will investigate the issue and keep you updated on the progress.
 3. **Fix:** Once the vulnerability is confirmed, we will release a patch as quickly as possible.

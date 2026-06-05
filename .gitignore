@@ -1,3 +1,6 @@
+# CI-generated auth for GitHub Packages (scripts/ci/github-packages.mjs)
+.npmrc
+
 # Logs
 logs
 *.log

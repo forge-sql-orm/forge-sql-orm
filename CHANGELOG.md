@@ -6,6 +6,135 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
+## [2.2.0] - IN PROGRESS
+
+🚀 What's New
+
+📦 Modular packages ([#2321](https://github.com/forge-sql-orm/forge-sql-orm/issues/2321))
+
+Advanced capabilities are split out of the monolith so **ORM-only** apps get a smaller dependency footprint and fewer surprises from transitive packages during Forge bundling and lint (see also [#2128](https://github.com/forge-sql-orm/forge-sql-orm/issues/2128)). Keeping everything in one package with `optionalDependencies` was not sufficient: Forge often still resolves and analyzes those dependencies even when a feature is unused.
+
+| Package                   | Responsibility                                                                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`forge-sql-orm`**       | Core ORM: Drizzle + `@forge/sql`, migrations, optimistic locking, query observability, **Level 1 local cache**, `Cache` SPI + default **`NopCache`** |
+| **`forge-sql-orm-extra`** | **Level 2** global cache (`@forge/kvs`, `KVSCache`, SQL-parser cache invalidation), Rovo, `clearCacheSchedulerTrigger`                               |
+| **`forge-sql-orm-cli`**   | Schema / migration CLI (unchanged role)                                                                                                              |
+
+The core package remains fully usable **without** installing `forge-sql-orm-extra`.
+
+🧩 Cache SPI (Level 2)
+
+- New **`Cache`** interface in core (`getQueryResultsFromCache`, `setQueryResult`, `clearExpiredCache`, `clearTablesCache`).
+- **`NopCache`** in core — default on `forge-sql-orm`; global cache methods do not persist to KVS.
+- **`KVSCache`** in **forge-sql-orm-extra** — default on `forge-sql-orm-extra`; Forge KVS backend (cursor pagination, batched deletes, retry with backoff).
+- `cacheImplementation` on `ForgeSqlOrmOptions` to plug in a custom backend or tests.
+
+**Level 1 (local / in-memory) cache** (`executeWithLocalContext`, `selectFrom`, `execute`, …) stays in **core** and works the same with either import.
+
+Manual global cache eviction is simplified:
+
+```typescript
+await forgeSQL.evictCache(["users", "orders"]);
+await forgeSQL.evictCacheEntities([Users, Orders]);
+```
+
+📖 Documentation split between [README.md](README.md) (core) and [forge-sql-orm-extra/README.md](forge-sql-orm-extra/README.md) (L2 cache + Rovo).
+
+---
+
+⚠️ Migration to 2.2.x
+
+### Why this release
+
+- **Smaller core** for users who only need SQL + Drizzle + migrations.
+- **Fewer transitive risks** (`node-sql-parser`, `@forge/kvs`, Rovo code paths) for apps that never enable those features.
+- **Clear boundaries** between core, extensions, and CLI — easier maintenance and future optional modules.
+
+### If you only use the ORM (no global KVS cache, no Rovo)
+
+**No migration required.**
+
+```bash
+npm install forge-sql-orm @forge/sql drizzle-orm -S
+```
+
+```typescript
+import ForgeSQL from "forge-sql-orm";
+const forgeSQL = new ForgeSQL();
+```
+
+Local cache, versioning, and Drizzle helpers behave as before. Core defaults to `NopCache()` for Level 2.
+
+### If you use global cache (Level 2) and/or Rovo
+
+1. Install the extension (keep core deps):
+
+   ```bash
+   npm install forge-sql-orm-extra @forge/kvs -S
+   ```
+
+2. Change the import — **logic, options, and queries stay the same**:
+
+   ```typescript
+   // Before (monolith ≤ 2.1.x)
+   import ForgeSQL from "forge-sql-orm";
+
+   // After (2.2.x)
+   import ForgeSQL from "forge-sql-orm-extra";
+   ```
+
+3. Keep existing cache configuration, for example:
+
+   ```typescript
+   const forgeSQL = new ForgeSQL({
+     cacheEntityName: "cache",
+     cacheTTL: 300,
+   });
+   ```
+
+4. Update moved imports, for example:
+
+   ```typescript
+   import { clearCacheSchedulerTrigger } from "forge-sql-orm-extra";
+   ```
+
+5. Replace manual eviction via `modifyWithVersioningAndEvictCache().evictCache*` with:
+
+   ```typescript
+   await forgeSQL.evictCache(["users", "orders"]);
+   await forgeSQL.evictCacheEntities([Users, Orders]);
+   ```
+
+`forge-sql-orm-extra` defaults to `new KVSCache()` — equivalent to the old monolith behaviour once you switch the import.
+
+Full details: [README — Breaking Changes (2.2.x)](README.md#4-breaking-changes-22x--core-vs-extra) and [forge-sql-orm-extra README](forge-sql-orm-extra/README.md).
+
+---
+
+🧪 CLI Test Suite & Merged Coverage
+
+`forge-sql-orm-cli` now has its own test safety net, and coverage from the library and the CLI is reported together.
+
+- Added Vitest unit tests for the CLI (command wiring, model generation, migration create/update/drop, schema diffing) behind an 80% coverage gate.
+- Library and CLI `lcov` reports are merged into a single report for SonarCloud and Qlty.
+
+🧹 Quality & Static Analysis
+
+- Banned explicit `any` in the CLI (`@typescript-eslint/no-explicit-any`) and replaced `any` in catch blocks across the codebase.
+- Lowered cognitive complexity in the CLI model/migration generators and applied SonarCloud fixes (`node:` import prefixes, `Number.parseInt`, locale-aware sorting, and more).
+- Stricter Knip configuration, SPDX/REUSE license headers, and a license-compliance check that fails on GPL/LGPL/AGPL/copyleft dependencies.
+- Documented the console-based logging policy (NFR-11).
+
+🛠 CI / Release Automation
+
+- Split the monolithic pipeline into separate quality / CLI / examples jobs; example deploys are capped at `max-parallel: 5`.
+- Randomized Forge deploy/install retry backoff to ride out transient Atlassian failures.
+- Codacy `exclude_paths` tuning and a Codacy badge in the README.
+
+📦 Dependency Updates
+
+Updated npm dependencies to their latest versions to ensure improved compatibility, security, and overall performance.
+
 ## [2.1.29] - 2026-05-21
 
 🚀 What's New

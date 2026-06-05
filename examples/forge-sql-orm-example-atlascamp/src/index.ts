@@ -5,13 +5,13 @@ import Resolver from "@forge/resolver";
 import { AsyncEvent, Queue } from "@forge/events";
 import {
   applySchemaMigrations,
-  clearCacheSchedulerTrigger,
   dropSchemaMigrations,
   fetchSchemaWebTrigger,
   formatLimitOffset,
   printDegradationQueriesConsumer,
   slowQuerySchedulerTrigger,
 } from "forge-sql-orm";
+import { clearCacheSchedulerTrigger } from "forge-sql-orm-extra";
 import migration from "./migration";
 import { FORGE_SQL_ORM } from "./utils/forgeSqlOrmUtils";
 import { and, desc, eq, getTableColumns, inArray, sql } from "drizzle-orm";

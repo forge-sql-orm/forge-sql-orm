@@ -43,6 +43,9 @@ describe("AggregateTiDB SQL fragments (toQuery)", () => {
     expect(groupConcatDistinct(cols.s).toQuery(mysqlQueryConfig).sql).toBe(
       "GROUP_CONCAT(DISTINCT `agg_t`.`s`)",
     );
+    expect(groupConcatDistinct(cols.s, ",").toQuery(mysqlQueryConfig).sql).toBe(
+      "GROUP_CONCAT(DISTINCT `agg_t`.`s` SEPARATOR ?)",
+    );
   });
 
   it("variance/stddev family", () => {

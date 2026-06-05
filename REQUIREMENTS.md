@@ -5,6 +5,7 @@ This document defines **what** Forge SQL ORM must deliver and **which platform l
 | Artifact                                                               | Role                                                                        |
 | ---------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [README.md](README.md)                                                 | User-facing feature documentation and API usage (canonical feature catalog) |
+| [forge-sql-orm-extra/README.md](forge-sql-orm-extra/README.md)         | Extended ORM package — global cache, Rovo, and related APIs                 |
 | [CHANGELOG.md](CHANGELOG.md)                                           | Version history and breaking-change notes                                   |
 | [CONTRIBUTING.md](CONTRIBUTING.md)                                     | Contributor process and quality gates                                       |
 | [GitHub Issues](https://github.com/forge-sql-orm/forge-sql-orm/issues) | Bug reports, feature requests, and traceability                             |
@@ -21,7 +22,7 @@ Official Atlassian references:
 
 Forge SQL ORM follows a **documentation-first** development model:
 
-1. **Every shipped feature is documented** in [README.md](README.md) (or the CLI README) before or together with the release that exposes it.
+1. **Every shipped feature is documented** in [README.md](README.md), [forge-sql-orm-extra/README.md](forge-sql-orm-extra/README.md), or [forge-sql-orm-cli/README.md](forge-sql-orm-cli/README.md) before or together with the release that exposes it.
 2. **Removed or deprecated features** are removed or marked in the same documentation in the release that removes them.
 3. **Breaking changes** are called out in [CHANGELOG.md](CHANGELOG.md) and, when applicable, in the README migration sections.
 4. **Nothing intentionally undocumented** — if it is part of the public API or behavior consumers rely on, it must appear in docs or linked examples.
@@ -39,7 +40,8 @@ Provide a **type-safe ORM layer** for [Atlassian Forge](https://developer.atlass
 
 ### 2.2 In scope
 
-- npm package `forge-sql-orm` (library)
+- npm package `forge-sql-orm` (core library)
+- npm package `forge-sql-orm-extra` (extended library — global cache, Rovo, SQL-parser cache invalidation)
 - npm package `forge-sql-orm-cli` (schema/migration tooling)
 - Custom Drizzle driver for `@forge/sql`
 - Schema migration queueing and execution patterns aligned with Forge SQL
@@ -56,6 +58,24 @@ Provide a **type-safe ORM layer** for [Atlassian Forge](https://developer.atlass
 - Atlassian Government Cloud (AGC) — Forge SQL is [not supported on AGC](https://developer.atlassian.com/platform/forge/storage-reference/sql/) at the time of writing; this library targets standard Forge environments where `@forge/sql` is available
 - Guaranteed TiDB-specific features beyond what Forge SQL documents as supported; prefer **ANSI SQL** where possible
 
+### 2.4 Modular package architecture
+
+The repository is a **monorepo** with three independently published npm packages. Consumers choose packages at install time; runtime code lives in `forge-sql-orm` or `forge-sql-orm-extra`, not both as primary imports.
+
+| Package                   | Directory              | Role                                                                                                                                                                                                                                                                    |
+| ------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`forge-sql-orm`**       | `src/`                 | Core ORM over `@forge/sql` — Drizzle driver, migrations, Level 1 (in-memory) cache, optimistic locking, query analysis, Forge/TiDB types and SQL helpers. No `@forge/kvs` in production dependencies.                                                                   |
+| **`forge-sql-orm-extra`** | `forge-sql-orm-extra/` | Extended ORM — includes everything from core (via `forge-sql-orm` dependency) plus Level 2 global cache (`@forge/kvs`), Rovo integration, and `node-sql-parser`-based cache invalidation. Drop-in replacement: import `forge-sql-orm-extra` instead of `forge-sql-orm`. |
+| **`forge-sql-orm-cli`**   | `forge-sql-orm-cli/`   | CLI for generating entities and migrations from existing MySQL/TiDB schemas; not loaded in Forge app runtime.                                                                                                                                                           |
+
+**Feature placement rules:**
+
+- Capabilities that need only `@forge/sql` and Drizzle belong in **core**.
+- Capabilities that need `@forge/kvs`, Rovo, or heavy optional parsers belong in **extra** (see NFR-9 bundle discipline).
+- Tooling that runs outside Forge resolvers belongs in **CLI**.
+
+**Versioning:** Packages share aligned **major** versions when breaking changes affect consumers across packages. **Minor** and **patch** versions may diverge between packages within the same major line.
+
 ---
 
 ## 3. Functional requirements
@@ -64,12 +84,12 @@ Each requirement maps to documentation in [README.md](README.md) unless noted.
 
 ### 3.1 Core data access
 
-| ID   | Requirement                                                                                                                                                                                                     |
-| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| FR-1 | Integrate with `@forge/sql` through a custom Drizzle driver so apps can run type-safe queries in Forge resolvers and triggers.                                                                                  |
-| FR-2 | Support SELECT/INSERT/UPDATE/DELETE via Drizzle query builder and documented extension methods (`selectFrom`, `selectDistinctFrom`, cacheable variants, CTEs via `with()`, raw `execute` / `executeCacheable`). |
-| FR-3 | Prevent ambiguous column names in multi-table selects (field name collision handling).                                                                                                                          |
-| FR-4 | Support DDL via `executeDDL` / `executeDDLActions` consistent with Forge SQL migration patterns.                                                                                                                |
+| ID   | Requirement                                                                                                                                                                                                                        |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-1 | Integrate with `@forge/sql` through a custom Drizzle driver so apps can run type-safe queries in Forge resolvers and triggers.                                                                                                     |
+| FR-2 | Support SELECT/INSERT/UPDATE/DELETE via Drizzle query builder and documented extension methods (`selectFrom`, `selectDistinctFrom`, CTEs via `with()`, raw `execute` in core; cacheable variants and `executeCacheable` in extra). |
+| FR-3 | Prevent ambiguous column names in multi-table selects (field name collision handling).                                                                                                                                             |
+| FR-4 | Support DDL via `executeDDL` / `executeDDLActions` consistent with Forge SQL migration patterns.                                                                                                                                   |
 
 ### 3.2 Migrations and schema
 
@@ -82,11 +102,11 @@ Each requirement maps to documentation in [README.md](README.md) unless noted.
 
 ### 3.3 Caching
 
-| ID    | Requirement                                                                                                                                   |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| FR-9  | **Level 1:** In-memory cache scoped to a single resolver/trigger invocation.                                                                  |
-| FR-10 | **Level 2 (optional):** Cross-invocation cache via `@forge/kvs` with invalidation and context-aware operations, respecting KVS limits (§5.2). |
-| FR-11 | Expose cache-aware query helpers and manual cache management APIs documented in README.                                                       |
+| ID    | Package | Requirement                                                                                                                                     |
+| ----- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-9  | core    | **Level 1:** In-memory cache scoped to a single resolver/trigger invocation.                                                                    |
+| FR-10 | extra   | **Level 2 (optional):** Cross-invocation cache via `@forge/kvs` with invalidation and context-aware operations, respecting KVS limits (§5.2).   |
+| FR-11 | extra   | Expose cache-aware query helpers and manual cache management APIs documented in [forge-sql-orm-extra/README.md](forge-sql-orm-extra/README.md). |
 
 ### 3.4 Reliability and observability
 
@@ -99,13 +119,13 @@ Each requirement maps to documentation in [README.md](README.md) unless noted.
 
 ### 3.5 Advanced / domain-specific
 
-| ID    | Requirement                                                                                                                                              |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| FR-16 | Provide Forge-specific date/time column types matching Forge SQL string formats.                                                                         |
-| FR-17 | Provide binary/UUID custom types (`forgeBinary`, `uuidBinary`, BLOB variants, etc.).                                                                     |
-| FR-18 | Provide TiDB `VECTOR` type and vector distance helpers for embeddings/similarity search where Forge SQL allows.                                          |
-| FR-19 | Provide TiDB SQL function helper modules (aggregates, JSON, window, encrypt, etc.) as documented.                                                        |
-| FR-20 | Provide a **Rovo integration** pattern with security validations and optional RLS for dynamic SQL (documented; see external example linked from README). |
+| ID    | Package | Requirement                                                                                                                                                                                                                |
+| ----- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-16 | core    | Provide Forge-specific date/time column types matching Forge SQL string formats.                                                                                                                                           |
+| FR-17 | core    | Provide binary/UUID custom types (`forgeBinary`, `uuidBinary`, BLOB variants, etc.).                                                                                                                                       |
+| FR-18 | core    | Provide TiDB `VECTOR` type and vector distance helpers for embeddings/similarity search where Forge SQL allows.                                                                                                            |
+| FR-19 | core    | Provide TiDB SQL function helper modules (aggregates, JSON, window, encrypt, etc.) as documented.                                                                                                                          |
+| FR-20 | extra   | Provide a **Rovo integration** pattern with security validations and optional RLS for dynamic SQL (documented in [forge-sql-orm-extra/README.md](forge-sql-orm-extra/README.md); see external example linked from README). |
 
 ---
 
@@ -114,14 +134,14 @@ Each requirement maps to documentation in [README.md](README.md) unless noted.
 | ID     | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | NFR-1  | **Type safety:** Public APIs are typed in TypeScript; `tsc` build must pass in CI.                                                                                                                                                                                                                                                                                                                                                                                                             |
-| NFR-2  | **Test coverage:** Library `src/` maintains Vitest coverage ≥ 80% statements/lines/functions and ≥ 75% branches ([CONTRIBUTING.md](CONTRIBUTING.md)). Integration with Forge SQL is exercised via `@forge/sql` mocks (§8.1), not live cloud DB tests in CI.                                                                                                                                                                                                                                    |
+| NFR-2  | **Test coverage:** Each package’s `src/` maintains Vitest coverage ≥ 80% statements/lines/functions and ≥ 75% branches ([CONTRIBUTING.md](CONTRIBUTING.md)). Integration with Forge SQL is exercised via `@forge/sql` mocks (§8.1), not live cloud DB tests in CI.                                                                                                                                                                                                                             |
 | NFR-3  | **Static analysis:** CI runs ESLint, Knip, SonarCloud, and related checks on every PR to `master`.                                                                                                                                                                                                                                                                                                                                                                                             |
 | NFR-4  | **Code review:** Every pull request is reviewed by an automated pipeline (CodeRabbit, Codacy AI Reviewer, SonarCloud, Qlty, DeepScan, Snyk, REUSE). **All bot comments are mandatory** and must be resolved by a human maintainer before merge. See §8.2.                                                                                                                                                                                                                                      |
 | NFR-5  | **Releases:** Semantic versioning; release notes in [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases) and [CHANGELOG.md](CHANGELOG.md).                                                                                                                                                                                                                                                                                                                               |
 | NFR-6  | **License:** MIT ([LICENSE](LICENSE)).                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | NFR-7  | **Security:** Vulnerabilities reported per [SECURITY.md](SECURITY.md), not via public issues.                                                                                                                                                                                                                                                                                                                                                                                                  |
 | NFR-8  | **Peer dependencies:** `drizzle-orm` and `@forge/sql` versions documented in `package.json`; consumers must align with supported ranges.                                                                                                                                                                                                                                                                                                                                                       |
-| NFR-9  | **Bundle discipline:** Optional/heavy dependencies (e.g. `@forge/kvs`, `node-sql-parser`, `@forge/events`) remain optional where possible to keep core installs lean.                                                                                                                                                                                                                                                                                                                          |
+| NFR-9  | **Bundle discipline:** Optional/heavy dependencies (e.g. `@forge/kvs`, `node-sql-parser`, `@forge/events`) stay in **forge-sql-orm-extra** or optional paths so **forge-sql-orm** core installs remain lean (see §2.4).                                                                                                                                                                                                                                                                        |
 | NFR-10 | **Dependency license compliance:** the production dependency tree must remain free of strong/weak copyleft licenses (GPL/LGPL/AGPL/SSPL/EUPL/OSL). Enforced in CI via `npm run license:check` (`license-checker-rseidelsohn`, blocking). This complements REUSE/SPDX file-header compliance (NFR-4, §8.2), which is a separate concern.                                                                                                                                                        |
 | NFR-11 | **Logging strategy:** Diagnostic logging uses the platform-native `console` API (Atlassian Forge captures `console.*` output from resolvers/triggers). The library deliberately does **not** depend on any third-party logging framework, consistent with bundle discipline (NFR-9). ESLint enforces `no-console: "error"`; every intentional log is opted in per line with `// eslint-disable-next-line no-console`, so console usage stays deliberate and reviewable rather than accidental. |
 
@@ -205,12 +225,12 @@ Global caching **must** account for:
 
 ## 6. Compatibility and versioning
 
-| ID       | Requirement                                                                                                          |
-| -------- | -------------------------------------------------------------------------------------------------------------------- |
-| COMPAT-1 | **Semantic versioning** for `forge-sql-orm` and `forge-sql-orm-cli` (aligned major versions when released together). |
-| COMPAT-2 | Breaking API or behavior changes require a **major** bump and an entry in CHANGELOG under a clearly marked section.  |
-| COMPAT-3 | Database-facing changes must remain compatible with Forge SQL migration and multi-version install guidance (§5.1).   |
-| COMPAT-4 | Deprecations should be announced in CHANGELOG and README before removal in the next major release where feasible.    |
+| ID       | Requirement                                                                                                                                               |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| COMPAT-1 | **Semantic versioning** for `forge-sql-orm`, `forge-sql-orm-extra`, and `forge-sql-orm-cli` (aligned major versions when breaking changes span packages). |
+| COMPAT-2 | Breaking API or behavior changes require a **major** bump and an entry in CHANGELOG under a clearly marked section.                                       |
+| COMPAT-3 | Database-facing changes must remain compatible with Forge SQL migration and multi-version install guidance (§5.1).                                        |
+| COMPAT-4 | Deprecations should be announced in CHANGELOG and README before removal in the next major release where feasible.                                         |
 
 ---
 
@@ -232,8 +252,8 @@ Example of community-reported defect tracking: [Issue #2128](https://github.com/
 
 Requirements in §3–§4 are verified by:
 
-- Automated tests (`__tests__/`, Vitest) with coverage thresholds
-- CI workflow [`.github/workflows/node.js.yml`](.github/workflows/node.js.yml) (lint, build, test:coverage, dependency license compliance (`license:check`), SonarCloud, example builds, Forge deploy smoke paths)
+- Automated tests in the repository root (`__tests__/`, Vitest) and in workspace packages (`forge-sql-orm-extra/__tests__/`, `forge-sql-orm-cli/__tests__/`) with coverage thresholds per package
+- CI workflow [`.github/workflows/node.js.yml`](.github/workflows/node.js.yml) (lint, build, test:coverage for core, extra, and CLI; dependency license compliance (`license:check`); SonarCloud, example builds, Forge deploy smoke paths)
 - Manual review of README/CHANGELOG on each release
 - Example applications built and deployed in CI (smoke validation of packaging and Forge app lifecycle; not a substitute for automated SQL integration tests)
 
@@ -249,19 +269,21 @@ Instead of hitting a remote database, tests **mock `@forge/sql`** at the boundar
 
 Primary suites (large, query-aware mocks):
 
-| Test file                                                                                                    | What it exercises                                                              |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| [`__tests__/src/core/ForgeSQLCrudOperations.test.ts`](__tests__/src/core/ForgeSQLCrudOperations.test.ts)     | INSERT, UPDATE, DELETE, optimistic locking, versioned entities                 |
-| [`__tests__/src/core/ForgeSQLSelectOperations.test.ts`](__tests__/src/core/ForgeSQLSelectOperations.test.ts) | SELECT, JOINs, CTEs, cacheable selects, vector helpers, custom types, metadata |
+| Test file                                                                                                                                            | What it exercises                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [`__tests__/src/core/ForgeSQLCrudOperations.test.ts`](__tests__/src/core/ForgeSQLCrudOperations.test.ts)                                             | INSERT, UPDATE, DELETE, optimistic locking, versioned entities     |
+| [`__tests__/src/core/ForgeSQLSelectOperations.test.ts`](__tests__/src/core/ForgeSQLSelectOperations.test.ts)                                         | SELECT, JOINs, CTEs, vector helpers, custom types, metadata (core) |
+| [`forge-sql-orm-extra/__tests__/src/cache/ForgeSQLCacheOperations.test.ts`](forge-sql-orm-extra/__tests__/src/cache/ForgeSQLCacheOperations.test.ts) | Level 2 cache, cacheable selects, KVS integration (extra)          |
+| [`forge-sql-orm-extra/__tests__/src/rovo/Rovo.test.ts`](forge-sql-orm-extra/__tests__/src/rovo/Rovo.test.ts)                                         | Rovo dynamic SQL, RLS, security validations (extra)                |
 
 Additional tests use the same `@forge/sql` mock pattern where needed (e.g. [`ForgeSQLLocalCache.test.ts`](__tests__/src/core/ForgeSQLLocalCache.test.ts), [`forgeDriver.test.ts`](__tests__/src/utils/forgeDriver.test.ts), migration web triggers under `__tests__/src/webtriggers/`).
 
 This approach satisfies **integration-style coverage** of the ORM stack (Drizzle → custom driver → `@forge/sql` call shape) without a cloud database. **Manual** validation against real Forge SQL remains the responsibility of app authors and is supported via documented `examples/*` apps and CI Forge deploy steps.
 
-| ID     | Requirement                                                                                                                                                            |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TEST-1 | Core SQL generation and CRUD/SELECT behavior must be covered by Vitest suites that mock `@forge/sql`, not by requiring a live Forge SQL instance in CI.                |
-| TEST-2 | New query shapes or Forge SQL interactions should extend the mock-based suites above (or add analogous tests) with assertions on generated SQL and `bindParams` usage. |
+| ID     | Requirement                                                                                                                                                                                    |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TEST-1 | Core SQL generation and CRUD/SELECT behavior must be covered by Vitest suites that mock `@forge/sql`, not by requiring a live Forge SQL instance in CI.                                        |
+| TEST-2 | New query shapes or Forge SQL interactions should extend the mock-based suites above (or add analogous tests in the relevant package) with assertions on generated SQL and `bindParams` usage. |
 
 ### 8.2 Code review and comment resolution
 
@@ -297,12 +319,12 @@ This pipeline, combined with mandatory human-driven comment resolution, satisfie
 
 ## 9. Document maintenance
 
-| Event                              | Action                                                                   |
-| ---------------------------------- | ------------------------------------------------------------------------ |
-| New public feature                 | Update README (+ example if non-trivial); add CHANGELOG entry on release |
-| Breaking change                    | CHANGELOG + README migration notes; bump major if needed                 |
-| Platform limit change by Atlassian | Update §5 and README warnings                                            |
-| New quality gate                   | Update CONTRIBUTING and §4                                               |
-| Dependency-license policy change   | Update NFR-10 and the `license:check` blocklist in `package.json`        |
+| Event                              | Action                                                                                                                |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| New public feature                 | Update README and/or package README (core, extra, or CLI); add example if non-trivial; add CHANGELOG entry on release |
+| Breaking change                    | CHANGELOG + README migration notes; bump major if needed                                                              |
+| Platform limit change by Atlassian | Update §5 and README warnings                                                                                         |
+| New quality gate                   | Update CONTRIBUTING and §4                                                                                            |
+| Dependency-license policy change   | Update NFR-10 and the `license:check` blocklist in `package.json`                                                     |
 
-**Last updated:** 2026-06-01 (added NFR-11 logging strategy)
+**Last updated:** 2026-06-04 (modular package architecture §2.4; forge-sql-orm-extra in scope and verification)

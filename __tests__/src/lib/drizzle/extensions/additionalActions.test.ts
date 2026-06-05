@@ -133,10 +133,13 @@ describe("additionalActions", () => {
     mockGetQueryLocalCacheQuery.mockClear();
     mockSaveQueryLocalCacheQuery.mockClear();
     mockSaveQueryLocalCacheQuery.mockResolvedValue(undefined);
-    // Provide the KVS-backed cache implementation (imported dynamically so the
-    // @forge/kvs mock factory runs after its mock objects are initialized).
-    const { KVSCache } = await import("../../../../../src/lib/cache/KVSCache");
-    defaultOptions.cacheImplementation = new KVSCache();
+    // Provide a fake cache SPI: reads miss (so queries execute), writes/evicts are no-ops.
+    defaultOptions.cacheImplementation = {
+      getQueryResultsFromCache: vi.fn().mockResolvedValue(undefined),
+      setQueryResult: vi.fn().mockResolvedValue(undefined),
+      clearTablesCache: vi.fn().mockResolvedValue(undefined),
+      clearExpiredCache: vi.fn().mockResolvedValue(undefined),
+    };
     const baseDb = drizzle(forgeDriver);
     db = patchDbWithSelectAliased(baseDb, defaultOptions);
   });

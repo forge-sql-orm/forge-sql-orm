@@ -11,9 +11,11 @@ import {
   compress,
   md5,
   randomBytes,
+  sha,
   sha1,
   sha2,
   sm3,
+  sqlPassword,
   uncompress,
   uncompressedLength,
   validatePasswordStrength,
@@ -43,10 +45,14 @@ describe("EncryptTiDB SQL fragments (toQuery)", () => {
 
     const dec = aesDecrypt(cols.blob, "k").toQuery(mysqlQueryConfig);
     expect(dec.sql).toBe("AES_DECRYPT(`enc_t`.`blob_col`, ?)");
+
+    const decIv = aesDecrypt(cols.blob, "k", 0).toQuery(mysqlQueryConfig);
+    expect(decIv.sql).toBe("AES_DECRYPT(`enc_t`.`blob_col`, ?, ?)");
   });
 
   it("hash and digest functions", () => {
     expect(md5("abc").toQuery(mysqlQueryConfig).sql).toBe("MD5(?)");
+    expect(sha("abc").toQuery(mysqlQueryConfig).sql).toBe("SHA(?)");
     expect(sha1("abc").toQuery(mysqlQueryConfig).sql).toBe("SHA1(?)");
     expect(sha2("abc", 256).toQuery(mysqlQueryConfig).sql).toBe("SHA2(?, ?)");
     expect(sm3("abc").toQuery(mysqlQueryConfig).sql).toBe("SM3(?)");
@@ -67,5 +73,9 @@ describe("EncryptTiDB SQL fragments (toQuery)", () => {
     expect(validatePasswordStrength("x").toQuery(mysqlQueryConfig).sql).toBe(
       "VALIDATE_PASSWORD_STRENGTH(?)",
     );
+  });
+
+  it("PASSWORD (deprecated alias)", () => {
+    expect(sqlPassword("secret").toQuery(mysqlQueryConfig).sql).toBe("PASSWORD(?)");
   });
 });

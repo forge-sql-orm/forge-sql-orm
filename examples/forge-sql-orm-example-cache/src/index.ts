@@ -145,10 +145,7 @@ resolver.define(
 );
 
 resolver.define("clearCache", async (): Promise<void> => {
-  await FORGE_SQL_ORM.modifyWithVersioningAndEvictCache().evictCacheEntities([
-    demoUsers,
-    demoOrders,
-  ]);
+  await FORGE_SQL_ORM.evictCacheEntities([demoUsers, demoOrders]);
 });
 
 resolver.define("runPerformanceAnalyze", async () => {

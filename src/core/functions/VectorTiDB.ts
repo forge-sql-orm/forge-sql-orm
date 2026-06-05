@@ -5,10 +5,6 @@ import { sql, type SQL, type AnyColumn } from "drizzle-orm";
 export { vectorTiDBType } from "../customTypes";
 
 function validateVectorValue(value: number[]): void {
-  if (!Array.isArray(value)) {
-    throw new Error("TiDB vector value must be an array of numbers");
-  }
-
   for (const item of value) {
     if (typeof item !== "number" || !Number.isFinite(item)) {
       throw new Error("TiDB vector contains invalid number");

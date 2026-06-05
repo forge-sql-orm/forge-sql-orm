@@ -7,6 +7,7 @@ import {
   getLastestMetadata,
   metadataQueryContext,
   MetadataQueryContext,
+  normalizeSqlForLoggingRegex,
 } from "../../../src/utils/metadataContextUtils";
 import { ForgeSQLMetadata } from "../../../src/utils/forgeDriver";
 import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";
@@ -60,6 +61,7 @@ describe("metadataContextUtils", () => {
     };
     mockForgeSQLORM = {
       analyze: vi.fn().mockReturnValue(mockAnalyze),
+      normalizationSQL: vi.fn((sql: string) => normalizeSqlForLoggingRegex(sql)),
     } as unknown as ForgeSqlOperation;
 
     // Create mock context
@@ -674,9 +676,10 @@ describe("metadataContextUtils", () => {
         showSlowestPlans: false,
       };
       mockAnalyze.explainAnalyzeRaw.mockResolvedValue([]);
+      vi.mocked(mockForgeSQLORM.normalizationSQL).mockImplementationOnce(() => {
+        throw new Error("parse error");
+      });
 
-      // Use invalid SQL that will cause parser to fail
-      // This will trigger fallback to regex normalization
       await saveMetaDataToContext(
         "SELECT * FROM users WHERE name = 'John' AND invalid syntax",
         [],
@@ -686,7 +689,6 @@ describe("metadataContextUtils", () => {
       await mockContext.printQueriesWithPlan();
 
       const warnCall = consoleWarnSpy.mock.calls[0][0] as string;
-      // Should still normalize using regex fallback
       expect(warnCall).toContain("SELECT * FROM users WHERE name = ?");
       expect(warnCall).not.toContain("John");
     });

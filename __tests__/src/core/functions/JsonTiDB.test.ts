@@ -163,6 +163,7 @@ describe("JsonTiDB SQL fragments (toQuery)", () => {
       "JSON_MERGE_PRESERVE(?, ?)",
     );
     expect(() => jsonMergePatch('{"a":1}')).toThrow(/at least two JSON documents/);
+    expect(() => jsonMergePreserve('{"a":1}')).toThrow(/at least two JSON documents/);
 
     expect(jsonRemove(cols.j, "$.b", "$.c").toQuery(mysqlQueryConfig).sql).toBe(
       "JSON_REMOVE(`json_t`.`j`, ?, ?)",

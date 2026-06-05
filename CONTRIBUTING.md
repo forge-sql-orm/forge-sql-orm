@@ -6,6 +6,18 @@ The following is a set of guidelines for contributing to Forge SQL ORM.
 
 For product scope, platform limits, and documentation obligations, see [REQUIREMENTS.md](REQUIREMENTS.md).
 
+## Repository layout
+
+This monorepo publishes three npm packages:
+
+| Package                | Directory              | When you change it                                                                            |
+| ---------------------- | ---------------------- | --------------------------------------------------------------------------------------------- |
+| `forge-sql-orm` (core) | `src/`, `__tests__/`   | Run checks from the repository root (see [Pre-commit Requirements](#pre-commit-requirements)) |
+| `forge-sql-orm-extra`  | `forge-sql-orm-extra/` | Also run `npm ci`, `npm run build`, and `npm run test:coverage` inside `forge-sql-orm-extra/` |
+| `forge-sql-orm-cli`    | `forge-sql-orm-cli/`   | Also run `npm ci`, `npm run build`, and `npm run test:coverage` inside `forge-sql-orm-cli/`   |
+
+CI runs the full quality gate for all three packages on every pull request to `master`. See [REQUIREMENTS.md §2.4](REQUIREMENTS.md#24-modular-package-architecture) for how features are split between core and extra.
+
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
@@ -16,7 +28,7 @@ This project uses **Husky** to enforce high code quality standards via git hooks
 
 ```bash
 # Clone the repository
-git clone [https://github.com/forge-sql-orm/forge-sql-orm.git](https://github.com/forge-sql-orm/forge-sql-orm.git)
+git clone https://github.com/forge-sql-orm/forge-sql-orm.git
 
 # Install dependencies (this automatically sets up Husky)
 npm install
@@ -45,12 +57,30 @@ npm run lint
 npm run test
 ```
 
+If you changed **`forge-sql-orm-extra`** or **`forge-sql-orm-cli`**, run the same checks in that package directory before opening a PR:
+
+```bash
+# forge-sql-orm-extra
+cd forge-sql-orm-extra
+npm ci
+npm run knip
+npm run build
+npm run test:coverage
+
+# forge-sql-orm-cli
+cd forge-sql-orm-cli
+npm ci
+npm run knip
+npm run build
+npm run test:coverage
+```
+
 ## Code Coverage Requirements
 
-This project enforces strict code coverage thresholds via Vitest. If your PR lowers the coverage below these limits, the build will fail:
+This project enforces strict code coverage thresholds via Vitest **in each package** (root, `forge-sql-orm-extra/`, `forge-sql-orm-cli/`). If your PR lowers the coverage below these limits, the build will fail:
 
 - **Statements: > 80%**
-- **Branches: > 75%**
+- **Branches: > 80%**
 - **Functions: > 80%**
 - **Lines: > 80%**
 

@@ -2,6 +2,7 @@ node_modules/
 dist/
 coverage/
 examples/
+scripts/
 forge-sql-orm-cli/
 img
 schemas
