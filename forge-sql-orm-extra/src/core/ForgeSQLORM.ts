@@ -883,7 +883,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
 class ForgeSQLORMExt implements ForgeSqlOperationExt {
   private readonly ormInstance: ForgeSqlOperationExt;
 
-  constructor(options?: ForgeSqlOrmOptions) {
+  constructor(options?: ForgeSqlOrmOptionsExtra) {
     this.ormInstance = ForgeSQLORMCacheImpl.getInstance(options);
   }
 
