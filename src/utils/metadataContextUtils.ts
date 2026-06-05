@@ -23,7 +23,7 @@ export type MetadataQueryOptions = {
   showSlowestPlans?: boolean;
   normalizeQuery?: boolean;
   asyncQueueName?: string;
-  normalizationFunction: (sql: string) => string;
+  normalizationFunction?: (sql: string) => string;
 };
 
 export type MetadataQueryContext = {
@@ -122,6 +122,11 @@ export function normalizeSqlForLoggingRegex(sql: string): string {
  * @returns Normalized SQL string with parameters replaced by '?'
  */
 export function normalizeSqlForLogging(sql: string, options: MetadataQueryOptions): string {
+  if (!options.normalizationFunction) {
+    // eslint-disable-next-line no-console
+    console.warn("normalizationFunction not provided, falling back to regex-based normalization");
+    return normalizeSqlForLoggingRegex(sql);
+  }
   try {
     return options.normalizationFunction(sql);
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
