@@ -27,7 +27,19 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
 [![Maintainability](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm/maintainability.svg)](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm)
 
-**Forge-SQL-ORM** is an ORM designed for working with [@forge/sql](https://developer.atlassian.com/platform/forge/storage-reference/sql-tutorial/) in **Atlassian Forge**. It is built on top of [Drizzle ORM](https://orm.drizzle.team) and provides advanced capabilities for working with relational databases inside Forge.
+**Forge SQL ORM** is a TypeScript ORM for [Atlassian Forge](https://developer.atlassian.com/platform/forge/) apps that use [@forge/sql](https://developer.atlassian.com/platform/forge/storage-reference/sql-tutorial/) — Atlassian’s managed SQL storage (TiDB-compatible) inside Forge resolvers, triggers, and scheduled jobs.
+
+Instead of calling `@forge/sql` with hand-written SQL strings, you define schemas and queries with [Drizzle ORM](https://orm.drizzle.team) and get full type safety, migrations, and Forge-specific helpers out of the box. The library provides a **custom Drizzle driver** for `@forge/sql`, **schema migrations**, **local in-memory caching**, **optimistic locking**, **query analysis**, and TiDB-oriented types (vectors, binary columns, SQL function helpers).
+
+**Packages in this repository:**
+
+| Package                                                  | Role                                                                                                                                                                                   |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`forge-sql-orm`** (this README)                        | Core ORM — Drizzle integration, migrations, local cache, query analysis                                                                                                                |
+| [**forge-sql-orm-extra**](forge-sql-orm-extra/README.md) | Optional add-on — global query cache ([@forge/kvs](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/)) and Rovo natural-language analytics |
+| [**forge-sql-orm-cli**](forge-sql-orm-cli/README.md)     | CLI — generate entities and migrations from existing MySQL/TiDB schemas                                                                                                                |
+
+Start with **`forge-sql-orm`** for any Forge SQL app; add **forge-sql-orm-extra** only when you need cross-invocation caching or Rovo.
 
 ## Key Features
 

@@ -1,8 +1,19 @@
 # forge-sql-orm-extra
 
-Extension package for [forge-sql-orm](../README.md): **global cache** ([@forge/kvs](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/)) and **Rovo** integration for secure natural-language analytics.
+**Forge SQL ORM Extra** is the extended edition of [forge-sql-orm](../README.md) — a TypeScript ORM for [Atlassian Forge](https://developer.atlassian.com/platform/forge/) apps that use [@forge/sql](https://developer.atlassian.com/platform/forge/storage-reference/sql-tutorial/). It includes everything from the core package (Drizzle integration, migrations, local cache, optimistic locking, query analysis) and adds capabilities that need [@forge/kvs](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/) or Rovo.
 
-The API mirrors core `ForgeSQL`. **Only Level 2 (global KVS) cache and Rovo** live in this package. **Level 1 (local / in-memory) cache** stays in [forge-sql-orm](../README.md) and works the same with `forge-sql-orm` or `forge-sql-orm-extra` (`executeWithLocalContext`, `selectFrom`, `execute`, …). Import **forge-sql-orm-extra** when you need L2 or Rovo.
+Use **`forge-sql-orm-extra`** instead of **`forge-sql-orm`** when you want a single import that covers both everyday Forge SQL work and the extras below. The public API is the same `ForgeSQL` class — extended methods sit alongside the core ones.
+
+**What extra adds on top of core:**
+
+| Capability                                       | Core (`forge-sql-orm`) | Extra (`forge-sql-orm-extra`)                                     |
+| ------------------------------------------------ | ---------------------- | ----------------------------------------------------------------- |
+| Drizzle driver, migrations, CRUD, query analysis | ✅                     | ✅ (included)                                                     |
+| Level 1 local / in-memory cache (per invocation) | ✅                     | ✅ (included)                                                     |
+| Level 2 global query cache via `@forge/kvs`      | —                      | ✅ `selectCacheable*`, `executeCacheable`, cache eviction helpers |
+| Rovo natural-language analytics with RLS         | —                      | ✅ `forgeSQL.rovo()`                                              |
+
+Install **forge-sql-orm-extra** when you need cross-invocation caching or Rovo. For Forge SQL apps without those features, [forge-sql-orm](../README.md) alone is enough.
 
 ## Installation
 
