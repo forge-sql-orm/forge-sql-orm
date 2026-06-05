@@ -1,4 +1,5 @@
-# Weekly snapshot of green master → GitHub Packages (dist-tag: latest).
+# Weekly snapshot of master → GitHub Packages (dist-tag: latest).
+# Runs the same quality gate as CI (lint, knip, build, tests) before publish.
 # Official semver releases stay on npmjs.com (manual).
 name: Weekly GitHub Packages (latest)
 
@@ -11,7 +12,6 @@ on:
 permissions:
   contents: read
   packages: write
-  actions: read
 
 concurrency:
   group: weekly-gpr
@@ -34,21 +34,6 @@ jobs:
         with:
           node-version: 24.x
           cache: npm
-
-      - name: Verify master HEAD has a green CI run
-        run: |
-          set -euo pipefail
-          success_count=$(gh api \
-            "repos/${GITHUB_REPOSITORY}/actions/workflows/node.js.yml/runs" \
-            -f head_sha="${GITHUB_SHA}" \
-            -f status=completed \
-            -f per_page=20 \
-            --jq '[.workflow_runs[] | select(.conclusion == "success" and .event == "push")] | length')
-          if [ "$success_count" -eq 0 ]; then
-            echo "master @ ${GITHUB_SHA} is not green: no successful push run of node.js.yml found"
-            exit 1
-          fi
-          echo "Verified green master CI for ${GITHUB_SHA} (${success_count} successful run(s))"
 
       - name: Install core dependencies
         run: npm ci --ignore-scripts

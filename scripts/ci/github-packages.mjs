@@ -19,10 +19,9 @@ import {
   publishWeeklyExtra,
 } from "./gpr-publish.mjs";
 import { ciVersion, weeklyVersion, writeNpmrc } from "./gpr-shared.mjs";
-import { verifyMasterCiGreen } from "./verify-master-ci.mjs";
 
 const COMMAND_USAGE =
-  "ci-version | weekly-version | write-npmrc | publish-core | publish-extra | publish-cli | publish-weekly-core | publish-weekly-extra | publish-weekly-cli | verify-master-ci | install-workspace | install-example | cleanup-ci-versions | cleanup-all-ci-versions";
+  "ci-version | weekly-version | write-npmrc | publish-core | publish-extra | publish-cli | publish-weekly-core | publish-weekly-extra | publish-weekly-cli | install-workspace | install-example | cleanup-ci-versions | cleanup-all-ci-versions";
 
 function requireCliArg(args, index, usage) {
   const value = args[index];
@@ -74,10 +73,6 @@ async function runPublishWeeklyCliCommand(args) {
   await publishWeeklyCli(requireCliArg(args, 0, "publish-weekly-cli <coreVersion>"));
 }
 
-async function runVerifyMasterCiCommand(args) {
-  await verifyMasterCiGreen(requireCliArg(args, 0, "verify-master-ci <headSha>"));
-}
-
 function runInstallWorkspaceCommand(args) {
   const [cwd, coreVersion, extraVersion, cliVersion] = args;
   if (!cwd || !coreVersion) {
@@ -111,7 +106,6 @@ const commandHandlers = {
   "publish-weekly-core": runPublishWeeklyCoreCommand,
   "publish-weekly-extra": runPublishWeeklyExtraCommand,
   "publish-weekly-cli": runPublishWeeklyCliCommand,
-  "verify-master-ci": runVerifyMasterCiCommand,
   "install-workspace": runInstallWorkspaceCommand,
   "install-example": runInstallExampleCommand,
   "cleanup-ci-versions": cleanupCiVersions,

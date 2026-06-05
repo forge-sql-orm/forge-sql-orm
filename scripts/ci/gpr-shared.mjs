@@ -8,7 +8,6 @@ export const GPR_REGISTRY = "https://npm.pkg.github.com";
 export const CI_PUBLISH_TAG = "ci";
 export const LATEST_PUBLISH_TAG = "latest";
 export const CI_PACKAGE_DIRS = [".", "forge-sql-orm-extra", "forge-sql-orm-cli"];
-export const WEEKLY_WORKFLOW_FILE = "node.js.yml";
 
 function requireRunNumber() {
   const runNumber = process.env.GITHUB_RUN_NUMBER;
