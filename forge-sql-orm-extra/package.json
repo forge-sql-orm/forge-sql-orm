@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.1.8",
-    "knip": "^6.15.0",
+    "knip": "^6.16.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8",
     "license-checker-rseidelsohn": "^5.0.1"
@@ -63,7 +63,7 @@
     ]
   },
   "dependencies": {
-    "@forge/kvs": "^1.6.2",
+    "@forge/kvs": "^1.6.4",
     "@forge/sql": "^3.0.25",
     "forge-sql-orm": "file:..",
     "luxon": "^3.7.2",

@@ -37,7 +37,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.6.0",
     "husky": "^9.1.7",
-    "knip": "^6.15.0",
+    "knip": "^6.16.0",
     "lcov-result-merger": "^6.0.0",
     "license-checker-rseidelsohn": "^5.0.1",
     "prettier": "^3.8.3",
