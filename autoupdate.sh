@@ -53,7 +53,7 @@ run npm run build
 (
 section "forge-sql-orm-extra"
 step "Updating dependencies (ncu -u)..."
-cd forge-sql-orm-cli
+cd forge-sql-orm-extra
 run ncu -u --dep prod,dev,peer
 step "Removing node_modules and package-lock.json..."
 run rm -rf node_modules package-lock.json
@@ -63,7 +63,7 @@ step "Running knip..."
 run npm run knip
 step "Running lint:fix..."
 run npm run lint:fix
-step "Building CLI..."
+step "Building EXTRA..."
 run npm run build
 )
 section "Examples"
