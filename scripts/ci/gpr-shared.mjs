@@ -98,7 +98,7 @@ export function npmEnvWithoutUserConfig() {
   return env;
 }
 
-export async function githubApi(apiPath, { method = "GET", token } = {}) {
+export async function githubApi(apiPath, { method = "GET", token = githubToken() } = {}) {
   return fetch(`https://api.github.com${apiPath}`, {
     method,
     headers: {
