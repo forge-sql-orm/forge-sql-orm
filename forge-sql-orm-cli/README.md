@@ -30,6 +30,14 @@ The CLI tool must be installed as a local development dependency and used via np
 npm install forge-sql-orm-cli -D
 ```
 
+**Weekly `latest` from GitHub Packages** (optional, pre-release snapshots of `master`):
+
+```bash
+npm install forge-sql-orm-cli@npm:@forge-sql-orm/forge-sql-orm-cli@latest -D
+```
+
+Requires a project `.npmrc` for `@forge-sql-orm` — see [core README — Installing from GitHub Packages](../README.md#installing-from-github-packages-weekly-latest). Official stable releases remain on [npmjs.com](https://www.npmjs.com/package/forge-sql-orm-cli).
+
 # Basic installation for UI-Kit projects
 
 npm install forge-sql-orm-cli -D --legacy-peer-deps

@@ -130,6 +130,7 @@ Full details: [README — Breaking Changes (2.2.x)](README.md#4-breaking-changes
 - Split the monolithic pipeline into separate quality / CLI / examples jobs; example deploys are capped at `max-parallel: 5`.
 - Randomized Forge deploy/install retry backoff to ride out transient Atlassian failures.
 - Codacy `exclude_paths` tuning and a Codacy badge in the README.
+- **Weekly GitHub Packages (`latest`)** — workflow [`.github/workflows/weekly-gpr.yml`](.github/workflows/weekly-gpr.yml) runs every **Sunday 02:00 UTC** (and on manual dispatch). It checks out `master`, runs the same quality gate as CI (REUSE, Knip, license, lint, build, format, tests for core / extra / CLI), then publishes all three packages to [GitHub Packages](https://github.com/orgs/forge-sql-orm/packages) with dist-tag **`latest`** (version `{semver}-weekly.{YYYYMMDD}`). Ephemeral **`ci.*`** GPR versions are cleaned up after each weekly run. **Official semver releases stay on [npmjs.com](https://www.npmjs.com/package/forge-sql-orm)** — see [Installing from GitHub Packages (weekly `latest`)](README.md#installing-from-github-packages-weekly-latest) in the README.
 
 📦 Dependency Updates
 
