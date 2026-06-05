@@ -7,7 +7,7 @@
  * publish uses a temporary directory with an adjusted manifest only for npm publish.
  */
 
-import { cleanupCiVersions } from "./gpr-delete.mjs";
+import { cleanupAllCiVersions, cleanupCiVersions } from "./gpr-delete.mjs";
 import {
   installExampleDeps,
   installWorkspacePackages,
@@ -22,7 +22,7 @@ import { ciVersion, weeklyVersion, writeNpmrc } from "./gpr-shared.mjs";
 import { verifyMasterCiGreen } from "./verify-master-ci.mjs";
 
 const COMMAND_USAGE =
-  "ci-version | weekly-version | write-npmrc | publish-core | publish-extra | publish-cli | publish-weekly-core | publish-weekly-extra | publish-weekly-cli | verify-master-ci | install-workspace | install-example | cleanup-ci-versions";
+  "ci-version | weekly-version | write-npmrc | publish-core | publish-extra | publish-cli | publish-weekly-core | publish-weekly-extra | publish-weekly-cli | verify-master-ci | install-workspace | install-example | cleanup-ci-versions | cleanup-all-ci-versions";
 
 function requireCliArg(args, index, usage) {
   const value = args[index];
@@ -115,6 +115,7 @@ const commandHandlers = {
   "install-workspace": runInstallWorkspaceCommand,
   "install-example": runInstallExampleCommand,
   "cleanup-ci-versions": cleanupCiVersions,
+  "cleanup-all-ci-versions": cleanupAllCiVersions,
 };
 
 async function main() {

@@ -11,14 +11,6 @@ function requireRepository() {
   return repository;
 }
 
-function requireHeadSha(args) {
-  const headSha = args[0] ?? process.env.GITHUB_SHA;
-  if (!headSha) {
-    throw new Error("usage: verify-master-ci <headSha>");
-  }
-  return headSha;
-}
-
 function isGreenMasterRun(run) {
   return run.conclusion === "success" && run.event === "push";
 }

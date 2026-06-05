@@ -116,6 +116,12 @@ jobs:
           node scripts/ci/github-packages.mjs publish-weekly-cli "${{ steps.publish_weekly_core.outputs.core_version }}"
           echo "cli_version=$(node scripts/ci/github-packages.mjs weekly-version forge-sql-orm-cli)" >> "$GITHUB_OUTPUT"
 
+      - name: Delete all ephemeral ci.* versions from GitHub Packages
+        continue-on-error: true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/ci/github-packages.mjs cleanup-all-ci-versions
+
       - name: Summary
         run: |
           echo "## Weekly GitHub Packages (latest)" >> "$GITHUB_STEP_SUMMARY"
