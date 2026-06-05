@@ -15,9 +15,9 @@ const args = process.argv.slice(2).join(" ");
 const cliPath = path.resolve(__dirname, "cli.mjs");
 
 try {
-    execSync(`npx  --yes tsm --no-warnings "${cliPath}" ${args}`, { stdio: "inherit" });
-    process.exit(0);
+  execSync(`npx  --yes tsm --no-warnings "${cliPath}" ${args}`, { stdio: "inherit" });
+  process.exit(0);
 } catch (e: unknown) {
-    console.error("⚠️  Command execution failed:", e instanceof Error ? e.message : e);
-    process.exit(1);
+  console.error("⚠️  Command execution failed:", e instanceof Error ? e.message : e);
+  process.exit(1);
 }
