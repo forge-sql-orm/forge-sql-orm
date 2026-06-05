@@ -8,12 +8,14 @@ import { tmpdir } from "node:os";
 import {
   CI_PUBLISH_TAG,
   GPR_REGISTRY,
+  LATEST_PUBLISH_TAG,
   ciVersion,
   gprDependencyAlias,
   gprInstallAlias,
   npmEnvWithoutUserConfig,
   readPkg,
   scopedGprName,
+  weeklyVersion,
   writeNpmrc,
 } from "./gpr-shared.mjs";
 
@@ -57,7 +59,8 @@ function sanitizePublishManifest(pkg) {
   delete pkg.devDependencies;
 }
 
-async function npmPublishEphemeral(sourceDir, version, transformPkg) {
+async function npmPublishEphemeral(sourceDir, version, options = {}) {
+  const { transformPkg, publishTag = CI_PUBLISH_TAG } = options;
   const sourcePkg = readPkg(sourceDir);
   const publishPkg = structuredClone(sourcePkg);
   publishPkg.name = scopedGprName(sourcePkg.name);
@@ -72,8 +75,8 @@ async function npmPublishEphemeral(sourceDir, version, transformPkg) {
     writeFileSync(`${stagingDir}/package.json`, `${JSON.stringify(publishPkg, null, 2)}\n`);
     writeNpmrc(stagingDir);
     try {
-      runNpmCommand(stagingDir, `publish --ignore-scripts --tag ${CI_PUBLISH_TAG}`);
-      console.error(`Published ${publishPkg.name}@${version} to GitHub Packages`);
+      runNpmCommand(stagingDir, `publish --ignore-scripts --tag ${publishTag}`);
+      console.error(`Published ${publishPkg.name}@${version} (${publishTag}) to GitHub Packages`);
     } catch (error) {
       if (isGprAlreadyPublishedError(error)) {
         console.error(`Already published ${publishPkg.name}@${version}, continuing`);
@@ -102,6 +105,12 @@ function hasDep(pkg, name) {
   return Boolean(pkg.dependencies?.[name] ?? pkg.devDependencies?.[name]);
 }
 
+function linkCoreDependency(pkg, coreVersion) {
+  if (pkg.dependencies?.["forge-sql-orm"]) {
+    pkg.dependencies["forge-sql-orm"] = gprDependencyAlias("forge-sql-orm", coreVersion);
+  }
+}
+
 export async function publishCore() {
   const version = ciVersion(".");
   await npmPublishEphemeral(".", version);
@@ -109,19 +118,36 @@ export async function publishCore() {
 
 export async function publishExtra(coreVersion) {
   const version = ciVersion("forge-sql-orm-extra");
-  await npmPublishEphemeral("forge-sql-orm-extra", version, (pkg) => {
-    if (pkg.dependencies?.["forge-sql-orm"]) {
-      pkg.dependencies["forge-sql-orm"] = gprDependencyAlias("forge-sql-orm", coreVersion);
-    }
+  await npmPublishEphemeral("forge-sql-orm-extra", version, {
+    transformPkg: (pkg) => linkCoreDependency(pkg, coreVersion),
   });
 }
 
 export async function publishCli(coreVersion) {
   const version = ciVersion("forge-sql-orm-cli");
-  await npmPublishEphemeral("forge-sql-orm-cli", version, (pkg) => {
-    if (pkg.dependencies?.["forge-sql-orm"]) {
-      pkg.dependencies["forge-sql-orm"] = gprDependencyAlias("forge-sql-orm", coreVersion);
-    }
+  await npmPublishEphemeral("forge-sql-orm-cli", version, {
+    transformPkg: (pkg) => linkCoreDependency(pkg, coreVersion),
+  });
+}
+
+export async function publishWeeklyCore() {
+  const version = weeklyVersion(".");
+  await npmPublishEphemeral(".", version, { publishTag: LATEST_PUBLISH_TAG });
+}
+
+export async function publishWeeklyExtra(coreVersion) {
+  const version = weeklyVersion("forge-sql-orm-extra");
+  await npmPublishEphemeral("forge-sql-orm-extra", version, {
+    publishTag: LATEST_PUBLISH_TAG,
+    transformPkg: (pkg) => linkCoreDependency(pkg, coreVersion),
+  });
+}
+
+export async function publishWeeklyCli(coreVersion) {
+  const version = weeklyVersion("forge-sql-orm-cli");
+  await npmPublishEphemeral("forge-sql-orm-cli", version, {
+    publishTag: LATEST_PUBLISH_TAG,
+    transformPkg: (pkg) => linkCoreDependency(pkg, coreVersion),
   });
 }
 
