@@ -29,12 +29,18 @@ function readPkg(dir) {
 }
 
 function baseVersion(version) {
-  return String(version).replace(/-ci\.\d+$/, "");
+  return String(version).replace(/-ci\.[\d]+(?:-a[\d]+)?$/, "");
+}
+
+function ciVersionLabel() {
+  const runNumber = requireRunNumber();
+  const attempt = process.env.GITHUB_RUN_ATTEMPT ?? "1";
+  return attempt === "1" ? runNumber : `${runNumber}-a${attempt}`;
 }
 
 export function ciVersion(dir = ".") {
   const pkg = readPkg(dir);
-  return `${baseVersion(pkg.version)}-ci.${requireRunNumber()}`;
+  return `${baseVersion(pkg.version)}-ci.${ciVersionLabel()}`;
 }
 
 function githubOwner() {
@@ -93,10 +99,6 @@ function commandOutput(error) {
   return `${error.stdout?.toString() ?? ""}${error.stderr?.toString() ?? ""}${error.message ?? ""}`;
 }
 
-function isGprNotFoundError(error) {
-  return /E404|404|not found|ETARGET/i.test(commandOutput(error));
-}
-
 function isGprAlreadyPublishedError(error) {
   return /E409|409|Cannot publish over existing version/i.test(commandOutput(error));
 }
@@ -107,33 +109,6 @@ function runNpmCommand(cwd, args) {
     stdio: ["inherit", process.stderr, "pipe"],
     env: npmEnvWithoutUserConfig(),
   });
-}
-
-function withTemporaryNpmContext(scopedName, run) {
-  const dir = mkdtempSync(path.join(tmpdir(), "forge-sql-orm-gpr-npm-"));
-  try {
-    writeFileSync(path.join(dir, "package.json"), `${JSON.stringify({ name: scopedName, version: "0.0.0" })}\n`);
-    writeNpmrc(dir);
-    return run(dir);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-}
-
-function tryUnpublishGprVersion(unscopedName, version) {
-  const scopedName = scopedGprName(unscopedName);
-  try {
-    withTemporaryNpmContext(scopedName, (dir) => {
-      runNpmCommand(dir, `unpublish ${scopedName}@${version} --registry=${GPR_REGISTRY}`);
-    });
-    console.error(`Unpublished ${scopedName}@${version}`);
-  } catch (error) {
-    if (isGprNotFoundError(error)) {
-      console.error(`Version ${scopedName}@${version} not found, skipping`);
-      return;
-    }
-    console.warn(`Failed to unpublish ${scopedName}@${version}: ${commandOutput(error)}`);
-  }
 }
 
 function sanitizePublishManifest(pkg) {
@@ -148,7 +123,7 @@ function sanitizePublishManifest(pkg) {
   delete pkg.devDependencies;
 }
 
-function npmPublishEphemeral(sourceDir, version, transformPkg) {
+async function npmPublishEphemeral(sourceDir, version, transformPkg) {
   const sourcePkg = readPkg(sourceDir);
   const publishPkg = structuredClone(sourcePkg);
   publishPkg.name = scopedGprName(sourcePkg.name);
@@ -156,9 +131,6 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
   publishPkg.publishConfig = { registry: GPR_REGISTRY, access: "public" };
   transformPkg?.(publishPkg);
   sanitizePublishManifest(publishPkg);
-
-  // Re-runs reuse GITHUB_RUN_NUMBER, so remove any leftover CI version first.
-  tryUnpublishGprVersion(sourcePkg.name, version);
 
   const stagingDir = mkdtempSync(path.join(tmpdir(), "forge-sql-orm-gpr-"));
   try {
@@ -206,15 +178,15 @@ function hasDep(pkg, name) {
   return Boolean(pkg.dependencies?.[name] ?? pkg.devDependencies?.[name]);
 }
 
-function publishCore() {
+async function publishCore() {
   const version = ciVersion(".");
-  npmPublishEphemeral(".", version);
+  await npmPublishEphemeral(".", version);
   return version;
 }
 
-function publishExtra(coreVersion) {
+async function publishExtra(coreVersion) {
   const version = ciVersion("forge-sql-orm-extra");
-  npmPublishEphemeral("forge-sql-orm-extra", version, (pkg) => {
+  await npmPublishEphemeral("forge-sql-orm-extra", version, (pkg) => {
     if (pkg.dependencies?.["forge-sql-orm"]) {
       pkg.dependencies["forge-sql-orm"] = gprDependencyAlias("forge-sql-orm", coreVersion);
     }
@@ -222,9 +194,9 @@ function publishExtra(coreVersion) {
   return version;
 }
 
-function publishCli(coreVersion) {
+async function publishCli(coreVersion) {
   const version = ciVersion("forge-sql-orm-cli");
-  npmPublishEphemeral("forge-sql-orm-cli", version, (pkg) => {
+  await npmPublishEphemeral("forge-sql-orm-cli", version, (pkg) => {
     if (pkg.dependencies?.["forge-sql-orm"]) {
       pkg.dependencies["forge-sql-orm"] = gprDependencyAlias("forge-sql-orm", coreVersion);
     }
@@ -251,10 +223,120 @@ function installExampleDeps(exampleDir, versions) {
   installFromGpr(exampleDir, specs);
 }
 
-function cleanupCiVersions() {
+async function githubApi(apiPath, { method = "GET", token } = {}) {
+  return fetch(`https://api.github.com${apiPath}`, {
+    method,
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
+}
+
+function matchesPackageName(pkgName, unscopedName) {
+  const owner = githubOwner();
+  const scoped = scopedGprName(unscopedName);
+  return (
+    pkgName === unscopedName ||
+    pkgName === scoped ||
+    pkgName === `${owner}/${unscopedName}` ||
+    pkgName?.toLowerCase() === unscopedName.toLowerCase()
+  );
+}
+
+function packageNameCandidates(unscopedName) {
+  const owner = githubOwner();
+  const scoped = scopedGprName(unscopedName);
+  return [...new Set([unscopedName, scoped, `${owner}/${unscopedName}`])];
+}
+
+async function listPackageVersions(owner, apiPackageName, token) {
+  const encodedName = encodeURIComponent(apiPackageName);
+  const roots = [`/orgs/${owner}/packages/npm/${encodedName}`, `/users/${owner}/packages/npm/${encodedName}`, `/user/packages/npm/${encodedName}`];
+
+  for (const root of roots) {
+    const versions = [];
+    for (let page = 1; page <= 5; page += 1) {
+      const response = await githubApi(`${root}/versions?per_page=100&page=${page}&state=active`, { token });
+      if (response.status === 404) {
+        break;
+      }
+      if (!response.ok) {
+        const body = await response.text();
+        console.warn(`Failed to list ${apiPackageName} versions (${root}): ${response.status} ${body}`);
+        break;
+      }
+      const pageVersions = await response.json();
+      if (!pageVersions.length) {
+        break;
+      }
+      versions.push(...pageVersions);
+    }
+    if (versions.length) {
+      return { root, versions };
+    }
+  }
+
+  return null;
+}
+
+async function discoverPackageApiName(owner, unscopedName, token) {
+  const response = await githubApi(`/orgs/${owner}/packages?package_type=npm&per_page=100`, { token });
+  if (response.ok) {
+    const packages = await response.json();
+    const match = packages.find((pkg) => matchesPackageName(pkg.name, unscopedName));
+    if (match) {
+      return match.name;
+    }
+  }
+
+  for (const candidate of packageNameCandidates(unscopedName)) {
+    const located = await listPackageVersions(owner, candidate, token);
+    if (located) {
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
+async function deleteGprVersion(unscopedName, version) {
+  const owner = githubOwner();
+  const token = githubToken();
+  const scopedName = scopedGprName(unscopedName);
+  const apiPackageName = await discoverPackageApiName(owner, unscopedName, token);
+  if (!apiPackageName) {
+    console.error(`Package ${scopedName} not found in GitHub Packages API, skipping delete for ${version}`);
+    return;
+  }
+
+  const located = await listPackageVersions(owner, apiPackageName, token);
+  if (!located) {
+    console.error(`No versions listed for ${apiPackageName}, skipping delete for ${version}`);
+    return;
+  }
+
+  const match = located.versions.find((entry) => entry.name === version);
+  if (!match) {
+    console.error(`Version ${scopedName}@${version} not found, skipping`);
+    return;
+  }
+
+  const response = await githubApi(`${located.root}/versions/${match.id}`, { method: "DELETE", token });
+  if (response.status === 204) {
+    console.error(`Deleted ${scopedName}@${version}`);
+    return;
+  }
+
+  const body = await response.text();
+  console.warn(`Failed to delete ${scopedName}@${version}: ${response.status} ${body}`);
+}
+
+async function cleanupCiVersions() {
   for (const dir of CI_PACKAGE_DIRS) {
     const pkg = readPkg(dir);
-    tryUnpublishGprVersion(pkg.name, ciVersion(dir));
+    await deleteGprVersion(pkg.name, ciVersion(dir));
   }
 }
 
@@ -272,7 +354,7 @@ async function main() {
     }
     case "publish-core": {
       writeNpmrc();
-      publishCore();
+      await publishCore();
       break;
     }
     case "publish-extra": {
@@ -281,7 +363,7 @@ async function main() {
       if (!coreVersion) {
         throw new Error("usage: publish-extra <coreVersion>");
       }
-      publishExtra(coreVersion);
+      await publishExtra(coreVersion);
       break;
     }
     case "publish-cli": {
@@ -290,7 +372,7 @@ async function main() {
       if (!coreVersion) {
         throw new Error("usage: publish-cli <coreVersion>");
       }
-      publishCli(coreVersion);
+      await publishCli(coreVersion);
       break;
     }
     case "install-workspace": {
@@ -323,8 +405,7 @@ async function main() {
       break;
     }
     case "cleanup-ci-versions": {
-      writeNpmrc();
-      cleanupCiVersions();
+      await cleanupCiVersions();
       break;
     }
     default:
