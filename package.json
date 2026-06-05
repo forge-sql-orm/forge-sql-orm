@@ -55,7 +55,7 @@
     "lint": "eslint src  forge-sql-orm-extra/src forge-sql-orm-cli/src --ext .ts,.tsx",
     "lint:fix": "eslint src  forge-sql-orm-cli/src  forge-sql-orm-extra/src  --ext .ts,.tsx --fix",
     "format": "prettier --write src examples __tests__ forge-sql-orm-cli/src forge-sql-orm-extra/src  forge-sql-orm-cli/__tests__ forge-sql-orm-extra/__tests__ ",
-    "format:check": "prettier --write src examples __tests__ forge-sql-orm-cli/src forge-sql-orm-extra/src  forge-sql-orm-cli/__tests__ forge-sql-orm-extra/__tests__ --check",
+    "format:check": "prettier src examples __tests__ forge-sql-orm-cli/src forge-sql-orm-extra/src  forge-sql-orm-cli/__tests__ forge-sql-orm-extra/__tests__ --check",
     "clean": "rm -rf dist",
     "build": "npm run clean && npm run build:types",
     "build:types": "tsc",
