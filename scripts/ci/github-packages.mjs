@@ -86,6 +86,56 @@ function copyPackagePayload(sourceDir, targetDir, pkg) {
 
 const PUBLISH_LIFECYCLE_SCRIPTS = ["prepare", "prepublish", "prepublishOnly", "prepack", "postpack"];
 
+function commandOutput(error) {
+  if (!error || typeof error !== "object") {
+    return "";
+  }
+  return `${error.stdout?.toString() ?? ""}${error.stderr?.toString() ?? ""}${error.message ?? ""}`;
+}
+
+function isGprNotFoundError(error) {
+  return /E404|404|not found|ETARGET/i.test(commandOutput(error));
+}
+
+function isGprAlreadyPublishedError(error) {
+  return /E409|409|Cannot publish over existing version/i.test(commandOutput(error));
+}
+
+function runNpmCommand(cwd, args) {
+  return execSync(`npm ${args}`, {
+    cwd,
+    stdio: ["inherit", process.stderr, "pipe"],
+    env: npmEnvWithoutUserConfig(),
+  });
+}
+
+function withTemporaryNpmContext(scopedName, run) {
+  const dir = mkdtempSync(path.join(tmpdir(), "forge-sql-orm-gpr-npm-"));
+  try {
+    writeFileSync(path.join(dir, "package.json"), `${JSON.stringify({ name: scopedName, version: "0.0.0" })}\n`);
+    writeNpmrc(dir);
+    return run(dir);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+function tryUnpublishGprVersion(unscopedName, version) {
+  const scopedName = scopedGprName(unscopedName);
+  try {
+    withTemporaryNpmContext(scopedName, (dir) => {
+      runNpmCommand(dir, `unpublish ${scopedName}@${version} --registry=${GPR_REGISTRY}`);
+    });
+    console.error(`Unpublished ${scopedName}@${version}`);
+  } catch (error) {
+    if (isGprNotFoundError(error)) {
+      console.error(`Version ${scopedName}@${version} not found, skipping`);
+      return;
+    }
+    console.warn(`Failed to unpublish ${scopedName}@${version}: ${commandOutput(error)}`);
+  }
+}
+
 function sanitizePublishManifest(pkg) {
   for (const scriptName of PUBLISH_LIFECYCLE_SCRIPTS) {
     delete pkg.scripts?.[scriptName];
@@ -107,6 +157,9 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
   transformPkg?.(publishPkg);
   sanitizePublishManifest(publishPkg);
 
+  // Re-runs reuse GITHUB_RUN_NUMBER, so remove any leftover CI version first.
+  tryUnpublishGprVersion(sourcePkg.name, version);
+
   const stagingDir = mkdtempSync(path.join(tmpdir(), "forge-sql-orm-gpr-"));
   try {
     copyPackagePayload(sourceDir, stagingDir, sourcePkg);
@@ -115,15 +168,17 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
       `${JSON.stringify(publishPkg, null, 2)}\n`,
     );
     writeNpmrc(stagingDir);
-    const publishEnv = { ...process.env };
-    delete publishEnv.NPM_CONFIG_USERCONFIG;
-    // Keep npm notices off stdout so workflow output capture stays a single version line.
-    execSync(`npm publish --ignore-scripts --tag ${CI_PUBLISH_TAG}`, {
-      cwd: stagingDir,
-      stdio: ["inherit", process.stderr, "inherit"],
-      env: publishEnv,
-    });
-    console.error(`Published ${publishPkg.name}@${version} to GitHub Packages`);
+    try {
+      // Keep npm notices off stdout so workflow output capture stays a single version line.
+      runNpmCommand(stagingDir, `publish --ignore-scripts --tag ${CI_PUBLISH_TAG}`);
+      console.error(`Published ${publishPkg.name}@${version} to GitHub Packages`);
+    } catch (error) {
+      if (isGprAlreadyPublishedError(error)) {
+        console.error(`Already published ${publishPkg.name}@${version}, continuing`);
+        return;
+      }
+      throw error;
+    }
   } finally {
     rmSync(stagingDir, { recursive: true, force: true });
   }
@@ -196,73 +251,10 @@ function installExampleDeps(exampleDir, versions) {
   installFromGpr(exampleDir, specs);
 }
 
-async function githubApi(path, { method = "GET", token } = {}) {
-  return fetch(`https://api.github.com${path}`, {
-    method,
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
-}
-
-async function findPackageVersionId(owner, packageName, version, token) {
-  const encodedName = encodeURIComponent(packageName);
-  const scopes = [`/orgs/${owner}/packages/npm/${encodedName}/versions`, `/users/${owner}/packages/npm/${encodedName}/versions`];
-
-  for (const scope of scopes) {
-    for (let page = 1; page <= 5; page += 1) {
-      const response = await githubApi(`${scope}?per_page=100&page=${page}`, { token });
-      if (response.status === 404) {
-        break;
-      }
-      if (!response.ok) {
-        const body = await response.text();
-        console.warn(`Failed to list ${packageName} versions (${scope}): ${response.status} ${body}`);
-        break;
-      }
-
-      const versions = await response.json();
-      if (!versions.length) {
-        break;
-      }
-
-      const match = versions.find((entry) => entry.name === version);
-      if (match) {
-        return { scope, id: match.id };
-      }
-    }
-  }
-
-  return null;
-}
-
-async function deletePackageVersion(owner, packageName, version, token) {
-  const located = await findPackageVersionId(owner, packageName, version, token);
-  if (!located) {
-    console.log(`Version ${packageName}@${version} not found, skipping`);
-    return;
-  }
-
-  const response = await githubApi(`${located.scope}/${located.id}`, { method: "DELETE", token });
-  if (response.status === 204) {
-    console.log(`Deleted ${packageName}@${version}`);
-    return;
-  }
-
-  const body = await response.text();
-  console.warn(`Failed to delete ${packageName}@${version}: ${response.status} ${body}`);
-}
-
-async function cleanupCiVersions() {
-  const owner = githubOwner();
-  const token = githubToken();
-
+function cleanupCiVersions() {
   for (const dir of CI_PACKAGE_DIRS) {
     const pkg = readPkg(dir);
-    const version = ciVersion(dir);
-    await deletePackageVersion(owner, scopedGprName(pkg.name), version, token);
+    tryUnpublishGprVersion(pkg.name, ciVersion(dir));
   }
 }
 
@@ -331,7 +323,8 @@ async function main() {
       break;
     }
     case "cleanup-ci-versions": {
-      await cleanupCiVersions();
+      writeNpmrc();
+      cleanupCiVersions();
       break;
     }
     default:
