@@ -8,7 +8,6 @@ export const GPR_REGISTRY = "https://npm.pkg.github.com";
 export const CI_PUBLISH_TAG = "ci";
 export const LATEST_PUBLISH_TAG = "latest";
 export const CI_PACKAGE_DIRS = [".", "forge-sql-orm-extra", "forge-sql-orm-cli"];
-export const WEEKLY_WORKFLOW_FILE = "node.js.yml";
 
 function requireRunNumber() {
   const runNumber = process.env.GITHUB_RUN_NUMBER;
@@ -61,9 +60,9 @@ export function githubOwner() {
 }
 
 export function githubToken() {
-  const token = process.env.NODE_AUTH_TOKEN ?? process.env.GITHUB_TOKEN;
+  const token = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN ?? process.env.NODE_AUTH_TOKEN;
   if (!token) {
-    throw new Error("NODE_AUTH_TOKEN or GITHUB_TOKEN is required to access GitHub Packages");
+    throw new Error("GH_TOKEN, GITHUB_TOKEN, or NODE_AUTH_TOKEN is required for GitHub API / Packages");
   }
   return token;
 }
@@ -98,7 +97,7 @@ export function npmEnvWithoutUserConfig() {
   return env;
 }
 
-export async function githubApi(apiPath, { method = "GET", token } = {}) {
+export async function githubApi(apiPath, { method = "GET", token = githubToken() } = {}) {
   return fetch(`https://api.github.com${apiPath}`, {
     method,
     headers: {

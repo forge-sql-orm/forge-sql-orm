@@ -18,6 +18,12 @@ This monorepo publishes three npm packages:
 
 CI runs the full quality gate for all three packages on every pull request to `master`. See [REQUIREMENTS.md §2.4](REQUIREMENTS.md#24-modular-package-architecture) for how features are split between core and extra.
 
+## Weekly GitHub Packages (maintainers)
+
+In addition to PR CI, [`.github/workflows/weekly-gpr.yml`](.github/workflows/weekly-gpr.yml) publishes a **weekly snapshot** of `master` to GitHub Packages (`dist-tag: latest`) after the same quality checks (Knip, lint, build, tests). Ephemeral `ci.*` GPR versions are bulk-deleted at the end of that job.
+
+Consumer install instructions (`.npmrc`, npm aliases): [README — Installing from GitHub Packages (weekly `latest`)](README.md#installing-from-github-packages-weekly-latest). You do not need to run the weekly workflow locally when contributing — merge to `master` and wait for the schedule, or trigger **Weekly GitHub Packages (latest)** manually from Actions if needed.
+
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.

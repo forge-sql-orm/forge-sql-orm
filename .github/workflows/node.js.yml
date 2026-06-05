@@ -5,15 +5,6 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: Forge environment to deploy to
-        type: choice
-        default: development
-        options:
-          - development
-          - production
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.actor == 'dependabot[bot]' && github.run_id || github.ref }}

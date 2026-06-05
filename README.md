@@ -73,6 +73,7 @@ Start with **`forge-sql-orm`** for any Forge SQL app; add **forge-sql-orm-extra*
 - [Key Features](#key-features)
 - [Usage Approaches](#usage-approaches)
 - [Installation](#installation)
+- [Installing from GitHub Packages (weekly `latest`)](#installing-from-github-packages-weekly-latest)
 - [CLI Commands](#cli-commands) | [CLI Documentation](forge-sql-orm-cli/README.md)
 - [Quick Start](#quick-start)
 
@@ -274,6 +275,47 @@ npm install forge-sql-orm-extra @forge/kvs -S
 ```
 
 (You still need the core dependencies above.)
+
+### Installing from GitHub Packages (weekly `latest`)
+
+Besides [official releases on npmjs.com](https://www.npmjs.com/package/forge-sql-orm), the repository publishes a **weekly snapshot of `master`** to [GitHub Packages](https://github.com/orgs/forge-sql-orm/packages) every **Sunday 02:00 UTC** (workflow [Weekly GitHub Packages (latest)](.github/workflows/weekly-gpr.yml); also runnable manually from the Actions tab). These builds pass the same quality gate as CI (lint, Knip, tests, license check) before publish.
+
+| Channel                      | Registry                                                 | dist-tag     | When                              |
+| ---------------------------- | -------------------------------------------------------- | ------------ | --------------------------------- |
+| **Production (recommended)** | [npmjs.com](https://www.npmjs.com/package/forge-sql-orm) | npm `latest` | Manual semver release + CHANGELOG |
+| **Bleeding-edge snapshot**   | GitHub Packages                                          | GPR `latest` | Weekly from current `master`      |
+
+GPR package names are scoped: `@forge-sql-orm/forge-sql-orm`, `@forge-sql-orm/forge-sql-orm-extra`, `@forge-sql-orm/forge-sql-orm-cli`. Published versions look like `2.1.29-weekly.20260608` (immutable); the **`latest`** tag always points at the most recent weekly build.
+
+**1. Authenticate** — create or edit `.npmrc` in your project (use a [GitHub personal access token](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) with `read:packages`, or `GITHUB_TOKEN` in CI):
+
+```ini
+@forge-sql-orm:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+Keep the default registry for everything else (Forge apps still install `@forge/sql` and `drizzle-orm` from npmjs.com):
+
+```ini
+registry=https://registry.npmjs.org/
+```
+
+**2. Install core** (npm alias — your `import` stays `forge-sql-orm`):
+
+```bash
+npm install forge-sql-orm@npm:@forge-sql-orm/forge-sql-orm@latest @forge/sql drizzle-orm -S
+```
+
+**3. Optional — extra and CLI from GPR:**
+
+```bash
+npm install forge-sql-orm-extra@npm:@forge-sql-orm/forge-sql-orm-extra@latest @forge/kvs -S
+npm install forge-sql-orm-cli@npm:@forge-sql-orm/forge-sql-orm-cli@latest -D
+```
+
+Pin a specific weekly version instead of `@latest` when you need reproducibility, for example `@forge-sql-orm/forge-sql-orm@2.1.29-weekly.20260608`.
+
+Weekly GPR builds are **not** the supported production channel for most apps — prefer npm semver releases. Use GPR `latest` to try fixes on `master` before the next npm release, or for internal smoke tests.
 
 ## forge-sql-orm-extra
 

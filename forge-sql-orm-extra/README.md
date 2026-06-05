@@ -40,6 +40,16 @@ npm install forge-sql-orm-extra @forge/kvs -S
 
 You still need `forge-sql-orm`, `@forge/sql`, and `drizzle-orm` in the project (install the core line above if they are not already present).
 
+**Weekly `latest` from GitHub Packages** — same quality-gated snapshots as [core README — Installing from GitHub Packages](../README.md#installing-from-github-packages-weekly-latest). Example:
+
+```bash
+npm install forge-sql-orm@npm:@forge-sql-orm/forge-sql-orm@latest \
+  forge-sql-orm-extra@npm:@forge-sql-orm/forge-sql-orm-extra@latest \
+  @forge/kvs -S
+```
+
+(`forge-sql-orm-extra` on GPR already depends on the matching weekly core build.)
+
 ## Quick Start
 
 ```typescript
