@@ -12,7 +12,8 @@
 
 [![License](https://img.shields.io/github/license/forge-sql-orm/forge-sql-orm)](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/LICENSE)
 [![REUSE status](https://api.reuse.software/badge/github.com/forge-sql-orm/forge-sql-orm)](https://api.reuse.software/info/github.com/forge-sql-orm/forge-sql-orm)
-[![License compliance](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/license-compliance.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
+[![License compliance (core)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/license-compliance.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
+[![License compliance (extra)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/extra-license-compliance.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
 
 [![forge-sql-orm CI](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml)
 [![DeepScan grade](https://deepscan.io/api/teams/26652/projects/30920/branches/997203/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=26652&pid=30920&bid=997203)

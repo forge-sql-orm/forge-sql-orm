@@ -1,5 +1,14 @@
 # forge-sql-orm-extra
 
+[![npm version](https://img.shields.io/npm/v/forge-sql-orm-extra)](https://www.npmjs.com/package/forge-sql-orm-extra)
+[![npm downloads](https://img.shields.io/npm/dm/forge-sql-orm-extra)](https://www.npmjs.com/package/forge-sql-orm-extra)
+
+[![License](https://img.shields.io/github/license/forge-sql-orm/forge-sql-orm)](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/LICENSE)
+[![REUSE status](https://api.reuse.software/badge/github.com/forge-sql-orm/forge-sql-orm)](https://api.reuse.software/info/github.com/forge-sql-orm/forge-sql-orm)
+[![License compliance (extra)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/extra-license-compliance.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
+
+[![forge-sql-orm CI](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml)
+
 **Forge SQL ORM Extra** is the extended edition of [forge-sql-orm](../README.md) — a TypeScript ORM for [Atlassian Forge](https://developer.atlassian.com/platform/forge/) apps that use [@forge/sql](https://developer.atlassian.com/platform/forge/storage-reference/sql-tutorial/). It includes everything from the core package (Drizzle integration, migrations, local cache, optimistic locking, query analysis) and adds capabilities that need [@forge/kvs](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/) or Rovo.
 
 Use **`forge-sql-orm-extra`** instead of **`forge-sql-orm`** when you want a single import that covers both everyday Forge SQL work and the extras below. The public API is the same `ForgeSQL` class — extended methods sit alongside the core ones.

@@ -67,21 +67,36 @@ jobs:
           patterns: "src/**|forge-sql-orm-cli/src/**|forge-sql-orm-extra/src/**"
           ignore: "*.js|*.jsx|*.mjs|*.cjs|*.min.js"
 
-      # Runs the same blocklist gate as CI; the badge reflects its result.
+      # Runs the same blocklist gate as CI; one badge per package (core + extra).
       # `badge` CLI ships with badge-maker (the shields.io renderer) — fetched
       # via npx, so no extra dependency in package.json.
-      - name: License compliance badge
+      - name: License compliance badges
         run: |
+          mkdir -p output
+
+          write_license_badge() {
+            local check_status=$1
+            local output_file=$2
+            local label=$3
+            if [ "$check_status" -eq 0 ]; then
+              message="no copyleft"
+              color=":brightgreen"
+            else
+              message="copyleft found"
+              color=":red"
+            fi
+            npx --yes -p badge-maker badge "$label" "$message" "$color" @flat > "$output_file"
+          }
+
           set +e
-          npm run license:check && cd forge-sql-orm-extra && npm run license:check
-          status=$?
+          npm run license:check > /dev/null 2>&1
+          core_status=$?
+          (cd forge-sql-orm-extra && npm run license:check > /dev/null 2>&1)
+          extra_status=$?
           set -e
-          if [ "$status" -eq 0 ]; then
-            message="no copyleft"; color=":brightgreen"
-          else
-            message="copyleft found"; color=":red"
-          fi
-          npx --yes -p badge-maker badge licenses "$message" "$color" @flat > output/license-compliance.svg
+
+          write_license_badge "$core_status" output/license-compliance.svg licenses
+          write_license_badge "$extra_status" output/extra-license-compliance.svg "extra licenses"
 
       - name: Publish badges to `badges` branch
         run: |
@@ -93,19 +108,21 @@ jobs:
           # Stash badge SVGs outside the worktree so the orphan reset
           # below doesn't wipe them.
           TMP=$(mktemp -d)
-          cp output/loc-full.svg            "$TMP/"
-          cp output/loc-src.svg             "$TMP/"
-          cp output/license-compliance.svg  "$TMP/"
+          cp output/loc-full.svg                   "$TMP/"
+          cp output/loc-src.svg                    "$TMP/"
+          cp output/license-compliance.svg         "$TMP/"
+          cp output/extra-license-compliance.svg   "$TMP/"
 
           git checkout --orphan badges
           git rm -rf --quiet . || true
           git clean -fdx -e output
 
-          mv "$TMP/loc-full.svg"            ./loc-full.svg
-          mv "$TMP/loc-src.svg"             ./loc-src.svg
-          mv "$TMP/license-compliance.svg"  ./license-compliance.svg
+          mv "$TMP/loc-full.svg"                   ./loc-full.svg
+          mv "$TMP/loc-src.svg"                    ./loc-src.svg
+          mv "$TMP/license-compliance.svg"         ./license-compliance.svg
+          mv "$TMP/extra-license-compliance.svg"   ./extra-license-compliance.svg
 
-          git add loc-full.svg loc-src.svg license-compliance.svg
+          git add loc-full.svg loc-src.svg license-compliance.svg extra-license-compliance.svg
           if git diff --cached --quiet; then
             echo "No badge changes — nothing to publish."
             exit 0
