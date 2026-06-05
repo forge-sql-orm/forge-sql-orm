@@ -343,6 +343,61 @@ describe("forge-sql-orm-extra ForgeSQLORM", () => {
       );
     });
   });
+
+  describe("normalizationSQL", () => {
+    it("normalizes SQL via parser on impl and public wrapper", () => {
+      const sql = "SELECT `id`, `name` FROM `users` WHERE `id` = 42 AND `name` = 'Alice'";
+
+      const implResult = getOrmInstance(forgeSQL).normalizationSQL(sql);
+      const publicResult = forgeSQL.normalizationSQL(sql);
+
+      expect(publicResult).toBe(implResult);
+      expect(publicResult).toContain("id = ?");
+      expect(publicResult).toContain("name = ?");
+      expect(publicResult).not.toContain("Alice");
+      expect(publicResult).not.toContain("42");
+    });
+  });
+
+  describe("executeWithMetadata error handling", () => {
+    it("logs and swallows errors from the onMetadata callback", async () => {
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await forgeSQL.executeWithMetadata(
+        async () => "value",
+        () => {
+          throw new Error("metadata callback failed");
+        },
+      );
+
+      expect(result).toBe("value");
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "[ForgeSQLORM][executeWithMetadata] Failed to run onMetadata callback",
+        expect.objectContaining({
+          errorMessage: "metadata callback failed",
+        }),
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe("public wrapper delegation", () => {
+    it("rovo on public class delegates to impl and returns a Rovo integration", () => {
+      const publicRovo = forgeSQL.rovo();
+      const implRovo = getOrmInstance(forgeSQL).rovo();
+
+      expect(typeof publicRovo.rovoSettingBuilder).toBe("function");
+      expect(typeof implRovo.rovoSettingBuilder).toBe("function");
+    });
+
+    it("selectCacheableFrom on public class delegates to impl drizzle helper", async () => {
+      fakeCache.getQueryResultsFromCache.mockResolvedValue([{ id: 3, name: "public" }]);
+      const result = await forgeSQL.selectCacheableFrom(testEntity, 45);
+      expect(result).toEqual([{ id: 3, name: "public" }]);
+    });
+  });
 });
 
 describe("forge-sql-orm-extra ForgeSQLORM isolated initialization", () => {
