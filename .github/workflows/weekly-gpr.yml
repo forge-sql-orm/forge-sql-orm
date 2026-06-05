@@ -1,0 +1,135 @@
+# Weekly snapshot of green master → GitHub Packages (dist-tag: latest).
+# Official semver releases stay on npmjs.com (manual).
+name: Weekly GitHub Packages (latest)
+
+on:
+  schedule:
+    # Sunday 02:00 UTC
+    - cron: "0 2 * * 0"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: write
+  actions: read
+
+concurrency:
+  group: weekly-gpr
+  cancel-in-progress: false
+
+jobs:
+  weekly-latest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: master
+          fetch-depth: 1
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Verify master HEAD has a green CI run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/ci/github-packages.mjs verify-master-ci "${{ github.sha }}"
+
+      - name: Install core dependencies
+        run: npm ci --ignore-scripts
+
+      - name: REUSE / SPDX compliance
+        uses: fsfe/reuse-action@bb774aa972c2a89ff34781233d275075cbddf542 # v5
+
+      - run: npm run knip
+
+      - name: License compliance (no GPL/LGPL/AGPL/copyleft)
+        run: npm run license:check
+
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run format:check
+      - run: npm run test:coverage
+
+      - name: Set weekly version suffix
+        id: weekly
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+          else
+            echo "date=$(date -u +%Y%m%d)-m${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish weekly forge-sql-orm to GitHub Packages (latest)
+        id: publish_weekly_core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
+        run: |
+          node scripts/ci/github-packages.mjs publish-weekly-core
+          echo "core_version=$(node scripts/ci/github-packages.mjs weekly-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Extra package (quality gate)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
+        run: |
+          cd forge-sql-orm-extra
+          npm ci --ignore-scripts
+          node ../scripts/ci/github-packages.mjs install-workspace . "${{ steps.publish_weekly_core.outputs.core_version }}"
+          npm run license:check
+          npm run knip
+          npm run build
+          npm run test:coverage
+
+      - name: Publish weekly forge-sql-orm-extra to GitHub Packages (latest)
+        id: publish_weekly_extra
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
+        run: |
+          node scripts/ci/github-packages.mjs publish-weekly-extra "${{ steps.publish_weekly_core.outputs.core_version }}"
+          echo "extra_version=$(node scripts/ci/github-packages.mjs weekly-version forge-sql-orm-extra)" >> "$GITHUB_OUTPUT"
+
+      - name: CLI package (quality gate)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
+        run: |
+          cd forge-sql-orm-cli
+          npm ci --ignore-scripts
+          node ../scripts/ci/github-packages.mjs install-workspace . "${{ steps.publish_weekly_core.outputs.core_version }}"
+          npm run knip
+          npm run lint
+          npm run build
+          npm run test:coverage
+
+      - name: Publish weekly forge-sql-orm-cli to GitHub Packages (latest)
+        id: publish_weekly_cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
+        run: |
+          node scripts/ci/github-packages.mjs publish-weekly-cli "${{ steps.publish_weekly_core.outputs.core_version }}"
+          echo "cli_version=$(node scripts/ci/github-packages.mjs weekly-version forge-sql-orm-cli)" >> "$GITHUB_OUTPUT"
+
+      - name: Delete all ephemeral ci.* versions from GitHub Packages
+        continue-on-error: true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/ci/github-packages.mjs cleanup-all-ci-versions
+
+      - name: Summary
+        run: |
+          echo "## Weekly GitHub Packages (latest)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Package | Version | dist-tag |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| --- | --- | --- |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| forge-sql-orm | ${{ steps.publish_weekly_core.outputs.core_version }} | latest |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| forge-sql-orm-extra | ${{ steps.publish_weekly_extra.outputs.extra_version }} | latest |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| forge-sql-orm-cli | ${{ steps.publish_weekly_cli.outputs.cli_version }} | latest |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"

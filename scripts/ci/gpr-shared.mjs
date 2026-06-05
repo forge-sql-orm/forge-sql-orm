@@ -6,7 +6,9 @@ import path from "node:path";
 
 export const GPR_REGISTRY = "https://npm.pkg.github.com";
 export const CI_PUBLISH_TAG = "ci";
+export const LATEST_PUBLISH_TAG = "latest";
 export const CI_PACKAGE_DIRS = [".", "forge-sql-orm-extra", "forge-sql-orm-cli"];
+export const WEEKLY_WORKFLOW_FILE = "node.js.yml";
 
 function requireRunNumber() {
   const runNumber = process.env.GITHUB_RUN_NUMBER;
@@ -21,7 +23,22 @@ export function readPkg(dir) {
 }
 
 function baseVersion(version) {
-  return String(version).replace(/-ci\.[\d]+(?:-a[\d]+)?$/, "");
+  return String(version)
+    .replace(/-ci\.[\d]+(?:-a[\d]+)?$/, "")
+    .replace(/-weekly\.\d{8}$/, "");
+}
+
+export function weeklyVersionLabel() {
+  const fromEnv = process.env.WEEKLY_BUILD_DATE;
+  if (fromEnv) {
+    return fromEnv;
+  }
+  return new Date().toISOString().slice(0, 10).replaceAll("-", "");
+}
+
+export function weeklyVersion(dir = ".") {
+  const pkg = readPkg(dir);
+  return `${baseVersion(pkg.version)}-weekly.${weeklyVersionLabel()}`;
 }
 
 function ciVersionLabel() {

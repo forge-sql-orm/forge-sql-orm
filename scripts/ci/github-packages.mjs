@@ -7,18 +7,22 @@
  * publish uses a temporary directory with an adjusted manifest only for npm publish.
  */
 
-import { cleanupCiVersions } from "./gpr-delete.mjs";
+import { cleanupAllCiVersions, cleanupCiVersions } from "./gpr-delete.mjs";
 import {
   installExampleDeps,
   installWorkspacePackages,
   publishCli,
   publishCore,
   publishExtra,
+  publishWeeklyCli,
+  publishWeeklyCore,
+  publishWeeklyExtra,
 } from "./gpr-publish.mjs";
-import { ciVersion, writeNpmrc } from "./gpr-shared.mjs";
+import { ciVersion, weeklyVersion, writeNpmrc } from "./gpr-shared.mjs";
+import { verifyMasterCiGreen } from "./verify-master-ci.mjs";
 
 const COMMAND_USAGE =
-  "ci-version | write-npmrc | publish-core | publish-extra | publish-cli | install-workspace | install-example | cleanup-ci-versions";
+  "ci-version | weekly-version | write-npmrc | publish-core | publish-extra | publish-cli | publish-weekly-core | publish-weekly-extra | publish-weekly-cli | verify-master-ci | install-workspace | install-example | cleanup-ci-versions | cleanup-all-ci-versions";
 
 function requireCliArg(args, index, usage) {
   const value = args[index];
@@ -30,6 +34,10 @@ function requireCliArg(args, index, usage) {
 
 function runCiVersionCommand(args) {
   console.log(ciVersion(args[0] ?? "."));
+}
+
+function runWeeklyVersionCommand(args) {
+  console.log(weeklyVersion(args[0] ?? "."));
 }
 
 function runWriteNpmrcCommand() {
@@ -49,6 +57,25 @@ async function runPublishExtraCommand(args) {
 async function runPublishCliCommand(args) {
   writeNpmrc();
   await publishCli(requireCliArg(args, 0, "publish-cli <coreVersion>"));
+}
+
+async function runPublishWeeklyCoreCommand() {
+  writeNpmrc();
+  await publishWeeklyCore();
+}
+
+async function runPublishWeeklyExtraCommand(args) {
+  writeNpmrc();
+  await publishWeeklyExtra(requireCliArg(args, 0, "publish-weekly-extra <coreVersion>"));
+}
+
+async function runPublishWeeklyCliCommand(args) {
+  writeNpmrc();
+  await publishWeeklyCli(requireCliArg(args, 0, "publish-weekly-cli <coreVersion>"));
+}
+
+async function runVerifyMasterCiCommand(args) {
+  await verifyMasterCiGreen(requireCliArg(args, 0, "verify-master-ci <headSha>"));
 }
 
 function runInstallWorkspaceCommand(args) {
@@ -76,13 +103,19 @@ function runInstallExampleCommand(args) {
 
 const commandHandlers = {
   "ci-version": runCiVersionCommand,
+  "weekly-version": runWeeklyVersionCommand,
   "write-npmrc": runWriteNpmrcCommand,
   "publish-core": runPublishCoreCommand,
   "publish-extra": runPublishExtraCommand,
   "publish-cli": runPublishCliCommand,
+  "publish-weekly-core": runPublishWeeklyCoreCommand,
+  "publish-weekly-extra": runPublishWeeklyExtraCommand,
+  "publish-weekly-cli": runPublishWeeklyCliCommand,
+  "verify-master-ci": runVerifyMasterCiCommand,
   "install-workspace": runInstallWorkspaceCommand,
   "install-example": runInstallExampleCommand,
   "cleanup-ci-versions": cleanupCiVersions,
+  "cleanup-all-ci-versions": cleanupAllCiVersions,
 };
 
 async function main() {

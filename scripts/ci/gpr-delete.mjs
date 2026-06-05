@@ -12,6 +12,12 @@ import {
 } from "./gpr-shared.mjs";
 
 const MAX_VERSION_PAGES = 5;
+const MAX_CLEANUP_VERSION_PAGES = 50;
+const CI_VERSION_PATTERN = /-ci\.\d+(?:-a\d+)?$/;
+
+function isCiEphemeralVersion(versionName) {
+  return CI_VERSION_PATTERN.test(versionName);
+}
 
 function matchesPackageName(pkgName, unscopedName) {
   const owner = githubOwner();
@@ -95,6 +101,17 @@ async function findPackageApiName(owner, unscopedName, token) {
   return null;
 }
 
+async function deleteVersionById(root, versionId, scopedName, versionName, token) {
+  const response = await githubApi(`${root}/versions/${versionId}`, { method: "DELETE", token });
+  if (response.status === 204) {
+    console.error(`Deleted ${scopedName}@${versionName}`);
+    return;
+  }
+
+  const body = await response.text();
+  console.warn(`Failed to delete ${scopedName}@${versionName}: ${response.status} ${body}`);
+}
+
 async function deleteLocatedVersion(located, version, scopedName, token) {
   const match = located.versions.find((entry) => entry.name === version);
   if (!match) {
@@ -102,14 +119,52 @@ async function deleteLocatedVersion(located, version, scopedName, token) {
     return;
   }
 
-  const response = await githubApi(`${located.root}/versions/${match.id}`, { method: "DELETE", token });
-  if (response.status === 204) {
-    console.error(`Deleted ${scopedName}@${version}`);
+  await deleteVersionById(located.root, match.id, scopedName, version, token);
+}
+
+async function collectAllVersionsForRoot(root, token, apiPackageName) {
+  const versions = [];
+  for (let page = 1; page <= MAX_CLEANUP_VERSION_PAGES; page += 1) {
+    const pageResult = await readVersionsPage(root, page, token, apiPackageName);
+    versions.push(...pageResult.versions);
+    if (pageResult.stop) {
+      break;
+    }
+  }
+  return versions;
+}
+
+async function listAllPackageVersions(owner, apiPackageName, token) {
+  for (const root of packageVersionRoots(owner, apiPackageName)) {
+    const versions = await collectAllVersionsForRoot(root, token, apiPackageName);
+    if (versions.length) {
+      return { root, versions };
+    }
+  }
+  return null;
+}
+
+async function cleanupAllCiVersionsForPackage(unscopedName) {
+  const owner = githubOwner();
+  const token = githubToken();
+  const scopedName = scopedGprName(unscopedName);
+  const apiPackageName = await findPackageApiName(owner, unscopedName, token);
+  if (!apiPackageName) {
+    console.error(`Package ${scopedName} not found in GitHub Packages API, skipping ci cleanup`);
     return;
   }
 
-  const body = await response.text();
-  console.warn(`Failed to delete ${scopedName}@${version}: ${response.status} ${body}`);
+  const located = await listAllPackageVersions(owner, apiPackageName, token);
+  if (!located) {
+    console.error(`No versions listed for ${apiPackageName}, skipping ci cleanup`);
+    return;
+  }
+
+  const ciVersions = located.versions.filter((entry) => isCiEphemeralVersion(entry.name));
+  console.error(`Deleting ${ciVersions.length} ci.* version(s) for ${scopedName}`);
+  for (const entry of ciVersions) {
+    await deleteVersionById(located.root, entry.id, scopedName, entry.name, token);
+  }
 }
 
 async function deleteGprVersion(unscopedName, version) {
@@ -135,5 +190,12 @@ export async function cleanupCiVersions() {
   for (const dir of CI_PACKAGE_DIRS) {
     const pkg = readPkg(dir);
     await deleteGprVersion(pkg.name, ciVersion(dir));
+  }
+}
+
+export async function cleanupAllCiVersions() {
+  for (const dir of CI_PACKAGE_DIRS) {
+    const pkg = readPkg(dir);
+    await cleanupAllCiVersionsForPackage(pkg.name);
   }
 }
