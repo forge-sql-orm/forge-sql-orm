@@ -13,6 +13,7 @@ import path from "node:path";
 import { tmpdir } from "node:os";
 
 const GPR_REGISTRY = "https://npm.pkg.github.com";
+const CI_PUBLISH_TAG = "ci";
 const CI_PACKAGE_DIRS = [".", "forge-sql-orm-extra", "forge-sql-orm-cli"];
 
 function requireRunNumber() {
@@ -83,7 +84,7 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
       path.join(stagingDir, "package.json"),
       `${JSON.stringify(publishPkg, null, 2)}\n`,
     );
-    execSync("npm publish --ignore-scripts", {
+    execSync(`npm publish --ignore-scripts --tag ${CI_PUBLISH_TAG}`, {
       cwd: stagingDir,
       stdio: "inherit",
       env: {
