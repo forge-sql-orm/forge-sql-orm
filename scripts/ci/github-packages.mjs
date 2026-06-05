@@ -122,7 +122,7 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
       stdio: "inherit",
       env: publishEnv,
     });
-    console.log(`Published ${publishPkg.name}@${version} to GitHub Packages`);
+    console.error(`Published ${publishPkg.name}@${version} to GitHub Packages`);
   } finally {
     rmSync(stagingDir, { recursive: true, force: true });
   }
