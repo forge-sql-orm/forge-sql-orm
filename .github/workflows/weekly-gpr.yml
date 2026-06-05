@@ -21,6 +21,8 @@ jobs:
   weekly-latest:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -34,8 +36,6 @@ jobs:
           cache: npm
 
       - name: Verify master HEAD has a green CI run
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/ci/github-packages.mjs verify-master-ci "${{ github.sha }}"
 
       - name: Install core dependencies
@@ -66,7 +66,6 @@ jobs:
       - name: Publish weekly forge-sql-orm to GitHub Packages (latest)
         id: publish_weekly_core
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
         run: |
           node scripts/ci/github-packages.mjs publish-weekly-core
@@ -74,7 +73,6 @@ jobs:
 
       - name: Extra package (quality gate)
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
         run: |
           cd forge-sql-orm-extra
@@ -88,7 +86,6 @@ jobs:
       - name: Publish weekly forge-sql-orm-extra to GitHub Packages (latest)
         id: publish_weekly_extra
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
         run: |
           node scripts/ci/github-packages.mjs publish-weekly-extra "${{ steps.publish_weekly_core.outputs.core_version }}"
@@ -96,7 +93,6 @@ jobs:
 
       - name: CLI package (quality gate)
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
         run: |
           cd forge-sql-orm-cli
@@ -110,7 +106,6 @@ jobs:
       - name: Publish weekly forge-sql-orm-cli to GitHub Packages (latest)
         id: publish_weekly_cli
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WEEKLY_BUILD_DATE: ${{ steps.weekly.outputs.date }}
         run: |
           node scripts/ci/github-packages.mjs publish-weekly-cli "${{ steps.publish_weekly_core.outputs.core_version }}"
@@ -118,8 +113,6 @@ jobs:
 
       - name: Delete all ephemeral ci.* versions from GitHub Packages
         continue-on-error: true
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/ci/github-packages.mjs cleanup-all-ci-versions
 
       - name: Summary
