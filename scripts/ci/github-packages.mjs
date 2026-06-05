@@ -37,15 +37,44 @@ export function ciVersion(dir = ".") {
   return `${baseVersion(pkg.version)}-ci.${requireRunNumber()}`;
 }
 
-function writeNpmrc() {
+function githubOwner() {
+  const repository = process.env.GITHUB_REPOSITORY;
+  if (!repository) {
+    throw new Error("GITHUB_REPOSITORY is required for GitHub Packages");
+  }
+  return repository.split("/")[0];
+}
+
+function githubToken() {
   const token = process.env.NODE_AUTH_TOKEN ?? process.env.GITHUB_TOKEN;
   if (!token) {
     throw new Error("NODE_AUTH_TOKEN or GITHUB_TOKEN is required to access GitHub Packages");
   }
-  writeFileSync(
-    ".npmrc",
-    `//npm.pkg.github.com/:_authToken=${token}\nregistry=https://registry.npmjs.org/\n`,
-  );
+  return token;
+}
+
+function scopedGprName(name) {
+  if (name.startsWith("@")) {
+    return name;
+  }
+  return `@${githubOwner()}/${name}`;
+}
+
+function gprDependencyAlias(name, version) {
+  return `npm:${scopedGprName(name)}@${version}`;
+}
+
+function gprInstallAlias(name, version) {
+  return `${name}@npm:${scopedGprName(name)}@${version}`;
+}
+
+function npmrcContent() {
+  const owner = githubOwner();
+  return `//npm.pkg.github.com/:_authToken=${githubToken()}\n@${owner}:registry=${GPR_REGISTRY}\nregistry=https://registry.npmjs.org/\n`;
+}
+
+function writeNpmrc(targetDir = ".") {
+  writeFileSync(path.join(targetDir, ".npmrc"), npmrcContent());
 }
 
 function copyPackagePayload(sourceDir, targetDir, pkg) {
@@ -72,8 +101,9 @@ function sanitizePublishManifest(pkg) {
 function npmPublishEphemeral(sourceDir, version, transformPkg) {
   const sourcePkg = readPkg(sourceDir);
   const publishPkg = structuredClone(sourcePkg);
+  publishPkg.name = scopedGprName(sourcePkg.name);
   publishPkg.version = version;
-  publishPkg.publishConfig = { registry: GPR_REGISTRY };
+  publishPkg.publishConfig = { registry: GPR_REGISTRY, access: "public" };
   transformPkg?.(publishPkg);
   sanitizePublishManifest(publishPkg);
 
@@ -84,13 +114,13 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
       path.join(stagingDir, "package.json"),
       `${JSON.stringify(publishPkg, null, 2)}\n`,
     );
+    writeNpmrc(stagingDir);
+    const publishEnv = { ...process.env };
+    delete publishEnv.NPM_CONFIG_USERCONFIG;
     execSync(`npm publish --ignore-scripts --tag ${CI_PUBLISH_TAG}`, {
       cwd: stagingDir,
       stdio: "inherit",
-      env: {
-        ...process.env,
-        NPM_CONFIG_REGISTRY: GPR_REGISTRY,
-      },
+      env: publishEnv,
     });
     console.log(`Published ${publishPkg.name}@${version} to GitHub Packages`);
   } finally {
@@ -102,7 +132,7 @@ function installFromGpr(cwd, specs) {
   if (!specs.length) {
     return;
   }
-  execSync(`npm install ${specs.join(" ")} --registry=${GPR_REGISTRY} --ignore-scripts`, {
+  execSync(`npm install ${specs.join(" ")} --ignore-scripts`, {
     cwd,
     stdio: "inherit",
   });
@@ -122,7 +152,7 @@ function publishExtra(coreVersion) {
   const version = ciVersion("forge-sql-orm-extra");
   npmPublishEphemeral("forge-sql-orm-extra", version, (pkg) => {
     if (pkg.dependencies?.["forge-sql-orm"]) {
-      pkg.dependencies["forge-sql-orm"] = coreVersion;
+      pkg.dependencies["forge-sql-orm"] = gprDependencyAlias("forge-sql-orm", coreVersion);
     }
   });
   return version;
@@ -132,7 +162,7 @@ function publishCli(coreVersion) {
   const version = ciVersion("forge-sql-orm-cli");
   npmPublishEphemeral("forge-sql-orm-cli", version, (pkg) => {
     if (pkg.dependencies?.["forge-sql-orm"]) {
-      pkg.dependencies["forge-sql-orm"] = coreVersion;
+      pkg.dependencies["forge-sql-orm"] = gprDependencyAlias("forge-sql-orm", coreVersion);
     }
   });
   return version;
@@ -143,7 +173,7 @@ function installWorkspacePackage(cwd, name, version) {
   if (!hasDep(pkg, name)) {
     return;
   }
-  installFromGpr(cwd, [`${name}@${version}`]);
+  installFromGpr(cwd, [gprInstallAlias(name, version)]);
 }
 
 function installExampleDeps(exampleDir, versions) {
@@ -151,26 +181,10 @@ function installExampleDeps(exampleDir, versions) {
   const specs = [];
   for (const [name, version] of Object.entries(versions)) {
     if (hasDep(pkg, name)) {
-      specs.push(`${name}@${version}`);
+      specs.push(gprInstallAlias(name, version));
     }
   }
   installFromGpr(exampleDir, specs);
-}
-
-function githubOwner() {
-  const repository = process.env.GITHUB_REPOSITORY;
-  if (!repository) {
-    throw new Error("GITHUB_REPOSITORY is required to delete GitHub Packages versions");
-  }
-  return repository.split("/")[0];
-}
-
-function githubToken() {
-  const token = process.env.NODE_AUTH_TOKEN ?? process.env.GITHUB_TOKEN;
-  if (!token) {
-    throw new Error("NODE_AUTH_TOKEN or GITHUB_TOKEN is required to delete GitHub Packages versions");
-  }
-  return token;
 }
 
 async function githubApi(path, { method = "GET", token } = {}) {
@@ -239,7 +253,7 @@ async function cleanupCiVersions() {
   for (const dir of CI_PACKAGE_DIRS) {
     const pkg = readPkg(dir);
     const version = ciVersion(dir);
-    await deletePackageVersion(owner, pkg.name, version, token);
+    await deletePackageVersion(owner, scopedGprName(pkg.name), version, token);
   }
 }
 
