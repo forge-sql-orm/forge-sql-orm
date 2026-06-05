@@ -34,7 +34,7 @@ step "Building..."
 run npm run build
 step "Staging package.json and package-lock.json..."
 run git add package.json package-lock.json
-
+(
 section "forge-sql-orm-cli"
 step "Updating dependencies (ncu -u)..."
 cd forge-sql-orm-cli
@@ -49,9 +49,25 @@ step "Running lint:fix..."
 run npm run lint:fix
 step "Building CLI..."
 run npm run build
-
+)
+(
+section "forge-sql-orm-extra"
+step "Updating dependencies (ncu -u)..."
+cd forge-sql-orm-cli
+run ncu -u --dep prod,dev,peer
+step "Removing node_modules and package-lock.json..."
+run rm -rf node_modules package-lock.json
+step "Installing dependencies (npm i)..."
+run npm i
+step "Running knip..."
+run npm run knip
+step "Running lint:fix..."
+run npm run lint:fix
+step "Building CLI..."
+run npm run build
+)
 section "Examples"
-cd ../examples
+cd examples
 
 section "forge-sql-orm-example-drizzle-driver-simple"
 cd forge-sql-orm-example-drizzle-driver-simple
