@@ -119,6 +119,8 @@
 - [Product requirements](REQUIREMENTS.md) — scope, platform limits (Forge SQL / KVS), traceability
 - [ForgeSqlOrmOptions](#forgesqlormoptions)
 - [Migration Guide](#migration-guide)
+  - [Migrating from 2.0.x to 2.1.x](#migrating-from-20x-to-21x)
+  - [Migrating from 2.1.x to 2.2.x](#migrating-from-21x-to-22x)
 
 ## 🚀 Quick Navigation
 
@@ -2356,47 +2358,76 @@ find . -name "*.ts" -o -name "*.js" | xargs sed -i 's/forgeSQL\.modify()/forgeSQ
 find . -name "*.ts" -o -name "*.js" | xargs sed -i 's/forgeSQL\.crud()/forgeSQL.modifyWithVersioning()/g'
 ```
 
-#### 4. Breaking Changes (2.2.x — core vs extra)
+### Migrating from 2.1.x to 2.2.x
 
-Starting with **2.2.x**, the library is split into two packages to keep the core smaller and reduce dependencies for apps that do not need global cache or Rovo:
+Starting with **2.2.x**, the library is split into two packages to keep the core smaller and reduce dependencies for apps that do not need global cache or Rovo.
+
+#### 1. Understand the package split
 
 | Package                 | Install                                               | Use when                                                                                                   |
 | ----------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | **forge-sql-orm**       | `npm install forge-sql-orm @forge/sql drizzle-orm -S` | Drizzle + `@forge/sql`, **Level 1 local cache**, migrations, optimistic locking (no L2 KVS)                |
 | **forge-sql-orm-extra** | `npm install forge-sql-orm-extra @forge/kvs -S`       | **Level 2** global KVS cache, Rovo — L1 still from core; see [extra README](forge-sql-orm-extra/README.md) |
 
-**If you did not use global cache (L2) or Rovo:** nothing changes. Keep `import ForgeSQL from "forge-sql-orm"`. Local cache (`executeWithLocalContext`, `selectFrom`, `execute`, …) stays on core.
+#### 2. Stay on core if you do not use L2 or Rovo
 
-**If you used Level 2 global cache (`cacheEntityName`, `selectCacheable`, `executeCacheable`, `*AndEvictCache`, `executeWithCacheContext`, …) or Rovo (`forgeSQL.rovo()`):** (Level 1 local cache alone does not require extra.)
+**If you did not use global cache (L2) or Rovo:** nothing changes. Keep:
 
-1. Add the extension package: `npm install forge-sql-orm-extra @forge/kvs -S` (core dependencies stay as before).
-2. Change the import only — the rest of your logic stays the same:
+```typescript
+import ForgeSQL from "forge-sql-orm";
+```
 
-   ```typescript
-   // ❌ Before (2.1.x and earlier monolith)
-   import ForgeSQL from "forge-sql-orm";
+Local cache (`executeWithLocalCacheContext`, `selectFrom`, `execute`, …) stays on core.
 
-   // ✅ After (2.2.x with cache or Rovo)
-   import ForgeSQL from "forge-sql-orm-extra";
-   ```
+#### 3. Add the extension package (L2 cache or Rovo only)
 
-3. Keep your existing options and calls unchanged, for example:
+**If you used Level 2 global cache** (`cacheEntityName`, `selectCacheable*`, `executeCacheable`, `*AndEvictCache`, `executeWithCacheContext`, …) **or Rovo** (`forgeSQL.rovo()`):
 
-   ```typescript
-   const forgeSQL = new ForgeSQL({
-     cacheEntityName: "cache",
-     cacheTTL: 300,
-   });
+```bash
+npm install forge-sql-orm-extra @forge/kvs -S
+```
 
-   const users = await forgeSQL
-     .selectCacheable({ id: users.id, name: users.name })
-     .from(users)
-     .where(eq(users.active, true));
-   ```
+Core dependencies (`forge-sql-orm`, `@forge/sql`, `drizzle-orm`) stay as before. Level 1 local cache alone does **not** require extra.
 
-4. Update imports for helpers that moved with cache (if you use them), e.g. `clearCacheSchedulerTrigger` from `"forge-sql-orm-extra"` instead of `"forge-sql-orm"`.
+#### 4. Change the import
 
-**2.1.x reminder:** `modify()` and `crud()` were removed in 2.1.x — use `modifyWithVersioning()` (see sections 1–3 above).
+```typescript
+// ❌ Before (2.1.x monolith)
+import ForgeSQL from "forge-sql-orm";
+
+// ✅ After (2.2.x with cache or Rovo)
+import ForgeSQL from "forge-sql-orm-extra";
+```
+
+The rest of your logic stays the same — options, method names, and call patterns are unchanged.
+
+#### 5. Keep existing options and calls
+
+```typescript
+const forgeSQL = new ForgeSQL({
+  cacheEntityName: "cache",
+  cacheTTL: 300,
+});
+
+const users = await forgeSQL
+  .selectCacheable({ id: users.id, name: users.name })
+  .from(users)
+  .where(eq(users.active, true));
+```
+
+#### 6. Update imports for helpers that moved with cache
+
+If you use web triggers or utilities that moved to the extension package, update their import path, for example:
+
+```typescript
+// ❌ Before
+import { clearCacheSchedulerTrigger } from "forge-sql-orm";
+
+// ✅ After
+import { clearCacheSchedulerTrigger } from "forge-sql-orm-extra";
+```
+
+See [forge-sql-orm-extra README](forge-sql-orm-extra/README.md) for the full list of cache and Rovo APIs.
 
 ## License
 
