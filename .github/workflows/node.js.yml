@@ -71,6 +71,7 @@ jobs:
           if [ "${{ github.actor }}" != "dependabot[bot]" ]; then
             node ../scripts/ci/github-packages.mjs install-workspace . "${{ steps.publish_core.outputs.core_version }}"
           fi
+          npm run license:check
           npm run knip
           npm run build
           npm run test:coverage

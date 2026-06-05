@@ -33,6 +33,9 @@ jobs:
       - name: Install deps (for license scan)
         run: npm ci --ignore-scripts
 
+      - name: Install forge-sql-orm-extra deps (for license scan)
+        run: cd forge-sql-orm-extra && npm ci --ignore-scripts
+
       - name: Prepare output dir
         run: mkdir -p output
 
@@ -61,7 +64,7 @@ jobs:
           badge: ./output/loc-src.svg
           badge_label: "LoC (src)"
           badge_color: "green"
-          patterns: "src/**|forge-sql-orm-cli/src/**"
+          patterns: "src/**|forge-sql-orm-cli/src/**|forge-sql-orm-extra/src/**"
           ignore: "*.js|*.jsx|*.mjs|*.cjs|*.min.js"
 
       # Runs the same blocklist gate as CI; the badge reflects its result.
@@ -70,7 +73,7 @@ jobs:
       - name: License compliance badge
         run: |
           set +e
-          npm run license:check
+          npm run license:check && cd forge-sql-orm-extra && npm run license:check
           status=$?
           set -e
           if [ "$status" -eq 0 ]; then
