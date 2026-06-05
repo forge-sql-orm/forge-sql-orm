@@ -435,8 +435,6 @@ const optimizedData = await forgeSQL.executeWithLocalCacheContextAndReturnValue(
 
 ## Choosing the Right Method - ForgeSQL ORM
 
-### When to Use Each Approach
-
 | Method                                | Use Case                                                    | Versioning | Cache Management     |
 | ------------------------------------- | ----------------------------------------------------------- | ---------- | -------------------- |
 | `modifyWithVersioningAndEvictCache()` | High-concurrency scenarios with Cache support               | ✅ Yes     | ✅ Yes               |
@@ -456,8 +454,6 @@ const optimizedData = await forgeSQL.executeWithLocalCacheContextAndReturnValue(
 | `with()`                              | Common Table Expressions (CTEs)                             | ❌ No      | Local Cache          |
 
 ## Choosing the Right Method - Direct Drizzle
-
-### When to Use Each Approach
 
 | Method                                                                 | Use Case                                                                                                               | Versioning | Cache Management     |
 | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | -------------------- |
