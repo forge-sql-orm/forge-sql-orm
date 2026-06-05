@@ -54,12 +54,27 @@ function copyPackagePayload(sourceDir, targetDir, pkg) {
   }
 }
 
+const PUBLISH_LIFECYCLE_SCRIPTS = ["prepare", "prepublish", "prepublishOnly", "prepack", "postpack"];
+
+function sanitizePublishManifest(pkg) {
+  for (const scriptName of PUBLISH_LIFECYCLE_SCRIPTS) {
+    delete pkg.scripts?.[scriptName];
+  }
+  if (pkg.scripts && Object.keys(pkg.scripts).length === 0) {
+    delete pkg.scripts;
+  }
+  delete pkg.husky;
+  delete pkg["lint-staged"];
+  delete pkg.devDependencies;
+}
+
 function npmPublishEphemeral(sourceDir, version, transformPkg) {
   const sourcePkg = readPkg(sourceDir);
   const publishPkg = structuredClone(sourcePkg);
   publishPkg.version = version;
   publishPkg.publishConfig = { registry: GPR_REGISTRY };
   transformPkg?.(publishPkg);
+  sanitizePublishManifest(publishPkg);
 
   const stagingDir = mkdtempSync(path.join(tmpdir(), "forge-sql-orm-gpr-"));
   try {
@@ -68,7 +83,7 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
       path.join(stagingDir, "package.json"),
       `${JSON.stringify(publishPkg, null, 2)}\n`,
     );
-    execSync("npm publish", {
+    execSync("npm publish --ignore-scripts", {
       cwd: stagingDir,
       stdio: "inherit",
       env: {
