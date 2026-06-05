@@ -61,8 +61,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          core_version="$(node scripts/ci/github-packages.mjs publish-core)"
-          echo "core_version=$core_version" >> "$GITHUB_OUTPUT"
+          node scripts/ci/github-packages.mjs publish-core
+          echo "core_version=$(node scripts/ci/github-packages.mjs ci-version)" >> "$GITHUB_OUTPUT"
       - name: Extra package (knip / build / tests with coverage)
         run: |
           cd forge-sql-orm-extra
@@ -79,8 +79,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          extra_version="$(node scripts/ci/github-packages.mjs publish-extra "${{ steps.publish_core.outputs.core_version }}")"
-          echo "extra_version=$extra_version" >> "$GITHUB_OUTPUT"
+          node scripts/ci/github-packages.mjs publish-extra "${{ steps.publish_core.outputs.core_version }}"
+          echo "extra_version=$(node scripts/ci/github-packages.mjs ci-version forge-sql-orm-extra)" >> "$GITHUB_OUTPUT"
       - name: CLI package (knip / lint / build / tests with coverage)
         run: |
           cd forge-sql-orm-cli
@@ -98,8 +98,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cli_version="$(node scripts/ci/github-packages.mjs publish-cli "${{ steps.publish_core.outputs.core_version }}")"
-          echo "cli_version=$cli_version" >> "$GITHUB_OUTPUT"
+          node scripts/ci/github-packages.mjs publish-cli "${{ steps.publish_core.outputs.core_version }}"
+          echo "cli_version=$(node scripts/ci/github-packages.mjs ci-version forge-sql-orm-cli)" >> "$GITHUB_OUTPUT"
       - name: Merge library + EXTRA + CLI coverage into a single report
         run: npm run coverage:merge
       - name: SonarQube Scan

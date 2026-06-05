@@ -117,9 +117,10 @@ function npmPublishEphemeral(sourceDir, version, transformPkg) {
     writeNpmrc(stagingDir);
     const publishEnv = { ...process.env };
     delete publishEnv.NPM_CONFIG_USERCONFIG;
+    // Keep npm notices off stdout so workflow output capture stays a single version line.
     execSync(`npm publish --ignore-scripts --tag ${CI_PUBLISH_TAG}`, {
       cwd: stagingDir,
-      stdio: "inherit",
+      stdio: ["inherit", process.stderr, "inherit"],
       env: publishEnv,
     });
     console.error(`Published ${publishPkg.name}@${version} to GitHub Packages`);
@@ -271,7 +272,7 @@ async function main() {
     }
     case "publish-core": {
       writeNpmrc();
-      console.log(publishCore());
+      publishCore();
       break;
     }
     case "publish-extra": {
@@ -280,7 +281,7 @@ async function main() {
       if (!coreVersion) {
         throw new Error("usage: publish-extra <coreVersion>");
       }
-      console.log(publishExtra(coreVersion));
+      publishExtra(coreVersion);
       break;
     }
     case "publish-cli": {
@@ -289,7 +290,7 @@ async function main() {
       if (!coreVersion) {
         throw new Error("usage: publish-cli <coreVersion>");
       }
-      console.log(publishCli(coreVersion));
+      publishCli(coreVersion);
       break;
     }
     case "install-workspace": {
