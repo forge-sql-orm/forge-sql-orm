@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { githubApi, WEEKLY_WORKFLOW_FILE } from "./gpr-shared.mjs";
+import { githubApi, githubToken, WEEKLY_WORKFLOW_FILE } from "./gpr-shared.mjs";
 
 function requireRepository() {
   const repository = process.env.GITHUB_REPOSITORY;
@@ -17,8 +17,10 @@ function isGreenMasterRun(run) {
 
 export async function verifyMasterCiGreen(headSha) {
   const repository = requireRepository();
+  const token = githubToken();
   const response = await githubApi(
     `/repos/${repository}/actions/workflows/${WEEKLY_WORKFLOW_FILE}/runs?head_sha=${headSha}&status=completed&per_page=20`,
+    { token },
   );
 
   if (!response.ok) {

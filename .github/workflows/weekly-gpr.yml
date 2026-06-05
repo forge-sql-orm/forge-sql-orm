@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      GITHUB_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -36,7 +36,19 @@ jobs:
           cache: npm
 
       - name: Verify master HEAD has a green CI run
-        run: node scripts/ci/github-packages.mjs verify-master-ci "${{ github.sha }}"
+        run: |
+          set -euo pipefail
+          success_count=$(gh api \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/node.js.yml/runs" \
+            -f head_sha="${GITHUB_SHA}" \
+            -f status=completed \
+            -f per_page=20 \
+            --jq '[.workflow_runs[] | select(.conclusion == "success" and .event == "push")] | length')
+          if [ "$success_count" -eq 0 ]; then
+            echo "master @ ${GITHUB_SHA} is not green: no successful push run of node.js.yml found"
+            exit 1
+          fi
+          echo "Verified green master CI for ${GITHUB_SHA} (${success_count} successful run(s))"
 
       - name: Install core dependencies
         run: npm ci --ignore-scripts

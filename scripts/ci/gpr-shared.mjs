@@ -61,9 +61,9 @@ export function githubOwner() {
 }
 
 export function githubToken() {
-  const token = process.env.GITHUB_TOKEN ?? process.env.GH_TOKEN ?? process.env.NODE_AUTH_TOKEN;
+  const token = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN ?? process.env.NODE_AUTH_TOKEN;
   if (!token) {
-    throw new Error("GITHUB_TOKEN, GH_TOKEN, or NODE_AUTH_TOKEN is required for GitHub API / Packages");
+    throw new Error("GH_TOKEN, GITHUB_TOKEN, or NODE_AUTH_TOKEN is required for GitHub API / Packages");
   }
   return token;
 }
