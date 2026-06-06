@@ -21,7 +21,7 @@ run() { echo -e "${YELLOW}  →${RESET} $*"; "$@"; }
 
 section "Root package (forge-sql-orm)"
 step "Updating dependencies (ncu -u)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Removing node_modules and package-lock.json..."
 run rm -rf node_modules package-lock.json
 step "Installing dependencies (npm i)..."
@@ -38,7 +38,7 @@ run git add package.json package-lock.json
 section "forge-sql-orm-cli"
 step "Updating dependencies (ncu -u)..."
 cd forge-sql-orm-cli
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Removing node_modules and package-lock.json..."
 run rm -rf node_modules package-lock.json
 step "Installing dependencies (npm i)..."
@@ -54,7 +54,7 @@ run npm run build
 section "forge-sql-orm-extra"
 step "Updating dependencies (ncu -u)..."
 cd forge-sql-orm-extra
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Removing node_modules and package-lock.json..."
 run rm -rf node_modules package-lock.json
 step "Installing dependencies (npm i)..."
@@ -72,7 +72,7 @@ cd forge-sql-orm-example-drizzle-driver-simple
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -82,7 +82,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -98,7 +98,7 @@ cd forge-sql-orm-example-dynamic
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -108,7 +108,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -124,7 +124,7 @@ cd forge-sql-orm-example-optimistic-locking
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -134,7 +134,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -150,7 +150,7 @@ cd forge-sql-orm-example-query-analyses
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -160,7 +160,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -176,7 +176,7 @@ cd forge-sql-orm-example-simple
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -186,7 +186,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -202,7 +202,7 @@ cd forge-sql-orm-example-checklist
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -212,7 +212,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -228,7 +228,7 @@ cd forge-sql-orm-example-org-tracker
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -238,7 +238,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -254,7 +254,7 @@ cd forge-sql-orm-example-sql-executor
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -264,7 +264,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -280,7 +280,7 @@ cd forge-sql-orm-example-cache
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -290,7 +290,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -307,7 +307,7 @@ cd forge-sql-orm-example-atlascamp
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -317,7 +317,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -333,7 +333,7 @@ cd forge-sql-orm-example-vector
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -343,7 +343,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -359,7 +359,7 @@ cd forge-sql-orm-example-ai
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -369,7 +369,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -385,7 +385,7 @@ cd forge-sql-orm-example-backend-ai
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."
@@ -395,7 +395,7 @@ run git add package.json package-lock.json
 step "Static UI: removing and updating deps..."
 cd ai-lib
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "AI-LIB: installing..."
 run npm i
 step "AI-LIB: building..."
@@ -405,7 +405,7 @@ sleep 2
 run git add package.json package-lock.json
 cd ../static/forge-orm-example
 run rm -rf node_modules package-lock.json
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 run rm -rf package-lock.json
 step "Static UI: installing and knip..."
 run npm i
@@ -421,7 +421,7 @@ cd forge-sql-orm-example-ui-kit
 step "Removing node_modules and lock file..."
 run rm -rf node_modules package-lock.json
 step "Updating dependencies (ncu)..."
-run ncu -u --dep prod,dev,peer
+run ncu -u --dep prod,dev,peer,optional
 step "Installing dependencies..."
 run npm i
 step "Running knip..."

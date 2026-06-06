@@ -36,7 +36,7 @@ npm install forge-sql-orm-cli -D
 npm install forge-sql-orm-cli@npm:@forge-sql-orm/forge-sql-orm-cli@latest -D
 ```
 
-Requires a project `.npmrc` for `@forge-sql-orm` — see [core README — Installing from GitHub Packages](../README.md#installing-from-github-packages-weekly-latest). Official stable releases remain on [npmjs.com](https://www.npmjs.com/package/forge-sql-orm-cli).
+Requires a project `.npmrc` for `@forge-sql-orm` — see [core README — Installing from GitHub Packages](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md#installing-from-github-packages-weekly-latest). Official stable releases remain on [npmjs.com](https://www.npmjs.com/package/forge-sql-orm-cli).
 
 # Basic installation for UI-Kit projects
 

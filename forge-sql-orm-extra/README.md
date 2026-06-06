@@ -9,7 +9,7 @@
 
 [![forge-sql-orm CI](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml)
 
-**Forge SQL ORM Extra** is the extended edition of [forge-sql-orm](../README.md) — a TypeScript ORM for [Atlassian Forge](https://developer.atlassian.com/platform/forge/) apps that use [@forge/sql](https://developer.atlassian.com/platform/forge/storage-reference/sql-tutorial/). It includes everything from the core package (Drizzle integration, migrations, local cache, optimistic locking, query analysis) and adds capabilities that need [@forge/kvs](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/) or Rovo.
+**Forge SQL ORM Extra** is the extended edition of [forge-sql-orm](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md) — a TypeScript ORM for [Atlassian Forge](https://developer.atlassian.com/platform/forge/) apps that use [@forge/sql](https://developer.atlassian.com/platform/forge/storage-reference/sql-tutorial/). It includes everything from the core package (Drizzle integration, migrations, local cache, optimistic locking, query analysis) and adds capabilities that need [@forge/kvs](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/) or Rovo.
 
 Use **`forge-sql-orm-extra`** instead of **`forge-sql-orm`** when you want a single import that covers both everyday Forge SQL work and the extras below. The public API is the same `ForgeSQL` class — extended methods sit alongside the core ones.
 
@@ -22,7 +22,7 @@ Use **`forge-sql-orm-extra`** instead of **`forge-sql-orm`** when you want a sin
 | Level 2 global query cache via `@forge/kvs`      | —                      | ✅ `selectCacheable*`, `executeCacheable`, cache eviction helpers |
 | Rovo natural-language analytics with RLS         | —                      | ✅ `forgeSQL.rovo()`                                              |
 
-Install **forge-sql-orm-extra** when you need cross-invocation caching or Rovo. For Forge SQL apps without those features, [forge-sql-orm](../README.md) alone is enough.
+Install **forge-sql-orm-extra** when you need cross-invocation caching or Rovo. For Forge SQL apps without those features, [forge-sql-orm](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md) alone is enough.
 
 ## Installation
 
@@ -40,7 +40,7 @@ npm install forge-sql-orm-extra @forge/kvs -S
 
 You still need `forge-sql-orm`, `@forge/sql`, and `drizzle-orm` in the project (install the core line above if they are not already present).
 
-**Weekly `latest` from GitHub Packages** — same quality-gated snapshots as [core README — Installing from GitHub Packages](../README.md#installing-from-github-packages-weekly-latest). Example:
+**Weekly `latest` from GitHub Packages** — same quality-gated snapshots as [core README — Installing from GitHub Packages](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md#installing-from-github-packages-weekly-latest). Example:
 
 ```bash
 npm install forge-sql-orm@npm:@forge-sql-orm/forge-sql-orm@latest \
@@ -157,7 +157,7 @@ The diagram below shows the lifecycle of a cacheable query in Forge-SQL-ORM:
    - Cache miss / expired → query is executed against @forge/sql.
 4. Fresh result is stored in @forge/kvs with TTL and returned to the caller.
 
-![img.png](../img/umlCache1.png)
+![img.png](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/master/img/umlCache1.png)
 
 The diagram below shows how Evict Cache works in Forge-SQL-ORM:
 
@@ -167,7 +167,7 @@ The diagram below shows how Evict Cache works in Forge-SQL-ORM:
 4. Once eviction is complete, the update result is returned to the resolver.
 5. **Note:** Expired entries are not processed here — they are cleaned up separately by the scheduled cache cleanup trigger using the `expiration` index.
 
-![img.png](../img/umlCacheEvict1.png)
+![img.png](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/master/img/umlCacheEvict1.png)
 
 The diagram below shows how Scheduled Expiration Cleanup works:
 
@@ -178,7 +178,7 @@ The diagram below shows how Scheduled Expiration Cleanup works:
 3. Entries are deleted in batches (up to 25 per transaction) until the page is empty; pagination is done with a cursor (e.g., 100 per page).
 4. This keeps the cache footprint small. Use this trigger only when needed; poor INSERT/UPDATE performance should be addressed by cache design first.
 
-![img.png](../img/umlCacheEvictScheduler1.png)
+![img.png](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/master/img/umlCacheEvictScheduler1.png)
 
 The diagram below shows how Cache Context works:
 
@@ -192,7 +192,7 @@ The diagram below shows how Cache Context works:
 5. Matching cache entries are deleted in **batches** (≤25 per transaction) until the page is exhausted; then the next page is fetched via the cursor.
 6. Expiration is handled separately by the scheduled cleanup and is **not part of** the context flow.
 
-![img.png](../img/umlCacheEvictCacheContext1.png)
+![img.png](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/master/img/umlCacheEvictCacheContext1.png)
 
 ### Important Considerations
 
@@ -509,7 +509,7 @@ where Cache context - allows you to batch cache invalidation events and bypass c
 
 [↑ Back to Top](#table-of-contents)
 
-This section documents **Level 2 only** (moved to **forge-sql-orm-extra**). Level 1 (local cache) is documented below and in the [core README](../README.md#usage-approaches); it does not require `@forge/kvs`.
+This section documents **Level 2 only** (moved to **forge-sql-orm-extra**). Level 1 (local cache) is documented below and in the [core README](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md#usage-approaches); it does not require `@forge/kvs`.
 
 **forge-sql-orm-extra** provides a global caching system that provides **cross-invocation caching** - the ability to share cached data between different resolver invocations. The global cache system is built on top of [@forge/kvs Custom entity store](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/) and provides persistent cross-invocation caching with automatic serialization/deserialization of complex data structures.
 
@@ -535,7 +535,7 @@ Default backends differ by package:
 
 **If you used global cache before (2.1.x monolith):** install and import **`forge-sql-orm-extra`** instead of `forge-sql-orm`. You do not need to change `cacheEntityName`, TTL, or query code — only the import (and dependencies). `KVSCache` is already the default on this package.
 
-The backend is still pluggable via `cacheImplementation` ([`Cache`](../src/lib/cache/Cache.ts) interface from core). Override only for custom implementations or tests:
+The backend is still pluggable via `cacheImplementation` ([`Cache`](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/src/lib/cache/Cache.ts) interface from core). Override only for custom implementations or tests:
 
 ```typescript
 import ForgeSQL from "forge-sql-orm-extra";
@@ -606,7 +606,7 @@ await forgeSQL.executeWithCacheContext(async () => {
 
 ### Local Cache Operations (Level 1)
 
-> **Package note:** Local cache is **core** functionality ([forge-sql-orm](../README.md)); it did **not** move to extra. This section describes L1 for apps using **forge-sql-orm-extra** (L1 + L2). For L1 only, use core `forge-sql-orm` without `@forge/kvs`.
+> **Package note:** Local cache is **core** functionality ([forge-sql-orm](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md)); it did **not** move to extra. This section describes L1 for apps using **forge-sql-orm-extra** (L1 + L2). For L1 only, use core `forge-sql-orm` without `@forge/kvs`.
 
 Forge-SQL-ORM provides a local cache system (Level 1 cache) that stores query results in memory for the duration of a single resolver invocation. This is particularly useful for optimizing repeated queries within the same execution context(resolver invocation).
 
@@ -817,7 +817,7 @@ The diagram below shows how local cache works in Forge-SQL-ORM:
 5. **Query After Modification**: Cache miss (was evicted) → Database query → Save to local cache
 6. **Request End**: Local cache context is destroyed, all data cleared
 
-![Local Cache Flow](../img/localCacheFlow.txt)
+![Local Cache Flow](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/master/img/umlLocalCache.png)
 
 ### Cache-Aware Query Operations
 
@@ -1155,7 +1155,7 @@ export async function runSecurityNotesQuery(
 
 ## ForgeSqlOrmOptions (cache)
 
-When using `forge-sql-orm-extra`, these options apply in addition to [core options](../README.md#forgesqlormoptions):
+When using `forge-sql-orm-extra`, these options apply in addition to [core options](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md#forgesqlormoptions):
 
 | Option                | Type      | Description                                                                                                                                    |
 | --------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1167,12 +1167,12 @@ When using `forge-sql-orm-extra`, these options apply in addition to [core optio
 
 ## Examples
 
-- [Cache Example](../examples/forge-sql-orm-example-cache) — caching with performance monitoring
+- [Cache Example](https://github.com/forge-sql-orm/forge-sql-orm/tree/master/examples/forge-sql-orm-example-cache) — caching with performance monitoring
 - [Rovo Integration Example](https://github.com/vzakharchenko/Forge-Secure-Notes-for-Jira) — secure natural-language analytics
 
 ## See also
 
-- [Forge SQL ORM (core)](../README.md) — Drizzle driver, migrations, optimistic locking, local cache, vectors, CLI
+- [Forge SQL ORM (core)](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md) — Drizzle driver, migrations, optimistic locking, local cache, vectors, CLI
 
 ## License
 

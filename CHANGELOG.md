@@ -6,7 +6,7 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
-## [2.2.0] - IN PROGRESS
+## [2.2.0] - 2026-06-06
 
 🚀 What's New
 
