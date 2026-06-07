@@ -1,11 +1,27 @@
 # Forge SQL ORM
 
-[![npm version](https://img.shields.io/npm/v/forge-sql-orm)](https://www.npmjs.com/package/forge-sql-orm)
-[![npm downloads](https://img.shields.io/npm/dm/forge-sql-orm)](https://www.npmjs.com/package/forge-sql-orm)
+[![npm version (core)](https://img.shields.io/npm/v/forge-sql-orm?label=core)](https://www.npmjs.com/package/forge-sql-orm)
+[![npm downloads (core)](https://img.shields.io/npm/dm/forge-sql-orm?label=core%20downloads)](https://www.npmjs.com/package/forge-sql-orm)
+[![npm version (extra)](https://img.shields.io/npm/v/forge-sql-orm-extra?label=extra)](https://www.npmjs.com/package/forge-sql-orm-extra)
+[![npm downloads (extra)](https://img.shields.io/npm/dm/forge-sql-orm-extra?label=extra%20downloads)](https://www.npmjs.com/package/forge-sql-orm-extra)
 [![npm version (CLI)](https://img.shields.io/npm/v/forge-sql-orm-cli?label=cli)](https://www.npmjs.com/package/forge-sql-orm-cli)
 [![npm downloads (CLI)](https://img.shields.io/npm/dm/forge-sql-orm-cli?label=cli%20downloads)](https://www.npmjs.com/package/forge-sql-orm-cli)
 
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=coverage)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+[![forge-sql-orm CI](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+[![Code Coverage](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm/coverage.svg)](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=bugs)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
+
+[![DeepScan grade](https://deepscan.io/api/teams/26652/projects/30920/branches/997203/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=26652&pid=30920&bid=997203)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5a850fba74734c658a5f88822cff4fd0)](https://app.codacy.com/gh/forge-sql-orm/forge-sql-orm/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Snyk Vulnerabilities](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm/badge.svg)](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm)
+[![Maintainability](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm/maintainability.svg)](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm)
+[![Socket Badge](https://badge.socket.dev/npm/package/forge-sql-orm/latest)](https://badge.socket.dev/npm/package/forge-sql-orm/latest)
 
 [![LoC (full)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/loc-full.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
 [![LoC (src)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/loc-src.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
@@ -14,19 +30,6 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/forge-sql-orm/forge-sql-orm)](https://api.reuse.software/info/github.com/forge-sql-orm/forge-sql-orm)
 [![License compliance (core)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/license-compliance.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
 [![License compliance (extra)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/extra-license-compliance.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
-
-[![forge-sql-orm CI](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml/badge.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/node.js.yml)
-[![DeepScan grade](https://deepscan.io/api/teams/26652/projects/30920/branches/997203/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=26652&pid=30920&bid=997203)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5a850fba74734c658a5f88822cff4fd0)](https://app.codacy.com/gh/forge-sql-orm/forge-sql-orm/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![Snyk Vulnerabilities](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm/badge.svg)](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
-
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=bugs)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=forge-sql-orm_forge-sql-orm&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=forge-sql-orm_forge-sql-orm)
-[![Maintainability](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm/maintainability.svg)](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm)
 
 **Forge SQL ORM** is a TypeScript ORM for [Atlassian Forge](https://developer.atlassian.com/platform/forge/) apps that use [@forge/sql](https://developer.atlassian.com/platform/forge/storage-reference/sql-tutorial/) — Atlassian’s managed SQL storage (TiDB-compatible) inside Forge resolvers, triggers, and scheduled jobs.
 
