@@ -14,6 +14,10 @@ jobs:
   # --- Quality gate: core library lint / build / tests / coverage scanners ---
   quality:
     runs-on: ubuntu-latest
+    env:
+      SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+      QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+      CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
     permissions:
       contents: read
       packages: write
@@ -96,16 +100,25 @@ jobs:
           node scripts/ci/github-packages.mjs publish-cli "${{ steps.publish_core.outputs.core_version }}"
           echo "cli_version=$(node scripts/ci/github-packages.mjs ci-version forge-sql-orm-cli)" >> "$GITHUB_OUTPUT"
       - name: Merge library + EXTRA + CLI coverage into a single report
+        if: env.SONARCLOUD_TOKEN != '' || env.QLTY_COVERAGE_TOKEN != '' || env.CODACY_API_TOKEN != ''
         run: npm run coverage:merge
       - name: SonarQube Scan
+        if: env.SONARCLOUD_TOKEN != ''
         uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7.2.1
         env:
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+          SONAR_TOKEN: ${{ env.SONARCLOUD_TOKEN }}
       - name: Upload to Qlty
+        if: env.QLTY_COVERAGE_TOKEN != ''
         uses: qltysh/qlty-action/coverage@141b881236146435192435eb7b0e06ea0b70b4d9 # main as of 2026-05-12
         with:
-          coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          coverage-token: ${{ env.QLTY_COVERAGE_TOKEN }}
           files: ./coverage/lcov.info
+      - name: Upload coverage to Codacy
+        if: env.CODACY_API_TOKEN != ''
+        uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1.3.0
+        with:
+          api-token: ${{ env.CODACY_API_TOKEN }}
+          coverage-reports: ./coverage/lcov.info
 
   # --- Examples: one matrix entry per example, built & deployed in parallel ---
   examples:
