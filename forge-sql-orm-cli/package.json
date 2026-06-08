@@ -85,5 +85,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/forge-sql-orm/forge-sql-orm.git"
+  },
+  "overrides": {
+    "esbuild": "npm:esbuild@latest"
   }
 }
