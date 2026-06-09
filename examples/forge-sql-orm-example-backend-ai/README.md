@@ -42,7 +42,7 @@ Forge SQL does not expose MySQL-style `FULLTEXT` search. This example scores key
 - Fields: `title` (boost ×2) and `document`; options: `prefix: true`, `fuzzy: 0.2`.
 - Output `fulltextScore` is normalized to 0–1 relative to the best hit in the batch.
 
-Fulltext complements vector/rerank: it boosts **exact phrases** (e.g. `search-and-rescue acute sense of smell` → Dogs) but can misfire when the query contains many words from the wrong document (see [hybrid demo](#hybrid-demo-vector-and-fulltext-disagree--target-tree) below).
+Fulltext complements vector/rerank: it boosts **exact phrases** (e.g. `search-and-rescue acute sense of smell` → Dogs) but can misfire when the query contains many words from the wrong document (see [hybrid demo](#hybrid-demo-semantic-search-right-fulltext-wrong-target-tree) below).
 
 ### Pipeline (`search` resolver in [`src/index.ts`](./src/index.ts))
 

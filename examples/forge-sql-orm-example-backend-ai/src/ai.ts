@@ -25,24 +25,33 @@ type AiInstance = {
 };
 
 let aiInstance: AiInstance | null = null;
+let aiInitPromise: Promise<AiInstance> | null = null;
 
 async function getAiInstance(): Promise<AiInstance> {
   if (aiInstance) {
     return aiInstance;
   }
 
-  const sidecarPath = path.join(process.cwd(), "ai-lib/dist/dist/index.mjs");
+  if (!aiInitPromise) {
+    aiInitPromise = (async () => {
+      const sidecarPath = path.join(process.cwd(), "ai-lib/dist/dist/index.mjs");
 
-  try {
-    const importDynamic = new Function("modulePath", "return import(modulePath)");
-    const module = await importDynamic(sidecarPath);
-    const initAI = module.initAI as (basePath: string) => Promise<AiInstance>;
-    aiInstance = await initAI(process.cwd());
-    return aiInstance;
-  } catch (err) {
-    console.error("Failed to load AI sidecar bundle:", err);
-    throw err;
+      try {
+        const importDynamic = new Function("modulePath", "return import(modulePath)");
+        const module = await importDynamic(sidecarPath);
+        const initAI = module.initAI as (basePath: string) => Promise<AiInstance>;
+        const instance = await initAI(process.cwd());
+        aiInstance = instance;
+        return instance;
+      } catch (err) {
+        aiInitPromise = null;
+        console.error("Failed to load AI sidecar bundle:", err);
+        throw err;
+      }
+    })();
   }
+
+  return aiInitPromise;
 }
 
 export const getVector = async (text: string): Promise<number[]> => {
