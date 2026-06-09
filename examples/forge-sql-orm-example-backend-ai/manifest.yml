@@ -57,5 +57,3 @@ permissions:
   content:
     styles:
       - "unsafe-inline"
-    scripts:
-      - "unsafe-eval"

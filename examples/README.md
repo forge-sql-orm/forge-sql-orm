@@ -113,12 +113,14 @@ Custom UI example for **AI semantic search** with embeddings computed **on the f
 
 ### [forge-sql-orm-example-backend-ai](forge-sql-orm-example-backend-ai)
 
-Same **AI semantic search** flow, but embeddings are computed **on the Forge backend** (resolver runtime), not in Custom UI.
+**Hybrid AI search** on the Forge backend: vector retrieve in Forge SQL/TiDB, then fulltext, cross-encoder rerank, and **RRF** fusion — embeddings and scoring run in the resolver, not in Custom UI.
 
-- **Embeddings on the backend:** sidecar bundle in `ai-lib/` (see `manifest.yml` → `extraFiles`), loaded from resolver code; Custom UI sends plain `title` / `document` / search `text` only
-- `create` and `search` resolvers call the embedding pipeline server-side before SQL
+- **Backend AI sidecar** in `ai-lib/` (see `manifest.yml` → `extraFiles`): `all-MiniLM-L6-v2` (embeddings) and `ms-marco-MiniLM-L6-v2` (rerank); Custom UI sends plain `title` / `document` / search `text` only
+- **Hybrid pipeline:** cosine-distance shortlist → MiniSearch fulltext on candidates → cross-encoder rerank → reciprocal rank fusion (`hybridScore.ts` weights)
+- **Fulltext in Node.js** (MiniSearch) — Forge SQL has no `FULLTEXT` / `MATCH AGAINST`; complements vector and rerank for exact phrases
+- **No external AI APIs** — bundled models, RoA-eligible inference on Atlassian-hosted compute
 - Requires a separate `ai-lib` build per target (`arm64` / `x86_64` for deploy, `build:tunnel` for `forge tunnel`)
-- Cosine-distance ranking with similarity shown as percentage
+- UI shows **Combined (%)** (final RRF rank) plus Vector, Fulltext, and Rerank breakdown per row
 
 ### [forge-sql-orm-example-atlascamp](forge-sql-orm-example-atlascamp)
 

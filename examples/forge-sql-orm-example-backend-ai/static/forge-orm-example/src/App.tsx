@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { invoke } from "@forge/bridge";
 import Button from "@atlaskit/button";
 import DynamicTable from "@atlaskit/dynamic-table";
@@ -16,6 +16,9 @@ type SearchResult = {
   title: string;
   document: string;
   distance: number;
+  fulltextScore: number;
+  fusedScore: number;
+  score: number;
 };
 
 type DocumentRow = {
@@ -38,6 +41,19 @@ const contentCellStyles = xcss({
   whiteSpace: "normal",
   overflowWrap: "anywhere",
 });
+
+/** 0–100 within the current result list (min–max of rerank logits). Not an absolute global %. */
+function buildRelativeRerankFit(results: SearchResult[]): Map<number, number> {
+  if (results.length === 0) {
+    return new Map();
+  }
+  const scores = results.map((row) => row.score);
+  const min = Math.min(...scores);
+  const max = Math.max(...scores);
+  return new Map(
+    results.map((row) => [row.id, max === min ? 100 : ((row.score - min) / (max - min)) * 100]),
+  );
+}
 
 function App() {
   const [activeTabIndex, setActiveTabIndex] = useState(1);
@@ -143,18 +159,28 @@ function App() {
     }
   };
 
+  const rerankFitById = useMemo(() => buildRelativeRerankFit(results), [results]);
+
   const searchHead = {
     cells: [
-      { key: "id", content: "ID", width: 10 },
-      { key: "title", content: "Title", width: 25 },
-      { key: "document", content: "Document", width: 45 },
-      { key: "similarity", content: "Similarity (%)", width: 20 },
+      { key: "rank", content: "Final rank", width: 8 },
+      { key: "id", content: "ID", width: 6 },
+      { key: "title", content: "Title", width: 12 },
+      { key: "document", content: "Document", width: 22 },
+      { key: "combined", content: "Combined (%)", width: 10 },
+      { key: "similarity", content: "Vector (%)", width: 9 },
+      { key: "fulltext", content: "Fulltext (%)", width: 9 },
+      { key: "rerankFit", content: "Rerank (%)", width: 9 },
     ],
   };
 
-  const searchRows = results.map((row) => ({
+  const searchRows = results.map((row, index) => ({
     key: `search-${row.id}`,
     cells: [
+      {
+        key: `rank-${row.id}`,
+        content: index === 0 ? `#${index + 1} ★` : `#${index + 1}`,
+      },
       { key: `id-${row.id}`, content: row.id },
       { key: `title-${row.id}`, content: row.title },
       {
@@ -178,7 +204,19 @@ function App() {
           </Stack>
         ),
       },
+      {
+        key: `combined-${row.id}`,
+        content: `${(row.fusedScore * 100).toFixed(0)}%`,
+      },
       { key: `similarity-${row.id}`, content: `${((1 - row.distance) * 100).toFixed(2)}%` },
+      {
+        key: `fulltext-${row.id}`,
+        content: `${(row.fulltextScore * 100).toFixed(0)}%`,
+      },
+      {
+        key: `rerankFit-${row.id}`,
+        content: `${rerankFitById.get(row.id)?.toFixed(0) ?? "—"}%`,
+      },
     ],
   }));
 
@@ -299,7 +337,10 @@ function App() {
                 <Box as="small">
                   {searchText.length}/{documentLimit} chars
                 </Box>
-                <Box as="small">Search runs on the backend: your text is embedded server-side.</Box>
+                <Box as="small">
+                  Pipeline: vector retrieve (Forge SQL) → MiniSearch fulltext → cross-encoder rerank
+                  → RRF (see hybridScore.ts weights). Combined (%) drives Final rank.
+                </Box>
                 <Inline space="space.100">
                   <Button appearance="primary" onClick={handleSearch} isDisabled={isLoading}>
                     Search
@@ -320,7 +361,18 @@ function App() {
           <h3>Results</h3>
 
           {results.length > 0 ? (
-            <DynamicTable head={searchHead} rows={searchRows} rowsPerPage={10} defaultPage={1} />
+            <Stack space="space.150">
+              <SectionMessage appearance="information">
+                <p>
+                  <strong>Final rank</strong> — order by <strong>Combined (%)</strong> (RRF of
+                  vector, fulltext, rerank — weights in backend hybridScore.ts).{" "}
+                  <strong>Vector</strong> — embedding similarity. <strong>Fulltext</strong> —
+                  MiniSearch on title + document. <strong>Rerank</strong> — cross-encoder fit,
+                  relative to other rows (100% = best rerank logit in this list).
+                </p>
+              </SectionMessage>
+              <DynamicTable head={searchHead} rows={searchRows} rowsPerPage={10} defaultPage={1} />
+            </Stack>
           ) : null}
 
           {documents.length > 0 ? (
