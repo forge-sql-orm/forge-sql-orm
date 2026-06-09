@@ -390,6 +390,13 @@ Expected: **Tree** #1 on vector, fulltext, rerank, and Combined — all signals 
    | `cambium xylem protective bark`                      | Tree   |
    | `ultrasonic vocalizations genetic similarity humans` | Mice   |
 
+## Known limitations
+
+- The lexical score is computed only over vector candidates, not the full corpus.
+- Model bundles increase app package size and must match the target Forge runtime architecture.
+- First model load can be slower than subsequent resolver calls.
+- This example is optimized for clarity and RoA-friendly deployment, not for large-scale search.
+
 ## References
 
 - [Forge SQL ORM README](https://github.com/forge-sql-orm/forge-sql-orm/blob/master/README.md)
