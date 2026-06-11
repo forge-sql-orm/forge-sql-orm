@@ -12,7 +12,7 @@
     "@atlaskit/tabs": "^19.1.0",
     "@atlaskit/textarea": "^8.3.2",
     "@atlaskit/textfield": "^8.3.2",
-    "@forge/bridge": "^5.16.2",
+    "@forge/bridge": "^5.17.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

@@ -4,9 +4,9 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@forge/api": "^7.2.1",
+    "@forge/api": "^7.2.2",
     "@forge/resolver": "1.8.0",
-    "@forge/sql": "^3.0.25",
+    "@forge/sql": "^3.0.26",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "2.2.0"
   },
