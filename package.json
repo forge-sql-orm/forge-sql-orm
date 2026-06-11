@@ -73,15 +73,15 @@
     "README.md"
   ],
   "peerDependencies": {
-    "@forge/sql": "^3.0.25",
+    "@forge/sql": "^3.0.26",
     "drizzle-orm": "^0.45.2"
   },
   "dependencies": {
-    "@forge/api": "^7.2.1",
+    "@forge/api": "^7.2.2",
     "luxon": "^3.7.2"
   },
   "optionalDependencies": {
-    "@forge/events": "^2.1.6"
+    "@forge/events": "^2.1.7"
   },
   "lint-staged": {
     "{src,forge-sql-orm-cli/src,__tests__,examples}/**/*.{ts,tsx,mts,cts}": [
