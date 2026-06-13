@@ -11,10 +11,11 @@ import {
   setCacheResult,
   clearTablesCache,
   VerioningModificationForgeSQL,
+  ForgeSqlOperation,
 } from "forge-sql-orm";
 import { getTableName } from "drizzle-orm/table";
 import { CacheForgeSQL } from "./CacheForgeSQL";
-import { ForgeSqlOperationExt, ForgeSqlOrmOptionsExtra } from "../core";
+import { ForgeSqlOrmOptionsExtra } from "../core";
 
 /**
  * Implementation of cache operations for ForgeSQL ORM.
@@ -26,7 +27,7 @@ import { ForgeSqlOperationExt, ForgeSqlOrmOptionsExtra } from "../core";
  */
 export class ForgeSQLCacheOperations implements CacheForgeSQL, VerioningModificationForgeSQL {
   private readonly options: ForgeSqlOrmOptionsExtra;
-  private readonly forgeOperations: ForgeSqlOperationExt;
+  private readonly forgeOperations: ForgeSqlOperation;
 
   /**
    * Creates a new instance of ForgeSQLCacheOperations.
@@ -34,7 +35,7 @@ export class ForgeSQLCacheOperations implements CacheForgeSQL, VerioningModifica
    * @param options - Configuration options for the ORM
    * @param forgeOperations - The ForgeSQL operations instance
    */
-  constructor(options: ForgeSqlOrmOptionsExtra, forgeOperations: ForgeSqlOperationExt) {
+  constructor(options: ForgeSqlOrmOptionsExtra, forgeOperations: ForgeSqlOperation) {
     this.options = options;
     this.forgeOperations = forgeOperations;
   }

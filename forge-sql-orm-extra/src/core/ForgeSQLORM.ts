@@ -105,7 +105,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
         selectFromCacheable: SelectAllFromCacheableAliasedType;
         selectDistinctFromCacheable: SelectAllDistinctFromCacheableAliasedType;
       };
-      this.cacheOperations = new ForgeSQLCacheOperations(this.options, this);
+      this.cacheOperations = new ForgeSQLCacheOperations(this.options, this.forgeSQLORM);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("ForgeSQLORM EXT initialization failed:", error);
