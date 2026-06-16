@@ -7,12 +7,12 @@
     "@forge/resolver": "1.8.0",
     "@forge/sql": "^3.0.26",
     "drizzle-orm": "^0.45.2",
-    "forge-sql-orm": "2.2.0"
+    "forge-sql-orm": "2.2.1"
   },
   "devDependencies": {
     "@types/node": "^25.9.3",
     "drizzle-kit": "^0.31.10",
-    "forge-sql-orm-cli": "^2.2.0",
+    "forge-sql-orm-cli": "^2.2.1",
     "knip": "^6.17.1",
     "mysql2": "^3.22.5",
     "typescript": "^6.0.3"
