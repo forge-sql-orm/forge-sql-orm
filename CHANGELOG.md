@@ -6,6 +6,43 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
+## [2.2.1] - 2026-06-16
+
+🚀 What's New
+
+🤖 Hybrid AI search example (backend)
+
+[`forge-sql-orm-example-backend-ai`](examples/forge-sql-orm-example-backend-ai) now demonstrates a **hybrid retrieval pipeline** on the Forge resolver — not vector-only cosine ranking:
+
+1. **Vector shortlist** — cosine distance in Forge SQL / TiDB (`all-MiniLM-L6-v2` embeddings).
+2. **Fulltext** — MiniSearch on candidates (`title` boost ×2, `prefix`, `fuzzy: 0.2`); Forge SQL has no `FULLTEXT` / `MATCH AGAINST`, so keyword scoring runs in Node.js.
+3. **Rerank** — cross-encoder `ms-marco-MiniLM-L6-v2` re-scores each `(query, document)` pair.
+4. **RRF fusion** — reciprocal rank fusion in [`hybridScore.ts`](examples/forge-sql-orm-example-backend-ai/src/hybridScore.ts) with tunable weights.
+
+Custom UI shows **Combined (%)** (final rank) plus Vector, Fulltext, and Rerank breakdown per row. No external AI APIs — bundled ONNX models in the `ai-lib` sidecar, RoA-eligible on Atlassian-hosted compute.
+
+[`examples/README.md`](examples/README.md) updated to describe the hybrid flow vs the frontend-only [`forge-sql-orm-example-ai`](examples/forge-sql-orm-example-ai).
+
+🐛 Bug Fixes
+
+### `forge-sql-orm-extra`: cache operations wiring ([#2393](https://github.com/forge-sql-orm/forge-sql-orm/pull/2393))
+
+`ForgeSQLCacheOperations` now receives the core **`ForgeSqlOperation`** instance (`forgeSQLORM`) instead of the extra cache wrapper (`this`). This fixes Level 2 cache invalidation and **`modifyWithVersioning` / `modifyWithVersioningAndEvictCache`** behaviour when using `import ForgeSQL from "forge-sql-orm-extra"`.
+
+🛡️ CLI Security
+
+- Added **`esbuild` override** in `forge-sql-orm-cli` to resolve a transitive vulnerable `esbuild` pulled in via `drizzle-kit` → `@esbuild-kit/*` (GHSA-67mh-4wv8-2f99).
+- Regenerated **`forge-sql-orm-cli/package-lock.json`** for reproducible installs.
+
+🛠 CI / Quality
+
+- **Codacy** coverage upload integrated into the quality workflow; README badges refreshed.
+- SonarCloud, Qlty, and Codacy upload steps run **only when the corresponding token secret is set** — forks and local CI no longer fail on missing coverage credentials.
+
+📦 Dependency Updates
+
+Updated npm dependencies to their latest versions to ensure improved compatibility, security, and overall performance.
+
 ## [2.2.0] - 2026-06-06
 
 🚀 What's New
