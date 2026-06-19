@@ -21,7 +21,7 @@
     "knip": "knip"
   },
   "devDependencies": {
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.0.0",
     "forge-sql-orm-cli": "^2.2.1",
     "knip": "^6.17.1",
     "typescript": "^6.0.3"
