@@ -15,7 +15,7 @@ import {
   type SelectedFields,
 } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { InferInsertModel, Query, SQL } from "drizzle-orm";
-import { parseDateTime, formatDateTime } from "../utils";
+import { parseDateTime, formatDateTime, MetadataQueryOptions } from "../utils";
 import {
   MySqlRemoteDatabase,
   MySqlRemotePreparedQueryHKT,
@@ -67,7 +67,6 @@ export type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
 import type { MySqlQueryResultKind } from "drizzle-orm/mysql-core/session";
 import type { WithBuilder } from "drizzle-orm/mysql-core/subquery";
 import { WithSubquery } from "drizzle-orm/subquery";
-import { MetadataQueryOptions } from "../utils";
 
 /**
  * Core interface for ForgeSQL operations.
