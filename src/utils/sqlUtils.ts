@@ -18,7 +18,6 @@ import {
   ilike,
   isNotNull,
   isTable,
-  ne,
   not,
   notInArray,
   SQL,
@@ -35,9 +34,6 @@ import { UniqueConstraintBuilder } from "drizzle-orm/mysql-core/unique-constrain
 import { SelectedFields } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { isSQLWrapper } from "drizzle-orm/sql/sql";
 import { clusterStatementsSummary, slowQuery, ForgeSqlOperation } from "../core";
-import { ColumnDataType } from "drizzle-orm/column-builder";
-import { AnyMySqlColumn } from "drizzle-orm/mysql-core/columns/common";
-import type { ColumnBaseConfig } from "drizzle-orm/column";
 import { getHttpResponse, TriggerResponse } from "../webtriggers";
 import { getAppContext } from "@forge/api";
 
@@ -761,7 +757,7 @@ function buildClusterStatementsSummaryQuery(forgeSQLORM: ForgeSqlOperation, time
   return forgeSQLORM
     .getDrizzleQueryBuilder()
     .select({
-      digestText: withTidbHint(statementsTable.digestText),
+      digestText: statementsTable.digestText,
       avgLatency: statementsTable.avgLatency,
       avgMem: statementsTable.avgMem,
       execCount: statementsTable.execCount,
@@ -864,6 +860,18 @@ export async function printQueriesWithPlan(
   }
 }
 
+/**
+ * Analyzes a failed query from CLUSTER_STATEMENTS_SUMMARY after a timeout or OOM error.
+ *
+ * Queries the summary table within the specified time window, orders results by memory
+ * usage (OOM) or latency (TIMEOUT), and logs the worst-performing matching statement.
+ *
+ * @param forgeSQLORM - The ForgeSQL operation instance for database access
+ * @param timeDiffMs - Time window in milliseconds to look back for the failed query
+ * @param type - Error category used to pick the ordering column (`OOM` or `TIMEOUT`)
+ *
+ * @throws Does not throw - errors are logged to console.debug instead
+ */
 export async function handleErrorsWithPlan(
   forgeSQLORM: ForgeSqlOperation,
   timeDiffMs: number,
@@ -889,8 +897,6 @@ export async function handleErrorsWithPlan(
     handleQueryPlanError(error);
   }
 }
-
-const SESSION_ALIAS_NAME_ORM = "orm";
 
 /**
  * Analyzes and logs slow queries from the last specified number of hours.
@@ -928,7 +934,7 @@ function buildSlowQueryQuery(forgeSQLORM: ForgeSqlOperation, hours: number) {
   return forgeSQLORM
     .getDrizzleQueryBuilder()
     .select({
-      query: withTidbHint(slowQuery.query),
+      query: slowQuery.query,
       queryTime: slowQuery.queryTime,
       memMax: slowQuery.memMax,
       plan: slowQuery.plan,
@@ -937,7 +943,7 @@ function buildSlowQueryQuery(forgeSQLORM: ForgeSqlOperation, hours: number) {
     .where(
       and(
         isNotNull(slowQuery.digest),
-        ne(slowQuery.sessionAlias, SESSION_ALIAS_NAME_ORM),
+        not(ilike(slowQuery.query, "%information_schema%")),
         gte(
           slowQuery.time,
           sql`DATE_SUB
@@ -1020,15 +1026,6 @@ export async function withTimeout<T>(
       clearTimeout(timeoutId);
     }
   }
-}
-
-export function withTidbHint<
-  TDataType extends ColumnDataType,
-  TPartial extends Partial<ColumnBaseConfig<TDataType, string>>,
->(column: AnyMySqlColumn<TPartial>): AnyMySqlColumn<TPartial> {
-  // We lie a bit to TypeScript here: at runtime this is a new SQL fragment,
-  // but returning TExpr keeps the column type info in downstream inference.
-  return sql`/*+ SET_VAR(tidb_session_alias=${sql.raw(SESSION_ALIAS_NAME_ORM)}) */ ${column}` as unknown as AnyMySqlColumn<TPartial>;
 }
 
 /**

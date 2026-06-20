@@ -108,7 +108,7 @@ export function withTidbHint<
 >(column: AnyMySqlColumn<TPartial>): AnyMySqlColumn<TPartial> {
   // We lie a bit to TypeScript here: at runtime this is a new SQL fragment,
   // but returning TExpr keeps the column type info in downstream inference.
-  return sql`/*+ MEMORY_QUOTA(1024 MB) */ ${column}` as unknown as AnyMySqlColumn<TPartial>;
+  return sql` ${column}` as unknown as AnyMySqlColumn<TPartial>;
 }
 const resolver = new Resolver();
 //

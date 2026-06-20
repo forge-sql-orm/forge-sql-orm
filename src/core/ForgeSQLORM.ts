@@ -81,11 +81,7 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
         console.debug("Initializing ForgeSQLORM...");
       }
       // Initialize Drizzle instance with our custom driver
-      const proxiedDriver = createForgeDriverProxy(
-        this,
-        newOptions.hints,
-        newOptions.logRawSqlQuery,
-      );
+      const proxiedDriver = createForgeDriverProxy(this, newOptions.logRawSqlQuery);
       this.drizzle = patchDbWithSelectAliased(
         drizzle(proxiedDriver, { logger: newOptions.logRawSqlQuery }),
         newOptions,
