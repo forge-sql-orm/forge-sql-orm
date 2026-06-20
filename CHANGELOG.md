@@ -6,6 +6,57 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
+## [2.2.2] - NEXT RELEASE
+
+🛡️ Forge SQL Policy Compatibility
+
+Atlassian has released a Forge SQL security hardening update that introduces pre-execution query monitoring and the new SQL_POLICY_VIOLATION error.
+
+Forge SQL now blocks restricted functions, statements, optimizer hints, and SQL patterns before they reach the database:
+
+https://developer.atlassian.com/platform/forge/changelog/#CHANGE-3254
+
+This is an important platform-level hardening step for the Forge ecosystem.
+
+During the development and maintenance of forge-sql-orm, I spent a lot of time researching Forge SQL internals, execution plans, slow query observability, and tenant isolation boundaries. Some of this research helped identify architectural edge cases in Forge SQL, including possible cross-tenant interaction paths through database-level metadata. These findings were responsibly shared with Atlassian engineering.
+
+I want to thank the Atlassian engineers who listened, reproduced the behavior, and shipped the necessary platform changes.
+
+I am glad that the research done around forge-sql-orm helped make Atlassian Forge SQL safer.
+
+🐛 Bug Fixes
+
+Slow query observability compatibility with 'SQL_POLICY_VIOLATION'
+
+Updated the optional slow query log / execution plan observability internals to work with the new Forge SQL query monitoring policy.
+
+Previously, the slow query observability flow used the tidb_session_alias optimizer hint to distinguish application queries from system queries in slow query log analysis.
+
+After the Forge SQL hardening update, this hint may be rejected with:
+
+'SQL_POLICY_VIOLATION'
+
+This could cause the optional scheduled slow query observability job to fail for apps that enabled slow query log collection in the Forge Developer Console.
+
+This release removes the dependency on the blocked optimizer hint and uses a compatible filtering approach.
+
+### Impact:
+
+- Normal ORM usage is not affected.
+- CRUD operations, migrations, pagination, optimistic locking, caching, and regular query execution continue to work as before.
+- Only optional slow query log / execution plan observability was affected.
+- Apps that did not enable slow query observability do not need to change anything.
+
+📦 Dependency Updates
+
+Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.
+
+⬆️ Recommended Update
+
+Users who rely on slow query log observability should upgrade to this version.
+
+For all other users, this is still a recommended maintenance update to stay aligned with the latest Forge SQL platform behavior.
+
 ## [2.2.1] - 2026-06-16
 
 🚀 What's New
