@@ -8,7 +8,6 @@ import {
   parseDateTime,
   formatDateTime,
   withTimeout,
-  withTidbHint,
   getPrimaryKeys,
   getTableMetadata,
   mapSelectFieldsWithAlias,
@@ -379,37 +378,6 @@ describe("transformValue", () => {
 
       await expect(resultPromise).rejects.toThrow("Zero timeout");
     }, 200);
-  });
-
-  describe("withTidbHint", () => {
-    it("should wrap column with TiDB session alias hint", () => {
-      const testTable = mysqlTable("test", {
-        id: int("id").primaryKey(),
-      });
-
-      const result = withTidbHint(testTable.id);
-
-      expect(result).toBeDefined();
-      // Check that result is a SQL object with queryChunks
-      expect(result).toHaveProperty("queryChunks");
-      // Check that the result has the expected SQL structure
-      // The function wraps the column with a TiDB hint, so we verify the structure exists
-      expect(result).toHaveProperty("decoder");
-      expect(result).toHaveProperty("queryChunks");
-    });
-
-    it("should return SQL wrapper object", () => {
-      const testTable = mysqlTable("test", {
-        id: int("id").primaryKey(),
-      });
-
-      const result = withTidbHint(testTable.id);
-
-      expect(result).toBeDefined();
-      // The result should be a SQL wrapper object
-      expect(result).toHaveProperty("queryChunks");
-      expect(result).toHaveProperty("decoder");
-    });
   });
 
   describe("getTableMetadata", () => {

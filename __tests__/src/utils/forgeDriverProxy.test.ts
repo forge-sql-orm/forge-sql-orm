@@ -4,20 +4,14 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createForgeDriverProxy } from "../../../src/utils/forgeDriverProxy";
 import { ForgeSqlOperation } from "../../../src/core/ForgeSQLQueryBuilder";
-import { SqlHints } from "../../../src/utils/sqlHints";
 
 // Mock dependencies
 const mockForgeDriver = vi.fn();
-const mockInjectSqlHints = vi.fn();
 const mockPrintQueriesWithPlan = vi.fn();
 const mockHandleErrorsWithPlan = vi.fn();
 
 vi.mock("../../../src/utils/forgeDriver", () => ({
   forgeDriver: (...args: any[]) => mockForgeDriver(...args),
-}));
-
-vi.mock("../../../src/utils/sqlHints", () => ({
-  injectSqlHints: (...args: any[]) => mockInjectSqlHints(...args),
 }));
 
 vi.mock("../../../src/utils/sqlUtils", () => ({
@@ -37,7 +31,6 @@ describe("forgeDriverProxy", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockForgeSqlOperation = {} as ForgeSqlOperation;
-    mockInjectSqlHints.mockImplementation((query: string) => query);
     mockForgeDriver.mockResolvedValue({ rows: [{ id: 1, name: "Test" }] });
     mockPrintQueriesWithPlan.mockResolvedValue(undefined);
     mockHandleErrorsWithPlan.mockResolvedValue(undefined);
@@ -65,57 +58,6 @@ describe("forgeDriverProxy", () => {
 
       expect(result).toEqual({ rows: [{ id: 1, name: "Test" }] });
       expect(mockForgeDriver).toHaveBeenCalledWith("SELECT * FROM users", [], "all");
-    });
-
-    it("should inject SQL hints when options provided", async () => {
-      const hints: SqlHints = { maxExecutionTime: 5000 };
-      mockInjectSqlHints.mockReturnValue("SELECT /*+ MAX_EXECUTION_TIME(5000) */ * FROM users");
-
-      proxiedDriver = createForgeDriverProxy(mockForgeSqlOperation, hints);
-      await proxiedDriver("SELECT * FROM users", [], "all");
-
-      expect(mockInjectSqlHints).toHaveBeenCalledWith("SELECT * FROM users", hints);
-      expect(mockForgeDriver).toHaveBeenCalledWith(
-        "SELECT /*+ MAX_EXECUTION_TIME(5000) */ * FROM users",
-        [],
-        "all",
-      );
-    });
-
-    it("should log SQL hints when logRawSqlQuery is true and query is modified", async () => {
-      const hints: SqlHints = { maxExecutionTime: 5000 };
-      mockInjectSqlHints.mockReturnValue("SELECT /*+ MAX_EXECUTION_TIME(5000) */ * FROM users");
-
-      proxiedDriver = createForgeDriverProxy(mockForgeSqlOperation, hints, true);
-      await proxiedDriver("SELECT * FROM users", [], "all");
-
-      expect(consoleDebugSpy).toHaveBeenCalledWith(
-        "SQL Hints injected: SELECT /*+ MAX_EXECUTION_TIME(5000) */ * FROM users",
-      );
-    });
-
-    it("should not log SQL hints when query is not modified", async () => {
-      const hints: SqlHints = { maxExecutionTime: 5000 };
-      mockInjectSqlHints.mockReturnValue("SELECT * FROM users");
-
-      proxiedDriver = createForgeDriverProxy(mockForgeSqlOperation, hints, true);
-      await proxiedDriver("SELECT * FROM users", [], "all");
-
-      expect(consoleDebugSpy).not.toHaveBeenCalledWith(
-        expect.stringContaining("SQL Hints injected"),
-      );
-    });
-
-    it("should not log SQL hints when logRawSqlQuery is false", async () => {
-      const hints: SqlHints = { maxExecutionTime: 5000 };
-      mockInjectSqlHints.mockReturnValue("SELECT /*+ MAX_EXECUTION_TIME(5000) */ * FROM users");
-
-      proxiedDriver = createForgeDriverProxy(mockForgeSqlOperation, hints, false);
-      await proxiedDriver("SELECT * FROM users", [], "all");
-
-      expect(consoleDebugSpy).not.toHaveBeenCalledWith(
-        expect.stringContaining("SQL Hints injected"),
-      );
     });
 
     it("should handle timeout errors and analyze query", async () => {
@@ -204,7 +146,7 @@ describe("forgeDriverProxy", () => {
       };
       mockForgeDriver.mockRejectedValueOnce(error);
 
-      proxiedDriver = createForgeDriverProxy(mockForgeSqlOperation, undefined, true);
+      proxiedDriver = createForgeDriverProxy(mockForgeSqlOperation, true);
 
       await expect(proxiedDriver("SELECT * FROM users", [], "all")).rejects.toEqual(error);
 
@@ -221,7 +163,7 @@ describe("forgeDriverProxy", () => {
       };
       mockForgeDriver.mockRejectedValueOnce(error);
 
-      proxiedDriver = createForgeDriverProxy(mockForgeSqlOperation, undefined, false);
+      proxiedDriver = createForgeDriverProxy(mockForgeSqlOperation, false);
 
       await expect(proxiedDriver("SELECT * FROM users", [], "all")).rejects.toEqual(error);
 

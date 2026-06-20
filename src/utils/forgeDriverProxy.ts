@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 import { forgeDriver } from "./forgeDriver";
-import { injectSqlHints, SqlHints } from "./sqlHints";
 import { ForgeSqlOperation } from "../core";
 import { handleErrorsWithPlan } from "./sqlUtils";
 
@@ -57,15 +56,17 @@ async function handleQueryError(
 }
 
 /**
- * Creates a proxy for the forgeDriver that injects SQL hints and handles query analysis
- * @param forgeSqlOperation - The ForgeSQL operation instance
- * @param options - SQL hints to inject
- * @param logRawSqlQuery - Whether to log raw SQL queries
+ * Creates a proxy for the forgeDriver that wraps query execution with error analysis.
+ *
+ * On timeout or out-of-memory errors, the proxy waits for CLUSTER_STATEMENTS_SUMMARY
+ * to be populated and logs diagnostic information for the failed query.
+ *
+ * @param forgeSqlOperation - The ForgeSQL operation instance used for query analysis
+ * @param logRawSqlQuery - When true, logs SQL error details to the console on failure
  * @returns A proxied version of the forgeDriver
  */
 export function createForgeDriverProxy(
   forgeSqlOperation: ForgeSqlOperation,
-  options?: SqlHints,
   logRawSqlQuery?: boolean,
 ) {
   return async (
@@ -77,19 +78,10 @@ export function createForgeDriverProxy(
     insertId?: number;
     affectedRows?: number;
   }> => {
-    // Inject SQL hints into the query
-    const modifiedQuery = injectSqlHints(query, options);
-
-    if (options && logRawSqlQuery && modifiedQuery !== query) {
-      // eslint-disable-next-line no-console
-      console.debug(`SQL Hints injected: ${modifiedQuery}`);
-    }
-
     const queryStartTime = Date.now();
 
     try {
-      // Execute the query with injected hints
-      return await forgeDriver(modifiedQuery, params, method);
+      return await forgeDriver(query, params, method);
     } catch (error) {
       const { isTimeout, isOutOfMemory } = isQueryError(error);
 

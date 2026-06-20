@@ -15,13 +15,12 @@ import {
   type SelectedFields,
 } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { InferInsertModel, Query, SQL } from "drizzle-orm";
-import { parseDateTime, formatDateTime } from "../utils";
+import { parseDateTime, formatDateTime, MetadataQueryOptions } from "../utils";
 import {
   MySqlRemoteDatabase,
   MySqlRemotePreparedQueryHKT,
   MySqlRemoteQueryResultHKT,
 } from "drizzle-orm/mysql-proxy";
-import { SqlHints } from "../utils/sqlHints";
 import {
   ClusterStatementRowCamelCase,
   ExplainAnalyzeRow,
@@ -68,7 +67,6 @@ export type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
 import type { MySqlQueryResultKind } from "drizzle-orm/mysql-core/session";
 import type { WithBuilder } from "drizzle-orm/mysql-core/subquery";
 import { WithSubquery } from "drizzle-orm/subquery";
-import { MetadataQueryOptions } from "../utils/metadataContextUtils";
 
 /**
  * Core interface for ForgeSQL operations.
@@ -802,8 +800,6 @@ export interface ForgeSqlOrmOptions {
   logCache?: boolean;
   /** Whether to disable optimistic locking for update operations */
   disableOptimisticLocking?: boolean;
-  /** SQL hints to be applied to queries for optimization */
-  hints?: SqlHints;
   /** Default Cache TTL (Time To Live) in seconds */
   cacheTTL?: number;
 
