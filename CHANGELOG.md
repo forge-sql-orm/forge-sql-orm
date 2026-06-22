@@ -6,7 +6,7 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
-## [2.2.2] - NEXT RELEASE
+## [2.2.2] - 22.06.2026
 
 🛡️ Forge SQL Policy Compatibility
 

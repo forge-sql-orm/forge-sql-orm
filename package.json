@@ -1,6 +1,6 @@
 {
   "name": "forge-sql-orm",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Drizzle ORM integration for Atlassian @forge/sql. Custom driver, schema migration, local in-memory cache, optimistic locking, and query analysis. Use forge-sql-orm-extra for @forge/kvs global cache and Rovo.",
   "main": "dist/index.js",
   "homepage": "https://github.com/forge-sql-orm/forge-sql-orm#readme",
@@ -28,16 +28,16 @@
     "@eslint/js": "^10.0.1",
     "@types/luxon": "^3.7.2",
     "@types/node": "^26.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.61.1",
-    "@typescript-eslint/parser": "^8.61.1",
+    "@typescript-eslint/eslint-plugin": "^8.62.0",
+    "@typescript-eslint/parser": "^8.62.0",
     "@vitest/coverage-v8": "^4.1.9",
     "@vitest/eslint-plugin": "^1.6.20",
     "@vitest/ui": "^4.1.9",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.6.0",
+    "globals": "^17.7.0",
     "husky": "^9.1.7",
-    "knip": "^6.17.1",
+    "knip": "^6.18.0",
     "lcov-result-merger": "^6.0.0",
     "license-checker-rseidelsohn": "^5.0.1",
     "prettier": "^3.8.4",
@@ -73,15 +73,15 @@
     "README.md"
   ],
   "peerDependencies": {
-    "@forge/sql": "^3.0.26",
+    "@forge/sql": "^4.0.0",
     "drizzle-orm": "^0.45.2"
   },
   "dependencies": {
-    "@forge/api": "^7.2.2",
+    "@forge/api": "^8.0.0",
     "luxon": "^3.7.2"
   },
   "optionalDependencies": {
-    "@forge/events": "^2.1.7"
+    "@forge/events": "^3.0.0"
   },
   "lint-staged": {
     "{src,forge-sql-orm-cli/src,__tests__,examples}/**/*.{ts,tsx,mts,cts}": [
