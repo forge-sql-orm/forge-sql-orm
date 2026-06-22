@@ -4,7 +4,7 @@
   "description": "",
   "dependencies": {
     "@atlaskit/css-reset": "^8.0.0",
-    "@forge/bridge": "^5.17.0",
+    "@forge/bridge": "^6.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -15,7 +15,7 @@
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^6.0.2",
     "dotenv": "17.4.2",
-    "knip": "^6.17.1",
+    "knip": "^6.17.2",
     "prettier": "^3.8.4",
     "prettier-plugin-pkg": "^0.22.1",
     "typescript": "^6.0.3",
