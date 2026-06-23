@@ -3,6 +3,20 @@
   "version": "2.2.2",
   "description": "Drizzle ORM integration for Atlassian @forge/sql. Custom driver, schema migration, local in-memory cache, optimistic locking, and query analysis. Use forge-sql-orm-extra for @forge/kvs global cache and Rovo.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "homepage": "https://github.com/forge-sql-orm/forge-sql-orm#readme",
   "bugs": {
     "url": "https://github.com/forge-sql-orm/forge-sql-orm/issues"
@@ -57,7 +71,9 @@
     "format": "prettier --write src examples __tests__ forge-sql-orm-cli/src forge-sql-orm-extra/src  forge-sql-orm-cli/__tests__ forge-sql-orm-extra/__tests__ ",
     "format:check": "prettier src examples __tests__ forge-sql-orm-cli/src forge-sql-orm-extra/src  forge-sql-orm-cli/__tests__ forge-sql-orm-extra/__tests__ --check",
     "clean": "rm -rf dist",
-    "build": "npm run clean && npm run build:types",
+    "build": "npm run clean && npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc",
+    "build:esm": "tsc -p tsconfig.esm.json && node scripts/write-esm-package.mjs",
     "build:types": "tsc",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",

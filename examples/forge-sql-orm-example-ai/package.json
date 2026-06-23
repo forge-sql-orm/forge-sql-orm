@@ -11,7 +11,7 @@
     "forge-sql-orm": "^2.2.2"
   },
   "scripts": {
-    "build:ci": "tsc --target esnext --project tsconfig.json --ignoreDeprecations 6.0 --outDir dist && rm -rf dist",
+    "build:ci": "tsc --target esnext --project tsconfig.json --outDir dist && rm -rf dist",
     "forge:debug": "forge tunnel -d -f index.handler",
     "build:husky": "tsc --project tsconfig.json  --outDir ./dist && rm -rf ./dist",
     "knip": "knip"
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/node": "^26.0.0",
     "knip": "^6.18.0",
-    "typescript": "^6.0.3"
+    "typescript": "^5.9.2"
   },
   "overrides": {
     "package-json": "npm:package-json@latest",

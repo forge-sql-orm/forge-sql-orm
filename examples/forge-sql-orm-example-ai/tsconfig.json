@@ -7,7 +7,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["ESNext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -16,11 +16,15 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "rootDir": "./src",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "removeComments": true,
+    "paths": {
+      "drizzle-orm": ["./node_modules/drizzle-orm/index.d.ts"],
+      "drizzle-orm/*": ["./node_modules/drizzle-orm/*"]
+    },
     "useUnknownInCatchVariables": false,
     "types": ["node"]
   }
