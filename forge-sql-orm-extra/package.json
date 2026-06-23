@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/node": "^26.0.0",
     "@vitest/coverage-v8": "^4.1.9",
-    "knip": "^6.17.1",
+    "knip": "^6.18.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
     "license-checker-rseidelsohn": "^5.0.1"
@@ -63,9 +63,9 @@
     ]
   },
   "dependencies": {
-    "@forge/kvs": "^1.6.5",
-    "@forge/sql": "^3.0.26",
-    "forge-sql-orm": "^2.2.1",
+    "@forge/kvs": "^2.0.0",
+    "@forge/sql": "^4.0.0",
+    "forge-sql-orm": "^2.2.2",
     "luxon": "^3.7.2",
     "node-sql-parser": "^5.4.0"
   }
