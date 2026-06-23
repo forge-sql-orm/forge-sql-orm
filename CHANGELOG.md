@@ -6,7 +6,7 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
-## [2.2.2] - NEXT RELEASE
+## [2.2.3] - 23.06.2026
 
 🛡️ Forge SQL Policy Compatibility
 
@@ -50,6 +50,28 @@ This release removes the dependency on the blocked optimizer hint and uses a com
 📦 Dependency Updates
 
 Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.
+
+🧩 @forge/cli 13.x Compatibility
+
+`@forge/cli` 13.x upgraded its bundling toolchain (webpack + `ts-loader` 9.x, TypeScript 5.9) and now performs stricter type-checking while bundling during `forge tunnel` / `forge deploy`.
+
+On apps consuming `forge-sql-orm`, this surfaced as a bundling failure:
+
+```
+Error: TypeScript errors in the app caused the bundling to fail.
+[tsl] ERROR ... TS2345 / TS2322
+  Two different types with this name exist, but they are unrelated.
+  Types have separate declarations of a private property 'shouldInlineParams'.
+  Property '$columns' is protected but type 'MySqlTable<T>' is not a class derived from 'MySqlTable<T>'.
+```
+
+Root cause: `drizzle-orm` ships dual type declarations — `*.d.ts` for the `import` condition and `*.d.cts` for the `require` condition. Because `forge-sql-orm` (and `forge-sql-orm-extra`) were published as CommonJS only, their declarations resolved `drizzle-orm` through the `require` condition (`*.d.cts`), while the app's own code resolved it through the `import` condition (`*.d.ts`). The bundler's per-file ESM/CJS resolution then saw two unrelated copies of `SQL` / `MySqlTable`, producing the errors above. Plain `tsc` did not catch this because it collapses both to the `import` condition.
+
+`forge-sql-orm` and `forge-sql-orm-extra` now ship a **dual ESM/CJS package**:
+
+- Added an `exports` map with `import` / `require` conditions.
+- The `import` condition resolves to ESM-mode type declarations (`dist/esm`), so `drizzle-orm` types resolve to the same `*.d.ts` set the consuming app uses.
+- The CommonJS runtime (`dist`) is unchanged.
 
 ⬆️ Recommended Update
 
