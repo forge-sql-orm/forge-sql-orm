@@ -73,12 +73,6 @@ Root cause: `drizzle-orm` ships dual type declarations — `*.d.ts` for the `imp
 - The `import` condition resolves to ESM-mode type declarations (`dist/esm`), so `drizzle-orm` types resolve to the same `*.d.ts` set the consuming app uses.
 - The CommonJS runtime (`dist`) is unchanged.
 
-### Impact:
-
-- No public API changes — only build output and package metadata changed.
-- Apps no longer need a `tsconfig` `paths` workaround to bundle under `@forge/cli` 13.x and above.
-- Consumers on older `@forge/cli` releases are unaffected.
-
 ⬆️ Recommended Update
 
 Users who rely on slow query log observability should upgrade to this version.
