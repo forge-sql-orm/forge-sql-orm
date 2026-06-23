@@ -4,6 +4,19 @@
   "description": "Extension package for forge-sql-orm. Use it when you need global @forge/kvs query caching (SQL-parser cache invalidation, cache contexts, cacheable reads/writes) or Rovo integration for secure dynamic analytics. Core forge-sql-orm covers Drizzle + @forge/sql only; install forge-sql-orm-extra for cache and optional service integrations.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "homepage": "https://github.com/forge-sql-orm/forge-sql-orm#readme",
   "bugs": {
     "url": "https://github.com/forge-sql-orm/forge-sql-orm/issues"
@@ -35,7 +48,9 @@
     "test:watch": "vitest --watch",
     "format": "prettier --write src",
     "clean": "rm -rf dist",
-    "build": "npm run clean && npm run build:types",
+    "build": "npm run clean && npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc",
+    "build:esm": "tsc -p tsconfig.esm.json && node scripts/write-esm-package.mjs",
     "build:types": "tsc",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
