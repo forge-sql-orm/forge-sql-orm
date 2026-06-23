@@ -11,8 +11,8 @@
     "@forge/resolver": "2.0.0",
     "@forge/sql": "^4.0.0",
     "drizzle-orm": "^0.45.2",
-    "forge-sql-orm": "file:../../../../../../private/tmp/claude-501/-Users-vasylzakharchenko-home-forge-sql-orm-examples-forge-sql-orm-example-checklist/2955d2e8-183e-42da-81e1-e59497d50be2/scratchpad/forge-sql-orm-2.2.2.tgz",
-    "forge-sql-orm-extra": "file:../../../../../../private/tmp/claude-501/-Users-vasylzakharchenko-home-forge-sql-orm-examples-forge-sql-orm-example-checklist/2955d2e8-183e-42da-81e1-e59497d50be2/scratchpad/forge-sql-orm-extra-2.2.2.tgz"
+    "forge-sql-orm": "^2.2.2",
+    "forge-sql-orm-extra": "2.2.2"
   },
   "scripts": {
     "models:create": "forge-sql-orm-cli generate:model --output src/entities",
