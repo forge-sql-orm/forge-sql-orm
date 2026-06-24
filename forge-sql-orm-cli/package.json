@@ -64,7 +64,7 @@
     "knip": "^6.18.0",
     "reflect-metadata": "^0.2.2",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16",
+    "vite": "^8.1.0",
     "vitest": "^4.1.9",
     "@vitest/coverage-v8": "^4.1.9"
   },

@@ -1,3 +1,18 @@
 {
-  "reject": ["react", "react-dom", "@types/react", "@types/react-dom"]
+  "reject": [
+    "react",
+    "react-dom",
+    "@types/react",
+    "@types/react-dom",
+    "@atlaskit/dynamic-table",
+    "@atlaskit/css-reset",
+    "@atlaskit/button",
+    "@atlaskit/tabs",
+    "@atlaskit/section-message",
+    "@atlaskit/textfield",
+    "@atlaskit/textfield",
+    "@atlaskit/spinner",
+    "@atlaskit/textarea",
+    "@atlaskit/primitives"
+  ]
 }
