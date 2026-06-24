@@ -40,6 +40,11 @@ export default defineConfig(async (env: ConfigEnv): Promise<UserConfig> => {
     define: envKeys,
     base: "./",
     plugins: [react()],
+    resolve: {
+      alias: {
+        "@popperjs/core": "@popperjs/core/dist/cjs/popper.js",
+      },
+    },
     server: {
       port: 3099,
       fs: {
