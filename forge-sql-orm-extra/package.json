@@ -64,9 +64,9 @@
     "README.md"
   ],
   "devDependencies": {
-    "@types/node": "^26.0.0",
+    "@types/node": "^26.0.1",
     "@vitest/coverage-v8": "^4.1.9",
-    "knip": "^6.18.0",
+    "knip": "^6.20.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
     "license-checker-rseidelsohn": "^5.0.1"
