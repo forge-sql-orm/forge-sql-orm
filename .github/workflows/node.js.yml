@@ -129,8 +129,8 @@ jobs:
       packages: read
     environment: ${{ github.event_name == 'push' && 'production' || (github.event_name == 'workflow_dispatch' && inputs.environment || 'development') }}
     strategy:
-      fail-fast: false
-      max-parallel: 2
+      fail-fast: true
+      max-parallel: 1
       matrix:
         include:
           # static: true-> has static/forge-orm-example frontend
