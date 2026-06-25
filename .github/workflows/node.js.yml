@@ -24,7 +24,7 @@ jobs:
       pull-requests: write
     strategy:
       matrix:
-        node-version: [24.x]
+        node-version: [22.x]
     outputs:
       core_version: ${{ steps.publish_core.outputs.core_version }}
       extra_version: ${{ steps.publish_extra.outputs.extra_version }}
@@ -155,7 +155,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 24.x
+          node-version: 22.x
           cache: 'npm'
       - run: npm install -g @forge/cli && forge settings set usage-analytics true
 
@@ -286,7 +286,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        node-version: [24.x]
+        node-version: [22.x]
     steps:
       - name: Fail if any dependency failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
