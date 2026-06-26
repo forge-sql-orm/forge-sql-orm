@@ -26,6 +26,7 @@ jobs:
       matrix:
         node-version: [24.16]
     outputs:
+      gpr_enabled: ${{ steps.gpr.outputs.enabled }}
       core_version: ${{ steps.publish_core.outputs.core_version }}
       extra_version: ${{ steps.publish_extra.outputs.extra_version }}
       cli_version: ${{ steps.publish_cli.outputs.cli_version }}
@@ -141,12 +142,7 @@ jobs:
   # --- Examples: one matrix entry per example, built & deployed in parallel ---
   examples:
     needs: quality
-    if: |
-      needs.quality.result == 'success' &&
-      github.actor != 'dependabot[bot]' &&
-      secrets.PACKAGE_TOKEN != '' &&
-      (github.event_name == 'push' ||
-       github.event.pull_request.head.repo.full_name == github.repository)
+    if: needs.quality.result == 'success' && needs.quality.outputs.gpr_enabled == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -323,13 +319,8 @@ jobs:
   # Every run publishes ephemeral -ci.* versions for downstream jobs; delete them
   # after the workflow finishes so GitHub Packages storage does not accumulate.
   cleanup-gpr:
-    needs: [build]
-    if: |
-      always() &&
-      github.actor != 'dependabot[bot]' &&
-      secrets.PACKAGE_TOKEN != '' &&
-      (github.event_name == 'push' ||
-       github.event.pull_request.head.repo.full_name == github.repository)
+    needs: [build, quality]
+    if: always() && needs.quality.outputs.gpr_enabled == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
