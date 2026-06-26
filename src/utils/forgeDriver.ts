@@ -71,6 +71,37 @@ export function isUpdateQueryResponse(obj: unknown): obj is UpdateQueryResponse 
 }
 
 /**
+ * Maps result rows (returned by the Forge SQL API as hashes/objects) into the
+ * positional arrays expected by Drizzle ORM.
+ *
+ * The Forge SQL API returns each row as an object keyed by column name. The key
+ * ordering of that object is NOT guaranteed to match the order of the columns in
+ * the executed query. Drizzle, however, consumes rows positionally. Relying on
+ * `Object.values(row)` therefore risks assigning values to the wrong columns.
+ *
+ * When field metadata is available, the column order it describes is used as the
+ * canonical ordering and each value is looked up by its column name. When no
+ * metadata is available (or it does not cover the row), we fall back to
+ * `Object.values`, preserving the original behaviour of the driver.
+ *
+ * @param rows - The rows returned by the Forge SQL API.
+ * @param metadata - The query metadata containing the ordered field definitions.
+ * @returns The rows as positional value arrays aligned to the field order.
+ */
+export function mapRowsToValues(
+  rows: Record<string, unknown>[],
+  metadata?: ForgeSQLMetadata,
+): unknown[][] {
+  const fields = metadata?.fields;
+
+  if (!fields || fields.length === 0) {
+    return rows.map((row) => Object.values(row));
+  }
+
+  return rows.map((row) => fields.map((field) => row[field.name]));
+}
+
+/**
  * Processes DDL query results and saves metadata to the execution context.
  *
  * @param query - The SQL query string
@@ -102,8 +133,9 @@ async function processDDLResult(
     if (method === "execute") {
       return { rows: [result.rows] };
     } else {
-      const rows = (result.rows as unknown[]).map((r) =>
-        Object.values(r as Record<string, unknown>),
+      const rows = mapRowsToValues(
+        result.rows as Record<string, unknown>[],
+        result.metadata as ForgeSQLMetadata | undefined,
       );
       return { rows };
     }
@@ -162,7 +194,10 @@ async function processAllMethod(
     return { rows: [] };
   }
 
-  const rows = result.rows.map((r) => Object.values(r as Record<string, unknown>));
+  const rows = mapRowsToValues(
+    result.rows as Record<string, unknown>[],
+    result.metadata as ForgeSQLMetadata | undefined,
+  );
 
   return { rows };
 }

@@ -48,25 +48,30 @@ vi.mock("@forge/sql/out/sql", () => ({
 }));
 
 describe("forgeDriver", () => {
-  const mockMetadata: ForgeSQLMetadata = {
+  const fieldBuilder = (name: string): ForgeSQLMetadata["fields"][number] => ({
+    catalog: "def",
+    name,
+    schema: "",
+    characterSet: 63,
+    decimals: 0,
+    table: "users",
+    orgTable: "users",
+    orgName: name,
+    flags: 0,
+    columnType: 3,
+    columnLength: 11,
+  });
+
+  // Builds metadata whose ordered `fields` describe the given column names. The
+  // Forge SQL API always returns field metadata that matches the columns in the
+  // result, so tests should mirror that by listing the columns their rows use.
+  const metadataFor = (...names: string[]): ForgeSQLMetadata => ({
     dbExecutionTime: 100,
     responseSize: 1024,
-    fields: [
-      {
-        catalog: "def",
-        name: "id",
-        schema: "",
-        characterSet: 63,
-        decimals: 0,
-        table: "users",
-        orgTable: "users",
-        orgName: "id",
-        flags: 0,
-        columnType: 3,
-        columnLength: 11,
-      },
-    ],
-  };
+    fields: names.map(fieldBuilder),
+  });
+
+  const mockMetadata: ForgeSQLMetadata = metadataFor("id", "name");
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -414,7 +419,7 @@ describe("forgeDriver", () => {
           { id: 1, name: "Test1", email: "test1@example.com" },
           { id: 2, name: "Test2", email: "test2@example.com" },
         ],
-        metadata: mockMetadata,
+        metadata: metadataFor("id", "name", "email"),
       });
 
       const result = await forgeDriver("SELECT * FROM users", [], "all");
@@ -456,6 +461,29 @@ describe("forgeDriver", () => {
       const result = await forgeDriver("SELECT * FROM users WHERE id = ?", [1], "all");
 
       expect(result).toEqual({ rows: [[1, "Test"]] });
+    });
+
+    it("should map row values according to the SELECT column order, not the hash key order", async () => {
+      // The remote SQL API returns each row as a hash/object. The order of the
+      // keys in that hash is NOT guaranteed to match the order of the columns in
+      // the SELECT clause. Drizzle consumes the rows positionally, so the driver
+      // must align each value with the requested column order rather than relying
+      // on the (arbitrary) key ordering returned by the API.
+      //
+      // Here the query selects "id, name" but the API returns the hash with the
+      // keys in the opposite order ("name" before "id"). The driver must still
+      // produce [id, name] = [1, "Alice"].
+      mockExecute.mockResolvedValue({
+        // Note the reversed key order compared to the SELECT clause below.
+        rows: [{ name: "Alice", id: 1 }],
+        // Field metadata reflects the SELECT column order: id, then name.
+        metadata: metadataFor("id", "name"),
+      });
+
+      const result = await forgeDriver("SELECT id, name FROM users", [], "all");
+
+      // Expected: values aligned to the SELECT column order (id first, then name).
+      expect(result).toEqual({ rows: [[1, "Alice"]] });
     });
   });
 
