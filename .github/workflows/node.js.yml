@@ -18,8 +18,6 @@ jobs:
       SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
       QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
       CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-      GH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
-      NODE_AUTH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
     permissions:
       contents: read
       packages: write
@@ -54,10 +52,14 @@ jobs:
       - name: Publish forge-sql-orm to GitHub Packages (not npmjs.com)
         if: github.actor != 'dependabot[bot]'
         id: publish_core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
         run: |
           node scripts/ci/github-packages.mjs publish-core
           echo "core_version=$(node scripts/ci/github-packages.mjs ci-version)" >> "$GITHUB_OUTPUT"
       - name: Extra package (knip / build / tests with coverage)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
         run: |
           cd forge-sql-orm-extra
           npm ci --ignore-scripts
@@ -71,10 +73,14 @@ jobs:
       - name: Publish forge-sql-orm-extra to GitHub Packages
         if: github.actor != 'dependabot[bot]'
         id: publish_extra
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
         run: |
           node scripts/ci/github-packages.mjs publish-extra "${{ steps.publish_core.outputs.core_version }}"
           echo "extra_version=$(node scripts/ci/github-packages.mjs ci-version forge-sql-orm-extra)" >> "$GITHUB_OUTPUT"
       - name: CLI package (knip / lint / build / tests with coverage)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
         run: |
           cd forge-sql-orm-cli
           npm ci --ignore-scripts
@@ -88,6 +94,8 @@ jobs:
       - name: Publish forge-sql-orm-cli to GitHub Packages
         if: github.actor != 'dependabot[bot]'
         id: publish_cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
         run: |
           node scripts/ci/github-packages.mjs publish-cli "${{ steps.publish_core.outputs.core_version }}"
           echo "cli_version=$(node scripts/ci/github-packages.mjs ci-version forge-sql-orm-cli)" >> "$GITHUB_OUTPUT"
@@ -116,10 +124,6 @@ jobs:
   examples:
     needs: quality
     runs-on: ubuntu-latest
-    env:
-      # Read ci.* packages published by the quality job
-      GH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
-      NODE_AUTH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
     permissions:
       contents: read
       packages: read
@@ -175,6 +179,8 @@ jobs:
         run: cd examples/${{ matrix.dir }} && npm ci --ignore-scripts
       - name: Install published workspace packages from GitHub Packages
         if: github.actor != 'dependabot[bot]' && needs.quality.outputs.core_version != ''
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
         run: |
           node scripts/ci/github-packages.mjs install-example \
             "examples/${{ matrix.dir }}" \
@@ -296,9 +302,6 @@ jobs:
     needs: [build]
     if: always() && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
-      NODE_AUTH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
     permissions:
       contents: read
       packages: write
@@ -308,4 +311,6 @@ jobs:
           persist-credentials: false
       - name: Delete CI package versions from GitHub Packages
         continue-on-error: true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
         run: node scripts/ci/github-packages.mjs cleanup-ci-versions
