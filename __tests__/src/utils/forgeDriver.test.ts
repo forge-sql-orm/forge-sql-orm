@@ -457,6 +457,28 @@ describe("forgeDriver", () => {
 
       expect(result).toEqual({ rows: [[1, "Test"]] });
     });
+
+    it("should map row values according to the SELECT column order, not the hash key order", async () => {
+      // The remote SQL API returns each row as a hash/object. The order of the
+      // keys in that hash is NOT guaranteed to match the order of the columns in
+      // the SELECT clause. Drizzle consumes the rows positionally, so the driver
+      // must align each value with the requested column order rather than relying
+      // on the (arbitrary) key ordering returned by the API.
+      //
+      // Here the query selects "id, name" but the API returns the hash with the
+      // keys in the opposite order ("name" before "id"). The driver must still
+      // produce [id, name] = [1, "Alice"].
+      mockExecute.mockResolvedValue({
+        // Note the reversed key order compared to the SELECT clause below.
+        rows: [{ name: "Alice", id: 1 }],
+        metadata: mockMetadata,
+      });
+
+      const result = await forgeDriver("SELECT id, name FROM users", [], "all");
+
+      // Expected: values aligned to the SELECT column order (id first, then name).
+      expect(result).toEqual({ rows: [[1, "Alice"]] });
+    });
   });
 
   describe("edge cases", () => {
