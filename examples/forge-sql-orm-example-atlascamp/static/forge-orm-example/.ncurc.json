@@ -1,10 +1,3 @@
 {
-  "reject": [
-    "react",
-    "react-dom",
-    "@types/react",
-    "@types/react-dom",
-    "@atlaskit/dynamic-table",
-    "@atlaskit/css-reset"
-  ]
+  "reject": ["react", "react-dom", "@types/react", "@types/react-dom"]
 }

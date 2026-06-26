@@ -6,6 +6,20 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
+## [2.2.4] - NEXT RELEASE
+
+### Community Contributions
+
+Thanks to @theghostwhoforks for contributing fixes that improve correctness and test stability:
+
+- Fixed a flaky datetime test by using UTC-safe date accessors.
+- Fixed Forge driver row mapping to preserve query column order from metadata instead of relying on JavaScript object key order.
+
+The row mapping fix is especially important for Drizzle ORM integration, where result values are consumed positionally.
+📦 Dependency Updates
+
+Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.
+
 ## [2.2.3] - 23.06.2026
 
 🛡️ Forge SQL Policy Compatibility
