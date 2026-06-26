@@ -46,9 +46,13 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
       // Test the parseDateTime function directly (used by fromDriver)
       const result = parseDateTime(dateString, "yyyy-MM-dd' 'HH:mm:ss.SSS");
       expect(result).toBeInstanceOf(Date);
-      expect(result.getFullYear()).toBe(2024);
-      expect(result.getMonth()).toBe(0); // January (0-indexed)
-      expect(result.getDate()).toBe(15);
+      // parseDateTime parses in UTC (Settings.defaultZone = "utc"), so assert
+      // using UTC accessors. Using local-timezone accessors (getFullYear/
+      // getMonth/getDate) makes this test flaky: on machines east of UTC the
+      // 14:30 UTC instant rolls over to the 16th in local time.
+      expect(result.getUTCFullYear()).toBe(2024);
+      expect(result.getUTCMonth()).toBe(0); // January (0-indexed)
+      expect(result.getUTCDate()).toBe(15);
     });
 
     it("should handle different datetime formats", () => {
