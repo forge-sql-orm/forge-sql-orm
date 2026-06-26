@@ -42,7 +42,7 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
     });
 
     it("should parse MySQL datetime string to Date", () => {
-      const dateString = "2024-01-15 14:30:45.123";
+      const dateString = "2024-01-15 12:30:45.123";
       // Test the parseDateTime function directly (used by fromDriver)
       const result = parseDateTime(dateString, "yyyy-MM-dd' 'HH:mm:ss.SSS");
       expect(result).toBeInstanceOf(Date);
