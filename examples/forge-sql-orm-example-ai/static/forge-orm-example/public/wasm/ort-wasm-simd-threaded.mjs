@@ -472,7 +472,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     Jc = [],
     S = {};
   function fd() {
-    for (var a = h.numThreads - 1; a--; ) bd();
+    for (var a = h.numThreads - 1; a--;) bd();
     ad.push(async () => {
       var b = gd();
       O++;
@@ -658,12 +658,12 @@ async function ortWasmThreaded(moduleArg = {}) {
       d = e + d;
       if (c) c = d;
       else {
-        for (; a[e] && !(e >= d); ) ++e;
+        for (; a[e] && !(e >= d);) ++e;
         c = e;
       }
       if (16 < c - b && a.buffer && sd)
         return sd.decode(a.buffer instanceof ArrayBuffer ? a.subarray(b, c) : a.slice(b, c));
-      for (e = ""; b < c; )
+      for (e = ""; b < c;)
         if (((d = a[b++]), d & 128)) {
           var f = a[b++] & 63;
           if (192 == (d & 224)) e += String.fromCharCode(((d & 31) << 6) | f);
@@ -768,7 +768,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     e >>>= 0;
     wd.length = 0;
     d = e >>> 3;
-    for (c = (e + c) >>> 3; d < c; ) {
+    for (c = (e + c) >>> 3; d < c;) {
       var f;
       (v(), H)[d++ >>> 0] ? (f = (v(), H)[d++ >>> 0]) : (f = (v(), G)[d++ >>> 0]);
       wd.push(f);
@@ -943,7 +943,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     b >>>= 0;
     d >>>= 0;
     Dd.length = 0;
-    for (var c; (c = (v(), A)[b++ >>> 0]); ) {
+    for (var c; (c = (v(), A)[b++ >>> 0]);) {
       var e = 105 != c;
       e &= 112 != c;
       d += e && d % 8 ? 4 : 0;
@@ -1051,7 +1051,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     b >>>= 0;
     if (Z.Wb == a) var c = Z.ac;
     else ((c = Error().stack.toString().split("\n")), "Error" == c[0] && c.shift(), Gd(c));
-    for (var e = 3; c[e] && Fd(c[e]) != a; ) ++e;
+    for (var e = 3; c[e] && Fd(c[e]) != a;) ++e;
     for (a = 0; a < d && c[a + e]; ++a) (v(), C)[((b + 4 * a) >>> 2) >>> 0] = Fd(c[a + e]);
     return a;
   }
@@ -1659,7 +1659,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     if (0 < O) P = xa;
     else if (n) (ra?.(h), Ia());
     else {
-      for (var a = ad; 0 < a.length; ) a.shift()(h);
+      for (var a = ad; 0 < a.length;) a.shift()(h);
       0 < O ? (P = xa) : ((h.calledRun = !0), pa || (Ia(), ra?.(h)));
     }
   }

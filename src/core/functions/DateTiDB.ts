@@ -36,15 +36,7 @@ export type MysqlIntervalUnit =
 
 /** First argument to `TIMESTAMPADD` / `TIMESTAMPDIFF` (keyword). */
 export type TimestampUnit =
-  | "MICROSECOND"
-  | "SECOND"
-  | "MINUTE"
-  | "HOUR"
-  | "DAY"
-  | "WEEK"
-  | "MONTH"
-  | "QUARTER"
-  | "YEAR";
+  "MICROSECOND" | "SECOND" | "MINUTE" | "HOUR" | "DAY" | "WEEK" | "MONTH" | "QUARTER" | "YEAR";
 
 export type GetFormatLocale = "USA" | "JIS" | "ISO" | "EUR" | "INTERNAL";
 export type GetFormatType = "DATE" | "DATETIME" | "TIME";

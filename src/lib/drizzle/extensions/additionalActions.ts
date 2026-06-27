@@ -167,9 +167,13 @@ export type SelectAllFromAliasedType = <T extends MySqlTable>(
   false,
   never,
   {
-    [K in keyof {
-      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
-    }]: {
+    [
+      K in keyof {
+        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
+          GetSelectTableSelection<T>[Key]
+        >;
+      }
+    ]: {
       [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
     }[K];
   }[],
@@ -190,9 +194,13 @@ export type SelectAllDistinctFromAliasedType = <T extends MySqlTable>(
   false,
   never,
   {
-    [K in keyof {
-      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
-    }]: {
+    [
+      K in keyof {
+        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
+          GetSelectTableSelection<T>[Key]
+        >;
+      }
+    ]: {
       [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
     }[K];
   }[],
@@ -214,9 +222,13 @@ export type SelectAllFromCacheableAliasedType = <T extends MySqlTable>(
   false,
   never,
   {
-    [K in keyof {
-      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
-    }]: {
+    [
+      K in keyof {
+        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
+          GetSelectTableSelection<T>[Key]
+        >;
+      }
+    ]: {
       [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
     }[K];
   }[],
@@ -238,9 +250,13 @@ export type SelectAllDistinctFromCacheableAliasedType = <T extends MySqlTable>(
   false,
   never,
   {
-    [K in keyof {
-      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
-    }]: {
+    [
+      K in keyof {
+        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
+          GetSelectTableSelection<T>[Key]
+        >;
+      }
+    ]: {
       [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
     }[K];
   }[],

@@ -135,14 +135,12 @@ async function findDuplicates<T extends AnyMySqlTable>(table: T): Promise<Duplic
     .having(rawSql`COUNT(*) > 1`);
 
   // Transform results
-  return duplicateResult.map(
-    (record): DuplicateResponse => ({
-      fields: Object.entries(record).reduce<Record<string, string>>((acc, [key, value]) => {
-        acc[key] = String(value ?? "");
-        return acc;
-      }, {}),
-    }),
-  );
+  return duplicateResult.map((record): DuplicateResponse => ({
+    fields: Object.entries(record).reduce<Record<string, string>>((acc, [key, value]) => {
+      acc[key] = String(value ?? "");
+      return acc;
+    }, {}),
+  }));
 }
 
 resolver.define("duplicate", async (): Promise<DuplicateResponse[]> => {
