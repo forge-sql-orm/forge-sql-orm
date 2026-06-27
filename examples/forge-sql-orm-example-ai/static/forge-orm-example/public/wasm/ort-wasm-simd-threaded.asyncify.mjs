@@ -625,7 +625,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     de = [],
     Hf = {};
   function Kf() {
-    for (var a = g.numThreads - 1; a--; ) Ef();
+    for (var a = g.numThreads - 1; a--;) Ef();
     Af.push(async () => {
       var b = Lf();
       Bf++;
@@ -803,7 +803,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     Wf = (a, b, c, d) => {
       c = b + c;
       if (d) return c;
-      for (; a[b] && !(b >= c); ) ++b;
+      for (; a[b] && !(b >= c);) ++b;
       return b;
     },
     Xf = (a, b = 0, c, d) => {
@@ -811,7 +811,7 @@ async function ortWasmThreaded(moduleArg = {}) {
       c = Wf(a, b, c, d);
       if (16 < c - b && a.buffer && Vf)
         return Vf.decode(a.buffer instanceof ArrayBuffer ? a.subarray(b, c) : a.slice(b, c));
-      for (d = ""; b < c; ) {
+      for (d = ""; b < c;) {
         var e = a[b++];
         if (e & 128) {
           var f = a[b++] & 63;
@@ -873,7 +873,7 @@ async function ortWasmThreaded(moduleArg = {}) {
   var wb = () => Ta(""),
     P = (a) => {
       a >>>= 0;
-      for (var b = ""; ; ) {
+      for (var b = ""; ;) {
         var c = (u(), x)[a++ >>> 0];
         if (!c) return b;
         b += String.fromCharCode(c);
@@ -1271,7 +1271,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     e >>>= 0;
     rg.length = 0;
     c = e >>> 3;
-    for (d = (e + d) >>> 3; c < d; ) {
+    for (d = (e + d) >>> 3; c < d;) {
       var f;
       (u(), F)[c++ >>> 0] ? (f = (u(), F)[c++ >>> 0]) : (f = (u(), E)[c++ >>> 0]);
       rg.push(f);
@@ -1511,7 +1511,7 @@ async function ortWasmThreaded(moduleArg = {}) {
   }
   function bc(a) {
     a >>>= 0;
-    for (var b = R(a); b.length; ) {
+    for (var b = R(a); b.length;) {
       var c = b.pop();
       b.pop()(c);
     }
@@ -1646,7 +1646,7 @@ async function ortWasmThreaded(moduleArg = {}) {
   var Tg = [],
     Ug = (a, b) => {
       Tg.length = 0;
-      for (var c; (c = (u(), x)[a++ >>> 0]); ) {
+      for (var c; (c = (u(), x)[a++ >>> 0]);) {
         var d = 105 != c;
         d &= 112 != c;
         b += d && b % 8 ? 4 : 0;
@@ -3143,7 +3143,7 @@ async function ortWasmThreaded(moduleArg = {}) {
     if (0 < Bf) Cf = Ea;
     else if (n) (xa?.(g), Sa());
     else {
-      for (var a = Af; 0 < a.length; ) a.shift()(g);
+      for (var a = Af; 0 < a.length;) a.shift()(g);
       0 < Bf ? (Cf = Ea) : ((g.calledRun = !0), ua || (Sa(), xa?.(g)));
     }
   }

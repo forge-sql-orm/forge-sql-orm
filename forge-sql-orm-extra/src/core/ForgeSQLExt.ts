@@ -51,9 +51,13 @@ export type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
   false,
   never,
   {
-    [K in keyof {
-      [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
-    }]: {
+    [
+      K in keyof {
+        [Key in keyof GetSelectTableSelection<T>]: SelectResultField<
+          GetSelectTableSelection<T>[Key]
+        >;
+      }
+    ]: {
       [Key in keyof GetSelectTableSelection<T>]: SelectResultField<GetSelectTableSelection<T>[Key]>;
     }[K];
   }[],

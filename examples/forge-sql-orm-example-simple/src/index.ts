@@ -38,13 +38,11 @@ resolver.define("duplicate", async (req): Promise<DuplicateResponse[]> => {
     .groupBy(users.name, users.email)
     .having(rawSql`COUNT(*) > 1`);
 
-  return duplicateResult.map(
-    (d): DuplicateResponse => ({
-      count: d.count as number,
-      name: d.name as string,
-      email: d.email as string,
-    }),
-  );
+  return duplicateResult.map((d): DuplicateResponse => ({
+    count: d.count as number,
+    name: d.name as string,
+    email: d.email as string,
+  }));
 });
 
 resolver.define("fetch", async (req: Request<{ sortType?: SortType }>): Promise<UserResponse[]> => {
@@ -61,13 +59,11 @@ resolver.define("fetch", async (req: Request<{ sortType?: SortType }>): Promise<
     : baseQuery;
 
   const result = await query;
-  return result.map(
-    (r): UserResponse => ({
-      id: r.id,
-      name: r.name,
-      email: r.email,
-    }),
-  );
+  return result.map((r): UserResponse => ({
+    id: r.id,
+    name: r.name,
+    email: r.email,
+  }));
 });
 
 export const handler = resolver.getDefinitions();
