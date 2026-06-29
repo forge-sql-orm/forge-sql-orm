@@ -54,7 +54,7 @@
     "knip": "^6.23.0",
     "lcov-result-merger": "^6.0.0",
     "license-checker-rseidelsohn": "^5.0.1",
-    "prettier": "^3.9.1",
+    "prettier": "^3.9.3",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9"
