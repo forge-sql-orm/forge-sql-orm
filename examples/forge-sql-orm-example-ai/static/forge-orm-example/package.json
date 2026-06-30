@@ -7,7 +7,7 @@
     "@atlaskit/button": "^24.3.0",
     "@atlaskit/css-reset": "^8.0.1",
     "@atlaskit/dynamic-table": "^19.1.0",
-    "@atlaskit/primitives": "^20.2.1",
+    "@atlaskit/primitives": "^20.3.0",
     "@atlaskit/section-message": "^9.2.1",
     "@atlaskit/spinner": "^20.1.0",
     "@atlaskit/tabs": "^20.1.0",
