@@ -66,7 +66,7 @@
   "devDependencies": {
     "@types/node": "^26.1.0",
     "@vitest/coverage-v8": "^4.1.9",
-    "knip": "^6.23.0",
+    "knip": "^6.24.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9",
     "license-checker-rseidelsohn": "^5.0.1"
