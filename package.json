@@ -44,9 +44,9 @@
     "@types/node": "^26.1.0",
     "@typescript-eslint/eslint-plugin": "^8.62.1",
     "@typescript-eslint/parser": "^8.62.1",
-    "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.10",
     "@vitest/eslint-plugin": "^1.6.21",
-    "@vitest/ui": "^4.1.9",
+    "@vitest/ui": "^4.1.10",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.7.0",
@@ -57,7 +57,7 @@
     "prettier": "^3.9.4",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.10"
   },
   "license": "MIT",
   "author": "Vasyl Zakharchenko",
@@ -89,15 +89,15 @@
     "README.md"
   ],
   "peerDependencies": {
-    "@forge/sql": "^4.0.0",
+    "@forge/sql": "^4.0.1",
     "drizzle-orm": "^0.45.2"
   },
   "dependencies": {
-    "@forge/api": "^8.0.0",
+    "@forge/api": "^8.0.1",
     "luxon": "^3.7.2"
   },
   "optionalDependencies": {
-    "@forge/events": "^3.0.0"
+    "@forge/events": "^3.0.1"
   },
   "lint-staged": {
     "{src,forge-sql-orm-cli/src,__tests__,examples}/**/*.{ts,tsx,mts,cts}": [

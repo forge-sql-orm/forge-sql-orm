@@ -65,10 +65,10 @@
   ],
   "devDependencies": {
     "@types/node": "^26.1.0",
-    "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.10",
     "knip": "^6.24.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.9",
+    "vitest": "^4.1.10",
     "license-checker-rseidelsohn": "^5.0.1"
   },
   "lint-staged": {
@@ -78,7 +78,7 @@
     ]
   },
   "dependencies": {
-    "@forge/kvs": "^2.0.0",
+    "@forge/kvs": "^2.0.1",
     "forge-sql-orm": "^2.2.3",
     "luxon": "^3.7.2",
     "node-sql-parser": "^5.4.0"
