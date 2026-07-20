@@ -18,10 +18,10 @@
     "knip": "^6.27.0"
   },
   "dependencies": {
-    "@forge/bridge": "6.1.0",
-    "@forge/react": "12.0.1",
+    "@forge/bridge": "6.1.1",
+    "@forge/react": "12.1.0",
     "@forge/resolver": "2.0.0",
-    "@forge/sql": "^4.0.1",
+    "@forge/sql": "^4.0.2",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "^2.2.3",
     "react": "^18.2.0"
