@@ -61,7 +61,7 @@
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
     "eslint-config-prettier": "^10.1.8",
-    "knip": "^6.27.0",
+    "knip": "^6.29.0",
     "reflect-metadata": "^0.2.2",
     "typescript": "^6.0.3",
     "vite": "^8.1.5",
