@@ -10,11 +10,11 @@
     "forge-sql-orm": "2.2.3"
   },
   "devDependencies": {
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "drizzle-kit": "^0.31.10",
     "forge-sql-orm-cli": "^2.2.3",
     "knip": "^6.29.0",
-    "mysql2": "^3.23.1",
+    "mysql2": "^3.23.2",
     "typescript": "^6.0.3"
   },
   "scripts": {
