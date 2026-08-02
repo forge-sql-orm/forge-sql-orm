@@ -32,7 +32,7 @@ for i in {1..60}; do
   if docker exec "${CONTAINER_NAME}" mysqladmin ping -proot -p"${MYSQL_ROOT_PASSWORD}" --silent >/dev/null 2>&1; then
     break
   fi
-  sleep 1
+  sleep 2
 done
 
 # extra sanity check

@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.2",
-    "knip": "^6.29.0",
+    "knip": "^6.31.0",
     "typescript": "^6.0.3"
   },
   "overrides": {
