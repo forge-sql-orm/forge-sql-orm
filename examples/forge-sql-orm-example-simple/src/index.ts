@@ -79,35 +79,3 @@ export const dropMigrations = () => {
 export const fetchMigrations = () => {
   return fetchSchemaWebTrigger();
 };
-
-export const proxyWebTrigger = async (request: {
-  headers: Record<string, string[]>;
-  path: string;
-  method: string;
-  userPath: string;
-  body: string;
-  queryParameters: Record<string, string[]>;
-}) => {
-  console.log("proxyWebTrigger", request.userPath);
-  console.log("proxyWebTrigger", request.path);
-  return {
-    headers: { "Content-Type": ["application/atom+xml;charset=utf-8"] },
-    statusCode: 200,
-    statusText: "OK",
-    body:
-      '{<?xml version="1.0" encoding="UTF-8"?>\n' +
-      "<magazin>\n" +
-      '    <produkt id="101" наличност="да">\n' +
-      "        <ime>Лаптоп</ime>\n" +
-      '        <cena valuta="BGN">1899.00</cena>\n' +
-      "        <proizvoditel>TechBrand</proizvoditel>\n" +
-      "    </produkt>\n" +
-      '    <produkt id="102" наличност="не">\n' +
-      "        <ime>Смартфон</ime>\n" +
-      '        <cena valuta="BGN">999.00</cena>\n' +
-      "        <proizvoditel>PhoneMaker</proizvoditel>\n" +
-      "    </produkt>\n" +
-      "</magazin>}",
-    contentType: "xml",
-  };
-};
