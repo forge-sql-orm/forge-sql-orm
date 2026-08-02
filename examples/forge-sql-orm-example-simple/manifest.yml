@@ -39,8 +39,6 @@ modules:
       handler: index.dropMigrations
     - key: fetchSchema
       handler: index.fetchMigrations
-    - key: proxyWebTrigger
-      handler: index.proxyWebTrigger
 resources:
   - key: main
     path: static/forge-orm-example/build-static
