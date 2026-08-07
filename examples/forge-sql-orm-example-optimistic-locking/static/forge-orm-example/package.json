@@ -1,13 +1,14 @@
 {
   "name": "forge_sql_orm_example_frontend",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "dependencies": {
-    "@atlaskit/button": "^25.0.2",
+    "@atlaskit/button": "^25.0.3",
     "@atlaskit/css-reset": "^8.1.2",
     "@atlaskit/dynamic-table": "^19.1.5",
-    "@atlaskit/tabs": "^20.1.3",
-    "@atlaskit/tokens": "^16.3.0",
+    "@atlaskit/tabs": "^21.0.0",
+    "@atlaskit/tokens": "^16.4.1",
     "@forge/bridge": "^6.2.0",
     "mobx": "7.0.0",
     "mobx-react": "10.0.0",
@@ -21,11 +22,11 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^6.0.5",
     "dotenv": "17.4.2",
-    "knip": "^6.31.0",
+    "knip": "^6.32.0",
     "prettier": "^3.9.6",
     "prettier-plugin-pkg": "^0.22.1",
     "typescript": "^7.0.2",
-    "vite": "^8.2.0"
+    "vite": "^8.2.1"
   },
   "scripts": {
     "build": "vite build",

@@ -70,7 +70,7 @@ export default defineConfig((config: UserConfig) => {
     ],
     resolve: {
       alias: {
-        sharp: path.resolve(__dirname, "src/sharp-stub.ts"),
+        sharp: path.resolve(import.meta.dirname, "src/sharp-stub.ts"),
       },
     },
     ssr: {
@@ -78,7 +78,7 @@ export default defineConfig((config: UserConfig) => {
     },
     build: {
       lib: {
-        entry: path.resolve(__dirname, "src/index.ts"),
+        entry: path.resolve(import.meta.dirname, "src/index.ts"),
         name: "ForgeAI",
         fileName: "index",
         formats: ["es"] as LibraryFormats[],

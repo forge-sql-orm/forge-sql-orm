@@ -61,10 +61,10 @@
     "@typescript-eslint/eslint-plugin": "^8.66.0",
     "@typescript-eslint/parser": "^8.66.0",
     "eslint-config-prettier": "^10.1.8",
-    "knip": "^6.31.0",
+    "knip": "^6.32.0",
     "reflect-metadata": "^0.2.2",
     "typescript": "^6.0.3",
-    "vite": "^8.2.0",
+    "vite": "^8.2.1",
     "vitest": "^4.1.10",
     "@vitest/coverage-v8": "^4.1.10"
   },

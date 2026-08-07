@@ -35,7 +35,7 @@ export default defineConfig(async (env: ConfigEnv): Promise<UserConfig> => {
     acc[`process.env.${key}`] = JSON.stringify(envVars[key]);
     return acc;
   }, {});
-  const buildPath = resolve(__dirname, envVars["BUILD_PATH"] || "./build");
+  const buildPath = resolve(import.meta.dirname, envVars["BUILD_PATH"] || "./build");
   return {
     define: envKeys,
     base: "./",
@@ -43,6 +43,7 @@ export default defineConfig(async (env: ConfigEnv): Promise<UserConfig> => {
     resolve: {
       alias: {
         "@popperjs/core": "@popperjs/core/dist/cjs/popper.js",
+        "@atlaskit/platform-feature-flags/fg": "@atlaskit/platform-feature-flags/dist/esm/fg.js",
       },
     },
     server: {
