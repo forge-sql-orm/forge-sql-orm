@@ -50,23 +50,23 @@
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "^2.2.3",
-    "inquirer": "^14.0.2",
-    "mysql2": "^3.23.2",
+    "inquirer": "^14.2.0",
+    "mysql2": "^3.24.2",
     "reflect-metadata": "^0.2.2",
-    "uuid": "^14.0.1"
+    "uuid": "^14.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.2.0",
-    "@typescript-eslint/eslint-plugin": "^8.66.0",
-    "@typescript-eslint/parser": "^8.66.0",
+    "@types/node": "^26.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/parser": "^8.68.0",
     "eslint-config-prettier": "^10.1.8",
-    "knip": "^6.32.0",
+    "knip": "^6.33.0",
     "reflect-metadata": "^0.2.2",
     "typescript": "^6.0.3",
-    "vite": "^8.2.1",
-    "vitest": "^4.1.10",
-    "@vitest/coverage-v8": "^4.1.10"
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11",
+    "@vitest/coverage-v8": "^4.1.11"
   },
   "lint-staged": {
     "*.{ts,tsx,css,scss,md}": [
