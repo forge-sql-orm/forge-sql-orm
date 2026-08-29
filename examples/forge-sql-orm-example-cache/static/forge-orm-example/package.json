@@ -4,22 +4,22 @@
   "description": "",
   "dependencies": {
     "@atlaskit/css-reset": "^8.0.0",
-    "@forge/bridge": "^6.2.0",
+    "@forge/bridge": "^6.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.4.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.7",
-    "@vitejs/plugin-react": "^6.0.5",
+    "@vitejs/plugin-react": "^6.1.1",
     "dotenv": "17.4.2",
-    "knip": "^6.32.0",
+    "knip": "^6.33.0",
     "prettier": "^3.9.6",
     "prettier-plugin-pkg": "^0.22.1",
     "typescript": "^7.0.2",
-    "vite": "^8.2.1"
+    "vite": "^8.2.2"
   },
   "scripts": {
     "build": "vite build",

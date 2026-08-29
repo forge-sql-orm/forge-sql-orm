@@ -5,16 +5,16 @@
   "private": true,
   "dependencies": {
     "@forge/resolver": "2.0.0",
-    "@forge/sql": "^4.0.3",
+    "@forge/sql": "^4.0.4",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "2.2.3"
   },
   "devDependencies": {
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.4.0",
     "drizzle-kit": "^0.31.10",
     "forge-sql-orm-cli": "^2.2.3",
-    "knip": "^6.32.0",
-    "mysql2": "^3.23.2",
+    "knip": "^6.33.0",
+    "mysql2": "^3.24.2",
     "typescript": "^6.0.3"
   },
   "scripts": {

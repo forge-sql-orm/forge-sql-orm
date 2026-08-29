@@ -40,24 +40,24 @@
   ],
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/luxon": "^3.7.4",
-    "@types/node": "^26.2.0",
-    "@typescript-eslint/eslint-plugin": "^8.66.0",
-    "@typescript-eslint/parser": "^8.66.0",
-    "@vitest/coverage-v8": "^4.1.10",
-    "@vitest/eslint-plugin": "^1.6.26",
-    "@vitest/ui": "^4.1.10",
-    "eslint": "^10.8.1",
+    "@types/luxon": "^3.7.5",
+    "@types/node": "^26.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/parser": "^8.68.0",
+    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/eslint-plugin": "^1.6.27",
+    "@vitest/ui": "^4.1.11",
+    "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.9.0",
+    "globals": "^17.11.0",
     "husky": "^9.1.7",
-    "knip": "^6.32.0",
+    "knip": "^6.33.0",
     "lcov-result-merger": "^6.0.0",
     "license-checker-rseidelsohn": "^5.0.1",
     "prettier": "^3.9.6",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   },
   "license": "MIT",
   "author": "Vasyl Zakharchenko",
@@ -89,15 +89,15 @@
     "README.md"
   ],
   "peerDependencies": {
-    "@forge/sql": "^4.0.3",
+    "@forge/sql": "^4.0.4",
     "drizzle-orm": "^0.45.2"
   },
   "dependencies": {
-    "@forge/api": "^8.0.3",
+    "@forge/api": "^8.0.4",
     "luxon": "^3.7.2"
   },
   "optionalDependencies": {
-    "@forge/events": "^3.0.3"
+    "@forge/events": "^3.0.4"
   },
   "lint-staged": {
     "{src,forge-sql-orm-cli/src,__tests__,examples}/**/*.{ts,tsx,mts,cts}": [
