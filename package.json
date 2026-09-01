@@ -49,7 +49,7 @@
     "@vitest/ui": "^4.1.11",
     "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.11.0",
+    "globals": "^17.12.0",
     "husky": "^9.1.7",
     "knip": "^6.34.0",
     "lcov-result-merger": "^6.0.0",
