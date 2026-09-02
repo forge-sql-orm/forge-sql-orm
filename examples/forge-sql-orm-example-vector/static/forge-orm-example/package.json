@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@atlaskit/button": "^25.3.0",
+    "@atlaskit/button": "^25.3.1",
     "@atlaskit/css-reset": "^8.4.0",
     "@atlaskit/primitives": "^22.5.0",
     "@atlaskit/section-message": "^10.2.0",
