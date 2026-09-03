@@ -4,7 +4,7 @@
   "description": "",
   "dependencies": {
     "@atlaskit/css-reset": "^8.4.0",
-    "@atlaskit/dynamic-table": "^19.3.1",
+    "@atlaskit/dynamic-table": "^19.3.2",
     "@forge/bridge": "^6.3.1",
     "mobx": "7.0.3",
     "mobx-react": "10.0.2",
