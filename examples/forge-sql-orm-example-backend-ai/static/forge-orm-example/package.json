@@ -6,7 +6,7 @@
   "dependencies": {
     "@atlaskit/button": "^25.3.2",
     "@atlaskit/css-reset": "^8.4.0",
-    "@atlaskit/dynamic-table": "^19.3.1",
+    "@atlaskit/dynamic-table": "^19.3.2",
     "@atlaskit/primitives": "^22.5.0",
     "@atlaskit/section-message": "^10.2.0",
     "@atlaskit/tabs": "^21.2.0",
