@@ -6,7 +6,13 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
-## [2.2.4] - NEXT RELEASE
+## [2.2.5] - NEXRELEASE
+
+📦 Dependency Updates
+
+Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.
+
+## [2.2.4] - 20.09.2026
 
 ### Community Contributions
 
