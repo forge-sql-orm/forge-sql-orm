@@ -4,9 +4,9 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@forge/api": "^8.0.5",
+    "@forge/api": "^8.1.0",
     "@forge/resolver": "2.0.0",
-    "@forge/sql": "^4.0.5",
+    "@forge/sql": "^4.0.6",
     "drizzle-orm": "^0.45.2",
     "forge-sql-orm": "2.2.3"
   },
@@ -20,9 +20,9 @@
     "knip": "knip"
   },
   "devDependencies": {
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.6.2",
     "forge-sql-orm-cli": "^2.2.3",
-    "knip": "^6.34.0",
+    "knip": "^6.37.0",
     "typescript": "^6.0.3"
   },
   "overrides": {

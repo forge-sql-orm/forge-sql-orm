@@ -64,11 +64,11 @@
     "README.md"
   ],
   "devDependencies": {
-    "@types/node": "^26.4.1",
-    "@vitest/coverage-v8": "^4.1.11",
-    "knip": "^6.34.0",
+    "@types/node": "^26.6.2",
+    "@vitest/coverage-v8": "^5.0.1",
+    "knip": "^6.37.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11",
+    "vitest": "^5.0.1",
     "license-checker-rseidelsohn": "^5.0.1"
   },
   "lint-staged": {
@@ -78,7 +78,7 @@
     ]
   },
   "dependencies": {
-    "@forge/kvs": "^2.0.5",
+    "@forge/kvs": "^2.0.6",
     "forge-sql-orm": "^2.2.3",
     "luxon": "^3.7.2",
     "node-sql-parser": "^5.4.0"

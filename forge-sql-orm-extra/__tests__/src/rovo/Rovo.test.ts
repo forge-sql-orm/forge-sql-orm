@@ -7,6 +7,12 @@ import { Rovo } from "../../../src/rovo/Rovo";
 import { ForgeSqlOperation, ForgeSqlOrmOptions } from "forge-sql-orm";
 import { mysqlTable, varchar, int } from "drizzle-orm/mysql-core";
 
+vi.mock("@forge/sql", () => ({
+  sql: {
+    executeRaw: vi.fn(),
+  },
+}));
+
 // Mock test table
 const testTable = mysqlTable("test_users", {
   id: int("id").primaryKey(),
@@ -186,14 +192,6 @@ describe("Rovo", () => {
   });
 
   describe("dynamicIsolatedQuery", () => {
-    beforeEach(() => {
-      vi.mock("@forge/sql", () => ({
-        sql: {
-          executeRaw: vi.fn(),
-        },
-      }));
-    });
-
     it("should execute valid SELECT query", async () => {
       const mockResult: Result<unknown> = {
         rows: [{ id: 1, name: "Test" }],

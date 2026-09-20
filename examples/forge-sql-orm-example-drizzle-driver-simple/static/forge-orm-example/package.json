@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "@atlaskit/css-reset": "^8.4.0",
-    "@atlaskit/dynamic-table": "^19.3.2",
-    "@forge/bridge": "^6.3.1",
+    "@atlaskit/css-reset": "^8.4.4",
+    "@atlaskit/dynamic-table": "^19.3.4",
+    "@forge/bridge": "^7.0.0",
     "mobx": "7.0.3",
     "mobx-react": "10.0.2",
     "react": "^18.3.1",
@@ -13,16 +13,16 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.6.2",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "6.1.1",
-    "dotenv": "17.4.2",
-    "knip": "^6.34.0",
-    "prettier": "^3.9.6",
+    "dotenv": "18.0.1",
+    "knip": "^6.37.0",
+    "prettier": "^3.9.8",
     "prettier-plugin-pkg": "^0.22.1",
     "typescript": "^7.0.2",
-    "vite": "8.2.2"
+    "vite": "8.3.0"
   },
   "scripts": {
     "build": "vite build",
