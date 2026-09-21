@@ -46,7 +46,7 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^15.0.0",
-    "dotenv": "^18.0.1",
+    "dotenv": "^18.0.2",
     "drizzle-kit": "^0.31.11",
     "drizzle-orm": "^0.45.3",
     "forge-sql-orm": "^2.2.4",
