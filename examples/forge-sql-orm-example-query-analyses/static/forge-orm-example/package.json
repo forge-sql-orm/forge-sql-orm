@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "@atlaskit/css-reset": "^8.4.5",
-    "@atlaskit/dynamic-table": "^19.3.5",
+    "@atlaskit/css-reset": "^8.4.6",
+    "@atlaskit/dynamic-table": "^19.3.6",
     "@forge/bridge": "^7.0.0",
     "forge-sql-orm": "^2.2.4",
     "mobx": "7.0.4",
