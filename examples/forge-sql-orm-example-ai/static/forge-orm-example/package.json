@@ -10,7 +10,7 @@
     "@atlaskit/primitives": "^22.5.4",
     "@atlaskit/section-message": "^10.2.6",
     "@atlaskit/spinner": "^20.4.4",
-    "@atlaskit/tabs": "^21.2.4",
+    "@atlaskit/tabs": "^21.2.5",
     "@atlaskit/textarea": "^10.2.7",
     "@atlaskit/textfield": "^10.2.6",
     "@forge/bridge": "^7.0.0",
