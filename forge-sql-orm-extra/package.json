@@ -65,10 +65,10 @@
   ],
   "devDependencies": {
     "@types/node": "^26.6.2",
-    "@vitest/coverage-v8": "^5.0.1",
+    "@vitest/coverage-v8": "^5.0.2",
     "knip": "^6.38.0",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.1",
+    "vitest": "^5.0.2",
     "license-checker-rseidelsohn": "^5.0.1"
   },
   "lint-staged": {
