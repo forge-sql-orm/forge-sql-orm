@@ -4,7 +4,7 @@
   "description": "",
   "dependencies": {
     "@atlaskit/css-reset": "^8.4.6",
-    "@atlaskit/dynamic-table": "^19.3.7",
+    "@atlaskit/dynamic-table": "^19.3.8",
     "@forge/bridge": "^7.1.0",
     "forge-sql-orm": "^2.2.4",
     "mobx": "7.0.5",
