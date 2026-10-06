@@ -12,7 +12,7 @@
     "build:x86_64": "vite build --mode production:x86_64"
   },
   "dependencies": {
-    "@huggingface/transformers": "^4.3.0"
+    "@huggingface/transformers": "^4.3.1"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
