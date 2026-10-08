@@ -22,7 +22,7 @@
     "@forge/react": "12.3.0",
     "@forge/resolver": "2.0.0",
     "@forge/sql": "^4.0.7",
-    "drizzle-orm": "^0.45.3",
+    "drizzle-orm": "^0.45.4",
     "forge-sql-orm": "^2.2.4",
     "react": "^18.2.0"
   },
