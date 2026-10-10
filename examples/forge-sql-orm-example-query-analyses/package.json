@@ -9,7 +9,7 @@
     "@forge/sql": "^4.0.7",
     "drizzle-orm": "^0.45.4",
     "forge-sql-orm": "2.2.4",
-    "uuid": "^14.0.2"
+    "uuid": "^14.0.3"
   },
   "scripts": {
     "models:create": "forge-sql-orm-cli generate:model --output src/entities",
