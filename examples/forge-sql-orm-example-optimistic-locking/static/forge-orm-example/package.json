@@ -9,7 +9,7 @@
     "@atlaskit/dynamic-table": "^19.3.8",
     "@atlaskit/tabs": "^21.3.0",
     "@atlaskit/tokens": "^20.4.1",
-    "@forge/bridge": "^7.1.0",
+    "@forge/bridge": "^7.2.0",
     "mobx": "7.0.6",
     "mobx-react": "10.0.2",
     "react": "^18.3.1",
