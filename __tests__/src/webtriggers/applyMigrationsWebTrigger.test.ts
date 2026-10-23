@@ -61,8 +61,9 @@ describe("applySchemaMigrations", () => {
     expect(mockProvision).toHaveBeenCalled();
     expect(mockRun).toHaveBeenCalled();
     expect(mockList).toHaveBeenCalled();
-    expect(consoleDebugSpy).toHaveBeenCalledWith("Provisioning the database");
-    expect(consoleDebugSpy).toHaveBeenCalledWith("Running schema migrations");
+    expect(consoleDebugSpy).toHaveBeenCalledWith(
+      "Provisioned the database and ran schema migrations",
+    );
     expect(consoleDebugSpy).toHaveBeenCalledWith("Migrations applied:", [
       "migration1",
       "migration2",
@@ -75,6 +76,58 @@ describe("applySchemaMigrations", () => {
     expect(result.statusText).toBe("OK");
     expect(result.body).toBe("Migrations successfully executed");
     expect(result.headers).toEqual({ "Content-Type": ["application/json"] });
+  });
+
+  it("should stay silent and skip history lookup when no migrations were applied", async () => {
+    mockRun.mockResolvedValue([]);
+    const mockMigration = vi.fn().mockResolvedValue(mockMigrationRunner);
+
+    const result = await applySchemaMigrations(mockMigration);
+
+    expect(mockProvision).toHaveBeenCalled();
+    expect(mockRun).toHaveBeenCalled();
+    expect(mockList).not.toHaveBeenCalled();
+    expect(consoleDebugSpy).not.toHaveBeenCalled();
+    expect(result.statusCode).toBe(200);
+    expect(result.body).toBe("Migrations successfully executed");
+  });
+
+  it("should send messages to a custom logger instead of console.debug", async () => {
+    const logger = vi.fn();
+    const mockMigration = vi.fn().mockResolvedValue(mockMigrationRunner);
+
+    const result = await applySchemaMigrations(mockMigration, { logger });
+
+    expect(logger).toHaveBeenCalledWith("Migrations applied:", ["migration1", "migration2"]);
+    expect(logger).toHaveBeenCalledWith(
+      "Migrations history:\nid, name, migrated_at\n",
+      expect.stringContaining("1, test_migration"),
+    );
+    expect(consoleDebugSpy).not.toHaveBeenCalled();
+    expect(result.statusCode).toBe(200);
+  });
+
+  it("should skip history when logHistory is false", async () => {
+    const mockMigration = vi.fn().mockResolvedValue(mockMigrationRunner);
+
+    const result = await applySchemaMigrations(mockMigration, { logHistory: false });
+
+    expect(mockList).not.toHaveBeenCalled();
+    expect(consoleDebugSpy).toHaveBeenCalledWith("Migrations applied:", [
+      "migration1",
+      "migration2",
+    ]);
+    expect(result.statusCode).toBe(200);
+  });
+
+  it("should still report errors via console.error when logger is silenced", async () => {
+    mockRun.mockRejectedValue(new Error("Run failed"));
+    const mockMigration = vi.fn().mockResolvedValue(mockMigrationRunner);
+
+    const result = await applySchemaMigrations(mockMigration, { logger: () => {} });
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith("Error during migration:", "Run failed");
+    expect(result.statusCode).toBe(500);
   });
 
   it("should handle empty migration history", async () => {

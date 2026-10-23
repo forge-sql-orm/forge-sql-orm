@@ -1418,6 +1418,16 @@ export const handlerMigration = async () => {
 };
 ```
 
+When no migration was applied, `applySchemaMigrations` logs nothing, so it is safe to call it from an hourly scheduled trigger. When migrations were applied it logs the result through `console.debug`; you can redirect or silence this output:
+
+```typescript
+// Redirect progress logs, or pass `() => {}` to silence them (errors still go to console.error)
+return applySchemaMigrations(migration, {
+  logger: (message, data) => console.info(message, data),
+  logHistory: false, // skip the full migration history dump
+});
+```
+
 Configure in `manifest.yml`:
 
 ```yaml

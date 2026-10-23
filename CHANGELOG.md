@@ -8,6 +8,11 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 ## [2.2.5] - NEXRELEASE
 
+### Improvements
+
+- `applySchemaMigrations` no longer logs anything when no migration was applied, so it is safe to run from an hourly scheduled trigger (#2768).
+- New optional second argument `{ logger, logHistory }` to redirect or silence migration logs. Errors still go to `console.error`.
+
 📦 Dependency Updates
 
 Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.
