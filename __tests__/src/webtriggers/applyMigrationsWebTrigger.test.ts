@@ -107,6 +107,20 @@ describe("applySchemaMigrations", () => {
     expect(result.statusCode).toBe(200);
   });
 
+  it("should return success when the custom logger throws", async () => {
+    const logger = vi.fn().mockImplementation(() => {
+      throw new Error("logger failed");
+    });
+    const mockMigration = vi.fn().mockResolvedValue(mockMigrationRunner);
+
+    const result = await applySchemaMigrations(mockMigration, { logger });
+
+    expect(logger).toHaveBeenCalled();
+    expect(consoleErrorSpy).toHaveBeenCalledWith("Migration logger failed:", expect.any(Error));
+    expect(result.statusCode).toBe(200);
+    expect(result.body).toBe("Migrations successfully executed");
+  });
+
   it("should skip history when logHistory is false", async () => {
     const mockMigration = vi.fn().mockResolvedValue(mockMigrationRunner);
 

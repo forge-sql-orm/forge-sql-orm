@@ -53,7 +53,16 @@ export const applySchemaMigrations = async (
   options: ApplySchemaMigrationsOptions = {},
 ) => {
   // eslint-disable-next-line no-console
-  const { logger = console.debug, logHistory = true } = options;
+  const { logger: customLogger = console.debug, logHistory = true } = options;
+  // A failing logger must not turn already applied migrations into an error response
+  const logger: NonNullable<ApplySchemaMigrationsOptions["logger"]> = (...args) => {
+    try {
+      customLogger(...args);
+    } catch (loggerError) {
+      // eslint-disable-next-line no-console
+      console.error("Migration logger failed:", loggerError);
+    }
+  };
   try {
     if (typeof migration !== "function") {
       throw new Error("migration is not a function");
