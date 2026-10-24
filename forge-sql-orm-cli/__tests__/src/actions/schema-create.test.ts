@@ -35,9 +35,9 @@ describe("createSchema", () => {
     vi.restoreAllMocks();
   });
 
-  it("runs drizzle-kit push with a URL-encoded connection string", async () => {
+  it("runs drizzle-kit push with a URL-encoded connection string", () => {
     fs.writeFileSync(path.join(dir, "schema.ts"), "// schema");
-    await createSchema(options());
+    createSchema(options());
 
     expect(execSync).toHaveBeenCalledTimes(1);
     const cmd = vi.mocked(execSync).mock.calls[0][0] as string;
@@ -48,15 +48,15 @@ describe("createSchema", () => {
     expect(exitSpy).toHaveBeenCalledWith(0);
   });
 
-  it("exits with code 1 when the schema file does not exist", async () => {
-    await createSchema(options());
+  it("exits with code 1 when the schema file does not exist", () => {
+    createSchema(options());
     expect(execSync).not.toHaveBeenCalled();
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
-  it("exits with code 1 when connection parameters are missing", async () => {
+  it("exits with code 1 when connection parameters are missing", () => {
     fs.writeFileSync(path.join(dir, "schema.ts"), "// schema");
-    await createSchema({ ...options(), host: undefined });
+    createSchema({ ...options(), host: undefined });
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 });
