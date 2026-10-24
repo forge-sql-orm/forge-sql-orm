@@ -92,10 +92,9 @@ describe("transformValue", () => {
       expect(result).toBeDefined();
       expect(JSON.stringify(result)).toBe(
         JSON.stringify({
+          queryChunks: [{ value: "10" }],
           decoder: {},
           shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["10"] }],
         }),
       );
     });
@@ -114,10 +113,9 @@ describe("transformValue", () => {
       expect(result).toBeDefined();
       expect(JSON.stringify(result)).toBe(
         JSON.stringify({
+          queryChunks: [{ value: "0" }],
           decoder: {},
           shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["0"] }],
         }),
       );
     });
@@ -127,10 +125,9 @@ describe("transformValue", () => {
       expect(result).toBeDefined();
       expect(JSON.stringify(result)).toBe(
         JSON.stringify({
+          queryChunks: [{ value: "-5" }],
           decoder: {},
           shouldInlineParams: false,
-          usedTables: [],
-          queryChunks: [{ value: ["-5"] }],
         }),
       );
     });

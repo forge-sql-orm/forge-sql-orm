@@ -90,7 +90,7 @@
   ],
   "peerDependencies": {
     "@forge/sql": "^4.0.8",
-    "drizzle-orm": "^0.45.4"
+    "drizzle-orm": "^1.0.0-rc.5"
   },
   "dependencies": {
     "@forge/api": "^8.3.0",

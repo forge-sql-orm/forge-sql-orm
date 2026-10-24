@@ -12,7 +12,7 @@ export const appUser = mysqlTable(
       .notNull()
       .references(() => organization.id),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "app_user_id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );
 
 export const organization = mysqlTable(
@@ -21,5 +21,5 @@ export const organization = mysqlTable(
     id: int().notNull(),
     name: varchar({ length: 255 }).notNull(),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "organization_id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );

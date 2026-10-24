@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { relations } from "drizzle-orm/relations";
+import { relations } from "drizzle-orm/_relations";
 import { demoUsers, demoOrders } from "./schema";
 
 export const demoOrdersRelations = relations(demoOrders, ({ one }) => ({
