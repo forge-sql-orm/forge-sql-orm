@@ -7,7 +7,7 @@
     "@forge/api": "^8.3.0",
     "@forge/resolver": "2.0.1",
     "@forge/sql": "^4.0.8",
-    "drizzle-orm": "1.0.0-rc.5",
+    "drizzle-orm": "^1.0.0-rc.5",
     "forge-sql-orm": "../.."
   },
   "scripts": {

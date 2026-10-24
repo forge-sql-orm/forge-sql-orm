@@ -7,7 +7,7 @@
     "@forge/events": "^3.0.8",
     "@forge/resolver": "2.0.1",
     "@forge/sql": "^4.0.8",
-    "drizzle-orm": "1.0.0-rc.5",
+    "drizzle-orm": "^1.0.0-rc.5",
     "forge-sql-orm": "../..",
     "uuid": "^14.0.3"
   },
