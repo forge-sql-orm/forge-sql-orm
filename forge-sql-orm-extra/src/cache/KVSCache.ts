@@ -109,10 +109,8 @@ export class KVSCache implements Cache {
     for (let i = 0; i < results.length; i += CACHE_CONSTANTS.BATCH_SIZE) {
       const batch = results.slice(i, i + CACHE_CONSTANTS.BATCH_SIZE);
       // Sequential on purpose: batches are throttled to respect Forge limits
-
-      const batchResult = await kvs.batchDelete(
-        batch.map((result) => ({ key: result.key, entityName: cacheEntityName })),
-      );
+      const keys = batch.map((result) => ({ key: result.key, entityName: cacheEntityName }));
+      const batchResult = await kvs.batchDelete(keys); // NOSONAR
       batchResult.failedKeys.forEach((failedKey) => {
         warnCacheLog(JSON.stringify(failedKey), options);
       });
@@ -146,12 +144,12 @@ export class KVSCache implements Cache {
     for (;;) {
       const activeQuery = cursor ? baseQuery.cursor(cursor) : baseQuery;
       // Sequential on purpose: each page depends on the previous cursor
-
-      const listResult = await activeQuery.limit(CACHE_CONSTANTS.PAGE_SIZE).getMany();
+      const pageQuery = activeQuery.limit(CACHE_CONSTANTS.PAGE_SIZE);
+      const listResult = await pageQuery.getMany(); // NOSONAR
 
       debugCacheLog(`${label}: ${JSON.stringify(listResult.results.map((r) => r.key))}`, options);
 
-      await this.deleteCacheEntriesInBatches(listResult.results, cacheEntityName, options);
+      await this.deleteCacheEntriesInBatches(listResult.results, cacheEntityName, options); // NOSONAR
       total += listResult.results.length;
 
       if (!listResult.nextCursor) {

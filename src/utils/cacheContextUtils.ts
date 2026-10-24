@@ -74,14 +74,13 @@ export const localCacheApplicationContext = new AsyncLocalStorage<LocalCacheAppl
  * await saveTableIfInsideCacheContext(usersTable);
  * ```
  */
-export async function saveTableIfInsideCacheContext<T extends AnyMySqlTable>(
-  table: T,
-): Promise<void> {
+export function saveTableIfInsideCacheContext<T extends AnyMySqlTable>(table: T): Promise<void> {
   const context = cacheApplicationContext.getStore();
   if (context) {
     const tableName = getTableName(table).toLowerCase();
     context.tables.add(tableName);
   }
+  return Promise.resolve();
 }
 
 /**
@@ -177,22 +176,23 @@ export function saveQueryLocalCacheQuery<T extends MySqlSelectDynamic<AnyMySqlSe
  * // Execute query and cache result
  * ```
  */
-export async function getQueryLocalCacheQuery<
-  T extends MySqlSelectDynamic<AnyMySqlSelectQueryBuilder>,
->(query: T, options: ForgeSqlOrmOptions): Promise<unknown[] | undefined> {
+export function getQueryLocalCacheQuery<T extends MySqlSelectDynamic<AnyMySqlSelectQueryBuilder>>(
+  query: T,
+  options: ForgeSqlOrmOptions,
+): Promise<unknown[] | undefined> {
   const context = getReadyLocalCacheContext();
   if (!context) {
-    return undefined;
+    return Promise.resolve(undefined);
   }
 
   const toSQL = asToSql(query).toSQL();
   const entry = context.cache[hashKey(toSQL)];
   if (entry?.sql !== toSQL.sql.toLowerCase()) {
-    return undefined;
+    return Promise.resolve(undefined);
   }
 
   logLocalCacheEvent("HIT", toSQL, options);
-  return entry.data;
+  return Promise.resolve(entry.data);
 }
 
 /**
@@ -210,13 +210,13 @@ export async function getQueryLocalCacheQuery<
  * // All cached queries involving users table are now removed
  * ```
  */
-export async function evictLocalCacheQuery<T extends AnyMySqlTable>(
+export function evictLocalCacheQuery<T extends AnyMySqlTable>(
   table: T,
   options: ForgeSqlOrmOptions,
 ): Promise<void> {
   const context = getReadyLocalCacheContext();
   if (!context) {
-    return;
+    return Promise.resolve();
   }
 
   const tableName = getTableName(table);
@@ -226,6 +226,7 @@ export async function evictLocalCacheQuery<T extends AnyMySqlTable>(
       delete context.cache[key];
     }
   }
+  return Promise.resolve();
 }
 
 /**
@@ -245,20 +246,22 @@ export async function evictLocalCacheQuery<T extends AnyMySqlTable>(
  * );
  * ```
  */
-export async function isTableContainsTableInCacheContext(
+export function isTableContainsTableInCacheContext(
   sql: string,
   options: ForgeSqlOrmOptions,
 ): Promise<boolean> {
   const context = cacheApplicationContext.getStore();
   if (!context) {
-    return false;
+    return Promise.resolve(false);
   }
 
   const tables = Array.from(context.tables);
   const lowerSql = sql.toLowerCase();
 
-  return tables.some((table) => {
-    const tablePattern = options.cacheWrapTable ? `\`${table}\`` : table;
-    return lowerSql.includes(tablePattern);
-  });
+  return Promise.resolve(
+    tables.some((table) => {
+      const tablePattern = options.cacheWrapTable ? `\`${table}\`` : table;
+      return lowerSql.includes(tablePattern);
+    }),
+  );
 }

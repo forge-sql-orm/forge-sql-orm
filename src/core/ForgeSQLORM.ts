@@ -235,9 +235,7 @@ class ForgeSQLORMImpl implements ForgeSqlOperation {
         totalResponseSize: 0,
         beginTime: new Date(),
         forgeSQLORM: this,
-        printQueriesWithPlan: async () => {
-          return;
-        },
+        printQueriesWithPlan: () => Promise.resolve(),
         options: options,
         statistics: [],
       },

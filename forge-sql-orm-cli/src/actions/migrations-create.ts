@@ -200,7 +200,7 @@ async function getAllCreateTableStatements(connection: mysql.Connection): Promis
   const statements: string[] = [];
 
   for (const table of tables) {
-    const createTable = await getCreateTableStatement(connection, table);
+    const createTable = await getCreateTableStatement(connection, table); // NOSONAR sequential on purpose
     if (createTable) {
       statements.push(createTable);
     }
