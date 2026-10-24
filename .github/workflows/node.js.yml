@@ -134,6 +134,8 @@ jobs:
           files: ./coverage/lcov.info
       - name: Upload coverage to Codacy
         if: steps.gpr.outputs.enabled == 'true' && env.CODACY_API_TOKEN != ''
+        # Codacy is an external service; its outages must not fail the build
+        continue-on-error: true
         uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1.3.0
         with:
           api-token: ${{ env.CODACY_API_TOKEN }}
