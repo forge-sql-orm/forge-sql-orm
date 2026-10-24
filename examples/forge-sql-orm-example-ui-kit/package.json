@@ -23,14 +23,11 @@
     "@forge/resolver": "2.0.1",
     "@forge/sql": "^4.0.8",
     "drizzle-orm": "1.0.0-rc.5",
-    "forge-sql-orm": "^2.2.4",
+    "forge-sql-orm": "../..",
     "react": "^18.2.0"
   },
   "overrides": {
     "@compiled/react": "latest",
-    "prosemirror-view": "npm:prosemirror-view@latest",
-    "forge-sql-orm": {
-      "drizzle-orm": "$drizzle-orm"
-    }
+    "prosemirror-view": "npm:prosemirror-view@latest"
   }
 }

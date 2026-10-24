@@ -2536,7 +2536,13 @@ import { relations } from "drizzle-orm/_relations";
 // …or migrate to Drizzle v1 `defineRelations` (RQB v2)
 ```
 
-If you generated models with `forge-sql-orm-cli generate:model`, re-generate them with the 3.x CLI and review the diff, or apply the two edits above manually.
+If you generated models with `forge-sql-orm-cli generate:model`, re-generate them with the 3.x CLI and review the diff, or apply the two edits above manually. The 3.x CLI ships with `drizzle-kit` v1, so the generated files differ from 2.x:
+
+- `primaryKey({ columns })` has no `name`, and unique indexes are generated as `uniqueIndex(...)` instead of `unique(...).on(...)`.
+- `relations.ts` uses Drizzle v1 `defineRelations` (the exported `relations` object replaces the per-table `*Relations` exports).
+- Date/time columns still become `forgeDateTimeString` / `forgeTimestampString` / `forgeDateString` / `forgeTimeString` (the `fsp` precision option is not carried over, as before).
+
+`migrations:create`, `migrations:update`, `migrations:drop` and `schema:create` keep the same options and output format.
 
 Other Drizzle v1 changes are described in Drizzle's own upgrade notes — check them if you use features outside Forge SQL ORM's wrappers (for example `drizzle-kit` configuration or relational queries).
 

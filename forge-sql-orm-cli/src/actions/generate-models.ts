@@ -20,27 +20,23 @@ export interface GenerateModelsOptions {
 }
 
 /**
- * Interface for column metadata
+ * Interface for a drizzle-kit snapshot DDL entity (`snapshot.json` -> `ddl`)
  */
-interface ColumnMetadata {
-  autoincrement: boolean;
+interface SnapshotEntity {
+  entityType: string;
+  table?: string;
   name: string;
-  type: string;
-  primaryKey: boolean;
-  notNull: boolean;
+  type?: string;
+  notNull?: boolean;
 }
 
 /**
- * Interface for table metadata
+ * Interface for column metadata
  */
-interface TableMetadata {
+interface ColumnMetadata {
   name: string;
-  columns: Record<string, ColumnMetadata>;
-  compositePrimaryKeys: Record<string, { name: string; columns: string[] }>;
-  indexes: Record<string, unknown>;
-  foreignKeys: Record<string, unknown>;
-  uniqueConstraints: Record<string, unknown>;
-  checkConstraint: Record<string, unknown>;
+  type: string;
+  notNull: boolean;
 }
 
 /**
@@ -63,25 +59,17 @@ interface TableVersionMetadata {
  */
 type AdditionalMetadata = Record<string, TableVersionMetadata>;
 
-/**
- * Interface for journal entry
- */
-interface JournalEntry {
-  idx: number;
-  version: string;
-  when: number;
-  tag: string;
-  breakpoints: boolean;
-}
+/** Drizzle date/time column builders and the forge custom types that replace them. */
+const FORGE_DATE_TYPES: Record<string, string> = {
+  datetime: "forgeDateTimeString",
+  timestamp: "forgeTimestampString",
+  date: "forgeDateString",
+  time: "forgeTimeString",
+};
 
-/**
- * Interface for journal data
- */
-interface JournalData {
-  version: string;
-  dialect: string;
-  entries: JournalEntry[];
-}
+/** Matches `type()`, `type("name")`, `type({ ... })` and `type("name", { ... })`. */
+const DATE_COLUMN_PATTERN =
+  /\b(datetime|timestamp|date|time)\(\s*(?:(['"])([^'"]+)\2)?\s*,?\s*(?:\{[^{}]*\})?\s*\)/g;
 
 /**
  * Replaces MySQL types with custom types in the generated schema
@@ -92,38 +80,13 @@ function replaceMySQLTypes(schemaContent: string): string {
   // Add imports at the top of the file
   const imports = `import { forgeDateTimeString, forgeTimeString, forgeDateString, forgeTimestampString } from "forge-sql-orm";\n\n`;
 
-  // Replace types in the content
-  let modifiedContent = schemaContent
-    // Handle datetime with column name and mode option
-    .replace(
-      /datetime\(['"]([^'"]+)['"],\s*{\s*mode:\s*['"]string['"]\s*}\)/g,
-      "forgeDateTimeString('$1')",
-    )
-    // Handle datetime with column name only
-    .replace(/datetime\(['"]([^'"]+)['"]\)/g, "forgeDateTimeString('$1')")
-    // Handle datetime with mode option only
-    .replace(/datetime\(\s*{\s*mode:\s*['"]string['"]\s*}\s*\)/g, "forgeDateTimeString()")
-    // Handle time with column name and mode option
-    .replace(/time\(['"]([^'"]+)['"],\s*{\s*mode:\s*['"]string['"]\s*}\)/g, "forgeTimeString('$1')")
-    // Handle time with column name only
-    .replace(/time\(['"]([^'"]+)['"]\)/g, "forgeTimeString('$1')")
-    // Handle time with mode option only
-    .replace(/time\(\s*{\s*mode:\s*['"]string['"]\s*}\s*\)/g, "forgeTimeString()")
-    // Handle date with column name and mode option
-    .replace(/date\(['"]([^'"]+)['"],\s*{\s*mode:\s*['"]string['"]\s*}\)/g, "forgeDateString('$1')")
-    // Handle date with column name only
-    .replace(/date\(['"]([^'"]+)['"]\)/g, "forgeDateString('$1')")
-    // Handle date with mode option only
-    .replace(/date\(\s*{\s*mode:\s*['"]string['"]\s*}\s*\)/g, "forgeDateString()")
-    // Handle timestamp with column name and mode option
-    .replace(
-      /timestamp\(['"]([^'"]+)['"],\s*{\s*mode:\s*['"]string['"]\s*}\)/g,
-      "forgeTimestampString('$1')",
-    )
-    // Handle timestamp with column name only
-    .replace(/timestamp\(['"]([^'"]+)['"]\)/g, "forgeTimestampString('$1')")
-    // Handle timestamp with mode option only
-    .replace(/timestamp\(\s*{\s*mode:\s*['"]string['"]\s*}\s*\)/g, "forgeTimestampString()");
+  // Replace date/time column builders, with or without a column name and column config
+  // (e.g. `datetime("c")`, `datetime({ fsp: 3 })`, `timestamp("c", { mode: "string" })`)
+  let modifiedContent = schemaContent.replace(
+    DATE_COLUMN_PATTERN,
+    (_match, type: string, _quote: string | undefined, columnName: string | undefined) =>
+      `${FORGE_DATE_TYPES[type]}(${columnName ? `'${columnName}'` : ""})`,
+  );
 
   // Add imports if they don't exist
   if (!modifiedContent.includes("import { forgeDateTimeString")) {
@@ -161,34 +124,56 @@ function resolveVersionField(
   return undefined;
 }
 
+/** Strips length/precision from a MySQL column type: `datetime(3)` -> `datetime`. */
+function baseColumnType(type: string): string {
+  return type.replace(/\(.*$/, "").trim().toLowerCase();
+}
+
+/** Groups the snapshot columns by table name. */
+function readSnapshotTables(snapshotFile: string): Map<string, ColumnMetadata[]> {
+  const snapshot = JSON.parse(fs.readFileSync(snapshotFile, "utf-8")) as { ddl: SnapshotEntity[] };
+  const tables = new Map<string, ColumnMetadata[]>();
+  for (const entity of snapshot.ddl) {
+    if (entity.entityType === "tables") {
+      tables.set(entity.name, tables.get(entity.name) ?? []);
+    } else if (entity.entityType === "columns" && entity.table) {
+      const columns = tables.get(entity.table) ?? [];
+      columns.push({
+        name: entity.name,
+        type: baseColumnType(entity.type ?? ""),
+        notNull: entity.notNull === true,
+      });
+      tables.set(entity.table, columns);
+    }
+  }
+  return tables;
+}
+
 /**
  * Reads the drizzle snapshot and builds the version-metadata map for all tables.
  */
-function buildAdditionalMetadata(metaDir: string, versionFieldName: string): AdditionalMetadata {
+function buildAdditionalMetadata(
+  snapshotFile: string | undefined,
+  versionFieldName: string,
+): AdditionalMetadata {
   const additionalMetadata: AdditionalMetadata = {};
-  const snapshotFile = path.join(metaDir, "0000_snapshot.json");
-  if (!fs.existsSync(snapshotFile)) {
+  if (!snapshotFile) {
     return additionalMetadata;
   }
 
-  const snapshotData = JSON.parse(fs.readFileSync(snapshotFile, "utf-8"));
-  for (const [tableName, tableData] of Object.entries(snapshotData.tables)) {
-    const table = tableData as TableMetadata;
-
+  for (const [tableName, columns] of readSnapshotTables(snapshotFile)) {
     if (tableName.toLowerCase().startsWith("a_")) {
       console.warn(
         `⚠️  Table "${tableName}" starts with "a_". KVS Cache will not work with this table because such tables are ignored in cache operations.`,
       );
     }
 
-    const versionEntry = Object.entries(table.columns).find(
-      ([, col]) => col.name.toLowerCase() === versionFieldName,
-    );
-    if (!versionEntry) {
+    const versionColumn = columns.find((col) => col.name.toLowerCase() === versionFieldName);
+    if (!versionColumn) {
       continue;
     }
 
-    const metadata = resolveVersionField(tableName, versionEntry[1]);
+    const metadata = resolveVersionField(tableName, versionColumn);
     if (metadata) {
       additionalMetadata[tableName] = metadata;
     }
@@ -235,32 +220,27 @@ function rewriteSchemaTypes(output: string): void {
   console.log(`✅ Updated schema types in: ${schemaPath}`);
 }
 
-/** Removes drizzle-kit migration/meta artifacts that are not needed by forge-sql-orm. */
-function cleanupGeneratedArtifacts(output: string, metaDir: string): void {
-  const migrationDir = path.join(output, "migrations");
-  if (fs.existsSync(migrationDir)) {
-    fs.rmSync(migrationDir, { recursive: true, force: true });
-    console.log(`✅ Removed: ${migrationDir}`);
+/** Lists drizzle-kit migration folders (`<timestamp>_<name>/snapshot.json`) in the output directory. */
+function listMigrationFolders(output: string): string[] {
+  if (!fs.existsSync(output)) {
+    return [];
   }
+  return fs
+    .readdirSync(output, { withFileTypes: true })
+    .filter(
+      (entry) =>
+        entry.isDirectory() && fs.existsSync(path.join(output, entry.name, "snapshot.json")),
+    )
+    .map((entry) => entry.name)
+    .sort();
+}
 
-  if (!fs.existsSync(metaDir)) {
-    return;
+/** Removes the migration folders drizzle-kit created, they are not needed by forge-sql-orm. */
+function cleanupGeneratedArtifacts(output: string, createdFolders: string[]): void {
+  for (const folder of createdFolders) {
+    fs.rmSync(path.join(output, folder), { recursive: true, force: true });
+    console.log(`✅ Removed: ${path.join(output, folder)}`);
   }
-
-  const journalFile = path.join(metaDir, "_journal.json");
-  if (fs.existsSync(journalFile)) {
-    const journalData = JSON.parse(fs.readFileSync(journalFile, "utf-8")) as JournalData;
-    for (const entry of journalData.entries) {
-      const sqlFile = path.join(output, `${entry.tag}.sql`);
-      if (fs.existsSync(sqlFile)) {
-        fs.rmSync(sqlFile, { force: true });
-        console.log(`✅ Removed SQL file: ${entry.tag}.sql`);
-      }
-    }
-  }
-
-  fs.rmSync(metaDir, { recursive: true, force: true });
-  console.log(`✅ Removed: ${metaDir}`);
 }
 
 const NPX_COMMAND = process.platform === "win32" ? "npx.cmd" : "npx";
@@ -271,6 +251,8 @@ const NPX_COMMAND = process.platform === "win32" ? "npx.cmd" : "npx";
  */
 export const generateModels = (options: GenerateModelsOptions): void => {
   try {
+    const foldersBefore = new Set(listMigrationFolders(options.output));
+
     // Generate models using drizzle-kit pull
     // Arguments are passed as an array (no shell) so user input cannot inject commands
     execFileSync(
@@ -288,10 +270,14 @@ export const generateModels = (options: GenerateModelsOptions): void => {
       { encoding: "utf-8" },
     );
 
-    const metaDir = path.join(options.output, "meta");
-    const additionalMetadata = fs.existsSync(metaDir)
-      ? buildAdditionalMetadata(metaDir, options.versionField)
-      : {};
+    const createdFolders = listMigrationFolders(options.output).filter(
+      (folder) => !foldersBefore.has(folder),
+    );
+    const latestFolder = createdFolders.at(-1);
+    const additionalMetadata = buildAdditionalMetadata(
+      latestFolder ? path.join(options.output, latestFolder, "snapshot.json") : undefined,
+      options.versionField,
+    );
 
     fs.writeFileSync(
       path.join(options.output, "index.ts"),
@@ -299,7 +285,7 @@ export const generateModels = (options: GenerateModelsOptions): void => {
     );
 
     rewriteSchemaTypes(options.output);
-    cleanupGeneratedArtifacts(options.output, metaDir);
+    cleanupGeneratedArtifacts(options.output, createdFolders);
 
     console.log(`✅ Successfully generated models and version metadata`);
     process.exit(0);

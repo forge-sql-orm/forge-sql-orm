@@ -79,8 +79,11 @@
   },
   "dependencies": {
     "@forge/kvs": "^2.1.0",
-    "forge-sql-orm": "^2.2.4",
+    "forge-sql-orm": "..",
     "luxon": "^3.7.2",
     "node-sql-parser": "^5.4.0"
+  },
+  "optionalDependencies": {
+    "@forge/sql": "^4.0.8"
   }
 }

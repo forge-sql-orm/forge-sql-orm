@@ -540,14 +540,37 @@ function normalizeMySQLType(mysqlType: string): string {
   return normalized;
 }
 
+/** Resolved foreign key definition (Drizzle v1 exposes it as a plain object or via `reference()`). */
+interface ResolvedForeignKey {
+  name?: string;
+  columns: { name: string }[];
+}
+
+/** Index builder internals (Drizzle v1 keeps the definition in `config`). */
+interface IndexBuilderInternals {
+  config: { name: string; columns: { name: string }[]; unique?: boolean };
+}
+
+/**
+ * Resolves a foreign key to its definition. Inline `.references()` foreign keys are plain objects,
+ * `foreignKey({...})` is a builder that exposes the definition through `reference()`.
+ */
+function resolveForeignKey(fk: ForeignKeyBuilder): ResolvedForeignKey {
+  const candidate = fk as unknown as Partial<ResolvedForeignKey> & {
+    reference?: () => ResolvedForeignKey;
+  };
+  return typeof candidate.reference === "function"
+    ? candidate.reference()
+    : { name: candidate.name, columns: candidate.columns ?? [] };
+}
+
 /**
  * Gets the name of a foreign key constraint
  * @param fk - The foreign key builder
  * @returns The name of the foreign key constraint
  */
-function getForeignKeyName(fk: ForeignKeyBuilder): string {
-  // @ts-ignore - Internal property access
-  return fk.name;
+function getForeignKeyName(fk: ForeignKeyBuilder): string | undefined {
+  return resolveForeignKey(fk).name;
 }
 
 /**
@@ -556,8 +579,7 @@ function getForeignKeyName(fk: ForeignKeyBuilder): string {
  * @returns The name of the index
  */
 function getIndexName(index: AnyIndexBuilder): string {
-  // @ts-ignore - Internal property access
-  return index.name;
+  return (index as unknown as IndexBuilderInternals).config.name;
 }
 
 /**
@@ -576,8 +598,22 @@ function getUniqueConstraintName(uc: UniqueConstraintBuilder): string {
  * @returns Array of column names
  */
 function getIndexColumns(index: AnyIndexBuilder): string[] {
-  // @ts-ignore - Internal property access
-  return index.columns.map((col) => col.name);
+  // `unique(...).on(...)` constraints expose `columns` directly, index builders keep it in `config`
+  const internals = index as unknown as Partial<IndexBuilderInternals> & {
+    columns?: { name: string }[];
+  };
+  return (internals.config?.columns ?? internals.columns ?? []).map((col) => col.name);
+}
+
+/**
+ * Whether a Drizzle index definition is unique: either `unique(...).on(...)`
+ * or `uniqueIndex(...)` (an index builder with `config.unique`).
+ */
+function isUniqueIndex(index: AnyIndexBuilder): boolean {
+  return (
+    index instanceof UniqueConstraintBuilder ||
+    (index as unknown as IndexBuilderInternals).config?.unique === true
+  );
 }
 
 /** Locale-aware comparator for sorting column-name arrays deterministically. */
@@ -589,8 +625,7 @@ function compareForeignKey(
   fk: ForeignKeyBuilder,
   { columns }: { columns: string[]; unique: boolean },
 ) {
-  // @ts-ignore
-  const fcolumns: string[] = fk.columns.map((c) => c.name);
+  const fcolumns: string[] = resolveForeignKey(fk).columns.map((c) => c.name);
   return (
     fcolumns.toSorted(compareColumnNames).join(",") ===
     columns.toSorted(compareColumnNames).join(",")
@@ -800,7 +835,7 @@ function buildIndexChanges(
     }
 
     const columnsChanged = dbIndex.columns.join(", ") !== getIndexColumns(drizzleIndex).join(", ");
-    const uniqueChanged = dbIndex.unique !== drizzleIndex instanceof UniqueConstraintBuilder;
+    const uniqueChanged = dbIndex.unique !== isUniqueIndex(drizzleIndex);
     if (columnsChanged || uniqueChanged) {
       changes.push(
         { change: `DROP INDEX \`${indexName}\` ON \`${tableName}\`;` },
@@ -853,8 +888,7 @@ function buildForeignKeyChanges(
     if (fkName) {
       changes.push({ change: `ALTER TABLE \`${tableName}\` DROP FOREIGN KEY  \`${fkName}\`;` });
     } else {
-      // @ts-ignore - Internal property access
-      const columns = drizzleForeignKey.columns as { name: string }[] | undefined;
+      const { columns } = resolveForeignKey(drizzleForeignKey);
       const columnNames = columns?.length
         ? columns.map((c) => c.name).join(", ")
         : "unknown columns";

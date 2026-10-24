@@ -90,13 +90,11 @@ describe("transformValue", () => {
     it("should return a valid SQL raw number for valid input", () => {
       const result = formatLimitOffset(10);
       expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          queryChunks: [{ value: "10" }],
-          decoder: {},
-          shouldInlineParams: false,
-        }),
-      );
+      expect(JSON.parse(JSON.stringify(result))).toEqual({
+        queryChunks: [{ value: "10" }],
+        decoder: {},
+        shouldInlineParams: false,
+      });
     });
 
     it("should throw error for NaN input", () => {
@@ -111,25 +109,21 @@ describe("transformValue", () => {
     it("should handle zero value", () => {
       const result = formatLimitOffset(0);
       expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          queryChunks: [{ value: "0" }],
-          decoder: {},
-          shouldInlineParams: false,
-        }),
-      );
+      expect(JSON.parse(JSON.stringify(result))).toEqual({
+        queryChunks: [{ value: "0" }],
+        decoder: {},
+        shouldInlineParams: false,
+      });
     });
 
     it("should handle negative values", () => {
       const result = formatLimitOffset(-5);
       expect(result).toBeDefined();
-      expect(JSON.stringify(result)).toBe(
-        JSON.stringify({
-          queryChunks: [{ value: "-5" }],
-          decoder: {},
-          shouldInlineParams: false,
-        }),
-      );
+      expect(JSON.parse(JSON.stringify(result))).toEqual({
+        queryChunks: [{ value: "-5" }],
+        decoder: {},
+        shouldInlineParams: false,
+      });
     });
   });
 
