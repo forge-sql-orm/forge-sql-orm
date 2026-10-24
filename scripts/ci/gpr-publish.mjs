@@ -8,13 +8,13 @@ import { tmpdir } from "node:os";
 import {
   CI_PUBLISH_TAG,
   GPR_REGISTRY,
-  LATEST_PUBLISH_TAG,
   ciVersion,
   gprDependencyAlias,
   gprInstallAlias,
   npmEnvWithoutUserConfig,
   readPkg,
   scopedGprName,
+  weeklyPublishTag,
   weeklyVersion,
   writeNpmrc,
 } from "./gpr-shared.mjs";
@@ -132,13 +132,13 @@ export async function publishCli(coreVersion) {
 
 export async function publishWeeklyCore() {
   const version = weeklyVersion(".");
-  await npmPublishEphemeral(".", version, { publishTag: LATEST_PUBLISH_TAG });
+  await npmPublishEphemeral(".", version, { publishTag: weeklyPublishTag() });
 }
 
 export async function publishWeeklyExtra(coreVersion) {
   const version = weeklyVersion("forge-sql-orm-extra");
   await npmPublishEphemeral("forge-sql-orm-extra", version, {
-    publishTag: LATEST_PUBLISH_TAG,
+    publishTag: weeklyPublishTag(),
     transformPkg: (pkg) => linkCoreDependency(pkg, coreVersion),
   });
 }
@@ -146,7 +146,7 @@ export async function publishWeeklyExtra(coreVersion) {
 export async function publishWeeklyCli(coreVersion) {
   const version = weeklyVersion("forge-sql-orm-cli");
   await npmPublishEphemeral("forge-sql-orm-cli", version, {
-    publishTag: LATEST_PUBLISH_TAG,
+    publishTag: weeklyPublishTag(),
     transformPkg: (pkg) => linkCoreDependency(pkg, coreVersion),
   });
 }

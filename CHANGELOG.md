@@ -8,6 +8,11 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 ## [2.2.5] - NEXRELEASE
 
+### New
+
+- **Initial support for Drizzle ORM v1.** The `feat/drizzle-v1` branch moves `forge-sql-orm`, `forge-sql-orm-extra` and `forge-sql-orm-cli` to `drizzle-orm@^1.0.0-rc.5` (and `drizzle-kit` v1 for the CLI). It runs in parallel with `master` and is planned to be released as **3.0.0** once Drizzle ORM v1 is officially released; 2.x stays on Drizzle ORM 0.45.x. See issue #2794, pull request #2793 and the new README section "Installing 3.0.0-rc.5 from GitHub Packages (weekly `drizzle-v1`) with drizzle-orm v1".
+- New CI workflows for the Drizzle v1 line: daily dependency autoupdate of `feat/drizzle-v1` at 21:00 UTC (`autoupdate.v1.yml`, `automerge.v1.yml`) and a weekly snapshot published to GitHub Packages every Sunday 04:00 UTC with dist-tag `drizzle-v1` (`weekly-gpr.v1.yml`). The `latest` tag of the `master` weekly snapshot is not affected.
+
 ### Improvements
 
 - `applySchemaMigrations` no longer logs anything when no migration was applied, so it is safe to run from an hourly scheduled trigger (#2768).
