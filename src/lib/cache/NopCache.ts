@@ -28,12 +28,13 @@ export class NopCache implements Cache {
   /**
    * Always reports a cache miss; warns that caching is not configured.
    */
-  getQueryResultsFromCache<T>(query: { toSQL: () => Query }): Promise<T | undefined> {
+  // Kept async so an error thrown by query.toSQL() becomes a rejected promise instead of a sync throw
+  async getQueryResultsFromCache<T>(query: { toSQL: () => Query }): Promise<T | undefined> {
     // eslint-disable-next-line no-console
     console.warn(
       `NopCache.getQueryResultsFromCache is invoked for query: ${query.toSQL().sql}. Please check your configuration.`,
     );
-    return Promise.resolve(undefined);
+    return undefined;
   }
 
   /**
