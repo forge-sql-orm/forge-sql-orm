@@ -1,0 +1,133 @@
+# Drizzle ORM v1 line (3.x): daily dependency autoupdate of the `feat/drizzle-v1` branch.
+# Scheduled workflows only run from the default branch, so this file lives on `master`
+# and operates on `feat/drizzle-v1`. Independent from autoupdate.yml (master, every 6h):
+# separate concurrency group, label (`dependencies_updated_v1`) and branch prefix
+# (`dependencies-v1/auto-`) so neither workflow closes or sweeps the other's PRs.
+name: Dependency autoupdate - drizzle-v1 (daily)
+
+on:
+  schedule:
+    # Every day at 21:00 UTC
+    - cron: "0 21 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: autoupdate-v1
+  cancel-in-progress: true
+
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout feat/drizzle-v1
+        uses: actions/checkout@v4
+        with:
+          ref: feat/drizzle-v1
+          fetch-depth: 0
+          token: ${{ secrets.AUTOUPDATE_PAT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: "npm"
+
+      - name: Install ncu globally (pinned + no install scripts)
+        # Pinned version satisfies S8543; --ignore-scripts satisfies S6505.
+        run: npm install -g --ignore-scripts npm-check-updates@18.0.2
+
+      - name: Configure git as PR author
+        run: |
+          git config user.name "Vasyl Zakharchenko"
+          git config user.email "vaszakharchenko@gmail.com"
+
+      - name: Ensure label exists
+        env:
+          GH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
+        run: |
+          gh label create dependencies_updated_v1 \
+            --color "0E8A16" \
+            --description "Automated dependency updates (drizzle-v1 branch)" \
+            --force
+
+      - name: Close existing autoupdate PRs and delete their branches
+        env:
+          GH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
+        run: |
+          # 1) Close PRs carrying the label that target feat/drizzle-v1 (auto-deletes the head branch).
+          prs=$(gh pr list --label dependencies_updated_v1 --base feat/drizzle-v1 --state open --json number --jq '.[].number')
+          if [ -n "$prs" ]; then
+            for pr in $prs; do
+              echo "Closing PR #$pr"
+              gh pr close "$pr" \
+                --delete-branch \
+                --comment "Superseded by today's autoupdate run."
+            done
+          else
+            echo "No existing autoupdate PRs to close."
+          fi
+
+          # 2) Sweep up orphan dependencies-v1/auto-* branches (pushed but never
+          #    PR'd — e.g. when a previous run failed before gh pr create).
+          orphans=$(gh api -X GET repos/${{ github.repository }}/branches \
+            --paginate --jq '.[].name' | grep '^dependencies-v1/auto-' || true)
+          for b in $orphans; do
+            echo "Deleting orphan branch $b"
+            git push origin --delete "$b" || true
+          done
+
+      - name: Run autoupdate.sh
+        run: |
+          chmod +x ./autoupdate.sh
+          ./autoupdate.sh
+
+      - name: Detect changes
+        id: changes
+        run: |
+          # autoupdate.sh stages files per section; merge into one staged set
+          if git diff --cached --quiet && git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing to update."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create branch, commit, push, open PR
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          BRANCH="dependencies-v1/auto-${DATE}"
+
+          git checkout -b "$BRANCH"
+          # Stage anything autoupdate.sh did not stage explicitly
+          git add -A
+
+          # Final guard: the husky pre-commit hook re-runs npm i during commit,
+          # which can regenerate package-lock.json deterministically and
+          # collapse the diff that Detect changes saw. If nothing remains
+          # staged after the final add -A, exit cleanly — no PR needed.
+          if git diff --cached --quiet; then
+            echo "Nothing staged to commit after final add -A. Exiting cleanly."
+            exit 0
+          fi
+
+          git commit -m "chore(deps): daily autoupdate drizzle-v1 ${DATE}"
+          # Force-push as a safety net: the orphan-branch sweep above usually
+          # clears any pre-existing remote ref, but a same-day re-run would
+          # otherwise hit non-fast-forward on the second push.
+          git push -u origin "$BRANCH" --force
+
+          gh pr create \
+            --base feat/drizzle-v1 \
+            --head "$BRANCH" \
+            --title "chore(deps): daily autoupdate drizzle-v1 ${DATE}" \
+            --body "Automated dependency update of the drizzle-v1 line produced by \`.github/workflows/autoupdate.v1.yml\`. Will auto-merge once required checks pass." \
+            --label dependencies_updated_v1

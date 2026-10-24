@@ -1,0 +1,29 @@
+# Drizzle ORM v1 line (3.x): auto-merge for the daily autoupdate PRs that target `feat/drizzle-v1`
+# (label `dependencies_updated_v1`, set by .github/workflows/autoupdate.v1.yml).
+# For pull_request events GitHub reads the workflow from the PR's base branch, so this file
+# must also be present on `feat/drizzle-v1` (merge `master` into it after this file lands).
+name: Auto-merge dependencies - drizzle-v1
+
+on:
+  pull_request:
+    branches:
+      - feat/drizzle-v1
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  enable-automerge:
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'dependencies_updated_v1')
+    steps:
+      - name: Enable auto-merge for PR
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.AUTOUPDATE_PAT }}

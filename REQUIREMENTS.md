@@ -78,12 +78,32 @@ The repository is a **monorepo** with three independently published npm packages
 
 **Release channels:**
 
-| Channel                  | Registry                   | Audience                     | Documented in                                                                                           |
-| ------------------------ | -------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Semver release           | npmjs.com                  | Production Forge apps        | README Installation, CHANGELOG                                                                          |
-| Weekly `master` snapshot | GitHub Packages (`latest`) | Early adopters / smoke tests | [README § GitHub Packages](../README.md#installing-from-github-packages-weekly-latest), CHANGELOG 2.2.0 |
+| Channel                           | Registry                       | Audience                                                | Documented in                                                                                                                                                   |
+| --------------------------------- | ------------------------------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Semver release                    | npmjs.com                      | Production Forge apps                                   | README Installation, CHANGELOG                                                                                                                                  |
+| Weekly `master` snapshot          | GitHub Packages (`latest`)     | Early adopters / smoke tests                            | [README § GitHub Packages](../README.md#installing-from-github-packages-weekly-latest), CHANGELOG 2.2.0                                                         |
+| Weekly `feat/drizzle-v1` snapshot | GitHub Packages (`drizzle-v1`) | Early adopters testing Drizzle ORM v1 (3.x pre-release) | [README § Installing 3.0.0-rc.5 from GitHub Packages](README.md#installing-300-rc5-from-github-packages-weekly-drizzle-v1-with-drizzle-orm-v1), CHANGELOG 2.2.5 |
 
 Weekly publishes must run the quality gate defined in §8 before GPR upload; ephemeral `ci.*` GPR versions are not a consumer channel.
+
+### 2.5 Drizzle ORM v1 line (3.x)
+
+**What it is.** The **3.x** major line moves the whole package family (`forge-sql-orm`, `forge-sql-orm-extra`, `forge-sql-orm-cli`) from Drizzle ORM 0.45.x to **Drizzle ORM v1** (`drizzle-orm` v1 and `drizzle-kit` v1 for the CLI). Forge SQL ORM's own API is intended to stay the same; the breaking changes come from Drizzle v1 itself (types, schema APIs, `drizzle-kit` output format) — see [Drizzle ORM v0 → v1 changes](https://orm.drizzle.team/docs/v0-v1-changes) and the migration section of the branch README.
+
+**Why a separate line.** Drizzle v1 is a major release with breaking changes that cannot be absorbed into 2.x without breaking existing consumers (COMPAT-1, COMPAT-2), and it is still a release candidate. Developing it on its own branch lets users and maintainers try Drizzle v1 early, keeps `master` (2.x on Drizzle ORM 0.45.x) stable and releasable, and lets the 3.0.0 release follow Drizzle's official v1 release without a big-bang migration.
+
+**How it is maintained.**
+
+| Aspect             | Rule                                                                                                                                                                                                                        |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Branch             | `feat/drizzle-v1` (pull request [#2793](https://github.com/forge-sql-orm/forge-sql-orm/pull/2793), tracking issue [#2794](https://github.com/forge-sql-orm/forge-sql-orm/issues/2794)), developed in parallel with `master` |
+| Drizzle versions   | `drizzle-orm` / `drizzle-kit` on the latest v1 release candidate (`^1.0.0-rc.*`) until Drizzle ORM v1 is officially released                                                                                                |
+| Dependency updates | Daily automatic update of the branch at 21:00 UTC (`.github/workflows/autoupdate.v1.yml`, auto-merge in `automerge.v1.yml`), independent from the `master` autoupdate                                                       |
+| Pre-release builds | Weekly snapshot to GitHub Packages every Sunday 04:00 UTC (`.github/workflows/weekly-gpr.v1.yml`), versions `3.0.0-rc.<n>-weekly.<date>`, dist-tag `drizzle-v1` (the `latest` tag stays with the `master` snapshot)         |
+| Quality gate       | Same gate as `master` (§8) before every GPR publish                                                                                                                                                                         |
+| Release            | 3.0.0 on npmjs.com only after Drizzle ORM v1 is officially released; CHANGELOG and README migration notes (2.x → 3.0.0) ship with it                                                                                        |
+
+Scheduled workflows run only from the default branch, so the `*.v1.yml` workflows live on `master` and operate on `feat/drizzle-v1`; `automerge.v1.yml` must also be present on `feat/drizzle-v1` (GitHub reads `pull_request` workflows from the PR's base branch).
 
 ---
 
@@ -234,12 +254,13 @@ Global caching **must** account for:
 
 ## 6. Compatibility and versioning
 
-| ID       | Requirement                                                                                                                                               |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| COMPAT-1 | **Semantic versioning** for `forge-sql-orm`, `forge-sql-orm-extra`, and `forge-sql-orm-cli` (aligned major versions when breaking changes span packages). |
-| COMPAT-2 | Breaking API or behavior changes require a **major** bump and an entry in CHANGELOG under a clearly marked section.                                       |
-| COMPAT-3 | Database-facing changes must remain compatible with Forge SQL migration and multi-version install guidance (§5.1).                                        |
-| COMPAT-4 | Deprecations should be announced in CHANGELOG and README before removal in the next major release where feasible.                                         |
+| ID       | Requirement                                                                                                                                                                          |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| COMPAT-1 | **Semantic versioning** for `forge-sql-orm`, `forge-sql-orm-extra`, and `forge-sql-orm-cli` (aligned major versions when breaking changes span packages).                            |
+| COMPAT-2 | Breaking API or behavior changes require a **major** bump and an entry in CHANGELOG under a clearly marked section.                                                                  |
+| COMPAT-3 | Database-facing changes must remain compatible with Forge SQL migration and multi-version install guidance (§5.1).                                                                   |
+| COMPAT-4 | Deprecations should be announced in CHANGELOG and README before removal in the next major release where feasible.                                                                    |
+| COMPAT-5 | Drizzle ORM major lines are not mixed: **2.x** targets Drizzle ORM 0.45.x, **3.x** targets Drizzle ORM v1 (§2.5); all three packages of one major line share the same Drizzle major. |
 
 ---
 
@@ -336,4 +357,4 @@ This pipeline, combined with mandatory human-driven comment resolution, satisfie
 | New quality gate                   | Update CONTRIBUTING and §4                                                                                            |
 | Dependency-license policy change   | Update NFR-10 and the `license:check` blocklist in `package.json`                                                     |
 
-**Last updated:** 2026-06-05 (release channels §2.4; NFR-5 weekly GPR)
+**Last updated:** 2026-10-24 (Drizzle ORM v1 line §2.5, COMPAT-5; release channels §2.4; NFR-5 weekly GPR)
