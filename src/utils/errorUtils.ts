@@ -27,7 +27,7 @@ function renderNonErrorValue(value: NonNullable<unknown>, fallback: string): str
   if (typeof value === "object" || typeof value === "function") {
     return safeStringify(value, fallback);
   }
-  return String(value);
+  return String(value as string | number | boolean | bigint | symbol);
 }
 
 /**

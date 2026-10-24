@@ -49,7 +49,7 @@ export async function dropTableSchemaMigrations(): Promise<TriggerResponse<strin
     for (const statement of dropStatements) {
       // eslint-disable-next-line no-console
       console.debug(`execute DDL: ${statement}`);
-      await sql.executeDDL(statement);
+      await sql.executeDDL(statement); // NOSONAR sequential on purpose
     }
 
     return getHttpResponse<string>(

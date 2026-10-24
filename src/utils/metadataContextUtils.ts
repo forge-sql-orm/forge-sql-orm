@@ -87,7 +87,7 @@ export function normalizeSqlForLoggingRegex(sql: string): string {
 
   normalized = normalized.replace(/'[^']*'/g, "?");
   normalized = normalized.replace(/"[^"]*"/g, "?");
-  normalized = normalized.replace(/\b-?\d+\.?\d*\b/g, "?");
+  normalized = normalized.replace(/\b-?\d+(?:\.\d+)?\b/g, "?");
   normalized = normalized.replace(/\b(true|false)\b/gi, "?");
 
   normalized = normalized.replace(/\bNULL\b/gi, "?");
@@ -282,14 +282,14 @@ async function printTopQueriesPlans(
  * );
  * ```
  */
-export async function saveMetaDataToContext(
+export function saveMetaDataToContext(
   stringQuery: string,
   params: unknown[],
   metadata: ForgeSQLMetadata,
 ): Promise<void> {
   const context = metadataQueryContext.getStore();
   if (!context) {
-    return;
+    return Promise.resolve();
   }
 
   // Initialize statistics array if needed
@@ -348,6 +348,8 @@ export async function saveMetaDataToContext(
     context.totalResponseSize += metadata.responseSize;
     context.totalDbExecutionTime += metadata.dbExecutionTime;
   }
+
+  return Promise.resolve();
 }
 
 /**
@@ -382,6 +384,6 @@ export async function printDegradationQueries(
  * Gets the latest metadata from the current context.
  * @returns The current metadata context or undefined if not in a context
  */
-export async function getLastestMetadata(): Promise<MetadataQueryContext | undefined> {
-  return metadataQueryContext.getStore();
+export function getLastestMetadata(): Promise<MetadataQueryContext | undefined> {
+  return Promise.resolve(metadataQueryContext.getStore());
 }

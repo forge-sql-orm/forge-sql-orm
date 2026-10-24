@@ -126,7 +126,7 @@ class RovoIntegrationSettingCreatorImpl implements RovoIntegrationSettingCreator
   private readonly contextParam: Record<string, string> = {};
   private readonly rlsFields: string[] = [];
   private isUseRls: boolean = false;
-  private isUseRlsConditional: () => Promise<boolean> = async () => true;
+  private isUseRlsConditional: () => Promise<boolean> = () => Promise.resolve(true);
   private wherePart: (alias: string) => string = () => "";
 
   /**
@@ -243,7 +243,7 @@ class RovoIntegrationSettingCreatorImpl implements RovoIntegrationSettingCreator
      * @implements {RlsSettings}
      */
     return new (class RlsSettingsImpl implements RlsSettings {
-      private isUseRlsConditionalSettings: () => Promise<boolean> = async () => true;
+      private isUseRlsConditionalSettings: () => Promise<boolean> = () => Promise.resolve(true);
       private rlsFieldsSettings: string[] = [];
       private wherePartSettings: (alias: string) => string = () => "";
 
@@ -845,8 +845,8 @@ export class Rovo implements RovoIntegration {
     fields: Array<{ orgTable?: string }>,
     upperTableName: string,
   ): void {
-    const fieldsFromOtherTables = fields.filter(
-      (f) => f.orgTable && f.orgTable.toUpperCase() !== upperTableName,
+    const fieldsFromOtherTables = fields.filter((f) =>
+      f.orgTable ? f.orgTable.toUpperCase() !== upperTableName : false,
     );
     if (fieldsFromOtherTables.length > 0) {
       throw new Error(

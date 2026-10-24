@@ -5,11 +5,11 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 
 import { generateModels, type GenerateModelsOptions } from "../../../src/actions/generate-models";
 
-vi.mock("child_process", () => ({ execSync: vi.fn() }));
+vi.mock("child_process", () => ({ execFileSync: vi.fn() }));
 
 interface SnapshotColumn {
   name: string;
@@ -88,8 +88,8 @@ describe("generateModels", () => {
     fs.writeFileSync(path.join(dir, "schema.ts"), "// empty");
     generateModels(options());
 
-    expect(execSync).toHaveBeenCalledTimes(1);
-    const cmd = vi.mocked(execSync).mock.calls[0][0] as string;
+    expect(execFileSync).toHaveBeenCalledTimes(1);
+    const cmd = (vi.mocked(execFileSync).mock.calls[0][1] as string[]).join(" ");
     expect(cmd).toContain("drizzle-kit pull");
     expect(cmd).toContain("mysql://root:secret@localhost:3306/testdb");
     expect(exitSpy).toHaveBeenCalledWith(0);
@@ -175,7 +175,7 @@ describe("generateModels", () => {
   });
 
   it("exits with code 1 when drizzle-kit pull throws", () => {
-    vi.mocked(execSync).mockImplementationOnce(() => {
+    vi.mocked(execFileSync).mockImplementationOnce(() => {
       throw new Error("pull failed");
     });
     generateModels(options());

@@ -9,6 +9,6 @@ export type OperationTypeQueryContext = {
 };
 export const operationTypeQueryContext = new AsyncLocalStorage<OperationTypeQueryContext>();
 
-export async function getOperationType(): Promise<OperationType> {
-  return operationTypeQueryContext.getStore()?.operationType ?? "DML";
+export function getOperationType(): Promise<OperationType> {
+  return Promise.resolve(operationTypeQueryContext.getStore()?.operationType ?? "DML");
 }
