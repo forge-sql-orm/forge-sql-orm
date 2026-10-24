@@ -4,7 +4,7 @@
 import "reflect-metadata";
 import fs from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 /**
  * Options for model generation
@@ -263,6 +263,8 @@ function cleanupGeneratedArtifacts(output: string, metaDir: string): void {
   console.log(`✅ Removed: ${metaDir}`);
 }
 
+const NPX_COMMAND = process.platform === "win32" ? "npx.cmd" : "npx";
+
 /**
  * Generates models for all tables in the database using drizzle-kit
  * @param options - Generation options
@@ -270,8 +272,19 @@ function cleanupGeneratedArtifacts(output: string, metaDir: string): void {
 export const generateModels = (options: GenerateModelsOptions): void => {
   try {
     // Generate models using drizzle-kit pull
-    execSync(
-      `npx drizzle-kit pull --dialect mysql --url mysql://${options.user}:${options.password}@${options.host}:${options.port}/${options.dbName} --out ${options.output}`,
+    // Arguments are passed as an array (no shell) so user input cannot inject commands
+    execFileSync(
+      NPX_COMMAND,
+      [
+        "drizzle-kit",
+        "pull",
+        "--dialect",
+        "mysql",
+        "--url",
+        `mysql://${options.user}:${options.password}@${options.host}:${options.port}/${options.dbName}`,
+        "--out",
+        options.output,
+      ],
       { encoding: "utf-8" },
     );
 

@@ -4,7 +4,7 @@
 import "reflect-metadata";
 import fs from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 /**
  * Options for direct schema creation from Drizzle models.
@@ -17,6 +17,8 @@ export interface CreateSchemaOptions {
   dbName?: string;
   entitiesPath: string;
 }
+
+const NPX_COMMAND = process.platform === "win32" ? "npx.cmd" : "npx";
 
 /**
  * Creates/updates DB schema directly from Drizzle models.
@@ -46,9 +48,12 @@ export const createSchema = (options: CreateSchemaOptions): void => {
     console.log(`📦 Applying schema from: ${schemaPath}`);
     console.log(`🗄️  Target database: ${options.dbName} (${options.host}:${options.port})`);
 
-    execSync(`npx drizzle-kit push --dialect mysql --schema "${schemaPath}" --url "${dbUrl}"`, {
-      stdio: "inherit",
-    });
+    // Arguments are passed as an array (no shell) so user input cannot inject commands
+    execFileSync(
+      NPX_COMMAND,
+      ["drizzle-kit", "push", "--dialect", "mysql", "--schema", schemaPath, "--url", dbUrl],
+      { stdio: "inherit" },
+    );
 
     console.log("✅ Schema successfully applied from Drizzle models.");
     process.exit(0);

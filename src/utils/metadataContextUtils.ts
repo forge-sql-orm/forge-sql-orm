@@ -87,7 +87,7 @@ export function normalizeSqlForLoggingRegex(sql: string): string {
 
   normalized = normalized.replace(/'[^']*'/g, "?");
   normalized = normalized.replace(/"[^"]*"/g, "?");
-  normalized = normalized.replace(/\b-?\d+\.?\d*\b/g, "?");
+  normalized = normalized.replace(/\b-?\d+(?:\.\d+)?\b/g, "?");
   normalized = normalized.replace(/\b(true|false)\b/gi, "?");
 
   normalized = normalized.replace(/\bNULL\b/gi, "?");

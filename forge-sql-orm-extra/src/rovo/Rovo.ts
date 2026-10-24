@@ -845,8 +845,8 @@ export class Rovo implements RovoIntegration {
     fields: Array<{ orgTable?: string }>,
     upperTableName: string,
   ): void {
-    const fieldsFromOtherTables = fields.filter(
-      (f) => f.orgTable && f.orgTable.toUpperCase() !== upperTableName,
+    const fieldsFromOtherTables = fields.filter((f) =>
+      f.orgTable ? f.orgTable.toUpperCase() !== upperTableName : false,
     );
     if (fieldsFromOtherTables.length > 0) {
       throw new Error(

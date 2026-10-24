@@ -5,11 +5,11 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 
 import { createSchema, type CreateSchemaOptions } from "../../../src/actions/schema-create";
 
-vi.mock("child_process", () => ({ execSync: vi.fn() }));
+vi.mock("child_process", () => ({ execFileSync: vi.fn() }));
 
 describe("createSchema", () => {
   let dir: string;
@@ -39,8 +39,8 @@ describe("createSchema", () => {
     fs.writeFileSync(path.join(dir, "schema.ts"), "// schema");
     createSchema(options());
 
-    expect(execSync).toHaveBeenCalledTimes(1);
-    const cmd = vi.mocked(execSync).mock.calls[0][0] as string;
+    expect(execFileSync).toHaveBeenCalledTimes(1);
+    const cmd = (vi.mocked(execFileSync).mock.calls[0][1] as string[]).join(" ");
     expect(cmd).toContain("drizzle-kit push");
     // user "ro ot" / password "p@ss/word" must be percent-encoded
     expect(cmd).toContain("mysql://ro%20ot:p%40ss%2Fword@localhost:3306/testdb");
@@ -50,7 +50,7 @@ describe("createSchema", () => {
 
   it("exits with code 1 when the schema file does not exist", () => {
     createSchema(options());
-    expect(execSync).not.toHaveBeenCalled();
+    expect(execFileSync).not.toHaveBeenCalled();
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
