@@ -140,12 +140,14 @@ function logLocalCacheEvent(action: "SAVE" | "HIT", q: Query, options: ForgeSqlO
   );
 }
 
-export async function saveQueryLocalCacheQuery<
-  T extends MySqlSelectDynamic<AnyMySqlSelectQueryBuilder>,
->(query: T, rows: unknown[], options: ForgeSqlOrmOptions): Promise<void> {
+export function saveQueryLocalCacheQuery<T extends MySqlSelectDynamic<AnyMySqlSelectQueryBuilder>>(
+  query: T,
+  rows: unknown[],
+  options: ForgeSqlOrmOptions,
+): Promise<void> {
   const context = getReadyLocalCacheContext();
   if (!context) {
-    return;
+    return Promise.resolve();
   }
 
   const toSQL = asToSql(query).toSQL();
@@ -154,6 +156,7 @@ export async function saveQueryLocalCacheQuery<
     data: rows,
   };
   logLocalCacheEvent("SAVE", toSQL, options);
+  return Promise.resolve();
 }
 
 /**

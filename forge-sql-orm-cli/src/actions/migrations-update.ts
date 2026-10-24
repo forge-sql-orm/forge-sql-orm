@@ -824,12 +824,12 @@ function buildForeignKeyChanges(
 
   // Foreign keys present in the database but not in the schema
   for (const [fkName, dbFK] of Object.entries(dbTable.foreignKeys)) {
-    const drizzleFK = metadata.foreignKeys.find(
+    const hasDrizzleFK = metadata.foreignKeys.some(
       (fk) =>
         getForeignKeyName(fk) === fkName ||
         compareForeignKey(fk, { columns: [dbFK.column], unique: false }),
     );
-    if (!drizzleFK) {
+    if (!hasDrizzleFK) {
       changes.push({
         change: `ALTER TABLE \`${tableName}\` ADD CONSTRAINT \`${fkName}\` FOREIGN KEY (\`${dbFK.column}\`) REFERENCES \`${dbFK.referencedTable}\` (\`${dbFK.referencedColumn}\`);`,
       });

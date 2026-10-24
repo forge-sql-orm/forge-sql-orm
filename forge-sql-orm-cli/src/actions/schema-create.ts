@@ -22,7 +22,7 @@ export interface CreateSchemaOptions {
  * Creates/updates DB schema directly from Drizzle models.
  * Uses drizzle-kit push to apply DDL immediately.
  */
-export const createSchema = async (options: CreateSchemaOptions) => {
+export const createSchema = (options: CreateSchemaOptions): void => {
   try {
     if (!options.host || !options.port || !options.user || !options.password || !options.dbName) {
       console.error(

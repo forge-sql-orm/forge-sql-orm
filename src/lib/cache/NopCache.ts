@@ -17,37 +17,40 @@ export class NopCache implements Cache {
   /**
    * No-op table invalidation; warns that caching is not configured.
    */
-  async clearTablesCache(tables: string[]): Promise<void> {
+  clearTablesCache(tables: string[]): Promise<void> {
     // eslint-disable-next-line no-console
     console.warn(
       `NopCache.clearTablesCache is invoked for tables: ${tables.join(", ")}. Please check your configuration.`,
     );
+    return Promise.resolve();
   }
 
   /**
    * Always reports a cache miss; warns that caching is not configured.
    */
-  async getQueryResultsFromCache<T>(query: { toSQL: () => Query }): Promise<T | undefined> {
+  getQueryResultsFromCache<T>(query: { toSQL: () => Query }): Promise<T | undefined> {
     // eslint-disable-next-line no-console
     console.warn(
       `NopCache.getQueryResultsFromCache is invoked for query: ${query.toSQL().sql}. Please check your configuration.`,
     );
-    return undefined;
+    return Promise.resolve(undefined);
   }
 
   /**
    * No-op expired-entry cleanup; warns that caching is not configured.
    */
-  async clearExpiredCache(): Promise<void> {
+  clearExpiredCache(): Promise<void> {
     // eslint-disable-next-line no-console
     console.warn("NopCache.clearExpiredCache is invoked. Please check your configuration.");
+    return Promise.resolve();
   }
 
   /**
    * No-op result storage; warns that caching is not configured.
    */
-  async setQueryResult(): Promise<void> {
+  setQueryResult(): Promise<void> {
     // eslint-disable-next-line no-console
     console.warn("NopCache.setQueryResult is invoked. Please check your configuration.");
+    return Promise.resolve();
   }
 }

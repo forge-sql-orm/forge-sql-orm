@@ -827,10 +827,10 @@ export class Rovo implements RovoIntegration {
           `Security validation failed: The query must include ${field} as a raw column in the SELECT statement. This field is required for row-level security enforcement.`,
         );
       }
-      const actualField = actualFields.find(
+      const hasForeignOriginField = actualFields.some(
         (f) => !f.orgTable || f.orgTable.toUpperCase() !== upperTableName,
       );
-      if (actualField) {
+      if (hasForeignOriginField) {
         throw new Error(
           `Security validation failed: '${field}' must come directly from the ${upperTableName} table. Joins, subqueries, or table aliases that change the origin of this column are not allowed.`,
         );

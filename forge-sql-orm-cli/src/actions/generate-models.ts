@@ -267,7 +267,7 @@ function cleanupGeneratedArtifacts(output: string, metaDir: string): void {
  * Generates models for all tables in the database using drizzle-kit
  * @param options - Generation options
  */
-export const generateModels = async (options: GenerateModelsOptions) => {
+export const generateModels = (options: GenerateModelsOptions): void => {
   try {
     // Generate models using drizzle-kit pull
     execSync(
