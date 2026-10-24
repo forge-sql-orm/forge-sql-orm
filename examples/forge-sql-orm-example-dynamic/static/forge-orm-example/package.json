@@ -50,6 +50,7 @@
   "overrides": {
     "parse-url": "npm:parse-url@latest",
     "gry": "npm:gry@latest",
-    "got": "npm:got@latest"
+    "got": "npm:got@latest",
+    "prosemirror-view": "npm:prosemirror-view@latest"
   }
 }

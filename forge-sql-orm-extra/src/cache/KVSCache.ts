@@ -108,6 +108,8 @@ export class KVSCache implements Cache {
   ): Promise<void> {
     for (let i = 0; i < results.length; i += CACHE_CONSTANTS.BATCH_SIZE) {
       const batch = results.slice(i, i + CACHE_CONSTANTS.BATCH_SIZE);
+      // Sequential on purpose: batches are throttled to respect Forge limits
+
       const batchResult = await kvs.batchDelete(
         batch.map((result) => ({ key: result.key, entityName: cacheEntityName })),
       );
@@ -143,9 +145,12 @@ export class KVSCache implements Cache {
 
     for (;;) {
       const activeQuery = cursor ? baseQuery.cursor(cursor) : baseQuery;
+      // Sequential on purpose: each page depends on the previous cursor
+
       const listResult = await activeQuery.limit(CACHE_CONSTANTS.PAGE_SIZE).getMany();
 
       debugCacheLog(`${label}: ${JSON.stringify(listResult.results.map((r) => r.key))}`, options);
+
       await this.deleteCacheEntriesInBatches(listResult.results, cacheEntityName, options);
       total += listResult.results.length;
 

@@ -46,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "overrides": {
+    "prosemirror-view": "npm:prosemirror-view@latest"
   }
 }

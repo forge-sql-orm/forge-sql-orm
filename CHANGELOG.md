@@ -12,6 +12,7 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 - `applySchemaMigrations` no longer logs anything when no migration was applied, so it is safe to run from an hourly scheduled trigger (#2768).
 - New optional second argument `{ logger, logHistory }` to redirect or silence migration logs. Errors still go to `console.error`.
+- Code quality cleanups from SonarCloud: removed `async` from functions without `await` (`NopCache`, `saveQueryLocalCacheQuery`, CLI `generateModels` / `createSchema`), replaced `.find(…)` with `.some(…)` where only presence is checked, and documented intentional sequential `await` in `KVSCache` loops. Public return types are unchanged.
 
 📦 Dependency Updates
 

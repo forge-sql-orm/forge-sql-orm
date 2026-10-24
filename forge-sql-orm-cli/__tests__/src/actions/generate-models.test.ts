@@ -84,9 +84,9 @@ describe("generateModels", () => {
     vi.restoreAllMocks();
   });
 
-  it("invokes drizzle-kit pull with the connection url", async () => {
+  it("invokes drizzle-kit pull with the connection url", () => {
     fs.writeFileSync(path.join(dir, "schema.ts"), "// empty");
-    await generateModels(options());
+    generateModels(options());
 
     expect(execSync).toHaveBeenCalledTimes(1);
     const cmd = vi.mocked(execSync).mock.calls[0][0] as string;
@@ -95,9 +95,9 @@ describe("generateModels", () => {
     expect(exitSpy).toHaveBeenCalledWith(0);
   });
 
-  it("writes version metadata only for supported, NOT NULL version fields", async () => {
+  it("writes version metadata only for supported, NOT NULL version fields", () => {
     fs.writeFileSync(path.join(dir, "schema.ts"), "// empty");
-    await generateModels(options());
+    generateModels(options());
 
     const index = fs.readFileSync(path.join(dir, "index.ts"), "utf-8");
     expect(index).toContain('export * from "./schema";');
@@ -107,9 +107,9 @@ describe("generateModels", () => {
     expect(index).not.toContain('"logs"');
   });
 
-  it("warns about a_-prefixed tables, nullable and unsupported version fields", async () => {
+  it("warns about a_-prefixed tables, nullable and unsupported version fields", () => {
     fs.writeFileSync(path.join(dir, "schema.ts"), "// empty");
-    await generateModels(options());
+    generateModels(options());
 
     const warnings = warnSpy.mock.calls.map((c: unknown[]) => String(c[0])).join("\n");
     expect(warnings).toContain('Table "a_cache" starts with "a_"');
@@ -117,12 +117,12 @@ describe("generateModels", () => {
     expect(warnings).toContain('unsupported type "varchar"');
   });
 
-  it("rewrites MySQL types in schema.ts to forge custom types", async () => {
+  it("rewrites MySQL types in schema.ts to forge custom types", () => {
     fs.writeFileSync(
       path.join(dir, "schema.ts"),
       `export const t = { created: datetime('created_at', { mode: 'string' }) };`,
     );
-    await generateModels(options());
+    generateModels(options());
 
     const schema = fs.readFileSync(path.join(dir, "schema.ts"), "utf-8");
     expect(schema).toContain("import { forgeDateTimeString");
@@ -130,29 +130,29 @@ describe("generateModels", () => {
     expect(schema).not.toContain("datetime('created_at'");
   });
 
-  it("cleans up meta directory, journal sql files and migrations directory", async () => {
+  it("cleans up meta directory, journal sql files and migrations directory", () => {
     fs.writeFileSync(path.join(dir, "schema.ts"), "// empty");
-    await generateModels(options());
+    generateModels(options());
 
     expect(fs.existsSync(path.join(dir, "meta"))).toBe(false);
     expect(fs.existsSync(path.join(dir, "0000_init.sql"))).toBe(false);
     expect(fs.existsSync(path.join(dir, "migrations"))).toBe(false);
   });
 
-  it("handles an output directory with no meta directory and no schema file", async () => {
+  it("handles an output directory with no meta directory and no schema file", () => {
     fs.rmSync(path.join(dir, "meta"), { recursive: true, force: true });
     fs.rmSync(path.join(dir, "migrations"), { recursive: true, force: true });
     fs.rmSync(path.join(dir, "0000_init.sql"), { force: true });
     // no schema.ts is written
 
-    await generateModels(options());
+    generateModels(options());
 
     const index = fs.readFileSync(path.join(dir, "index.ts"), "utf-8");
     expect(index).toContain("export const additionalMetadata");
     expect(exitSpy).toHaveBeenCalledWith(0);
   });
 
-  it("accepts every supported version-field type", async () => {
+  it("accepts every supported version-field type", () => {
     fs.writeFileSync(
       path.join(dir, "meta", "0000_snapshot.json"),
       JSON.stringify({
@@ -165,7 +165,7 @@ describe("generateModels", () => {
       }),
     );
 
-    await generateModels(options());
+    generateModels(options());
 
     const index = fs.readFileSync(path.join(dir, "index.ts"), "utf-8");
     expect(index).toContain('"t_dt"');
@@ -174,11 +174,11 @@ describe("generateModels", () => {
     expect(index).toContain('"t_dec"');
   });
 
-  it("exits with code 1 when drizzle-kit pull throws", async () => {
+  it("exits with code 1 when drizzle-kit pull throws", () => {
     vi.mocked(execSync).mockImplementationOnce(() => {
       throw new Error("pull failed");
     });
-    await generateModels(options());
+    generateModels(options());
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 });

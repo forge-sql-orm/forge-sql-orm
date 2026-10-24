@@ -256,7 +256,7 @@ program
         }
       },
     );
-    await generateModels(config as GenerateModelsOptions);
+    generateModels(config as GenerateModelsOptions);
   });
 
 // ✅ Command: Create initial database migration
@@ -370,7 +370,7 @@ program
           });
       },
     );
-    await createSchema(config as CreateSchemaOptions);
+    createSchema(config as CreateSchemaOptions);
   });
 
 // 🔥 Execute CLI
