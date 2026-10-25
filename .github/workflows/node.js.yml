@@ -334,5 +334,7 @@ jobs:
       - name: Delete CI package versions from GitHub Packages
         continue-on-error: true
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+          # github.token (packages: write) has its own rate limit, unlike the shared PACKAGE_TOKEN
+          # PAT, which is exhausted by other runs; same token the weekly cleanup uses.
+          GH_TOKEN: ${{ github.token }}
         run: node scripts/ci/github-packages.mjs cleanup-ci-versions
