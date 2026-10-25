@@ -35,6 +35,14 @@ export function weeklyVersionLabel() {
   return new Date().toISOString().slice(0, 10).replaceAll("-", "");
 }
 
+/**
+ * dist-tag used by weekly builds. Defaults to `latest`; the Drizzle v1 line sets
+ * `GPR_WEEKLY_TAG` so it never moves the `latest` tag of the `master` weekly snapshot.
+ */
+export function weeklyPublishTag() {
+  return process.env.GPR_WEEKLY_TAG || LATEST_PUBLISH_TAG;
+}
+
 export function weeklyVersion(dir = ".") {
   const pkg = readPkg(dir);
   return `${baseVersion(pkg.version)}-weekly.${weeklyVersionLabel()}`;
