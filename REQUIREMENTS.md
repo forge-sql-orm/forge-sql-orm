@@ -78,11 +78,11 @@ The repository is a **monorepo** with three independently published npm packages
 
 **Release channels:**
 
-| Channel                           | Registry                       | Audience                                                | Documented in                                                                                                                                                   |
-| --------------------------------- | ------------------------------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Semver release                    | npmjs.com                      | Production Forge apps                                   | README Installation, CHANGELOG                                                                                                                                  |
-| Weekly `master` snapshot          | GitHub Packages (`latest`)     | Early adopters / smoke tests                            | [README § GitHub Packages](../README.md#installing-from-github-packages-weekly-latest), CHANGELOG 2.2.0                                                         |
-| Weekly `feat/drizzle-v1` snapshot | GitHub Packages (`drizzle-v1`) | Early adopters testing Drizzle ORM v1 (3.x pre-release) | [README § Installing 3.0.0-rc.5 from GitHub Packages](README.md#installing-300-rc5-from-github-packages-weekly-drizzle-v1-with-drizzle-orm-v1), CHANGELOG 2.2.5 |
+| Channel                           | Registry                       | Audience                                                | Documented in                                                                                                                                                 |
+| --------------------------------- | ------------------------------ | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Semver release                    | npmjs.com                      | Production Forge apps                                   | README Installation, CHANGELOG                                                                                                                                |
+| Weekly `master` snapshot          | GitHub Packages (`latest`)     | Early adopters / smoke tests                            | [README § GitHub Packages](../README.md#installing-from-github-packages-weekly-latest), CHANGELOG 2.2.0                                                       |
+| Weekly `feat/drizzle-v1` snapshot | GitHub Packages (`drizzle-v1`) | Early adopters testing Drizzle ORM v1 (3.x pre-release) | [README § Installing 3.0.0-rc from GitHub Packages](README.md#installing-300-rc5-from-github-packages-weekly-drizzle-v1-with-drizzle-orm-v1), CHANGELOG 2.2.5 |
 
 Weekly publishes must run the quality gate defined in §8 before GPR upload; ephemeral `ci.*` GPR versions are not a consumer channel.
 

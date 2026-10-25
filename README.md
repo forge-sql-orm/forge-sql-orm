@@ -77,7 +77,7 @@ Start with **`forge-sql-orm`** for any Forge SQL app; add **forge-sql-orm-extra*
 - [Usage Approaches](#usage-approaches)
 - [Installation](#installation)
 - [Installing from GitHub Packages (weekly `latest`)](#installing-from-github-packages-weekly-latest)
-- [Installing 3.0.0-rc.5 from GitHub Packages (weekly `drizzle-v1`) with drizzle-orm v1](#installing-300-rc5-from-github-packages-weekly-drizzle-v1-with-drizzle-orm-v1)
+- [Installing 3.0.0-rc from GitHub Packages (weekly `drizzle-v1`) with drizzle-orm v1](#installing-300-rc5-from-github-packages-weekly-drizzle-v1-with-drizzle-orm-v1)
 - [CLI Commands](#cli-commands) | [CLI Documentation](forge-sql-orm-cli/README.md)
 - [Quick Start](#quick-start)
 
@@ -322,9 +322,9 @@ Pin a specific weekly version instead of `@latest` when you need reproducibility
 
 Weekly GPR builds are **not** the supported production channel for most apps — prefer npm semver releases. Use GPR `latest` to try fixes on `master` before the next npm release, or for internal smoke tests.
 
-### Installing 3.0.0-rc.5 from GitHub Packages (weekly `drizzle-v1`) with drizzle-orm v1
+### Installing 3.0.0-rc from GitHub Packages (weekly `drizzle-v1`) with drizzle-orm v1
 
-A **3.0.0** line with **Drizzle ORM v1** support (currently `drizzle-orm@^1.0.0-rc.5`) is developed on the [`feat/drizzle-v1`](https://github.com/forge-sql-orm/forge-sql-orm/tree/feat/drizzle-v1) branch **in parallel** with `master`; `master` (2.x) stays on Drizzle ORM 0.45.x. The line will be released as 3.0.0 on npmjs.com once Drizzle ORM v1 is officially released. Background: [Drizzle ORM v0 → v1 changes](https://orm.drizzle.team/docs/v0-v1-changes), tracking issue [#2794](https://github.com/forge-sql-orm/forge-sql-orm/issues/2794), pull request [#2793](https://github.com/forge-sql-orm/forge-sql-orm/pull/2793).
+A **3.0.0** line with **Drizzle ORM v1** support (currently `drizzle-orm@^rc`) is developed on the [`feat/drizzle-v1`](https://github.com/forge-sql-orm/forge-sql-orm/tree/feat/drizzle-v1) branch **in parallel** with `master`; `master` (2.x) stays on Drizzle ORM 0.45.x. The line will be released as 3.0.0 on npmjs.com once Drizzle ORM v1 is officially released. Background: [Drizzle ORM v0 → v1 changes](https://orm.drizzle.team/docs/v0-v1-changes), tracking issue [#2794](https://github.com/forge-sql-orm/forge-sql-orm/issues/2794), pull request [#2793](https://github.com/forge-sql-orm/forge-sql-orm/pull/2793).
 
 The branch keeps itself up to date automatically: a **daily dependency autoupdate at 21:00 UTC** (workflows [autoupdate.v1.yml](.github/workflows/autoupdate.v1.yml) and [automerge.v1.yml](.github/workflows/automerge.v1.yml)) picks up new Drizzle v1 release candidates, and a **weekly snapshot** is published to [GitHub Packages](https://github.com/orgs/forge-sql-orm/packages) every **Sunday 04:00 UTC** (workflow [Weekly GitHub Packages (drizzle-v1)](.github/workflows/weekly-gpr.v1.yml); also runnable manually from the Actions tab). These builds pass the same quality gate as CI (lint, Knip, tests, license check) before publish.
 
@@ -333,14 +333,14 @@ The branch keeps itself up to date automatically: a **daily dependency autoupdat
 | **Bleeding-edge snapshot (2.x)**    | GitHub Packages | GPR `latest`     | Weekly from current `master`             |
 | **Drizzle ORM v1 snapshot (3.0.0)** | GitHub Packages | GPR `drizzle-v1` | Weekly from the `feat/drizzle-v1` branch |
 
-Published versions look like `3.0.0-rc.5-weekly.20261101` (immutable); the **`drizzle-v1`** tag always points at the most recent weekly build of the Drizzle v1 line. The GPR `latest` tag is reserved for the `master` (2.x) snapshot.
+Published versions look like `3.0.0-rc-weekly.20261101` (immutable); the **`drizzle-v1`** tag always points at the most recent weekly build of the Drizzle v1 line. The GPR `latest` tag is reserved for the `master` (2.x) snapshot.
 
 **1. Authenticate** — same `.npmrc` as in [Installing from GitHub Packages (weekly `latest`)](#installing-from-github-packages-weekly-latest) (`@forge-sql-orm` scope on `https://npm.pkg.github.com`, everything else from npmjs.com).
 
 **2. Install core with Drizzle ORM v1** (npm alias — your `import` stays `forge-sql-orm`):
 
 ```bash
-npm install forge-sql-orm@npm:@forge-sql-orm/forge-sql-orm@drizzle-v1 @forge/sql drizzle-orm@^1.0.0-rc.5 -S
+npm install forge-sql-orm@npm:@forge-sql-orm/forge-sql-orm@drizzle-v1 @forge/sql drizzle-orm@^rc -S
 ```
 
 **3. Optional — extra and CLI from the same channel:**
@@ -350,7 +350,7 @@ npm install forge-sql-orm-extra@npm:@forge-sql-orm/forge-sql-orm-extra@drizzle-v
 npm install forge-sql-orm-cli@npm:@forge-sql-orm/forge-sql-orm-cli@drizzle-v1 -D
 ```
 
-Install all Forge SQL ORM packages from the same channel and keep a **single** `drizzle-orm` copy in your lock file (`npm ls drizzle-orm`). Pin a specific weekly version instead of `@drizzle-v1` when you need reproducibility, for example `@forge-sql-orm/forge-sql-orm@3.0.0-rc.5-weekly.20261101`.
+Install all Forge SQL ORM packages from the same channel and keep a **single** `drizzle-orm` copy in your lock file (`npm ls drizzle-orm`). Pin a specific weekly version instead of `@drizzle-v1` when you need reproducibility, for example `@forge-sql-orm/forge-sql-orm@3.0.0-rc-weekly.20261101`.
 
 These are **pre-release** builds on a Drizzle ORM release candidate and contain breaking changes compared to 2.x. Migration notes from 2.x.x to 3.0.0 are in the README of the `feat/drizzle-v1` branch (section "Migrating from 2.x.x to 3.0.0 (Drizzle ORM v1)") and in issue [#2794](https://github.com/forge-sql-orm/forge-sql-orm/issues/2794). Use them to try Drizzle ORM v1 early; for production keep the npm semver releases.
 
