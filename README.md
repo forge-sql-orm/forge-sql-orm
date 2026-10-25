@@ -2528,13 +2528,23 @@ primaryKey({ columns: [table.id] });
 ```
 
 ```typescript
-// ❌ Before
+// ❌ Before (Relational Queries v1)
 import { relations } from "drizzle-orm/relations";
+export const ordersRelations = relations(orders, ({ one }) => ({
+  user: one(users, { fields: [orders.userId], references: [users.id] }),
+}));
 
-// ✅ After (legacy relations API, same behavior)
-import { relations } from "drizzle-orm/_relations";
-// …or migrate to Drizzle v1 `defineRelations` (RQB v2)
+// ✅ After (Relational Queries v2)
+import { defineRelations } from "drizzle-orm";
+import * as schema from "./schema";
+export const relations = defineRelations(schema, (r) => ({
+  orders: {
+    user: r.one.users({ from: r.orders.userId, to: r.users.id }),
+  },
+}));
 ```
+
+See Drizzle's [Relations v1 → v2 guide](https://orm.drizzle.team/docs/relations-v1-v2) for the full syntax.
 
 If you generated models with `forge-sql-orm-cli generate:model`, re-generate them with the 3.x CLI and review the diff, or apply the two edits above manually. The 3.x CLI ships with `drizzle-kit` v1, so the generated files differ from 2.x:
 
@@ -2554,7 +2564,7 @@ Other Drizzle v1 changes are described in Drizzle's own upgrade notes — check 
 
 1. Upgrade `forge-sql-orm`, `forge-sql-orm-extra`, `forge-sql-orm-cli` to `^3` and `drizzle-orm` to `^1`.
 2. Run `npm ls drizzle-orm` — exactly one version.
-3. Remove `name` from `primaryKey({ … })` and move `relations` imports (or re-generate models).
+3. Remove `name` from `primaryKey({ … })` and migrate `relations` to `defineRelations` (or re-generate models).
 4. Run `tsc --noEmit` and your tests.
 
 ## License

@@ -1,16 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { relations } from "drizzle-orm/_relations";
-import { demoUsers, demoOrders } from "./schema";
+import { defineRelations } from "drizzle-orm";
+import * as schema from "./schema";
 
-export const demoOrdersRelations = relations(demoOrders, ({ one }) => ({
-  demoUser: one(demoUsers, {
-    fields: [demoOrders.userId],
-    references: [demoUsers.id],
-  }),
-}));
-
-export const demoUsersRelations = relations(demoUsers, ({ many }) => ({
-  demoOrders: many(demoOrders),
+export const relations = defineRelations(schema, (r) => ({
+  demoOrders: {
+    demoUser: r.one.demoUsers({
+      from: r.demoOrders.userId,
+      to: r.demoUsers.id,
+    }),
+  },
+  demoUsers: {
+    demoOrders: r.many.demoOrders({
+      from: r.demoUsers.id,
+      to: r.demoOrders.userId,
+    }),
+  },
 }));
