@@ -1,69 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-const getCells = (withWidth: boolean, deleteCell: boolean, type: "USER" | "DUPLICATE") => {
-  const columns: {
-    key: string;
-    content: any;
-    isSortable: boolean;
-    width: number | undefined;
-  }[] = [];
-  switch (type) {
-    case "USER": {
-      columns.push({
-        key: "id",
-        content: "ID",
-        isSortable: true,
-        width: withWidth ? 25 : undefined,
-      });
-      columns.push({
-        key: "name",
-        content: "NAME",
-        isSortable: true,
-        width: withWidth ? 25 : undefined,
-      });
-      columns.push({
-        key: "email",
-        content: "EMAIL",
-        isSortable: true,
-        width: withWidth ? 25 : undefined,
-      });
-      break;
-    }
-    case "DUPLICATE": {
-      columns.push({
-        key: "name",
-        content: "NAME",
-        isSortable: true,
-        width: withWidth ? 25 : undefined,
-      });
-      columns.push({
-        key: "email",
-        content: "EMAIL",
-        isSortable: true,
-        width: withWidth ? 25 : undefined,
-      });
-      columns.push({
-        key: "count",
-        content: "COUNT",
-        isSortable: true,
-        width: withWidth ? 25 : undefined,
-      });
-    }
-  }
+import { Column } from "../components/DataTable";
+
+export const createColumns = (deleteCell: boolean, type: "USER" | "DUPLICATE"): Column[] => {
+  const columns: Column[] =
+    type === "USER"
+      ? [
+          { key: "id", title: "ID", isSortable: true },
+          { key: "name", title: "NAME", isSortable: true },
+          { key: "email", title: "EMAIL", isSortable: true },
+        ]
+      : [
+          { key: "name", title: "NAME", isSortable: true },
+          { key: "email", title: "EMAIL", isSortable: true },
+          { key: "count", title: "COUNT", isSortable: true },
+        ];
   if (deleteCell) {
-    columns.push({
-      key: "delete",
-      content: "Delete",
-      isSortable: false,
-      width: withWidth ? 25 : undefined,
-    });
+    columns.push({ key: "delete", title: "Delete", isSortable: false });
   }
   return columns;
-};
-
-export const createHead = (withWidth: boolean, deleteCell: boolean, type: "USER" | "DUPLICATE") => {
-  return {
-    cells: getCells(withWidth, deleteCell, type),
-  };
 };

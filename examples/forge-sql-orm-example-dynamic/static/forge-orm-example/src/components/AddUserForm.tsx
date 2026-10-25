@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { observer } from "mobx-react";
 import { useRootStore } from "../store";
 import { useState } from "react";
 import { invoke } from "@forge/bridge";
 import { DynamicResponse } from "../utils/Constants";
 
-export default observer(() => {
+export default function AddUserForm() {
   const { usersMetadata, usersStore, stateStore } = useRootStore();
+  const metadataProperties = usersMetadata.metadata!.user.properties;
   const [formData, setFormData] = useState({});
 
   const handleChange = (event: any) => {
@@ -35,8 +35,8 @@ export default observer(() => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        {Object.keys(usersMetadata.metadata.user.properties).map((p) => {
-          let property = usersMetadata.metadata.user.properties[p];
+        {Object.keys(metadataProperties).map((p) => {
+          let property = metadataProperties[p];
           return (
             <div key={p}>
               <label htmlFor={p}>{p}</label>
@@ -57,4 +57,4 @@ export default observer(() => {
       </form>
     </div>
   );
-});
+}

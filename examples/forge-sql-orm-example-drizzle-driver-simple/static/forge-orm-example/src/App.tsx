@@ -4,7 +4,6 @@
 import React, { useEffect } from "react";
 import { invoke } from "@forge/bridge";
 import UserTable from "./components/UserTable";
-import { observer } from "mobx-react";
 import { useRootStore } from "./store";
 import AddUserForm from "./components/AddUserForm";
 import DuplicateTable from "./components/DuplicateTable";
@@ -70,4 +69,4 @@ function App() {
   }
 }
 
-export default observer(App);
+export default App;

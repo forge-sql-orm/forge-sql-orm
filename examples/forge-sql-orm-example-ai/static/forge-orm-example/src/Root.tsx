@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 import React, { useEffect, useState } from "react";
-import SectionMessage from "@atlaskit/section-message";
-import Spinner from "@atlaskit/spinner";
-import { Box, Inline, Stack } from "@atlaskit/primitives";
 import App from "./App";
 import { miniLLM, VectorBuilder } from "./ai";
 import { VectorModelProvider } from "./vectorModelContext";
@@ -57,29 +54,29 @@ export default function Root() {
 
   if (error) {
     return (
-      <Box padding="space.300">
-        <SectionMessage appearance="error">
+      <div className="page">
+        <div className="message error">
           <p>Failed to load embedding model: {error}</p>
-        </SectionMessage>
-      </Box>
+        </div>
+      </div>
     );
   }
 
   if (!builder) {
     return (
-      <Box padding="space.300">
-        <Stack space="space.200">
-          <SectionMessage appearance="information">
-            <Stack space="space.150">
-              <Inline space="space.150" alignBlock="center">
-                <Spinner size="large" label="Loading embedding model" />
+      <div className="page">
+        <div className="stack">
+          <div className="message">
+            <div className="stack">
+              <div className="inline">
+                <div className="spinner" role="status" aria-label="Loading embedding model" />
                 <strong>Loading embedding model</strong>
-              </Inline>
+              </div>
               <p>{formatModelLoadProgress(progressInfo)}</p>
-            </Stack>
-          </SectionMessage>
-        </Stack>
-      </Box>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
