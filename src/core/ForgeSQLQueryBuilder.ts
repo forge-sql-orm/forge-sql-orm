@@ -7,7 +7,11 @@ import {
   AnyMySqlSelectQueryBuilder,
   AnyMySqlTable,
   customType,
+  MySqlAsyncDeleteBase,
+  MySqlAsyncInsertHKT,
+  MySqlAsyncSelectBase,
   MySqlAsyncSelectBuilder,
+  MySqlAsyncUpdateHKT,
   MySqlTable,
 } from "drizzle-orm/mysql-core";
 import {
@@ -25,13 +29,6 @@ import {
 
 import { ExecuteQuery, SelectAliasedDistinctType, SelectAliasedType, Cache } from "..";
 import { MySqlInsertBuilder, MySqlUpdateBuilder } from "drizzle-orm/mysql-core/query-builders";
-import {
-  MySqlAsyncDeleteBase,
-  MySqlAsyncInsertHKT,
-  MySqlAsyncSelectBase,
-  MySqlAsyncUpdateHKT,
-} from "drizzle-orm/mysql-core";
-
 import {
   GetSelectTableName,
   GetSelectTableSelection,

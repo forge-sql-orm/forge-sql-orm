@@ -84,8 +84,10 @@ function replaceMySQLTypes(schemaContent: string): string {
   // (e.g. `datetime("c")`, `datetime({ fsp: 3 })`, `timestamp("c", { mode: "string" })`)
   let modifiedContent = schemaContent.replace(
     DATE_COLUMN_PATTERN,
-    (_match, type: string, _quote: string | undefined, columnName: string | undefined) =>
-      `${FORGE_DATE_TYPES[type]}(${columnName ? `'${columnName}'` : ""})`,
+    (_match, type: string, _quote: string | undefined, columnName: string | undefined) => {
+      const argument = columnName ? `'${columnName}'` : "";
+      return `${FORGE_DATE_TYPES[type]}(${argument})`;
+    },
   );
 
   // Add imports if they don't exist
@@ -232,14 +234,20 @@ function listMigrationFolders(output: string): string[] {
         entry.isDirectory() && fs.existsSync(path.join(output, entry.name, "snapshot.json")),
     )
     .map((entry) => entry.name)
-    .sort();
+    .sort((a, b) => a.localeCompare(b));
 }
 
 /** Removes the migration folders drizzle-kit created, they are not needed by forge-sql-orm. */
 function cleanupGeneratedArtifacts(output: string, createdFolders: string[]): void {
+  const outputRoot = path.resolve(output);
   for (const folder of createdFolders) {
-    fs.rmSync(path.join(output, folder), { recursive: true, force: true });
-    console.log(`✅ Removed: ${path.join(output, folder)}`);
+    const target = path.resolve(outputRoot, folder);
+    if (path.dirname(target) !== outputRoot) {
+      console.warn(`⚠️ Skipped removing folder outside of output directory: ${folder}`);
+      continue;
+    }
+    fs.rmSync(target, { recursive: true, force: true });
+    console.log(`✅ Removed: ${target}`);
   }
 }
 
