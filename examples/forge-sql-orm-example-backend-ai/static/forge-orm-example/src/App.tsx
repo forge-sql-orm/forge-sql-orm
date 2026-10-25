@@ -3,13 +3,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { invoke } from "@forge/bridge";
-import Button from "@atlaskit/button";
-import DynamicTable from "@atlaskit/dynamic-table";
-import TextArea from "@atlaskit/textarea";
-import Textfield from "@atlaskit/textfield";
-import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
-import SectionMessage from "@atlaskit/section-message";
-import { Box, Inline, Stack, xcss } from "@atlaskit/primitives";
+import DataTable from "./components/DataTable";
 
 type SearchResult = {
   id: number;
@@ -27,20 +21,6 @@ type DocumentRow = {
   document: string;
   embedding: number[];
 };
-
-const pageContainerStyles = xcss({
-  width: "100%",
-});
-
-const formBlockStyles = xcss({
-  width: "100%",
-  maxWidth: "100%",
-});
-
-const contentCellStyles = xcss({
-  whiteSpace: "normal",
-  overflowWrap: "anywhere",
-});
 
 /** 0–100 within the current result list (min–max of rerank logits). Not an absolute global %. */
 function buildRelativeRerankFit(results: SearchResult[]): Map<number, number> {
@@ -161,18 +141,16 @@ function App() {
 
   const rerankFitById = useMemo(() => buildRelativeRerankFit(results), [results]);
 
-  const searchHead = {
-    cells: [
-      { key: "rank", content: "Final rank", width: 8 },
-      { key: "id", content: "ID", width: 6 },
-      { key: "title", content: "Title", width: 12 },
-      { key: "document", content: "Document", width: 22 },
-      { key: "combined", content: "Combined (%)", width: 10 },
-      { key: "similarity", content: "Vector (%)", width: 9 },
-      { key: "fulltext", content: "Fulltext (%)", width: 9 },
-      { key: "rerankFit", content: "Rerank (%)", width: 9 },
-    ],
-  };
+  const searchHead = [
+    { key: "rank", title: "Final rank", width: 8 },
+    { key: "id", title: "ID", width: 6 },
+    { key: "title", title: "Title", width: 12 },
+    { key: "document", title: "Document", width: 22 },
+    { key: "combined", title: "Combined (%)", width: 10 },
+    { key: "similarity", title: "Vector (%)", width: 9 },
+    { key: "fulltext", title: "Fulltext (%)", width: 9 },
+    { key: "rerankFit", title: "Rerank (%)", width: 9 },
+  ];
 
   const searchRows = results.map((row, index) => ({
     key: `search-${row.id}`,
@@ -186,22 +164,22 @@ function App() {
       {
         key: `document-${row.id}`,
         content: (
-          <Stack space="space.100">
-            <Inline>
-              <Button
+          <div className="stack">
+            <div className="inline">
+              <button
                 onClick={() =>
                   setOpenSearchDocumentId((current) => (current === row.id ? null : row.id))
                 }
               >
                 {openSearchDocumentId === row.id ? "Hide document" : "Open document"}
-              </Button>
-            </Inline>
+              </button>
+            </div>
             {openSearchDocumentId === row.id ? (
-              <Box xcss={contentCellStyles}>
+              <div className="content-cell">
                 <strong>Document:</strong> {row.document}
-              </Box>
+              </div>
             ) : null}
-          </Stack>
+          </div>
         ),
       },
       {
@@ -220,14 +198,12 @@ function App() {
     ],
   }));
 
-  const documentsHead = {
-    cells: [
-      { key: "id", content: "ID", width: 10 },
-      { key: "title", content: "Title", width: 25 },
-      { key: "document", content: "Document", width: 30 },
-      { key: "vector", content: "Vector", width: 35 },
-    ],
-  };
+  const documentsHead = [
+    { key: "id", title: "ID", width: 10 },
+    { key: "title", title: "Title", width: 25 },
+    { key: "document", title: "Document", width: 30 },
+    { key: "vector", title: "Vector", width: 35 },
+  ];
 
   const documentRows = documents.map((row) => ({
     key: `fetch-${row.id}`,
@@ -237,132 +213,139 @@ function App() {
       {
         key: `document-${row.id}`,
         content: (
-          <Stack space="space.100">
-            <Inline>
-              <Button
+          <div className="stack">
+            <div className="inline">
+              <button
                 onClick={() => setOpenDocumentId((current) => (current === row.id ? null : row.id))}
               >
                 {openDocumentId === row.id ? "Hide document" : "Open document"}
-              </Button>
-            </Inline>
+              </button>
+            </div>
             {openDocumentId === row.id ? (
-              <Box xcss={contentCellStyles}>
+              <div className="content-cell">
                 <strong>Document:</strong> {row.document}
-              </Box>
+              </div>
             ) : null}
-          </Stack>
+          </div>
         ),
       },
       {
         key: `vector-${row.id}`,
         content: (
-          <Stack space="space.100">
-            <Inline>
-              <Button
+          <div className="stack">
+            <div className="inline">
+              <button
                 onClick={() => setOpenVectorId((current) => (current === row.id ? null : row.id))}
               >
                 {openVectorId === row.id ? "Hide vector" : "Open vector"}
-              </Button>
-            </Inline>
+              </button>
+            </div>
             {openVectorId === row.id ? (
-              <Box xcss={contentCellStyles}>
+              <div className="content-cell">
                 <strong>Vector:</strong> [{row.embedding.join(", ")}]
-              </Box>
+              </div>
             ) : null}
-          </Stack>
+          </div>
         ),
       },
     ],
   }));
 
   return (
-    <Box padding="space.300" xcss={pageContainerStyles}>
-      <Stack space="space.300">
+    <div className="page">
+      <div className="stack stack-lg">
         <h2>TiDB Vector Example (backend embeddings)</h2>
 
-        <Tabs
-          id="vector-tabs"
-          selected={activeTabIndex}
-          onChange={(index) => setActiveTabIndex(index)}
-        >
-          <TabList>
-            <Tab>Add documents</Tab>
-            <Tab>AI(Vector) search</Tab>
-          </TabList>
-          <TabPanel>
-            <Box padding="space.200" xcss={formBlockStyles}>
-              <Stack space="space.150">
+        <div className="tabs">
+          <button
+            className={activeTabIndex === 0 ? "active" : undefined}
+            onClick={() => setActiveTabIndex(0)}
+          >
+            Add documents
+          </button>
+          <button
+            className={activeTabIndex === 1 ? "active" : undefined}
+            onClick={() => setActiveTabIndex(1)}
+          >
+            AI(Vector) search
+          </button>
+        </div>
+        {activeTabIndex === 0 ? (
+          <>
+            <div className="form-block">
+              <div className="stack">
                 <h3>Insert document</h3>
-                <Textfield
+                <input
+                  type="text"
                   value={title}
                   maxLength={255}
                   placeholder="Title"
-                  onChange={(e) => setTitle((e.target as HTMLInputElement).value)}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
-                <TextArea
+                <textarea
                   value={documentText}
                   maxLength={documentLimit}
-                  minimumRows={8}
-                  resize="vertical"
+                  rows={8}
                   placeholder="Document text"
-                  onChange={(e) => setDocumentText((e.target as HTMLTextAreaElement).value)}
+                  onChange={(e) => setDocumentText(e.target.value)}
                 />
-                <Box as="small">
+                <small>
                   {documentText.length}/{documentLimit} chars
-                </Box>
-                <Box as="small">Embedding is computed on the Forge backend from document text.</Box>
-                <Inline space="space.100">
-                  <Button appearance="primary" onClick={handleCreate} isDisabled={isLoading}>
+                </small>
+                <small>Embedding is computed on the Forge backend from document text.</small>
+                <div className="inline">
+                  <button className="primary" onClick={handleCreate} disabled={isLoading}>
                     Insert
-                  </Button>
-                  <Button onClick={handleFetchAll} isDisabled={isLoading}>
+                  </button>
+                  <button onClick={handleFetchAll} disabled={isLoading}>
                     Fetch all
-                  </Button>
-                </Inline>
-              </Stack>
-            </Box>
-          </TabPanel>
-          <TabPanel>
-            <Box padding="space.200" xcss={formBlockStyles}>
-              <Stack space="space.150">
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : null}
+        {activeTabIndex === 1 ? (
+          <>
+            <div className="form-block">
+              <div className="stack">
                 <h3>AI(Vector) search</h3>
-                <TextArea
+                <textarea
                   value={searchText}
                   maxLength={documentLimit}
-                  minimumRows={6}
-                  resize="vertical"
+                  rows={6}
                   placeholder="Query text"
-                  onChange={(e) => setSearchText((e.target as HTMLTextAreaElement).value)}
+                  onChange={(e) => setSearchText(e.target.value)}
                 />
-                <Box as="small">
+                <small>
                   {searchText.length}/{documentLimit} chars
-                </Box>
-                <Box as="small">
+                </small>
+                <small>
                   Pipeline: vector retrieve (Forge SQL) → MiniSearch fulltext → cross-encoder rerank
                   → RRF (see hybridScore.ts weights). Combined (%) drives Final rank.
-                </Box>
-                <Inline space="space.100">
-                  <Button appearance="primary" onClick={handleSearch} isDisabled={isLoading}>
+                </small>
+                <div className="inline">
+                  <button className="primary" onClick={handleSearch} disabled={isLoading}>
                     Search
-                  </Button>
-                </Inline>
-              </Stack>
-            </Box>
-          </TabPanel>
-        </Tabs>
-
-        {message ? (
-          <SectionMessage appearance="information">
-            <p>{message}</p>
-          </SectionMessage>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
         ) : null}
 
-        <Box as="section">
+        {message ? (
+          <div className="message">
+            <p>{message}</p>
+          </div>
+        ) : null}
+
+        <section>
           <h3>Results</h3>
 
           {results.length > 0 ? (
-            <Stack space="space.150">
-              <SectionMessage appearance="information">
+            <div className="stack">
+              <div className="message">
                 <p>
                   <strong>Final rank</strong> — order by <strong>Combined (%)</strong> (RRF of
                   vector, fulltext, rerank — weights in backend hybridScore.ts).{" "}
@@ -370,22 +353,15 @@ function App() {
                   MiniSearch on title + document. <strong>Rerank</strong> — cross-encoder fit,
                   relative to other rows (100% = best rerank logit in this list).
                 </p>
-              </SectionMessage>
-              <DynamicTable head={searchHead} rows={searchRows} rowsPerPage={10} defaultPage={1} />
-            </Stack>
+              </div>
+              <DataTable columns={searchHead} rows={searchRows} />
+            </div>
           ) : null}
 
-          {documents.length > 0 ? (
-            <DynamicTable
-              head={documentsHead}
-              rows={documentRows}
-              rowsPerPage={10}
-              defaultPage={1}
-            />
-          ) : null}
-        </Box>
-      </Stack>
-    </Box>
+          {documents.length > 0 ? <DataTable columns={documentsHead} rows={documentRows} /> : null}
+        </section>
+      </div>
+    </div>
   );
 }
 

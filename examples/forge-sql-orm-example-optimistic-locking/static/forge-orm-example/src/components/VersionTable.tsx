@@ -2,17 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 import { CreatedResponseDataType, UPDATE_TYPE } from "../utils/Constants";
-import DynamicTable from "@atlaskit/dynamic-table";
-import { createHead } from "../utils/TableUtils";
-import { observer } from "mobx-react";
+import { columns } from "../utils/TableUtils";
 import { useRootStore } from "../store";
-import { RowCellType } from "@atlaskit/dynamic-table/types";
-import Button from "@atlaskit/button/new";
 
-export default observer((props: { type: UPDATE_TYPE }) => {
+export default function VersionTable(props: { type: UPDATE_TYPE }) {
   const { stateStore } = useRootStore();
-  const head = createHead(true);
-  let data: CreatedResponseDataType;
+  let data: CreatedResponseDataType | undefined;
   switch (props.type) {
     case "WITHOUT_VERSIONING": {
       data = stateStore.testData;
@@ -39,43 +34,30 @@ export default observer((props: { type: UPDATE_TYPE }) => {
   }
   return (
     <div>
-      <div>
-        <DynamicTable
-          head={head}
-          rows={[data].map((d, index) => {
-            const cells: Array<RowCellType> = [
-              { key: "id", content: d.id },
-              { key: "testDateColumn", content: String(d.testDateColumn) },
-              { key: "testNameColumn", content: d.testNameColumn },
-              {
-                key: "version",
-                content: d.version !== undefined ? String(d.version) : "EMPTY",
-              },
-              {
-                key: "action",
-                content: (
-                  <div>
-                    <Button appearance={"warning"} onClick={() => stateStore.saveState(props.type)}>
-                      update
-                    </Button>
-                  </div>
-                ),
-              },
-            ];
-            return {
-              key: `row-${index}-${d.id}`,
-              cells: cells,
-            };
-          })}
-          rowsPerPage={10}
-          defaultPage={1}
-          loadingSpinnerSize="large"
-          emptyView={<div>Table is EMPTY</div>}
-          isRankable
-        />
-        <br />
-        <br />
-      </div>
+      <table>
+        <thead>
+          <tr>
+            {columns.map((c) => (
+              <th key={c.key}>{c.title}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{data.id}</td>
+            <td>{String(data.testDateColumn)}</td>
+            <td>{data.testNameColumn}</td>
+            <td>{data.version !== undefined ? String(data.version) : "EMPTY"}</td>
+            <td>
+              <button className="btn-warning" onClick={() => stateStore.saveState(props.type)}>
+                update
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br />
+      <br />
     </div>
   );
-});
+}

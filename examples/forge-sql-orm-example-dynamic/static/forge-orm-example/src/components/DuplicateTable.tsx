@@ -2,15 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 import { DuplicateResponse } from "../utils/Constants";
-import DynamicTable from "@atlaskit/dynamic-table";
-import { createHead } from "../utils/TableUtils";
-import { observer } from "mobx-react";
+import DataTable from "./DataTable";
+import { createColumns } from "../utils/TableUtils";
 import { useRootStore } from "../store";
-import { RowCellType } from "@atlaskit/dynamic-table/types";
 
-export default observer(() => {
+export default function DuplicateTable() {
   const { usersStore, usersMetadata } = useRootStore();
-  const head = createHead(true, false, false, usersMetadata.metadata.duplicate.properties);
+  const columns = createColumns(false, false, usersMetadata.metadata!.duplicate.properties);
   const users: DuplicateResponse[] = usersStore.duplicates;
   if (!users || users.length === 0) {
     return <div>Duplicate Table is EMPTY</div>;
@@ -18,29 +16,17 @@ export default observer(() => {
   return (
     <div>
       <div>
-        <DynamicTable
-          head={head}
-          rows={users.map((d, index) => {
-            const cells: Array<RowCellType> = Object.keys(d.fields).map((key) => {
-              return {
-                key,
-                content: d.fields[key],
-              };
-            });
-            return {
-              key: `row-${index}-1`,
-              cells: cells,
-            };
-          })}
-          rowsPerPage={5}
-          defaultPage={1}
-          loadingSpinnerSize="large"
-          emptyView={<div>Duplicate Table is EMPTY</div>}
-          isRankable
+        <DataTable
+          columns={columns}
+          onSort={() => {}}
+          rows={users.map((d, index) => ({
+            key: `row-${index}-1`,
+            cells: { ...d.fields },
+          }))}
         />
         <br />
         <br />
       </div>
     </div>
   );
-});
+}

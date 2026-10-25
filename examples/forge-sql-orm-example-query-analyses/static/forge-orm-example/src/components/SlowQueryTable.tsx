@@ -1,18 +1,16 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import DynamicTable from "@atlaskit/dynamic-table";
-import { createHead } from "../utils/TableUtils";
-import { observer } from "mobx-react";
+import React from "react";
+import DataTable from "./DataTable";
+import { createColumns } from "../utils/TableUtils";
 import { useRootStore } from "../store";
-import { RowCellType } from "@atlaskit/dynamic-table/types";
 import { SlowQueryNormalized } from "../utils/Constants";
-import stateStore from "../store/StateStore";
 
-export default observer(() => {
-  const { usersStore } = useRootStore();
+export default function SlowQueryTable() {
+  const { usersStore, stateStore } = useRootStore();
 
-  const head = createHead(true, "SLOW_QUERY");
+  const columns = createColumns("SLOW_QUERY");
   const slowQueries: SlowQueryNormalized[] = usersStore.slowQueries;
   if (!slowQueries || slowQueries.length === 0) {
     return <div>SlowQuery is EMPTY</div>;
@@ -20,48 +18,38 @@ export default observer(() => {
   return (
     <div>
       <div>
-        <DynamicTable
-          head={head}
+        <DataTable
+          columns={columns}
           rows={slowQueries.map((d, index) => {
-            const cells: Array<RowCellType> = [
-              { key: "time", content: d.time },
-              { key: "query", content: d.query },
-              { key: "queryTime", content: d.queryTime },
-              { key: "resultRows", content: d.resultRows },
-              {
-                key: "plan",
-                content: !d.parsedPlan ? (
-                  <p></p>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => {
-                        if (d.parsedPlan) {
-                          usersStore.showPlan(d.parsedPlan, d.plan);
-                          stateStore.saveState("PLAN");
-                        }
-                      }}
-                    >
-                      Show Plan
-                    </button>
-                  </>
-                ),
-              },
-            ];
-            return {
-              key: `row-${index}`,
-              cells: cells,
+            const cells = {
+              time: d.time,
+              query: d.query,
+              queryTime: d.queryTime,
+              resultRows: d.resultRows,
+              plan: !d.parsedPlan ? (
+                <p></p>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      if (d.parsedPlan) {
+                        usersStore.showPlan(d.parsedPlan, d.plan);
+                        stateStore.saveState("PLAN");
+                      }
+                    }}
+                  >
+                    Show Plan
+                  </button>
+                </>
+              ),
             };
+            return { key: `row-${index}`, cells };
           })}
           rowsPerPage={10}
-          defaultPage={1}
-          loadingSpinnerSize="large"
-          emptyView={<div>Duplicate Table is EMPTY</div>}
-          isRankable
         />
         <br />
         <br />
       </div>
     </div>
   );
-});
+}

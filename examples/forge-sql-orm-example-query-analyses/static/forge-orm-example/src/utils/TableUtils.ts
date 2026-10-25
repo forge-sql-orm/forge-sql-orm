@@ -1,160 +1,38 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-const getCells = (withWidth: boolean, type: "SLOW_QUERY" | "PLAN" | "HISTORY") => {
-  const columns: {
-    key: string;
-    content: any;
-    isSortable: boolean;
-    width: number | undefined;
-  }[] = [];
-  switch (type) {
-    case "SLOW_QUERY": {
-      columns.push({
-        key: "time",
-        content: "Time",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "query",
-        content: "QUERY",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "queryTime",
-        content: "TIME",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "resultRows",
-        content: "ROWS",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "plan",
-        content: "PLAN",
-        isSortable: true,
-        width: withWidth ? 25 : undefined,
-      });
-      break;
-    }
-    case "HISTORY": {
-      columns.push({
-        key: "summaryBeginTime",
-        content: "summaryBeginTime",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "summaryEndTime",
-        content: "summaryEndTime",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "stmtType",
-        content: "stmtType",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "digestText",
-        content: "digestText",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "tableNames",
-        content: "tableNames",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "planHint",
-        content: "planHint",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "plan",
-        content: "PLAN",
-        isSortable: true,
-        width: withWidth ? 25 : undefined,
-      });
-      break;
-    }
-    case "PLAN": {
-      columns.push({
-        key: "id",
-        content: "Id",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "estRows",
-        content: "estRows",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "estCost",
-        content: "estCost",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "actRows",
-        content: "actRows",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "task",
-        content: "task",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "accessObject",
-        content: "accessObject",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "executionInfo",
-        content: "executionInfo",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "operatorInfo",
-        content: "operatorInfo",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "memory",
-        content: "memory",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-      columns.push({
-        key: "disk",
-        content: "disk",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      });
-    }
-  }
-  return columns;
+import { Column } from "../components/DataTable";
+
+const columnsByType: Record<"SLOW_QUERY" | "PLAN" | "HISTORY", Column[]> = {
+  SLOW_QUERY: [
+    { key: "time", title: "Time" },
+    { key: "query", title: "QUERY" },
+    { key: "queryTime", title: "TIME" },
+    { key: "resultRows", title: "ROWS" },
+    { key: "plan", title: "PLAN" },
+  ],
+  HISTORY: [
+    { key: "summaryBeginTime", title: "summaryBeginTime" },
+    { key: "summaryEndTime", title: "summaryEndTime" },
+    { key: "stmtType", title: "stmtType" },
+    { key: "digestText", title: "digestText" },
+    { key: "tableNames", title: "tableNames" },
+    { key: "planHint", title: "planHint" },
+    { key: "plan", title: "PLAN" },
+  ],
+  PLAN: [
+    { key: "id", title: "Id" },
+    { key: "estRows", title: "estRows" },
+    { key: "estCost", title: "estCost" },
+    { key: "actRows", title: "actRows" },
+    { key: "task", title: "task" },
+    { key: "accessObject", title: "accessObject" },
+    { key: "executionInfo", title: "executionInfo" },
+    { key: "operatorInfo", title: "operatorInfo" },
+    { key: "memory", title: "memory" },
+    { key: "disk", title: "disk" },
+  ],
 };
 
-export const createHead = (withWidth: boolean, type: "SLOW_QUERY" | "PLAN" | "HISTORY") => {
-  return {
-    cells: getCells(withWidth, type),
-  };
-};
+export const createColumns = (type: "SLOW_QUERY" | "PLAN" | "HISTORY"): Column[] =>
+  columnsByType[type];
