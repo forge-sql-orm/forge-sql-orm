@@ -1,6 +1,6 @@
 {
   "name": "forge-sql-orm-cli",
-  "version": "3.0.0-rc.5",
+  "version": "3.0.0-rc",
   "description": "CLI tool for Forge SQL ORM",
   "main": "dist-cli/cli.js",
   "types": "dist-cli/cli.d.ts",
