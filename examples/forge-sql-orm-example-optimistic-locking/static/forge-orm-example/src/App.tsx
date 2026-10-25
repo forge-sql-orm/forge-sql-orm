@@ -3,7 +3,6 @@
 
 import React, { useEffect } from "react";
 import { invoke } from "@forge/bridge";
-import { observer } from "mobx-react";
 import { useRootStore } from "./store";
 import { CreatedResponse } from "./utils/Constants";
 import Root from "./Root";
@@ -43,4 +42,4 @@ function App() {
   }
 }
 
-export default observer(App);
+export default App;

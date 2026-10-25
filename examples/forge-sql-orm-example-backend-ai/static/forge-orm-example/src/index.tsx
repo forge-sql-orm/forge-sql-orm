@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import React from "react";
-import "@atlaskit/css-reset/dist/bundle.css";
+import "./styles.css";
 import App from "./App";
-import "@atlaskit/css-reset";
 import { createRoot } from "react-dom/client";
 import { view } from "@forge/bridge";
 

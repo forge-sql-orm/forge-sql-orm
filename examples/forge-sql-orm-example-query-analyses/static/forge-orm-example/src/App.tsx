@@ -3,7 +3,6 @@
 
 import React from "react";
 import { invoke } from "@forge/bridge";
-import { observer } from "mobx-react";
 import { useRootStore } from "./store";
 import { SlowQueryNormalized } from "./utils/Constants";
 import SlowQueryTable from "./components/SlowQueryTable";
@@ -340,4 +339,4 @@ function App() {
   }
 }
 
-export default observer(App);
+export default App;

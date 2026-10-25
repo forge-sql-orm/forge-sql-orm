@@ -1,17 +1,16 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import DynamicTable from "@atlaskit/dynamic-table";
-import { createHead } from "../utils/TableUtils";
-import { observer } from "mobx-react";
+import React from "react";
+import DataTable from "./DataTable";
+import { createColumns } from "../utils/TableUtils";
 import { useRootStore } from "../store";
-import { RowCellType } from "@atlaskit/dynamic-table/types";
 import { ExplainAnalyzeRow } from "../utils/Constants";
 
-export default observer(() => {
+export default function PlanTable() {
   const { usersStore } = useRootStore();
 
-  const head = createHead(true, "PLAN");
+  const columns = createColumns("PLAN");
   const plan: ExplainAnalyzeRow[] = usersStore.plan;
   if (!plan || plan.length === 0) {
     return <div>${usersStore.planString}</div>;
@@ -19,35 +18,28 @@ export default observer(() => {
   return (
     <div>
       <div>
-        <DynamicTable
-          head={head}
+        <DataTable
+          columns={columns}
           rows={plan.map((d, index) => {
-            const cells: Array<RowCellType> = [
-              { key: "id", content: d.id },
-              { key: "estRows", content: d.estRows },
-              { key: "estCost", content: d.estCost },
-              { key: "actRows", content: d.actRows },
-              { key: "task", content: d.task },
-              { key: "accessObject", content: d.accessObject },
-              { key: "executionInfo", content: d.executionInfo },
-              { key: "operatorInfo", content: d.operatorInfo },
-              { key: "memory", content: d.memory },
-              { key: "disk", content: d.disk },
-            ];
-            return {
-              key: `row-${index}`,
-              cells: cells,
+            const cells = {
+              id: d.id,
+              estRows: d.estRows,
+              estCost: d.estCost,
+              actRows: d.actRows,
+              task: d.task,
+              accessObject: d.accessObject,
+              executionInfo: d.executionInfo,
+              operatorInfo: d.operatorInfo,
+              memory: d.memory,
+              disk: d.disk,
             };
+            return { key: `row-${index}`, cells };
           })}
           rowsPerPage={200}
-          defaultPage={1}
-          loadingSpinnerSize="large"
-          emptyView={<div>Duplicate Table is EMPTY</div>}
-          isRankable
         />
         <br />
         <br />
       </div>
     </div>
   );
-});
+}

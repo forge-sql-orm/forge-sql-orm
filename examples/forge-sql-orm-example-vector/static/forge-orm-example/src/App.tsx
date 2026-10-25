@@ -3,16 +3,6 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { invoke } from "@forge/bridge";
-import Button from "@atlaskit/button";
-import Textfield from "@atlaskit/textfield";
-import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
-import SectionMessage from "@atlaskit/section-message";
-import { Box, Inline, Stack, xcss } from "@atlaskit/primitives";
-
-const tabsWrapperStyles = xcss({
-  width: "100%",
-  maxWidth: "100%",
-});
 
 type SearchResult = {
   id: number;
@@ -129,86 +119,97 @@ function App() {
   };
 
   return (
-    <Box padding="space.300">
-      <Stack space="space.300">
+    <div className="page">
+      <div className="stack stack-lg">
         <h2>TiDB Vector Example (3D)</h2>
 
-        <Box xcss={tabsWrapperStyles}>
-          <Tabs
-            id="vector-tabs"
-            selected={activeTabIndex}
-            onChange={(index) => setActiveTabIndex(index)}
-          >
-            <TabList>
-              <Tab>Add documents</Tab>
-              <Tab>Vector search</Tab>
-            </TabList>
-            <TabPanel>
-              <Box padding="space.200">
-                <Stack space="space.150">
+        <div>
+          <div className="tabs">
+            <button
+              className={activeTabIndex === 0 ? "active" : undefined}
+              onClick={() => setActiveTabIndex(0)}
+            >
+              Add documents
+            </button>
+            <button
+              className={activeTabIndex === 1 ? "active" : undefined}
+              onClick={() => setActiveTabIndex(1)}
+            >
+              Vector search
+            </button>
+          </div>
+          {activeTabIndex === 0 ? (
+            <>
+              <div className="form-block">
+                <div className="stack">
                   <h3>Insert document</h3>
                   <label>Document</label>
-                  <Textfield
+                  <input
+                    type="text"
                     value={documentText}
-                    onChange={(e) => setDocumentText((e.target as HTMLInputElement).value)}
+                    onChange={(e) => setDocumentText(e.target.value)}
                   />
 
                   <label>Embedding vector (3 numbers)</label>
                   {embedding.map((value, index) => (
-                    <Textfield
+                    <input
+                      type="text"
                       key={index}
                       value={value}
                       placeholder={`v${index + 1}`}
                       onChange={(e) => {
                         const next = [...embedding];
-                        next[index] = (e.target as HTMLInputElement).value;
+                        next[index] = e.target.value;
                         setEmbedding(next);
                       }}
                     />
                   ))}
-                  <Inline space="space.100">
-                    <Button appearance="primary" onClick={handleCreate} isDisabled={isLoading}>
+                  <div className="inline">
+                    <button className="primary" onClick={handleCreate} disabled={isLoading}>
                       Insert
-                    </Button>
-                    <Button onClick={handleFetchAll} isDisabled={isLoading}>
+                    </button>
+                    <button onClick={handleFetchAll} disabled={isLoading}>
                       Fetch all
-                    </Button>
-                  </Inline>
-                </Stack>
-              </Box>
-            </TabPanel>
-            <TabPanel>
-              <Box padding="space.200">
-                <Stack space="space.150">
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : null}
+          {activeTabIndex === 1 ? (
+            <>
+              <div className="form-block">
+                <div className="stack">
                   <h3>Vector search</h3>
                   <label>Query vector (3 numbers)</label>
                   {searchVector.map((value, index) => (
-                    <Textfield
+                    <input
+                      type="text"
                       key={index}
                       value={value}
                       placeholder={`q${index + 1}`}
                       onChange={(e) => {
                         const next = [...searchVector];
-                        next[index] = (e.target as HTMLInputElement).value;
+                        next[index] = e.target.value;
                         setSearchVector(next);
                       }}
                     />
                   ))}
-                  <Inline space="space.100">
-                    <Button appearance="primary" onClick={handleSearch} isDisabled={isLoading}>
+                  <div className="inline">
+                    <button className="primary" onClick={handleSearch} disabled={isLoading}>
                       Search
-                    </Button>
-                  </Inline>
-                </Stack>
-              </Box>
-            </TabPanel>
-          </Tabs>
-        </Box>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : null}
+        </div>
 
         {message ? (
-          <SectionMessage appearance="information">
+          <div className="message">
             <p>{message}</p>
-          </SectionMessage>
+          </div>
         ) : null}
 
         <section>
@@ -256,8 +257,8 @@ function App() {
             </table>
           ) : null}
         </section>
-      </Stack>
-    </Box>
+      </div>
+    </div>
   );
 }
 

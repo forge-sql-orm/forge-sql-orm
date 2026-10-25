@@ -1,10 +1,31 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { defineConfig, type LibraryFormats, type SSROptions, UserConfig } from "vite";
+import { defineConfig, type LibraryFormats, type Plugin, type SSROptions, UserConfig } from "vite";
 import path from "path";
 import copy from "rollup-plugin-copy";
 import * as os from "node:os";
+
+/**
+ * transformers.js loads the native ONNX runtime with createRequire(...)("onnxruntime-node"), which
+ * a bundler cannot follow, and a deployed Forge function has no node_modules. Turn it into a
+ * static import so the runtime's JavaScript is bundled; its .node binary is loaded from
+ * dist/bin/napi-v6/<platform>/<arch> (copied by rollup-plugin-copy below).
+ */
+const inlineOnnxRuntime: Plugin = {
+  name: "inline-onnxruntime-node",
+  enforce: "pre",
+  transform(code, id) {
+    const call = 'requireFromHere("onnxruntime-node")';
+    if (!id.includes("transformers.node") || !code.includes(call)) return null;
+    return {
+      code:
+        'import * as __ortNode from "onnxruntime-node";\n' +
+        code.replace(call, "(__ortNode.default ?? __ortNode)"),
+      map: null,
+    };
+  },
+};
 
 export default defineConfig((config: UserConfig) => {
   let arch;
@@ -56,6 +77,7 @@ export default defineConfig((config: UserConfig) => {
 
   return {
     plugins: [
+      ...(isProduction ? [inlineOnnxRuntime] : []),
       copy({
         targets: [
           {

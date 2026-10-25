@@ -43,7 +43,6 @@ export default defineConfig(async (env: ConfigEnv): Promise<UserConfig> => {
     resolve: {
       alias: {
         "@popperjs/core": "@popperjs/core/dist/cjs/popper.js",
-        "@atlaskit/platform-feature-flags/fg": "@atlaskit/platform-feature-flags/dist/esm/fg.js",
       },
     },
     server: {

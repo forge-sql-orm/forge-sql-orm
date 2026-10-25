@@ -1,13 +1,12 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import { observer } from "mobx-react";
 import { useRootStore } from "../store";
 import { useState } from "react";
 import { CreatedResponse, CreatedResponseDataType, UPDATE_TYPE } from "../utils/Constants";
 import { invoke } from "@forge/bridge";
 
-export default observer((props: { type: UPDATE_TYPE }) => {
+export default function UpdateForm(props: { type: UPDATE_TYPE }) {
   const { stateStore } = useRootStore();
   const [status, setStatus] = useState<string>("");
   const [formData, setFormData] = useState<{ testNameColumn?: string; testDateColumn?: string }>(
@@ -39,7 +38,7 @@ export default observer((props: { type: UPDATE_TYPE }) => {
     setStatus(status);
   };
 
-  let data: CreatedResponseDataType;
+  let data: CreatedResponseDataType | undefined;
   switch (props.type) {
     case "WITHOUT_VERSIONING": {
       data = stateStore.testData;
@@ -60,6 +59,9 @@ export default observer((props: { type: UPDATE_TYPE }) => {
     default: {
       return <div>Unsupported ${props.type}</div>;
     }
+  }
+  if (!data) {
+    return <div>Try update first</div>;
   }
   return (
     <div>
@@ -118,4 +120,4 @@ export default observer((props: { type: UPDATE_TYPE }) => {
       ) : null}
     </div>
   );
-});
+}
