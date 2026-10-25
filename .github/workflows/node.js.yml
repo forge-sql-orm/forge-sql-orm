@@ -31,12 +31,12 @@ jobs:
       extra_version: ${{ steps.publish_extra.outputs.extra_version }}
       cli_version: ${{ steps.publish_cli.outputs.cli_version }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -128,9 +128,9 @@ jobs:
           SONAR_TOKEN: ${{ env.SONARCLOUD_TOKEN }}
       - name: Upload to Qlty
         if: steps.gpr.outputs.enabled == 'true' && env.QLTY_COVERAGE_TOKEN != ''
-        uses: qltysh/qlty-action/coverage@141b881236146435192435eb7b0e06ea0b70b4d9 # main as of 2026-05-12
+        uses: qltysh/qlty-action/coverage@ebcd284bf32e36a030afe15f1e136c7be08b9506 # v2.5.0
         with:
-          coverage-token: ${{ env.QLTY_COVERAGE_TOKEN }}
+          token: ${{ env.QLTY_COVERAGE_TOKEN }}
           files: ./coverage/lcov.info
       - name: Upload coverage to Codacy
         if: steps.gpr.outputs.enabled == 'true' && env.CODACY_API_TOKEN != ''
@@ -172,10 +172,10 @@ jobs:
           - { dir: forge-sql-orm-example-backend-ai,            static: true, ai_lib: true }
           - { dir: forge-sql-orm-example-ui-kit }
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.16
           cache: 'npm'
