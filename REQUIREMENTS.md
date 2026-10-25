@@ -84,7 +84,7 @@ The repository is a **monorepo** with three independently published npm packages
 | Weekly `master` snapshot          | GitHub Packages (`latest`)     | Early adopters / smoke tests                            | [README § GitHub Packages](../README.md#installing-from-github-packages-weekly-latest), CHANGELOG 2.2.0                                                       |
 | Weekly `feat/drizzle-v1` snapshot | GitHub Packages (`drizzle-v1`) | Early adopters testing Drizzle ORM v1 (3.x pre-release) | [README § Installing 3.0.0-rc from GitHub Packages](README.md#installing-300-rc5-from-github-packages-weekly-drizzle-v1-with-drizzle-orm-v1), CHANGELOG 2.2.5 |
 
-Weekly publishes must run the quality gate defined in §8 before GPR upload; ephemeral `ci.*` GPR versions are not a consumer channel.
+Weekly publishes must run the quality gate defined in §8 before GPR upload; ephemeral `ci.*` GPR versions are not a consumer channel. Ephemeral `ci.*` versions published by CI are deleted automatically by a nightly job at 01:00 UTC (`.github/workflows/cleanup-gpr.yml`), not by the CI workflow itself.
 
 ### 2.5 Drizzle ORM v1 line (3.x)
 
@@ -357,4 +357,4 @@ This pipeline, combined with mandatory human-driven comment resolution, satisfie
 | New quality gate                   | Update CONTRIBUTING and §4                                                                                            |
 | Dependency-license policy change   | Update NFR-10 and the `license:check` blocklist in `package.json`                                                     |
 
-**Last updated:** 2026-10-24 (Drizzle ORM v1 line §2.5, COMPAT-5; release channels §2.4; NFR-5 weekly GPR)
+**Last updated:** 2026-10-25 (Drizzle ORM v1 line §2.5, COMPAT-5; release channels §2.4; NFR-5 weekly GPR; nightly GPR `ci.*` cleanup §2.4)

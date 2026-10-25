@@ -1,0 +1,31 @@
+# Nightly cleanup of ephemeral -ci.* versions published by the CI workflow to GitHub Packages.
+# Runs outside the CI workflow so PR runs do not spend time/API quota on cleanup.
+name: Cleanup GitHub Packages (nightly)
+
+on:
+  schedule:
+    # Every day 01:00 UTC
+    - cron: "0 1 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: cleanup-gpr
+  cancel-in-progress: false
+
+jobs:
+  cleanup-gpr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: master
+          persist-credentials: false
+      - name: Delete all ephemeral ci.* versions from GitHub Packages
+        run: node scripts/ci/github-packages.mjs cleanup-all-ci-versions

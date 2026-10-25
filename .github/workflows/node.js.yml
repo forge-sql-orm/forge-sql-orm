@@ -317,24 +317,3 @@ jobs:
           exit 1
       - name: All required jobs passed
         run: echo "quality and all examples succeeded"
-
-  # Every run publishes ephemeral -ci.* versions for downstream jobs; delete them
-  # after the workflow finishes so GitHub Packages storage does not accumulate.
-  cleanup-gpr:
-    needs: [build, quality]
-    if: always() && needs.quality.outputs.gpr_enabled == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-      - name: Delete CI package versions from GitHub Packages
-        continue-on-error: true
-        env:
-          # github.token (packages: write) has its own rate limit, unlike the shared PACKAGE_TOKEN
-          # PAT, which is exhausted by other runs; same token the weekly cleanup uses.
-          GH_TOKEN: ${{ github.token }}
-        run: node scripts/ci/github-packages.mjs cleanup-ci-versions
