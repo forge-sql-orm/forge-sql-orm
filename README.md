@@ -2562,7 +2562,7 @@ primaryKey({ columns: [table.id] });
 
 ```typescript
 // ❌ Before (Relational Queries v1)
-import { relations } from "drizzle-orm/relations";
+import { relations } from "drizzle-orm/_relations";
 export const ordersRelations = relations(orders, ({ one }) => ({
   user: one(users, { fields: [orders.userId], references: [users.id] }),
 }));
