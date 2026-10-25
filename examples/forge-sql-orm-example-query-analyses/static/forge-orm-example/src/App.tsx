@@ -8,7 +8,7 @@ import { useRootStore } from "./store";
 import { SlowQueryNormalized } from "./utils/Constants";
 import SlowQueryTable from "./components/SlowQueryTable";
 import PlanTable from "./components/PlanTable";
-import { ClusterStatementRowCamelCase, ExplainAnalyzeRow } from "forge-sql-orm";
+import type { ClusterStatementRowCamelCase, ExplainAnalyzeRow } from "forge-sql-orm";
 import HistoryTable from "./components/HistoryTable";
 import "./App.css";
 import { showError } from "./utils/ErrorUtils";
