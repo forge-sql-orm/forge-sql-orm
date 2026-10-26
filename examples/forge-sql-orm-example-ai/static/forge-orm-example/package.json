@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@forge/bridge": "^7.2.0",
+    "@forge/bridge": "^7.2.1",
     "@huggingface/transformers": "^4.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
