@@ -18,10 +18,10 @@
     "knip": "^6.43.0"
   },
   "dependencies": {
-    "@forge/bridge": "7.2.0",
-    "@forge/react": "12.3.1",
-    "@forge/resolver": "2.0.1",
-    "@forge/sql": "^4.0.8",
+    "@forge/bridge": "7.2.1",
+    "@forge/react": "12.4.0",
+    "@forge/resolver": "2.0.2",
+    "@forge/sql": "^4.0.9",
     "forge-sql-orm": "../..",
     "react": "^18.2.0"
   },
