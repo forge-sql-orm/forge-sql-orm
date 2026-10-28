@@ -9,7 +9,8 @@ on:
       - master
   workflow_dispatch:
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   analysis:
@@ -20,6 +21,9 @@ jobs:
       security-events: write
       # Needed to publish results and get a badge (id-token: write).
       id-token: write
+      # Job-level permissions replace the top-level ones, so repeat the read access.
+      contents: read
+      actions: read
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
