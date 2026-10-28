@@ -8,12 +8,14 @@ on:
       - reopened
       - labeled
 permissions:
-  pull-requests: write
-  contents: write
+  contents: read
 
 jobs:
   enable-automerge:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
     # Match: dependabot bot PRs, plus any PR carrying the dependencies_updated
     # label (set by .github/workflows/autoupdate.yml).
     if: >

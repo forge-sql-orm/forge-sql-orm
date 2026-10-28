@@ -11,7 +11,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: weekly-gpr
@@ -20,6 +19,9 @@ concurrency:
 jobs:
   weekly-latest:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     timeout-minutes: 45
     env:
       GH_TOKEN: ${{ github.token }}

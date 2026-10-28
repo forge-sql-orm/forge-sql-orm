@@ -7,7 +7,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: badges
@@ -16,6 +16,8 @@ concurrency:
 jobs:
   loc:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     timeout-minutes: 10
     steps:
       - name: Checkout master

@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: cleanup-gpr
@@ -19,6 +18,9 @@ concurrency:
 jobs:
   cleanup-gpr:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     timeout-minutes: 15
     env:
       GH_TOKEN: ${{ github.token }}

@@ -12,9 +12,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 concurrency:
   group: autoupdate-v1
@@ -23,6 +21,10 @@ concurrency:
 jobs:
   autoupdate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     timeout-minutes: 60
     steps:
       - name: Checkout feat/drizzle-v1
