@@ -28,6 +28,9 @@
   },
   "overrides": {
     "@compiled/react": "latest",
-    "prosemirror-view": "npm:prosemirror-view@latest"
+    "prosemirror-view": "npm:prosemirror-view@latest",
+    "@esbuild-kit/core-utils": {
+      "esbuild": "^0.28.2"
+    }
   }
 }
