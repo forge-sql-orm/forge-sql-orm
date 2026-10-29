@@ -8,6 +8,10 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 ## [2.2.6] - NEXRELEASE
 
+🔒 Security
+
+Added an automated [OpenSSF Scorecard](https://scorecard.dev/) analysis workflow (weekly and on every push to `master`). Results are uploaded to GitHub code scanning, and the public report is available at [OpenSSF Scorecard report](https://scorecard.dev/viewer/?uri=github.com/forge-sql-orm/forge-sql-orm).
+
 📦 Dependency Updates
 
 Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.

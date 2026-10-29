@@ -14,12 +14,14 @@ on:
       - reopened
       - labeled
 permissions:
-  pull-requests: write
-  contents: write
+  contents: read
 
 jobs:
   enable-automerge:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
     if: contains(github.event.pull_request.labels.*.name, 'dependencies_updated_v1')
     steps:
       - name: Enable auto-merge for PR

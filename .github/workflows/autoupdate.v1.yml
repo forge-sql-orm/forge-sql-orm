@@ -12,9 +12,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 concurrency:
   group: autoupdate-v1
@@ -23,17 +21,21 @@ concurrency:
 jobs:
   autoupdate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     timeout-minutes: 60
     steps:
       - name: Checkout feat/drizzle-v1
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: feat/drizzle-v1
           fetch-depth: 0
           token: ${{ secrets.AUTOUPDATE_PAT }}
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.x
           cache: "npm"

@@ -7,7 +7,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: badges
@@ -16,6 +16,8 @@ concurrency:
 jobs:
   loc:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     timeout-minutes: 10
     steps:
       - name: Checkout master
@@ -85,7 +87,7 @@ jobs:
               message="copyleft found"
               color=":red"
             fi
-            npx --yes -p badge-maker badge "$label" "$message" "$color" @flat > "$output_file"
+            npx --yes -p badge-maker@6.0.0 badge "$label" "$message" "$color" @flat > "$output_file"
           }
 
           set +e

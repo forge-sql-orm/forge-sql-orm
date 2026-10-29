@@ -22,6 +22,8 @@
 [![Snyk Vulnerabilities](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm/badge.svg)](https://snyk.io/test/github/forge-sql-orm/forge-sql-orm)
 [![Maintainability](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm/maintainability.svg)](https://qlty.sh/gh/forge-sql-orm/projects/forge-sql-orm)
 [![Socket Badge](https://badge.socket.dev/npm/package/forge-sql-orm/latest)](https://badge.socket.dev/npm/package/forge-sql-orm/latest)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16030/badge)](https://www.bestpractices.dev/projects/16030)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/forge-sql-orm/forge-sql-orm/badge)](https://scorecard.dev/viewer/?uri=github.com/forge-sql-orm/forge-sql-orm)
 
 [![LoC (full)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/loc-full.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)
 [![LoC (src)](https://raw.githubusercontent.com/forge-sql-orm/forge-sql-orm/badges/loc-src.svg)](https://github.com/forge-sql-orm/forge-sql-orm/actions/workflows/badge.yml)

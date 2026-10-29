@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.actor == 'dependabot[bot]' && github.run_id || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
@@ -177,9 +180,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24.16
+          node-version: 24.22
           cache: 'npm'
-      - run: npm install -g @forge/cli && forge settings set usage-analytics true
+      - run: npm install -g @forge/cli@15.0.0 && forge settings set usage-analytics true
 
       # push / dispatch-production -> "production"; everything else (PRs,
       # dispatch-development) -> per-actor env named after the sanitized actor.
