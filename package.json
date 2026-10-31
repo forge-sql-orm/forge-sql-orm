@@ -47,7 +47,7 @@
     "@vitest/coverage-v8": "^5.0.5",
     "@vitest/eslint-plugin": "^1.6.28",
     "@vitest/ui": "^5.0.5",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "fast-check": "^4.10.2",
     "globals": "^17.13.0",
