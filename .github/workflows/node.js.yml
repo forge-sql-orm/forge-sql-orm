@@ -27,7 +27,7 @@ jobs:
       pull-requests: write
     strategy:
       matrix:
-        node-version: [24.16]
+        node-version: [24.22]
     outputs:
       gpr_enabled: ${{ steps.gpr.outputs.enabled }}
       core_version: ${{ steps.publish_core.outputs.core_version }}
