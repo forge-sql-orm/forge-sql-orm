@@ -14,24 +14,21 @@
   },
   "devDependencies": {
     "eslint-plugin-react-hooks": "^7.1.1",
-    "forge-sql-orm-cli": "^2.2.5",
+    "forge-sql-orm-cli": "../../forge-sql-orm-cli",
     "knip": "^6.44.0",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@forge/bridge": "7.2.1",
     "@forge/react": "12.4.0",
     "@forge/resolver": "2.0.2",
     "@forge/sql": "^4.0.9",
-    "drizzle-orm": "^0.45.4",
-    "forge-sql-orm": "^2.2.5",
+    "forge-sql-orm": "../..",
     "react": "^18.2.0"
   },
   "overrides": {
     "@compiled/react": "latest",
     "prosemirror-view": "npm:prosemirror-view@latest",
-    "@esbuild-kit/core-utils": {
-      "esbuild": "^0.28.2"
-    }
+    "drizzle-orm": "npm:drizzle-orm@rc"
   }
 }

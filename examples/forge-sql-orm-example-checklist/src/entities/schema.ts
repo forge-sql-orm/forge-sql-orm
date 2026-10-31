@@ -17,5 +17,5 @@ export const issueCheckList = mysqlTable(
     updateId: varchar("update_id", { length: 255 }).notNull(),
     updateDisplayName: varchar("update_display_name", { length: 255 }).notNull(),
   },
-  (table) => [primaryKey({ columns: [table.issueId], name: "issue_check_list_issue_id" })],
+  (table) => [primaryKey({ columns: [table.issueId] })],
 );

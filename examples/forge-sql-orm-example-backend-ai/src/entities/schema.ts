@@ -12,5 +12,5 @@ export const embeddedDocuments = mysqlTable(
     title: varchar({ length: 255 }).notNull(),
     embedding: vectorTiDBType("embedding", { dimension: 384 }).notNull(),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );

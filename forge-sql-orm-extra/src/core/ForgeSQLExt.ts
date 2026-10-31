@@ -3,20 +3,20 @@
 
 import { Result } from "@forge/sql";
 
-import { AnyMySqlTable, MySqlSelectBuilder, MySqlTable, MySqlColumn } from "drizzle-orm/mysql-core";
+import {
+  AnyMySqlTable,
+  MySqlAsyncDeleteBase,
+  MySqlAsyncInsertHKT,
+  MySqlAsyncSelectBase,
+  MySqlAsyncSelectBuilder,
+  MySqlAsyncUpdateHKT,
+  MySqlTable,
+  MySqlColumn,
+} from "drizzle-orm/mysql-core";
 import { type SelectedFields } from "drizzle-orm/mysql-core/query-builders/select.types";
-import {
-  MySqlRemoteDatabase,
-  MySqlRemotePreparedQueryHKT,
-  MySqlRemoteQueryResultHKT,
-} from "drizzle-orm/mysql-proxy";
+import { MySqlRemoteDatabase, MySqlRemoteQueryResultHKT } from "drizzle-orm/mysql-proxy";
 
-import {
-  MySqlDeleteBase,
-  MySqlInsertBuilder,
-  MySqlSelectBase,
-  MySqlUpdateBuilder,
-} from "drizzle-orm/mysql-core/query-builders";
+import { MySqlInsertBuilder, MySqlUpdateBuilder } from "drizzle-orm/mysql-core/query-builders";
 
 import {
   GetSelectTableName,
@@ -42,11 +42,10 @@ export interface ForgeSqlOrmOptionsExtra extends ForgeSqlOrmOptions {
  * Type alias for MySqlSelectBase return type used in selectFrom methods.
  * Reduces code duplication in type definitions.
  */
-export type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
+export type SelectFromReturnType<T extends MySqlTable> = MySqlAsyncSelectBase<
   GetSelectTableName<T>,
   GetSelectTableSelection<T>,
   "single",
-  MySqlRemotePreparedQueryHKT,
   GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
   false,
   never,
@@ -98,9 +97,9 @@ export interface ForgeSqlOperationExt
   extends QueryBuilderForgeSqlExt, ForgeSqlOperation, CacheForgeSQL {
   /**
    * Creates a new query builder for the given entity.
-   * @returns {MySqlRemoteDatabase<Record<string, unknown>>} The Drizzle database instance for building queries
+   * @returns {MySqlRemoteDatabase} The Drizzle database instance for building queries
    */
-  getDrizzleQueryBuilder(): MySqlRemoteDatabase<Record<string, unknown>> & {
+  getDrizzleQueryBuilder(): MySqlRemoteDatabase & {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
     executeQuery: ExecuteQuery;
@@ -136,9 +135,9 @@ export interface ForgeSqlOperationExt
 export interface QueryBuilderForgeSqlExt extends QueryBuilderForgeSql {
   /**
    * Creates a new query builder for the given entity.
-   * @returns {MySqlRemoteDatabase<Record<string, unknown>>} The Drizzle database instance for building queries
+   * @returns {MySqlRemoteDatabase} The Drizzle database instance for building queries
    */
-  getDrizzleQueryBuilder(): MySqlRemoteDatabase<Record<string, unknown>> & {
+  getDrizzleQueryBuilder(): MySqlRemoteDatabase & {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
     executeQuery: ExecuteQuery;
@@ -173,7 +172,7 @@ export interface QueryBuilderForgeSqlExt extends QueryBuilderForgeSql {
   selectCacheable<TSelection extends SelectedFields>(
     fields: TSelection,
     cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+  ): MySqlAsyncSelectBuilder<TSelection>;
 
   /**
    * Creates a cacheable select query builder for all columns from a table with field aliasing and caching support.
@@ -210,7 +209,7 @@ export interface QueryBuilderForgeSqlExt extends QueryBuilderForgeSql {
   selectDistinctCacheable<TSelection extends SelectedFields>(
     fields: TSelection,
     cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+  ): MySqlAsyncSelectBuilder<TSelection>;
 
   /**
    * Creates a cacheable select distinct query builder for all columns from a table with field aliasing and caching support.
@@ -241,7 +240,7 @@ export interface QueryBuilderForgeSqlExt extends QueryBuilderForgeSql {
    */
   insertAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT>;
 
   /**
    * Creates an update query builder that automatically evicts cache after execution.
@@ -254,7 +253,7 @@ export interface QueryBuilderForgeSqlExt extends QueryBuilderForgeSql {
    */
   updateAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT>;
 
   /**
    * Creates a delete query builder that automatically evicts cache after execution.
@@ -267,7 +266,7 @@ export interface QueryBuilderForgeSqlExt extends QueryBuilderForgeSql {
    */
   deleteAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+  ): MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT>;
 
   /**
    * Executes operations within a cache context that collects cache eviction events.

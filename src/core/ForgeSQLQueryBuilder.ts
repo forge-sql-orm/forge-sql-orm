@@ -7,7 +7,11 @@ import {
   AnyMySqlSelectQueryBuilder,
   AnyMySqlTable,
   customType,
-  MySqlSelectBuilder,
+  MySqlAsyncDeleteBase,
+  MySqlAsyncInsertHKT,
+  MySqlAsyncSelectBase,
+  MySqlAsyncSelectBuilder,
+  MySqlAsyncUpdateHKT,
   MySqlTable,
 } from "drizzle-orm/mysql-core";
 import {
@@ -16,11 +20,7 @@ import {
 } from "drizzle-orm/mysql-core/query-builders/select.types";
 import { InferInsertModel, Query, SQL } from "drizzle-orm";
 import { parseDateTime, formatDateTime, MetadataQueryOptions } from "../utils";
-import {
-  MySqlRemoteDatabase,
-  MySqlRemotePreparedQueryHKT,
-  MySqlRemoteQueryResultHKT,
-} from "drizzle-orm/mysql-proxy";
+import { MySqlRemoteDatabase, MySqlRemoteQueryResultHKT } from "drizzle-orm/mysql-proxy";
 import {
   ClusterStatementRowCamelCase,
   ExplainAnalyzeRow,
@@ -28,13 +28,7 @@ import {
 } from "./SystemTables";
 
 import { ExecuteQuery, SelectAliasedDistinctType, SelectAliasedType, Cache } from "..";
-import {
-  MySqlDeleteBase,
-  MySqlInsertBuilder,
-  MySqlSelectBase,
-  MySqlUpdateBuilder,
-} from "drizzle-orm/mysql-core/query-builders";
-
+import { MySqlInsertBuilder, MySqlUpdateBuilder } from "drizzle-orm/mysql-core/query-builders";
 import {
   GetSelectTableName,
   GetSelectTableSelection,
@@ -46,11 +40,10 @@ import { SQLWrapper } from "drizzle-orm/sql/sql";
  * Type alias for MySqlSelectBase return type used in selectFrom methods.
  * Reduces code duplication in type definitions.
  */
-export type SelectFromReturnType<T extends MySqlTable> = MySqlSelectBase<
+export type SelectFromReturnType<T extends MySqlTable> = MySqlAsyncSelectBase<
   GetSelectTableName<T>,
   GetSelectTableSelection<T>,
   "single",
-  MySqlRemotePreparedQueryHKT,
   GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
   false,
   never,
@@ -85,9 +78,9 @@ import { WithSubquery } from "drizzle-orm/subquery";
 export interface ForgeSqlOperation extends QueryBuilderForgeSql {
   /**
    * Creates a new query builder for the given entity.
-   * @returns {MySqlRemoteDatabase<Record<string, unknown>>} The Drizzle database instance for building queries
+   * @returns {MySqlRemoteDatabase} The Drizzle database instance for building queries
    */
-  getDrizzleQueryBuilder(): MySqlRemoteDatabase<Record<string, unknown>> & {
+  getDrizzleQueryBuilder(): MySqlRemoteDatabase & {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
     executeQuery: ExecuteQuery;
@@ -126,9 +119,9 @@ export interface ForgeSqlOperation extends QueryBuilderForgeSql {
 export interface QueryBuilderForgeSql {
   /**
    * Creates a new query builder for the given entity.
-   * @returns {MySqlRemoteDatabase<Record<string, unknown>>} The Drizzle database instance for building queries
+   * @returns {MySqlRemoteDatabase} The Drizzle database instance for building queries
    */
-  getDrizzleQueryBuilder(): MySqlRemoteDatabase<Record<string, unknown>> & {
+  getDrizzleQueryBuilder(): MySqlRemoteDatabase & {
     selectAliased: SelectAliasedType;
     selectAliasedDistinct: SelectAliasedDistinctType;
     executeQuery: ExecuteQuery;
@@ -140,7 +133,7 @@ export interface QueryBuilderForgeSql {
    *
    * @template TSelection - The type of the selected fields
    * @param {TSelection} fields - Object containing the fields to select, with table schemas as values
-   * @returns {MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>} A select query builder with unique field aliases
+   * @returns {MySqlAsyncSelectBuilder<TSelection>} A select query builder with unique field aliases
    * @throws {Error} If fields parameter is empty
    * @example
    * ```typescript
@@ -152,7 +145,7 @@ export interface QueryBuilderForgeSql {
    */
   select<TSelection extends SelectedFields>(
     fields: TSelection,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+  ): MySqlAsyncSelectBuilder<TSelection>;
 
   /**
    * Creates a select query builder for all columns from a table with field aliasing support.
@@ -174,7 +167,7 @@ export interface QueryBuilderForgeSql {
    *
    * @template TSelection - The type of the selected fields
    * @param {TSelection} fields - Object containing the fields to select, with table schemas as values
-   * @returns {MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>} A distinct select query builder with unique field aliases
+   * @returns {MySqlAsyncSelectBuilder<TSelection>} A distinct select query builder with unique field aliases
    * @throws {Error} If fields parameter is empty
    * @example
    * ```typescript
@@ -186,7 +179,7 @@ export interface QueryBuilderForgeSql {
    */
   selectDistinct<TSelection extends SelectedFields>(
     fields: TSelection,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+  ): MySqlAsyncSelectBuilder<TSelection>;
   /**
    * Creates a select distinct query builder for all columns from a table with field aliasing support.
    * This is a convenience method that automatically selects all distinct columns from the specified table.
@@ -212,7 +205,7 @@ export interface QueryBuilderForgeSql {
    */
   insert<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT>;
 
   /**
    * Creates an update query builder.
@@ -225,7 +218,7 @@ export interface QueryBuilderForgeSql {
    */
   update<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT>;
 
   /**
    * Creates a delete query builder.
@@ -238,7 +231,7 @@ export interface QueryBuilderForgeSql {
    */
   delete<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+  ): MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT>;
 
   /**
    * Executes operations within a local cache context that provides in-memory caching for select queries.
@@ -541,16 +534,12 @@ export interface QueryBuilderForgeSql {
    */
   with(...queries: WithSubquery[]): {
     select: {
-      (): MySqlSelectBuilder<undefined, MySqlRemotePreparedQueryHKT>;
-      <TSelection extends SelectedFields>(
-        fields: TSelection,
-      ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+      (): MySqlAsyncSelectBuilder<undefined>;
+      <TSelection extends SelectedFields>(fields: TSelection): MySqlAsyncSelectBuilder<TSelection>;
     };
     selectDistinct: {
-      (): MySqlSelectBuilder<undefined, MySqlRemotePreparedQueryHKT>;
-      <TSelection extends SelectedFields>(
-        fields: TSelection,
-      ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+      (): MySqlAsyncSelectBuilder<undefined>;
+      <TSelection extends SelectedFields>(fields: TSelection): MySqlAsyncSelectBuilder<TSelection>;
     };
   };
 

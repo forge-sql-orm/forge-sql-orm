@@ -24,7 +24,7 @@ export const comment = mysqlTable(
   (table) => [
     index("idx_comment_author_user_id").on(table.authorUserId),
     index("idx_comment_document_id").on(table.documentId),
-    primaryKey({ columns: [table.id], name: "comment_id" }),
+    primaryKey({ columns: [table.id] }),
   ],
 );
 
@@ -49,7 +49,7 @@ export const document = mysqlTable(
     index("idx_created_at").on(table.createdAt),
     index("idx_document_created_at_id").on(table.createdAt, table.id),
     index("idx_document_owner_user_id").on(table.ownerUserId),
-    primaryKey({ columns: [table.id], name: "document_id" }),
+    primaryKey({ columns: [table.id] }),
   ],
 );
 
@@ -72,7 +72,6 @@ export const documentAcl = mysqlTable(
     index("idx_document_acl_subject").on(table.subjectType, table.subjectId),
     primaryKey({
       columns: [table.documentId, table.permissionId, table.subjectType, table.subjectId],
-      name: "document_acl_document_id_permission_id_subject_type_subject_id",
     }),
   ],
 );
@@ -89,7 +88,7 @@ export const groupRole = mysqlTable(
   },
   (table) => [
     index("idx_group_role_role_id").on(table.roleId),
-    primaryKey({ columns: [table.groupId, table.roleId], name: "group_role_group_id_role_id" }),
+    primaryKey({ columns: [table.groupId, table.roleId] }),
   ],
 );
 
@@ -102,10 +101,7 @@ export const jiraGroup = mysqlTable(
       .default(sql`(CURRENT_TIMESTAMP)`)
       .notNull(),
   },
-  (table) => [
-    primaryKey({ columns: [table.id], name: "jira_group_id" }),
-    unique("uq_jira_group_name").on(table.name),
-  ],
+  (table) => [primaryKey({ columns: [table.id] }), unique("uq_jira_group_name").on(table.name)],
 );
 
 export const permission = mysqlTable(
@@ -115,10 +111,7 @@ export const permission = mysqlTable(
     code: varchar({ length: 64 }).notNull(),
     description: varchar({ length: 1024 }).notNull(),
   },
-  (table) => [
-    primaryKey({ columns: [table.id], name: "permission_id" }),
-    unique("uq_permission_code").on(table.code),
-  ],
+  (table) => [primaryKey({ columns: [table.id] }), unique("uq_permission_code").on(table.code)],
 );
 
 export const role = mysqlTable(
@@ -131,10 +124,7 @@ export const role = mysqlTable(
       .default(sql`(CURRENT_TIMESTAMP)`)
       .notNull(),
   },
-  (table) => [
-    primaryKey({ columns: [table.id], name: "role_id" }),
-    unique("uq_role_code").on(table.code),
-  ],
+  (table) => [primaryKey({ columns: [table.id] }), unique("uq_role_code").on(table.code)],
 );
 
 export const roleHierarchy = mysqlTable(
@@ -151,7 +141,6 @@ export const roleHierarchy = mysqlTable(
     index("idx_role_hierarchy_child_role_id").on(table.childRoleId),
     primaryKey({
       columns: [table.parentRoleId, table.childRoleId],
-      name: "role_hierarchy_parent_role_id_child_role_id",
     }),
   ],
 );
@@ -170,7 +159,6 @@ export const rolePermission = mysqlTable(
     index("idx_role_permission_permission_id").on(table.permissionId),
     primaryKey({
       columns: [table.roleId, table.permissionId],
-      name: "role_permission_role_id_permission_id",
     }),
   ],
 );
@@ -187,7 +175,7 @@ export const user = mysqlTable(
     updateAt: forgeDateTimeString("update_at").default(sql`(CURRENT_TIMESTAMP)`),
   },
   (table) => [
-    primaryKey({ columns: [table.id], name: "user_id" }),
+    primaryKey({ columns: [table.id] }),
     unique("uq_user_jira_account_id").on(table.jiraAccountId),
   ],
 );
@@ -204,7 +192,7 @@ export const userGroup = mysqlTable(
   },
   (table) => [
     index("idx_user_group_group_id").on(table.groupId),
-    primaryKey({ columns: [table.userId, table.groupId], name: "user_group_user_id_group_id" }),
+    primaryKey({ columns: [table.userId, table.groupId] }),
   ],
 );
 
@@ -220,6 +208,6 @@ export const userRole = mysqlTable(
   },
   (table) => [
     index("idx_user_role_role_id").on(table.roleId),
-    primaryKey({ columns: [table.userId, table.roleId], name: "user_role_user_id_role_id" }),
+    primaryKey({ columns: [table.userId, table.roleId] }),
   ],
 );

@@ -6,6 +6,7 @@ We are committed to fixing security vulnerabilities in the latest stable release
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 3.x.x   | :white_check_mark: |
 | 2.x.x   | :white_check_mark: |
 | < 2.0.0 | :x:                |
 

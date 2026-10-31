@@ -7,7 +7,10 @@ import { formatDateTime, formatLimitOffset, parseDateTime } from "../../../src/u
 
 // Property-based tests: fast-check generates many inputs, including hostile ones, to check
 // that the helpers that build SQL fragments and format dates keep their contracts.
-const rawText = (value: unknown): string => (value as any).queryChunks[0].value[0];
+const rawText = (value: unknown): string => {
+  const chunkValue = (value as any).queryChunks[0].value;
+  return Array.isArray(chunkValue) ? chunkValue[0] : chunkValue;
+};
 
 describe("formatLimitOffset (property-based)", () => {
   it("renders every safe integer as plain digits and nothing else", () => {

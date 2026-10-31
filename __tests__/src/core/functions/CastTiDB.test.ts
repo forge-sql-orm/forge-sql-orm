@@ -3,7 +3,6 @@
 
 import { describe, expect, it } from "vitest";
 import { getTableColumns } from "drizzle-orm";
-import { CasingCache } from "drizzle-orm/casing";
 import { int, mysqlTable, text } from "drizzle-orm/mysql-core";
 import {
   castTargetArray,
@@ -37,7 +36,6 @@ const t = mysqlTable("cast_t", {
 const cols = getTableColumns(t);
 
 const mysqlQueryConfig = {
-  casing: new CasingCache(undefined),
   escapeName: (name: string) => `\`${name.replace(/`/g, "``")}\``,
   escapeParam: (_num: number) => `?`,
   escapeString: (str: string) => `'${str.replace(/'/g, "''")}'`,

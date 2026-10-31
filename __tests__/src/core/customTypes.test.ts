@@ -3,7 +3,6 @@
 
 import { describe, expect, it } from "vitest";
 import { getTableColumns } from "drizzle-orm";
-import { CasingCache } from "drizzle-orm/casing";
 import { int, mysqlTable } from "drizzle-orm/mysql-core";
 import {
   forgeBinary,
@@ -29,7 +28,6 @@ const t = mysqlTable("custom_types_t", {
 const cols = getTableColumns(t);
 
 const mysqlQueryConfig = {
-  casing: new CasingCache(undefined),
   escapeName: (name: string) => `\`${name.replace(/`/g, "``")}\``,
   escapeParam: (_num: number) => `?`,
   escapeString: (str: string) => `'${str.replace(/'/g, "''")}'`,
