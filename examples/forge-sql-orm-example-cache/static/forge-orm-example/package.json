@@ -12,7 +12,7 @@
     "@types/node": "^26.6.6",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.7",
-    "@vitejs/plugin-react": "^6.1.2",
+    "@vitejs/plugin-react": "^6.2.1",
     "dotenv": "18.0.9",
     "knip": "^6.44.1",
     "prettier": "^3.9.10",
