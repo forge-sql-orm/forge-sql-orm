@@ -304,14 +304,12 @@ jobs:
           exit 1
 
   build:
+    name: build and deploy
     if: always()
     needs: [quality, examples]
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    strategy:
-      matrix:
-        node-version: [24.x]
     steps:
       - name: Fail if any dependency failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
