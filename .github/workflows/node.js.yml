@@ -27,7 +27,7 @@ jobs:
       pull-requests: write
     strategy:
       matrix:
-        node-version: [24.22]
+        node-version: [24.x]
     outputs:
       gpr_enabled: ${{ steps.gpr.outputs.enabled }}
       core_version: ${{ steps.publish_core.outputs.core_version }}
@@ -42,6 +42,7 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
+          check-latest: true
           cache: 'npm'
       - run: npm ci --ignore-scripts
       - name: REUSE / SPDX compliance
@@ -180,7 +181,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24.22
+          node-version: 24.x
+          check-latest: true
           cache: 'npm'
       - run: npm install -g @forge/cli@15.0.0 && forge settings set usage-analytics true
 
@@ -304,14 +306,12 @@ jobs:
           exit 1
 
   build:
+    name: build and deploy
     if: always()
     needs: [quality, examples]
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    strategy:
-      matrix:
-        node-version: [24.16]
     steps:
       - name: Fail if any dependency failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')

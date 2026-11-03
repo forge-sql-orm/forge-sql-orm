@@ -12,6 +12,11 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 Added an automated [OpenSSF Scorecard](https://scorecard.dev/) analysis workflow (weekly and on every push to `master`). Results are uploaded to GitHub code scanning, and the public report is available at [OpenSSF Scorecard report](https://scorecard.dev/viewer/?uri=github.com/forge-sql-orm/forge-sql-orm).
 
+⚙️ CI
+
+- Node.js version in the main CI workflow (`node.js.yml`) is now `24.x` (Node 24 LTS) everywhere instead of pinned `24.16` / `24.22`, consistent with the other workflows.
+- The final aggregating job is renamed from `build (24.x)` to `build and deploy` (the unused Node matrix was removed).
+
 📦 Dependency Updates
 
 Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.
