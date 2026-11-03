@@ -42,6 +42,7 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
+          check-latest: true
           cache: 'npm'
       - run: npm ci --ignore-scripts
       - name: REUSE / SPDX compliance
@@ -181,6 +182,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.x
+          check-latest: true
           cache: 'npm'
       - run: npm install -g @forge/cli@15.0.0 && forge settings set usage-analytics true
 
