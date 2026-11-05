@@ -3,7 +3,6 @@
 
 import { describe, expect, it } from "vitest";
 import { getTableColumns, type SQL } from "drizzle-orm";
-import { CasingCache } from "drizzle-orm/casing";
 import { int, mysqlTable, timestamp } from "drizzle-orm/mysql-core";
 import {
   addDate,
@@ -77,7 +76,6 @@ const t = mysqlTable("date_t", {
 const cols = getTableColumns(t);
 
 const mysqlQueryConfig = {
-  casing: new CasingCache(undefined),
   escapeName: (name: string) => `\`${name.replace(/`/g, "``")}\``,
   escapeParam: (_num: number) => `?`,
   escapeString: (str: string) => `'${str.replace(/'/g, "''")}'`,

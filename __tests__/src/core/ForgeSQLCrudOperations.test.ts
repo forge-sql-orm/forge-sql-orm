@@ -323,7 +323,7 @@ describe("ForgeSQLCrudOperations", () => {
     );
 
     expect(vi.mocked(sql.prepare)).toHaveBeenCalledWith(
-      "delete from `test_entity_version` where (`test_entity_version`.`id` = ? and `test_entity_version`.`version` = ?)",
+      "delete from `test_entity_version` where ((`test_entity_version`.`id` = ?) and (`test_entity_version`.`version` = ?))",
     );
   });
 
@@ -346,7 +346,7 @@ describe("ForgeSQLCrudOperations", () => {
       .modifyWithVersioning()
       .updateById({ id: 1, name: "Updated", version: 2 }, testEntityVersion);
     expect(vi.mocked(sql.prepare)).toHaveBeenCalledWith(
-      "update `test_entity_version` set `id` = ?, `name` = ?, `version` = ? where (`test_entity_version`.`id` = ? and `test_entity_version`.`version` = ?)",
+      "update `test_entity_version` set `id` = ?, `name` = ?, `version` = ? where ((`test_entity_version`.`id` = ?) and (`test_entity_version`.`version` = ?))",
     );
     const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
     expect(preparedStatement.bindParams).toHaveBeenCalledWith(1, "Updated", 3, 1, 2);
@@ -357,7 +357,7 @@ describe("ForgeSQLCrudOperations", () => {
       .modifyWithVersioning()
       .updateById({ id: 1, name: "Updated", version: 2 }, TestEntityVersionDifferentField);
     expect(vi.mocked(sql.prepare)).toHaveBeenCalledWith(
-      "update `test_entity_diff_version` set `id` = ?, `name` = ?, `version_different_field` = ? where (`test_entity_diff_version`.`id` = ? and `test_entity_diff_version`.`version_different_field` = ?)",
+      "update `test_entity_diff_version` set `id` = ?, `name` = ?, `version_different_field` = ? where ((`test_entity_diff_version`.`id` = ?) and (`test_entity_diff_version`.`version_different_field` = ?))",
     );
     const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
     expect(preparedStatement.bindParams).toHaveBeenCalledWith(1, "Updated", 3, 1, 2);
@@ -369,7 +369,7 @@ describe("ForgeSQLCrudOperations", () => {
       .modifyWithVersioning()
       .updateById({ id: 1, version: new Date("01.01.2010 00:00:00") }, testEntityDateVersion);
     expect(vi.mocked(sql.prepare)).toHaveBeenCalledWith(
-      "update `test_entity_date_version` set `id` = ?, `version` = ? where (`test_entity_date_version`.`id` = ? and `test_entity_date_version`.`version` = ?)",
+      "update `test_entity_date_version` set `id` = ?, `version` = ? where ((`test_entity_date_version`.`id` = ?) and (`test_entity_date_version`.`version` = ?))",
     );
     const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
     expect(preparedStatement.bindParams).toHaveBeenCalledWith(
@@ -386,7 +386,7 @@ describe("ForgeSQLCrudOperations", () => {
       .modifyWithVersioning()
       .updateById({ id: 1, version: new Date("01.01.2010 00:00:00") }, testEntityTimeStampVersion);
     expect(vi.mocked(sql.prepare)).toHaveBeenCalledWith(
-      "update `test_entity_timestamp_version` set `id` = ?, `version` = ? where (`test_entity_timestamp_version`.`id` = ? and `test_entity_timestamp_version`.`version` = ?)",
+      "update `test_entity_timestamp_version` set `id` = ?, `version` = ? where ((`test_entity_timestamp_version`.`id` = ?) and (`test_entity_timestamp_version`.`version` = ?))",
     );
     const preparedStatement = vi.mocked(sql.prepare).mock.results[0].value;
     expect(preparedStatement.bindParams).toHaveBeenCalledWith(
@@ -430,9 +430,7 @@ describe("ForgeSQLCrudOperations", () => {
 
       await expect(
         forgeSqlOperation.modifyWithVersioning().insert(testEntity, [{ id: 1, name: "Test" }]),
-      ).rejects.toThrow(
-        "Failed query: insert into `test_entity` (`id`, `name`) values (?, ?)\n" + "params: 1,Test",
-      );
+      ).rejects.toThrow("Failed query: insert into `test_entity` (`id`, `name`) values (?, ?)");
     });
 
     it("should throw error when update fails", async () => {
@@ -449,8 +447,7 @@ describe("ForgeSQLCrudOperations", () => {
       await expect(
         forgeSqlOperation.modifyWithVersioning().updateById({ id: 1, name: "Updated" }, testEntity),
       ).rejects.toThrow(
-        "Failed query: update `test_entity` set `id` = ?, `name` = ? where `test_entity`.`id` = ?\n" +
-          "params: 1,Updated,1",
+        "Failed query: update `test_entity` set `id` = ?, `name` = ? where `test_entity`.`id` = ?",
       );
     });
 
@@ -467,9 +464,7 @@ describe("ForgeSQLCrudOperations", () => {
 
       await expect(
         forgeSqlOperation.modifyWithVersioning().deleteById(1, testEntity),
-      ).rejects.toThrow(
-        "Failed query: delete from `test_entity` where `test_entity`.`id` = ?\n" + "params: 1",
-      );
+      ).rejects.toThrow("Failed query: delete from `test_entity` where `test_entity`.`id` = ?");
     });
   });
 

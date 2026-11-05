@@ -10,7 +10,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "paths": {
+      "drizzle-orm": ["./node_modules/drizzle-orm"],
+      "drizzle-orm/*": ["./node_modules/drizzle-orm/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist-cli"]

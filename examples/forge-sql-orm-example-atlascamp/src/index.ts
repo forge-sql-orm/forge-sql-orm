@@ -104,7 +104,7 @@ const query =
 //   .innerJoin(demoOrders, eq(demoOrders.userId, demoUsers.id));
 export function withTidbHint<
   TDataType extends ColumnDataType,
-  TPartial extends Partial<ColumnBaseConfig<TDataType, string>>,
+  TPartial extends Partial<ColumnBaseConfig<TDataType>>,
 >(column: AnyMySqlColumn<TPartial>): AnyMySqlColumn<TPartial> {
   // We lie a bit to TypeScript here: at runtime this is a new SQL fragment,
   // but returning TExpr keeps the column type info in downstream inference.

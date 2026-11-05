@@ -15,10 +15,7 @@ export const demoOrders = mysqlTable(
     product: varchar({ length: 100 }).notNull(),
     createdAt: forgeTimestampString("created_at"),
   },
-  (table) => [
-    index("user_id").on(table.userId),
-    primaryKey({ columns: [table.id], name: "demo_orders_id" }),
-  ],
+  (table) => [index("user_id").on(table.userId), primaryKey({ columns: [table.id] })],
 );
 
 export const demoUsers = mysqlTable(
@@ -27,5 +24,5 @@ export const demoUsers = mysqlTable(
     id: int().autoincrement().notNull(),
     name: varchar({ length: 100 }).notNull(),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "demo_users_id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );

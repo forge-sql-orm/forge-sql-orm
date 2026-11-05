@@ -7,8 +7,8 @@
   "dependencies": {
     "@forge/resolver": "2.0.2",
     "@forge/sql": "^4.0.9",
-    "drizzle-orm": "^0.45.4",
-    "forge-sql-orm": "^2.2.5",
+    "drizzle-orm": "rc",
+    "forge-sql-orm": "../..",
     "minisearch": "^7.2.0"
   },
   "scripts": {

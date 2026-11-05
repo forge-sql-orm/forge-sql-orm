@@ -369,7 +369,9 @@ describe("updateMigration", () => {
   });
 
   it("drops and recreates an index whose columns changed", async () => {
-    writeUsersSchema({ indexes: `{ name: "idx_name", columns: [{ name: "id" }] }` });
+    writeUsersSchema({
+      indexes: `{ config: { name: "idx_name", columns: [{ name: "id" }] } }`,
+    });
     mockConnection(
       [idDbColumn()],
       [
@@ -395,6 +397,78 @@ describe("updateMigration", () => {
     const migration = readMigration();
     expect(migration).toContain("DROP INDEX `idx_name`");
     expect(migration).toContain("INDEX if not exists `idx_name`");
+  });
+
+  it("does not recreate a matching uniqueIndex() (index builder with config.unique)", async () => {
+    writeUsersSchema({
+      indexes: `{ config: { name: "uq_email", columns: [{ name: "email" }], unique: true } }`,
+    });
+    mockConnection(
+      [idDbColumn()],
+      [
+        {
+          TABLE_NAME: "users",
+          INDEX_NAME: "uq_email",
+          COLUMN_NAME: "email",
+          NON_UNIQUE: 0,
+          SEQ_IN_INDEX: 1,
+        },
+      ],
+    );
+
+    await updateMigration(options());
+
+    expect(fs.existsSync(path.join(output, "migrationV2.ts"))).toBe(false);
+    expect(exitSpy).toHaveBeenCalledWith(0);
+  });
+
+  it("recreates an index that is unique in the db but not in the schema", async () => {
+    writeUsersSchema({
+      indexes: `{ config: { name: "idx_email", columns: [{ name: "email" }] } }`,
+    });
+    mockConnection(
+      [idDbColumn()],
+      [
+        {
+          TABLE_NAME: "users",
+          INDEX_NAME: "idx_email",
+          COLUMN_NAME: "email",
+          NON_UNIQUE: 0,
+          SEQ_IN_INDEX: 1,
+        },
+      ],
+    );
+
+    await updateMigration(options());
+
+    const migration = readMigration();
+    expect(migration).toContain("DROP INDEX `idx_email`");
+    expect(migration).toContain("UNIQUE INDEX if not exists `idx_email`");
+  });
+
+  it("resolves foreignKey() builders through reference()", async () => {
+    writeUsersSchema({
+      foreignKeys: `{ reference: () => ({ name: "fk_org", columns: [{ name: "org_id" }] }) }`,
+    });
+    mockConnection(
+      [idDbColumn()],
+      [],
+      [
+        {
+          TABLE_NAME: "users",
+          COLUMN_NAME: "org_id",
+          CONSTRAINT_NAME: "fk_org",
+          REFERENCED_TABLE_NAME: "orgs",
+          REFERENCED_COLUMN_NAME: "id",
+        },
+      ],
+    );
+
+    await updateMigration(options());
+
+    // the builder is matched to the db foreign key by name, so there is nothing to migrate
+    expect(fs.existsSync(path.join(output, "migrationV2.ts"))).toBe(false);
+    expect(exitSpy).toHaveBeenCalledWith(0);
   });
 
   it("treats a unique constraint as the matching index", async () => {

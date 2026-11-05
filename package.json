@@ -1,6 +1,6 @@
 {
   "name": "forge-sql-orm",
-  "version": "2.2.5",
+  "version": "3.0.0-rc",
   "description": "Drizzle ORM integration for Atlassian @forge/sql. Custom driver, schema migration, local in-memory cache, optimistic locking, and query analysis. Use forge-sql-orm-extra for @forge/kvs global cache and Rovo.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -91,7 +91,7 @@
   ],
   "peerDependencies": {
     "@forge/sql": "^4.0.9",
-    "drizzle-orm": "^0.45.4"
+    "drizzle-orm": "rc"
   },
   "dependencies": {
     "@forge/api": "^8.4.0",

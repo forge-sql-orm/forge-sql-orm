@@ -10,12 +10,7 @@
  * couple us to private Drizzle types. The `any`s here are deliberate at the
  * Drizzle/ORM boundary; tightening would not improve runtime safety.
  */
-import {
-  MySqlRawQueryResult,
-  MySqlRemoteDatabase,
-  MySqlRemotePreparedQueryHKT,
-  MySqlRemoteQueryResultHKT,
-} from "drizzle-orm/mysql-proxy";
+import { MySqlRemoteDatabase, MySqlRemoteQueryResultHKT } from "drizzle-orm/mysql-proxy";
 
 import { SelectedFields } from "drizzle-orm/mysql-core/query-builders/select.types";
 import {
@@ -24,13 +19,15 @@ import {
   mapSelectFieldsWithAlias,
   SelectFromReturnType,
 } from "../../..";
-import { MySqlSelectBase, MySqlSelectBuilder } from "drizzle-orm/mysql-core";
-import { MySqlTable } from "drizzle-orm/mysql-core/table";
 import {
-  MySqlDeleteBase,
-  MySqlInsertBuilder,
-  MySqlUpdateBuilder,
-} from "drizzle-orm/mysql-core/query-builders";
+  MySqlAsyncDeleteBase,
+  MySqlAsyncInsertHKT,
+  MySqlAsyncSelectBase,
+  MySqlAsyncSelectBuilder,
+  MySqlAsyncUpdateHKT,
+} from "drizzle-orm/mysql-core";
+import { MySqlTable } from "drizzle-orm/mysql-core/table";
+import { MySqlInsertBuilder, MySqlUpdateBuilder } from "drizzle-orm/mysql-core/query-builders";
 import { clearCache, getFromCache, setCacheResult } from "../../../utils/cacheUtils";
 import {
   cacheApplicationContext,
@@ -128,14 +125,14 @@ function shouldClearCacheOnError(error: any): boolean {
  */
 export type SelectAliasedType = <TSelection extends SelectedFields>(
   fields: TSelection,
-) => MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+) => MySqlAsyncSelectBuilder<TSelection>;
 
 /**
  * Type for select distinct queries with field aliasing
  */
 export type SelectAliasedDistinctType = <TSelection extends SelectedFields>(
   fields: TSelection,
-) => MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+) => MySqlAsyncSelectBuilder<TSelection>;
 
 /**
  * Type for select queries with field aliasing and caching
@@ -143,7 +140,7 @@ export type SelectAliasedDistinctType = <TSelection extends SelectedFields>(
 export type SelectAliasedCacheableType = <TSelection extends SelectedFields>(
   fields: TSelection,
   cacheTtl?: number,
-) => MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+) => MySqlAsyncSelectBuilder<TSelection>;
 
 /**
  * Type for select distinct queries with field aliasing and caching
@@ -151,18 +148,17 @@ export type SelectAliasedCacheableType = <TSelection extends SelectedFields>(
 export type SelectAliasedDistinctCacheableType = <TSelection extends SelectedFields>(
   fields: TSelection,
   cacheTtl?: number,
-) => MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+) => MySqlAsyncSelectBuilder<TSelection>;
 
 /**
  * Type for select queries from table with field aliasing
  */
 export type SelectAllFromAliasedType = <T extends MySqlTable>(
   table: T,
-) => MySqlSelectBase<
+) => MySqlAsyncSelectBase<
   GetSelectTableName<T>,
   GetSelectTableSelection<T>,
   "single",
-  MySqlRemotePreparedQueryHKT,
   GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
   false,
   never,
@@ -185,11 +181,10 @@ export type SelectAllFromAliasedType = <T extends MySqlTable>(
  */
 export type SelectAllDistinctFromAliasedType = <T extends MySqlTable>(
   table: T,
-) => MySqlSelectBase<
+) => MySqlAsyncSelectBase<
   GetSelectTableName<T>,
   GetSelectTableSelection<T>,
   "single",
-  MySqlRemotePreparedQueryHKT,
   GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
   false,
   never,
@@ -213,11 +208,10 @@ export type SelectAllDistinctFromAliasedType = <T extends MySqlTable>(
 export type SelectAllFromCacheableAliasedType = <T extends MySqlTable>(
   table: T,
   cacheTtl?: number,
-) => MySqlSelectBase<
+) => MySqlAsyncSelectBase<
   GetSelectTableName<T>,
   GetSelectTableSelection<T>,
   "single",
-  MySqlRemotePreparedQueryHKT,
   GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
   false,
   never,
@@ -241,11 +235,10 @@ export type SelectAllFromCacheableAliasedType = <T extends MySqlTable>(
 export type SelectAllDistinctFromCacheableAliasedType = <T extends MySqlTable>(
   table: T,
   cacheTtl?: number,
-) => MySqlSelectBase<
+) => MySqlAsyncSelectBase<
   GetSelectTableName<T>,
   GetSelectTableSelection<T>,
   "single",
-  MySqlRemotePreparedQueryHKT,
   GetSelectTableName<T> extends string ? Record<string & GetSelectTableName<T>, "not-null"> : {},
   false,
   never,
@@ -262,6 +255,8 @@ export type SelectAllDistinctFromCacheableAliasedType = <T extends MySqlTable>(
   }[],
   any
 >;
+
+type RawQueryResult<T> = MySqlQueryResultKind<MySqlRemoteQueryResultHKT, T>;
 
 /**
  * Type for executing raw SQL queries with local cache
@@ -283,21 +278,21 @@ export type ExecuteQueryCacheable = <T>(
  */
 export type InsertAndEvictCacheType = <TTable extends MySqlTable>(
   table: TTable,
-) => MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+) => MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT>;
 
 /**
  * Type for update operations with cache eviction
  */
 export type UpdateAndEvictCacheType = <TTable extends MySqlTable>(
   table: TTable,
-) => MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+) => MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT>;
 
 /**
  * Type for delete operations with cache eviction
  */
 export type DeleteAndEvictCacheType = <TTable extends MySqlTable>(
   table: TTable,
-) => MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>;
+) => MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT>;
 
 /**
  * Handles successful query execution with cache management.
@@ -442,11 +437,11 @@ function insertAndEvictCacheBuilder<TTable extends MySqlTable>(
   table: TTable,
   options: ForgeSqlOrmOptions,
   isCached: boolean,
-): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT> {
   const builder = db.insert(table);
   return createCacheEvictBuilder<
     TTable,
-    MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>
+    MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT>
   >(builder as unknown as QueryBuilder, table, options, isCached);
 }
 
@@ -463,11 +458,11 @@ function updateAndEvictCacheBuilder<TTable extends MySqlTable>(
   table: TTable,
   options: ForgeSqlOrmOptions,
   isCached: boolean,
-): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT> {
   const builder = db.update(table);
   return createCacheEvictBuilder<
     TTable,
-    MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>
+    MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT>
   >(builder as unknown as QueryBuilder, table, options, isCached);
 }
 
@@ -484,12 +479,14 @@ function deleteAndEvictCacheBuilder<TTable extends MySqlTable>(
   table: TTable,
   options: ForgeSqlOrmOptions,
   isCached: boolean,
-): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+): MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT> {
   const builder = db.delete(table);
-  return createCacheEvictBuilder<
-    TTable,
-    MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT>
-  >(builder as unknown as QueryBuilder, table, options, isCached);
+  return createCacheEvictBuilder<TTable, MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT>>(
+    builder as unknown as QueryBuilder,
+    table,
+    options,
+    isCached,
+  );
 }
 
 /**
@@ -747,7 +744,7 @@ function createAliasedSelectProxyHandler(config: AliasedSelectProxyConfig) {
 interface AliasedSelectBuilderConfig<TSelection extends SelectedFields> {
   db: MySqlRemoteDatabase<any>;
   fields: TSelection;
-  selectFn: (selections: any) => MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>;
+  selectFn: (selections: any) => MySqlAsyncSelectBuilder<TSelection>;
   useCache: boolean;
   options: ForgeSqlOrmOptions;
   cacheTtl?: number;
@@ -755,7 +752,7 @@ interface AliasedSelectBuilderConfig<TSelection extends SelectedFields> {
 
 function createAliasedSelectBuilder<TSelection extends SelectedFields>(
   config: AliasedSelectBuilderConfig<TSelection>,
-): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+): MySqlAsyncSelectBuilder<TSelection> {
   const { fields, selectFn, useCache, options, cacheTtl } = config;
   const { selections, aliasMap } = mapSelectFieldsWithAlias(fields);
   const builder = selectFn(selections);
@@ -801,10 +798,10 @@ function createRawQueryExecutor(
   options: ForgeSqlOrmOptions,
   useGlobalCache: boolean = false,
 ) {
-  return async function <T extends { [column: string]: any }>(
+  return async function <T>(
     query: SQLWrapper | string,
     cacheTtl?: number,
-  ): Promise<MySqlRawQueryResult> {
+  ): Promise<RawQueryResult<T>> {
     let sql: Query;
 
     if (isSQLWrapper(query)) {
@@ -820,19 +817,19 @@ function createRawQueryExecutor(
     // Check local cache first
     const localCacheResult = await getQueryLocalCacheQuery(sql, options);
     if (localCacheResult) {
-      return localCacheResult as MySqlRawQueryResult;
+      return localCacheResult as RawQueryResult<T>;
     }
 
     // Check global cache if enabled
     if (useGlobalCache) {
       const cacheResult = await getFromCache({ toSQL: () => sql }, options);
       if (cacheResult) {
-        return cacheResult as MySqlRawQueryResult;
+        return cacheResult as RawQueryResult<T>;
       }
     }
 
     // Execute query
-    const results = await db.execute<T>(query);
+    const results = (await db.execute(query)) as unknown as RawQueryResult<T>;
 
     // Save to local cache
     await saveQueryLocalCacheQuery(sql, results, options);

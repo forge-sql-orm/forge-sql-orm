@@ -3,7 +3,6 @@
 
 import { describe, expect, it } from "vitest";
 import { sql as dsql } from "drizzle-orm";
-import { CasingCache } from "drizzle-orm/casing";
 import {
   lastVal,
   nextVal,
@@ -12,7 +11,6 @@ import {
 } from "../../../../src/core/functions/SequenceTiDB";
 
 const mysqlQueryConfig = {
-  casing: new CasingCache(undefined),
   escapeName: (name: string) => `\`${name.replace(/`/g, "``")}\``,
   escapeParam: (_num: number) => `?`,
   escapeString: (str: string) => `'${str.replace(/'/g, "''")}'`,

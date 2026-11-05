@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import { describe, expect, it } from "vitest";
-import { CasingCache } from "drizzle-orm/casing";
 import { formatBytes, formatNanoTime } from "../../../../src/core/functions/UtilityTiDB";
 
 const mysqlQueryConfig = {
-  casing: new CasingCache(undefined),
   escapeName: (name: string) => `\`${name.replace(/`/g, "``")}\``,
   escapeParam: (_num: number) => `?`,
   escapeString: (str: string) => `'${str.replace(/'/g, "''")}'`,

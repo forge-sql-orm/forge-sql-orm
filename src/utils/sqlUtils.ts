@@ -17,6 +17,7 @@ import {
   gte,
   ilike,
   isNotNull,
+  is,
   isTable,
   not,
   notInArray,
@@ -605,12 +606,8 @@ function extractStringValueFromChunk(chunk: SQL): string | undefined {
     return undefined;
   }
 
-  const values = (stringChunk as StringChunk).value;
-  if (values?.length === 1) {
-    return values[0];
-  }
-
-  return undefined;
+  const value = (stringChunk as StringChunk).value;
+  return typeof value === "string" ? value : undefined;
 }
 
 function getAliasFromDrizzleAlias(value: unknown): string | undefined {
@@ -634,13 +631,10 @@ function transformValue(
   const column = aliasMap[alias];
   if (!column) return value;
 
-  let customColumn = column as MySqlCustomColumn<any>;
-  // @ts-ignore
-  const fromDriver = customColumn?.mapFrom;
-  if (fromDriver && value !== null && value !== undefined) {
-    return fromDriver(value);
+  if (!is(column, MySqlCustomColumn) || value === null || value === undefined) {
+    return value;
   }
-  return value;
+  return column.mapFromDriverValue(value);
 }
 
 function transformObject(
