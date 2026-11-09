@@ -19,10 +19,10 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@forge/bridge": "7.2.1",
-    "@forge/react": "12.4.0",
+    "@forge/bridge": "7.3.0",
+    "@forge/react": "12.5.0",
     "@forge/resolver": "2.0.2",
-    "@forge/sql": "^4.0.9",
+    "@forge/sql": "^4.0.10",
     "drizzle-orm": "^0.45.4",
     "forge-sql-orm": "^2.2.5",
     "react": "^18.2.0"
