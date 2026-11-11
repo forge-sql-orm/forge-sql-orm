@@ -50,7 +50,7 @@
     "drizzle-kit": "rc",
     "drizzle-orm": "rc",
     "forge-sql-orm": "..",
-    "inquirer": "^14.2.5",
+    "inquirer": "^14.3.0",
     "mysql2": "^3.24.6",
     "reflect-metadata": "^0.2.2",
     "uuid": "^14.0.3"
@@ -61,7 +61,7 @@
     "@typescript-eslint/eslint-plugin": "^8.72.2",
     "@typescript-eslint/parser": "^8.72.2",
     "eslint-config-prettier": "^10.1.8",
-    "knip": "^6.44.2",
+    "knip": "^6.45.0",
     "reflect-metadata": "^0.2.2",
     "typescript": "^6.0.3",
     "vite": "^8.3.7",
