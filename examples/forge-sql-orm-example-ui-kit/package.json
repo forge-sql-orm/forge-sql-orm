@@ -32,6 +32,7 @@
     "prosemirror-view": "npm:prosemirror-view@latest",
     "@esbuild-kit/core-utils": {
       "esbuild": "^0.28.2"
-    }
+    },
+    "minimatch": "npm:minimatch@latest"
   }
 }
