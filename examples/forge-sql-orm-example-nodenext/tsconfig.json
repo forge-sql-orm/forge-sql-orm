@@ -1,7 +1,5 @@
 {
-  "include": [
-    "./src"
-  ],
+  "include": ["./src"],
   "compilerOptions": {
     "target": "ESNext",
     "jsx": "react",
@@ -11,11 +9,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "exclude": [
-    "./src/frontend"
-  ]
+  "exclude": ["./src/frontend"]
 }

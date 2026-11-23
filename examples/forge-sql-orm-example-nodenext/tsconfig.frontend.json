@@ -1,8 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": [
-    "./src/frontend"
-  ],
+  "include": ["./src/frontend"],
   "exclude": [],
   "compilerOptions": {
     "module": "esnext",
