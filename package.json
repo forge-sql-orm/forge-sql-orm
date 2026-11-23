@@ -52,7 +52,7 @@
     "fast-check": "^4.11.0",
     "globals": "^17.14.0",
     "husky": "^9.1.7",
-    "knip": "^6.47.0",
+    "knip": "^6.48.0",
     "lcov-result-merger": "^6.0.0",
     "license-checker-rseidelsohn": "^5.0.1",
     "prettier": "^3.10.1",
