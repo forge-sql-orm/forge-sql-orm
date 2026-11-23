@@ -5,8 +5,12 @@
 // under the "import" condition (drizzle-orm .d.ts, not .d.cts). This keeps the
 // drizzle type identity consistent for ESM/bundler consumers of forge-sql-orm.
 import { writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { rewriteEsmDeclarations } from "./rewrite-esm-declarations.mjs";
 
 writeFileSync(
   new URL("../dist/esm/package.json", import.meta.url),
   JSON.stringify({ type: "module" }, null, 2) + "\n",
 );
+
+rewriteEsmDeclarations(fileURLToPath(new URL("../dist/esm/", import.meta.url)));

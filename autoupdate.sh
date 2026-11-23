@@ -432,6 +432,38 @@ step "Staging package files..."
 run git add package.json package-lock.json
 cd ..
 
+section "forge-sql-orm-example-nodenext-ts"
+cd forge-sql-orm-example-nodenext-ts
+step "Removing node_modules and lock file..."
+run rm -rf node_modules package-lock.json
+step "Updating dependencies (ncu)..."
+run ncu -u --dep prod,dev,peer,optional
+step "Installing dependencies..."
+run npm i
+step "Running knip..."
+run npm run knip
+step "Building (build:ci)..."
+run npm run build:ci
+step "Staging package files..."
+run git add package.json package-lock.json
+cd ..
+
+section "forge-sql-orm-example-nodenext-js"
+cd forge-sql-orm-example-nodenext-js
+step "Removing node_modules and lock file..."
+run rm -rf node_modules package-lock.json
+step "Updating dependencies (ncu)..."
+run ncu -u --dep prod,dev,peer,optional
+step "Installing dependencies..."
+run npm i
+step "Running knip..."
+run npm run knip
+step "Building (build:ci)..."
+run npm run build:ci
+step "Staging package files..."
+run git add package.json package-lock.json
+cd ..
+
 section "Format"
 cd ..
 step "Running format..."

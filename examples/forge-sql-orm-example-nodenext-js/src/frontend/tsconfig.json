@@ -1,0 +1,13 @@
+{
+  "include": ["."],
+  "compilerOptions": {
+    "target": "ESNext",
+    "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
+  }
+}
