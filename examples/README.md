@@ -138,4 +138,21 @@ Demonstration application showcasing advanced Forge SQL ORM capabilities for Atl
 - Async queues for degradation monitoring and long-running migrations
 - React-based frontend with interactive query execution
 
+### [forge-sql-orm-example-nodenext-js](forge-sql-orm-example-nodenext-js)
+
+Jira global page example written in **plain JavaScript (ESM + JSDoc)** and type-checked with `tsc` (`checkJs`) under `module` / `moduleResolution` **`nodenext`**, using both `forge-sql-orm` and `forge-sql-orm-extra`. Regression guard for [#2865](https://github.com/forge-sql-orm/forge-sql-orm/issues/2865) (ESM type declarations under NodeNext).
+
+- `"type": "module"` with explicit `.js` relative imports (`entities`, `migration`, `resolvers`)
+- Types via JSDoc, verified by `tsc` under `nodenext`, `node16` and `bundler`
+- Forge UI Kit global page (list, add and delete users)
+- Fails to compile if the ESM declarations of the packages break (named exports or `any` default export)
+
+### [forge-sql-orm-example-nodenext-ts](forge-sql-orm-example-nodenext-ts)
+
+The **TypeScript** counterpart of the NodeNext example: a Forge app compiled with `module` / `moduleResolution` **`nodenext`** using both `forge-sql-orm` and `forge-sql-orm-extra` ([#2865](https://github.com/forge-sql-orm/forge-sql-orm/issues/2865)).
+
+- Backend structured like the other examples (`entities`, `migration`, `resolvers`) with extensionless imports, because the Forge webpack bundler cannot resolve `./x.js` to `x.ts`
+- `src/esm-check.mts`: an ES-module-only file (never bundled) that resolves the packages through their ESM declarations and fails the build if named exports or the `ForgeSQL` type regress
+- Forge UI Kit global page (list, add and delete users)
+
 Each example includes its own README with detailed setup instructions and usage examples.
