@@ -19,7 +19,13 @@ import {
   writeNpmrc,
 } from "./gpr-shared.mjs";
 
-const PUBLISH_LIFECYCLE_SCRIPTS = ["prepare", "prepublish", "prepublishOnly", "prepack", "postpack"];
+const PUBLISH_LIFECYCLE_SCRIPTS = [
+  "prepare",
+  "prepublish",
+  "prepublishOnly",
+  "prepack",
+  "postpack",
+];
 
 function commandOutput(error) {
   if (!error || typeof error !== "object") {
