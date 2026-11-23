@@ -1,11 +1,11 @@
 modules:
   jira:globalPage:
-    - key: forge-sql-orm-nodenext-global-page
+    - key: forge-sql-orm-nodenext-js-global-page
       resource: main
       resolver:
         function: resolver
       render: native
-      title: Forge SQL ORM nodenext example
+      title: Forge SQL ORM nodenext example (JavaScript)
   trigger:
     - key: post-install-schema-migration
       function: runSchemaMigration
@@ -25,4 +25,5 @@ resources:
 app:
   runtime:
     name: nodejs24.x
-  id: ari:cloud:ecosystem::app/b944eca7-d87d-49c9-988b-95c50dcbbef6
+  # TODO: run `forge register` in this directory and replace with the generated app id
+  id: ari:cloud:ecosystem::app/REPLACE-WITH-FORGE-REGISTER-ID

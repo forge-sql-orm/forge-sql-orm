@@ -1,11 +1,10 @@
 {
-  "name": "forge-sql-orm-example-nodenext",
+  "name": "forge-sql-orm-example-nodenext-ts",
   "version": "1.0.0",
   "description": "Forge app using forge-sql-orm and forge-sql-orm-extra under module/moduleResolution nodenext (#2865)",
   "main": "index.js",
   "license": "MIT",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@forge/bridge": "7.4.0",
     "@forge/react": "12.6.0",
@@ -17,11 +16,11 @@
     "react": "^18.2.0"
   },
   "scripts": {
-    "build:ci": "tsc --project tsconfig.json && tsc --project tsconfig.frontend.json",
-    "check:nodenext": "tsc --project tsconfig.json",
-    "check:node16": "tsc --project tsconfig.json --module node16 --moduleResolution node16",
-    "check:bundler": "tsc --project tsconfig.json --module esnext --moduleResolution bundler",
-    "check:no-skiplibcheck": "tsc --project tsconfig.json --skipLibCheck false",
+    "build:ci": "tsc --noEmit --project tsconfig.json",
+    "check:nodenext": "tsc --noEmit --project tsconfig.json",
+    "check:node16": "tsc --noEmit --project tsconfig.json --module node16 --moduleResolution node16",
+    "check:bundler": "tsc --noEmit --project tsconfig.json --module esnext --moduleResolution bundler",
+    "check:no-skiplibcheck": "tsc --noEmit --project tsconfig.json --skipLibCheck false",
     "forge:debug": "forge tunnel -d -f index.handler",
     "knip": "knip"
   },

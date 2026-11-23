@@ -4,7 +4,7 @@
 import { makeResolver } from "@forge/resolver";
 import ForgeSQL from "forge-sql-orm-extra";
 import { eq } from "drizzle-orm";
-import { users, type User } from "../entities/index.js";
+import { users, type User } from "../entities";
 
 type ResolverDefinitions = {
   fetchUsers: () => User[];

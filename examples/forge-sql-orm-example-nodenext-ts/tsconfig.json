@@ -1,0 +1,13 @@
+{
+  "include": ["./src"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "jsx": "react",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
+  }
+}

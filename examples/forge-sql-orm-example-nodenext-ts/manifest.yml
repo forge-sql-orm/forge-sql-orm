@@ -1,0 +1,28 @@
+modules:
+  jira:globalPage:
+    - key: forge-sql-orm-nodenext-ts-global-page
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Forge SQL ORM nodenext example (TypeScript)
+  trigger:
+    - key: post-install-schema-migration
+      function: runSchemaMigration
+      events:
+        - avi:forge:installed:app
+  sql:
+    - key: main
+      engine: mysql
+  function:
+    - key: resolver
+      handler: index.handler
+    - key: runSchemaMigration
+      handler: index.handlerMigration
+resources:
+  - key: main
+    path: src/frontend/index.tsx
+app:
+  runtime:
+    name: nodejs24.x
+  id: ari:cloud:ecosystem::app/b944eca7-d87d-49c9-988b-95c50dcbbef6

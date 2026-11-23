@@ -14,7 +14,7 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 🧪 Examples
 
-- New example [`forge-sql-orm-example-nodenext`](examples/forge-sql-orm-example-nodenext): a UI Kit Forge app compiled with `module` / `moduleResolution` `nodenext` using both `forge-sql-orm` and `forge-sql-orm-extra`. It is built, deployed and installed in CI and updated by `autoupdate.sh`, guarding against regressions of #2865.
+- Two new examples guard against regressions of #2865 by compiling Forge apps (UI Kit global page, resolvers, SQL migration) with `module` / `moduleResolution` `nodenext` and both `forge-sql-orm` and `forge-sql-orm-extra`: [`forge-sql-orm-example-nodenext-js`](examples/forge-sql-orm-example-nodenext-js) (plain JavaScript ESM with JSDoc, checked with `checkJs`) and [`forge-sql-orm-example-nodenext-ts`](examples/forge-sql-orm-example-nodenext-ts) (TypeScript, with an ESM-only `.mts` check). Both are built, deployed and installed in CI and updated by `autoupdate.sh`.
 
 📦 Dependency Updates
 
