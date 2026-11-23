@@ -25,5 +25,4 @@ resources:
 app:
   runtime:
     name: nodejs24.x
-  # TODO: run `forge register` in this directory and replace with the generated app id
-  id: ari:cloud:ecosystem::app/REPLACE-WITH-FORGE-REGISTER-ID
+  id: ari:cloud:ecosystem::app/8ada4a53-b455-48f7-9f05-f23936e0e8aa

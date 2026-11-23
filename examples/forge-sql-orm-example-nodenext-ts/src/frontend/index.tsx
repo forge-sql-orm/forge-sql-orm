@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ForgeReconciler, {
   Button,
   DynamicTable,
@@ -31,14 +31,21 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
   const { handleSubmit, register, getFieldId } = useForm();
   const [formKey, setFormKey] = useState(0);
+  const latestLoad = useRef(0);
 
   const load = useCallback(async () => {
+    // Ignore responses of older loads so overlapping refreshes cannot show stale rows.
+    const loadId = ++latestLoad.current;
     try {
       setError(null);
       const data = await invoke<User[]>("fetchUsers");
-      setUsers(Array.isArray(data) ? data : []);
+      if (loadId === latestLoad.current) {
+        setUsers(Array.isArray(data) ? data : []);
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load users");
+      if (loadId === latestLoad.current) {
+        setError(e instanceof Error ? e.message : "Failed to load users");
+      }
     }
   }, []);
 
@@ -58,8 +65,13 @@ const App = () => {
   };
 
   const onDelete = async (id: number) => {
-    await invoke("deleteUser", { id });
-    await load();
+    try {
+      setError(null);
+      await invoke("deleteUser", { id });
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to delete user");
+    }
   };
 
   const rows = users.map((u) => ({
