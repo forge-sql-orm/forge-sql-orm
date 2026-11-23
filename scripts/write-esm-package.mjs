@@ -6,6 +6,7 @@
 // drizzle type identity consistent for ESM/bundler consumers of forge-sql-orm.
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { writeEsmEntry } from "./write-esm-entry.mjs";
 import { rewriteEsmDeclarations } from "./rewrite-esm-declarations.mjs";
 
 writeFileSync(
@@ -14,3 +15,4 @@ writeFileSync(
 );
 
 rewriteEsmDeclarations(fileURLToPath(new URL("../dist/esm/", import.meta.url)));
+writeEsmEntry(fileURLToPath(new URL("../dist/", import.meta.url)));
