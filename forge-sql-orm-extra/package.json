@@ -8,7 +8,7 @@
     ".": {
       "import": {
         "types": "./dist/esm/index.d.ts",
-        "default": "./dist/index.js"
+        "default": "./dist/esm/index.js"
       },
       "require": {
         "types": "./dist/index.d.ts",

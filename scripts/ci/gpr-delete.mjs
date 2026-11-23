@@ -46,7 +46,9 @@ function packageVersionRoots(owner, apiPackageName) {
 }
 
 async function readVersionsPage(root, page, token, apiPackageName) {
-  const response = await githubApi(`${root}/versions?per_page=100&page=${page}&state=active`, { token });
+  const response = await githubApi(`${root}/versions?per_page=100&page=${page}&state=active`, {
+    token,
+  });
   if (response.status === 404) {
     return { stop: true, versions: [] };
   }
@@ -82,7 +84,9 @@ async function listPackageVersions(owner, apiPackageName, token) {
 }
 
 async function findPackageApiName(owner, unscopedName, token) {
-  const response = await githubApi(`/orgs/${owner}/packages?package_type=npm&per_page=100`, { token });
+  const response = await githubApi(`/orgs/${owner}/packages?package_type=npm&per_page=100`, {
+    token,
+  });
   if (response.ok) {
     const packages = await response.json();
     const match = packages.find((pkg) => matchesPackageName(pkg.name, unscopedName));
@@ -173,7 +177,9 @@ async function deleteGprVersion(unscopedName, version) {
   const scopedName = scopedGprName(unscopedName);
   const apiPackageName = await findPackageApiName(owner, unscopedName, token);
   if (!apiPackageName) {
-    console.error(`Package ${scopedName} not found in GitHub Packages API, skipping delete for ${version}`);
+    console.error(
+      `Package ${scopedName} not found in GitHub Packages API, skipping delete for ${version}`,
+    );
     return;
   }
 

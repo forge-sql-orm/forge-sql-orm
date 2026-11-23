@@ -11,6 +11,19 @@ modules:
       function: runSchemaMigration
       events:
         - avi:forge:installed:app
+  scheduledTrigger:
+    - key: scheduled-schema-migration
+      function: runSchemaMigration
+      interval: hour
+  webtrigger:
+    - key: invoke-schema-migration
+      function: runSchemaMigration
+      security:
+        egress:
+          allowDataEgress: false
+          allowedResponses:
+            - statusCode: 200
+              body: '{"body": "Migrations successfully executed"}'
   sql:
     - key: main
       engine: mysql

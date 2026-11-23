@@ -30,3 +30,14 @@ npm run check:bundler
 forge register          # put the generated app id into manifest.yml
 forge deploy && forge install
 ```
+
+## Schema migration
+
+The migration runs on install, every hour (`scheduledTrigger`) and on demand through a static
+web trigger (`invoke-schema-migration`). If the `users` table is missing (for example after
+`forge install --upgrade` of an app installed earlier), run it manually:
+
+```bash
+forge deploy
+forge webtrigger -f runSchemaMigration   # pick the environment/site, then open the printed URL
+```

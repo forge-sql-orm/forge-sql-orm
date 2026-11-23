@@ -84,7 +84,9 @@ function runInstallWorkspaceCommand(args) {
 function runInstallExampleCommand(args) {
   const [exampleDir, coreVersion, extraVersion, cliVersion] = args;
   if (!exampleDir || !coreVersion) {
-    throw new Error("usage: install-example <exampleDir> <coreVersion> [extraVersion] [cliVersion]");
+    throw new Error(
+      "usage: install-example <exampleDir> <coreVersion> [extraVersion] [cliVersion]",
+    );
   }
   const versions = { "forge-sql-orm": coreVersion };
   if (extraVersion) {

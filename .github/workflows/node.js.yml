@@ -186,7 +186,7 @@ jobs:
           node-version: 24.x
           check-latest: true
           cache: 'npm'
-      - run: npm install -g @forge/cli@15.0.0 && forge settings set usage-analytics true
+      - run: npm install -g @forge/cli@16.0.0 && forge settings set usage-analytics true
 
       # push / dispatch-production -> "production"; everything else (PRs,
       # dispatch-development) -> per-actor env named after the sanitized actor.
@@ -244,7 +244,7 @@ jobs:
         run: |
           cd "examples/${{ matrix.dir }}"
           for attempt in 1 2; do
-            if forge deploy --non-interactive -e "$FORGE_ENV"; then
+            if forge deploy --approve MAJOR_VERSION_RULE --non-interactive -e "$FORGE_ENV"; then
               exit 0
             fi
             echo "::warning::forge deploy attempt $attempt failed for ${{ matrix.dir }}"
