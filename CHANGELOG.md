@@ -6,7 +6,13 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 > See also: [GitHub Releases](https://github.com/forge-sql-orm/forge-sql-orm/releases).
 
-## [2.2.6] - NEXRELEASE
+## [2.2.7] - NEXRELEASE
+
+📦 Dependency Updates
+
+Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.
+
+## [2.2.6] - 15.11.2026
 
 🔒 Security
 
