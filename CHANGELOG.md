@@ -8,6 +8,14 @@ preserved verbatim. The project follows [Semantic Versioning](https://semver.org
 
 ## [2.2.7] - NEXRELEASE
 
+🐛 Fixes
+
+- **ESM type declarations now work under `moduleResolution: nodenext` / `node16` (#2865).** The `dist/esm/**/*.d.ts` files of `forge-sql-orm` and `forge-sql-orm-extra` used extensionless relative imports (for example `export * from "./core"`), so ESM consumers (`"type": "module"` or `.mts`) saw `TS2614` for every named export and the default export `ForgeSQL` silently resolved to `any`. The ESM build step (`scripts/write-esm-package.mjs`) now rewrites relative specifiers in the generated declarations to explicit `.js` / `/index.js` paths, and adds the missing `.js` to `@forge/sql/out/*` deep imports. Runtime code, the CommonJS build and `bundler` resolution are unchanged.
+
+🧪 Examples
+
+- New example [`forge-sql-orm-example-nodenext`](examples/forge-sql-orm-example-nodenext): a UI Kit Forge app compiled with `module` / `moduleResolution` `nodenext` using both `forge-sql-orm` and `forge-sql-orm-extra`. It is built, deployed and installed in CI and updated by `autoupdate.sh`, guarding against regressions of #2865.
+
 📦 Dependency Updates
 
 Updated npm dependencies to their latest versions to improve compatibility, security, and overall maintenance stability.
