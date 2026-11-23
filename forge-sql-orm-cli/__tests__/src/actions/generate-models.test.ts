@@ -11,26 +11,44 @@ import { generateModels, type GenerateModelsOptions } from "../../../src/actions
 
 vi.mock("child_process", () => ({ execFileSync: vi.fn() }));
 
-interface SnapshotColumn {
-  name: string;
-  type: string;
-  notNull: boolean;
-}
+type SnapshotDdl = Record<string, unknown>[];
 
-const snapshotTable = (columns: Record<string, SnapshotColumn>) => ({
-  name: "tbl",
-  columns,
-  compositePrimaryKeys: {},
-  indexes: {},
-  foreignKeys: {},
-  uniqueConstraints: {},
-  checkConstraint: {},
+const table = (name: string) => ({ entityType: "tables", name });
+const column = (tableName: string, name: string, type: string, notNull: boolean) => ({
+  entityType: "columns",
+  table: tableName,
+  name,
+  type,
+  notNull,
 });
+
+const DEFAULT_DDL: SnapshotDdl = [
+  table("users"),
+  column("users", "id", "int", true),
+  column("users", "version", "int", true),
+  table("a_cache"),
+  column("a_cache", "id", "int", true),
+  table("posts"),
+  column("posts", "version", "int", false),
+  table("logs"),
+  column("logs", "version", "varchar(20)", true),
+];
 
 describe("generateModels", () => {
   let dir: string;
   let exitSpy: ReturnType<typeof vi.spyOn>;
   let warnSpy: ReturnType<typeof vi.spyOn>;
+
+  /** Makes the mocked `drizzle-kit pull` create a v1 migration folder with the given snapshot. */
+  const mockPull = (ddl: SnapshotDdl, folder = "20260101000000_init") => {
+    vi.mocked(execFileSync).mockImplementation((() => {
+      const folderPath = path.join(dir, folder);
+      fs.mkdirSync(folderPath, { recursive: true });
+      fs.writeFileSync(path.join(folderPath, "snapshot.json"), JSON.stringify({ ddl }));
+      fs.writeFileSync(path.join(folderPath, "migration.sql"), "CREATE TABLE x;");
+      return "";
+    }) as unknown as typeof execFileSync);
+  };
 
   const options = (): GenerateModelsOptions => ({
     host: "localhost",
@@ -49,34 +67,7 @@ describe("generateModels", () => {
     warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-    const metaDir = path.join(dir, "meta");
-    fs.mkdirSync(metaDir, { recursive: true });
-    fs.writeFileSync(
-      path.join(metaDir, "0000_snapshot.json"),
-      JSON.stringify({
-        tables: {
-          users: snapshotTable({
-            id: { name: "id", type: "int", notNull: true },
-            version: { name: "version", type: "int", notNull: true },
-          }),
-          a_cache: snapshotTable({
-            id: { name: "id", type: "int", notNull: true },
-          }),
-          posts: snapshotTable({
-            version: { name: "version", type: "int", notNull: false },
-          }),
-          logs: snapshotTable({
-            version: { name: "version", type: "varchar", notNull: true },
-          }),
-        },
-      }),
-    );
-    fs.writeFileSync(
-      path.join(metaDir, "_journal.json"),
-      JSON.stringify({ version: "7", dialect: "mysql", entries: [{ tag: "0000_init" }] }),
-    );
-    fs.writeFileSync(path.join(dir, "0000_init.sql"), "CREATE TABLE x;");
-    fs.mkdirSync(path.join(dir, "migrations"), { recursive: true });
+    mockPull(DEFAULT_DDL);
   });
 
   afterEach(() => {
@@ -117,53 +108,66 @@ describe("generateModels", () => {
     expect(warnings).toContain('unsupported type "varchar"');
   });
 
-  it("rewrites MySQL types in schema.ts to forge custom types", () => {
+  it("rewrites MySQL date/time types in schema.ts to forge custom types", () => {
     fs.writeFileSync(
       path.join(dir, "schema.ts"),
-      `export const t = { created: datetime('created_at', { mode: 'string' }) };`,
+      [
+        `created: datetime("created_at", { mode: 'string' }),`,
+        `precise: datetime({ fsp: 3 }).notNull(),`,
+        `updated: timestamp("updated_at").defaultNow(),`,
+        `stamp: timestamp({ mode: 'string' }),`,
+        `day: date("day"),`,
+        `at: time(),`,
+      ].join("\n"),
     );
     generateModels(options());
 
     const schema = fs.readFileSync(path.join(dir, "schema.ts"), "utf-8");
     expect(schema).toContain("import { forgeDateTimeString");
     expect(schema).toContain("forgeDateTimeString('created_at')");
-    expect(schema).not.toContain("datetime('created_at'");
+    expect(schema).toContain("forgeDateTimeString().notNull()");
+    expect(schema).toContain("forgeTimestampString('updated_at').defaultNow()");
+    expect(schema).toContain("forgeTimestampString()");
+    expect(schema).toContain("forgeDateString('day')");
+    expect(schema).toContain("forgeTimeString()");
+    expect(schema).not.toMatch(/\b(datetime|timestamp|date|time)\(/);
   });
 
-  it("cleans up meta directory, journal sql files and migrations directory", () => {
+  it("removes the migration folder created by drizzle-kit but keeps existing ones", () => {
+    const existing = path.join(dir, "20250101000000_old");
+    fs.mkdirSync(existing, { recursive: true });
+    fs.writeFileSync(path.join(existing, "snapshot.json"), "{}");
     fs.writeFileSync(path.join(dir, "schema.ts"), "// empty");
+
     generateModels(options());
 
-    expect(fs.existsSync(path.join(dir, "meta"))).toBe(false);
-    expect(fs.existsSync(path.join(dir, "0000_init.sql"))).toBe(false);
-    expect(fs.existsSync(path.join(dir, "migrations"))).toBe(false);
+    expect(fs.existsSync(path.join(dir, "20260101000000_init"))).toBe(false);
+    expect(fs.existsSync(existing)).toBe(true);
+    expect(fs.existsSync(path.join(dir, "schema.ts"))).toBe(true);
   });
 
-  it("handles an output directory with no meta directory and no schema file", () => {
-    fs.rmSync(path.join(dir, "meta"), { recursive: true, force: true });
-    fs.rmSync(path.join(dir, "migrations"), { recursive: true, force: true });
-    fs.rmSync(path.join(dir, "0000_init.sql"), { force: true });
-    // no schema.ts is written
+  it("handles a pull that creates no migration folder and no schema file", () => {
+    vi.mocked(execFileSync).mockImplementation((() => "") as unknown as typeof execFileSync);
 
     generateModels(options());
 
     const index = fs.readFileSync(path.join(dir, "index.ts"), "utf-8");
     expect(index).toContain("export const additionalMetadata");
+    expect(index).toContain("{}");
     expect(exitSpy).toHaveBeenCalledWith(0);
   });
 
-  it("accepts every supported version-field type", () => {
-    fs.writeFileSync(
-      path.join(dir, "meta", "0000_snapshot.json"),
-      JSON.stringify({
-        tables: {
-          t_dt: snapshotTable({ version: { name: "version", type: "datetime", notNull: true } }),
-          t_ts: snapshotTable({ version: { name: "version", type: "timestamp", notNull: true } }),
-          t_num: snapshotTable({ version: { name: "version", type: "number", notNull: true } }),
-          t_dec: snapshotTable({ version: { name: "version", type: "decimal", notNull: true } }),
-        },
-      }),
-    );
+  it("accepts every supported version-field type, ignoring length and precision", () => {
+    mockPull([
+      table("t_dt"),
+      column("t_dt", "version", "datetime(3)", true),
+      table("t_ts"),
+      column("t_ts", "version", "timestamp", true),
+      table("t_num"),
+      column("t_num", "version", "number", true),
+      table("t_dec"),
+      column("t_dec", "version", "decimal(10,2)", true),
+    ]);
 
     generateModels(options());
 

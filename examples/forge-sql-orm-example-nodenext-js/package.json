@@ -11,8 +11,8 @@
     "@forge/resolver": "2.0.2",
     "@forge/sql": "^4.0.11",
     "drizzle-orm": "^0.45.4",
-    "forge-sql-orm": "^2.2.6",
-    "forge-sql-orm-extra": "2.2.6",
+    "forge-sql-orm": "^../..",
+    "forge-sql-orm-extra": "../..",
     "react": "^18.2.0"
   },
   "scripts": {

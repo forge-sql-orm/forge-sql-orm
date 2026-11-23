@@ -44,7 +44,6 @@
     ]
   },
   "overrides": {
-    "prosemirror-view": "npm:prosemirror-view@latest",
-    "minimatch": "npm:minimatch@latest"
+    "prosemirror-view": "npm:prosemirror-view@latest"
   }
 }

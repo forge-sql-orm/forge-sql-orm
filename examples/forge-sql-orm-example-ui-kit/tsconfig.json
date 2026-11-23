@@ -5,6 +5,12 @@
   },
   "include": ["./src"],
   "compilerOptions": {
+    "paths": {
+      "@forge/sql": ["./node_modules/@forge/sql"],
+      "@forge/sql/*": ["./node_modules/@forge/sql/*"],
+      "drizzle-orm": ["./node_modules/drizzle-orm"],
+      "drizzle-orm/*": ["./node_modules/drizzle-orm/*"]
+    },
     "jsx": "react",
     "target": "ESNext",
     "useDefineForClassFields": true,

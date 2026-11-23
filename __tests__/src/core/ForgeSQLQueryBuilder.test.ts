@@ -67,7 +67,7 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
         dateTimeField: forgeDateTimeString("date_time_field"),
       });
 
-      const mapped = (testTable.dateTimeField as any).mapFrom("2026-06-12");
+      const mapped = (testTable.dateTimeField as any).mapFromDriverValue("2026-06-12");
       expect(mapped).toBeInstanceOf(Date);
       expect(mapped.getUTCFullYear()).toBe(2026);
       expect(mapped.getUTCMonth()).toBe(5);
@@ -83,8 +83,8 @@ describe("ForgeSQLQueryBuilder - Custom Types", () => {
         dateTimeField: forgeDateTimeString("date_time_field"),
       });
 
-      expect((testTable.dateTimeField as any).mapFrom(null)).toBeNull();
-      expect((testTable.dateTimeField as any).mapFrom(undefined)).toBeUndefined();
+      expect((testTable.dateTimeField as any).mapFromDriverValue(null)).toBeNull();
+      expect((testTable.dateTimeField as any).mapFromDriverValue(undefined)).toBeUndefined();
     });
   });
 

@@ -1,11 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Vasyl Zakharchenko
 // SPDX-License-Identifier: MIT
 
-import {
-  MySqlRemoteDatabase,
-  MySqlRemotePreparedQueryHKT,
-  MySqlRemoteQueryResultHKT,
-} from "drizzle-orm/mysql-proxy";
+import { MySqlRemoteDatabase, MySqlRemoteQueryResultHKT } from "drizzle-orm/mysql-proxy";
 import { ForgeSqlOperationExt, ForgeSqlOrmOptionsExtra, RovoIntegration } from "./ForgeSQLExt";
 import { resolveForgeSqlOrmOptionsExtra } from "./resolveForgeSqlOrmOptionsExtra";
 import ForgeSQL, {
@@ -34,10 +30,12 @@ import ForgeSQL, {
 
 import {
   AnyMySqlTable,
-  MySqlDeleteBase,
+  MySqlAsyncDeleteBase,
+  MySqlAsyncInsertHKT,
+  MySqlAsyncSelectBuilder,
+  MySqlAsyncUpdateHKT,
   MySqlInsertBuilder,
   MySqlQueryResultKind,
-  MySqlSelectBuilder,
   MySqlTable,
   MySqlUpdateBuilder,
   SelectedFields,
@@ -341,7 +339,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   insert<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT> {
     return this.forgeSQLORM.insert(table);
   }
   /**
@@ -355,7 +353,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   insertAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT> {
     return this.drizzle.insertAndEvictCache(table);
   }
 
@@ -370,7 +368,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   updateAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT> {
     return this.drizzle.updateAndEvictCache(table);
   }
 
@@ -385,7 +383,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   update<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT> {
     return this.forgeSQLORM.update(table);
   }
 
@@ -400,7 +398,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   delete<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT> {
     return this.forgeSQLORM.delete(table);
   }
   /**
@@ -414,7 +412,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   deleteAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT> {
     return this.drizzle.deleteAndEvictCache(table);
   }
 
@@ -501,7 +499,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   select<TSelection extends SelectedFields>(
     fields: TSelection,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncSelectBuilder<TSelection> {
     if (!fields) {
       throw new Error("fields is empty");
     }
@@ -526,7 +524,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
    */
   selectDistinct<TSelection extends SelectedFields>(
     fields: TSelection,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncSelectBuilder<TSelection> {
     if (!fields) {
       throw new Error("fields is empty");
     }
@@ -553,7 +551,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
   selectCacheable<TSelection extends SelectedFields>(
     fields: TSelection,
     cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncSelectBuilder<TSelection> {
     if (!fields) {
       throw new Error("fields is empty");
     }
@@ -580,7 +578,7 @@ class ForgeSQLORMCacheImpl implements ForgeSqlOperationExt {
   selectDistinctCacheable<TSelection extends SelectedFields>(
     fields: TSelection,
     cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncSelectBuilder<TSelection> {
     if (!fields) {
       throw new Error("fields is empty");
     }
@@ -993,14 +991,14 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
   selectCacheable<TSelection extends SelectedFields>(
     fields: TSelection,
     cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncSelectBuilder<TSelection> {
     return this.ormInstance.selectCacheable(fields, cacheTTL);
   }
 
   selectDistinctCacheable<TSelection extends SelectedFields>(
     fields: TSelection,
     cacheTTL?: number,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncSelectBuilder<TSelection> {
     return this.ormInstance.selectDistinctCacheable(fields, cacheTTL);
   }
 
@@ -1109,7 +1107,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   insert<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT> {
     return this.ormInstance.insert(table);
   }
 
@@ -1124,7 +1122,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   insertAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlInsertBuilder<TTable, MySqlRemoteQueryResultHKT, "all", MySqlAsyncInsertHKT> {
     return this.ormInstance.insertAndEvictCache(table);
   }
 
@@ -1139,7 +1137,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   update<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT> {
     return this.ormInstance.update(table);
   }
 
@@ -1154,7 +1152,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   updateAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlUpdateBuilder<TTable, MySqlRemoteQueryResultHKT, MySqlAsyncUpdateHKT> {
     return this.ormInstance.updateAndEvictCache(table);
   }
 
@@ -1169,7 +1167,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   delete<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT> {
     return this.ormInstance.delete(table);
   }
 
@@ -1184,7 +1182,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   deleteAndEvictCache<TTable extends MySqlTable>(
     table: TTable,
-  ): MySqlDeleteBase<TTable, MySqlRemoteQueryResultHKT, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncDeleteBase<TTable, MySqlRemoteQueryResultHKT> {
     return this.ormInstance.deleteAndEvictCache(table);
   }
 
@@ -1206,7 +1204,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   select<TSelection extends SelectedFields>(
     fields: TSelection,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncSelectBuilder<TSelection> {
     return this.ormInstance.select(fields);
   }
 
@@ -1216,7 +1214,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    *
    * @template TSelection - The type of the selected fields
    * @param {TSelection} fields - Object containing the fields to select, with table schemas as values
-   * @returns {MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT>} A distinct select query builder with unique field aliases
+   * @returns {MySqlAsyncSelectBuilder<TSelection>} A distinct select query builder with unique field aliases
    * @throws {Error} If fields parameter is empty
    * @example
    * ```typescript
@@ -1228,7 +1226,7 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    */
   selectDistinct<TSelection extends SelectedFields>(
     fields: TSelection,
-  ): MySqlSelectBuilder<TSelection, MySqlRemotePreparedQueryHKT> {
+  ): MySqlAsyncSelectBuilder<TSelection> {
     return this.ormInstance.selectDistinct(fields);
   }
 
@@ -1322,8 +1320,8 @@ class ForgeSQLORMExt implements ForgeSqlOperationExt {
    * await forgeSQL.executeDDL("DROP TABLE IF EXISTS old_users");
    * ```
    */
-  executeDDL(query: SQLWrapper | string) {
-    return this.ormInstance.executeDDL(query);
+  executeDDL<T>(query: SQLWrapper | string) {
+    return this.ormInstance.executeDDL<T>(query);
   }
 
   /**

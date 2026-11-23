@@ -12,7 +12,7 @@ export const testData = mysqlTable(
     testDateColumn: forgeDateTimeString("test_date_column"),
     testNameColumn: varchar("test_name_column", { length: 100 }),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "test_data_id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );
 
 export const testDataOptimisticDate = mysqlTable(
@@ -23,7 +23,7 @@ export const testDataOptimisticDate = mysqlTable(
     version: forgeDateTimeString().notNull(),
     testNameColumn: varchar("test_name_column", { length: 255 }),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "test_data_optimistic_date_id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );
 
 export const testDataOptimisticNumber = mysqlTable(
@@ -34,7 +34,7 @@ export const testDataOptimisticNumber = mysqlTable(
     testNameColumn: varchar("test_name_column", { length: 100 }),
     version: int().notNull(),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "test_data_optimistic_number_id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );
 
 export const testDataOptimisticTimestamp = mysqlTable(
@@ -45,5 +45,5 @@ export const testDataOptimisticTimestamp = mysqlTable(
     testNameColumn: varchar("test_name_column", { length: 100 }),
     version: forgeTimestampString().notNull(),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "test_data_optimistic_timestamp_id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );

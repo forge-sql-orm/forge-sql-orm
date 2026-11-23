@@ -141,6 +141,7 @@ Start with **`forge-sql-orm`** for any Forge SQL app; add **forge-sql-orm-extra*
 - [Migration Guide](#migration-guide)
   - [Migrating from 2.0.x to 2.1.x](#migrating-from-20x-to-21x)
   - [Migrating from 2.1.x to 2.2.x](#migrating-from-21x-to-22x)
+  - [Migrating from 2.x.x to 3.0.0 (Drizzle ORM v1)](#migrating-from-2xx-to-300-drizzle-orm-v1)
 
 ## 🚀 Quick Navigation
 
@@ -2530,6 +2531,76 @@ import { clearCacheSchedulerTrigger } from "forge-sql-orm-extra";
 ```
 
 See [forge-sql-orm-extra README](forge-sql-orm-extra/README.md) for the full list of cache and Rovo APIs.
+
+### Migrating from 2.x.x to 3.0.0 (Drizzle ORM v1)
+
+**3.0.0** moves the whole family (`forge-sql-orm`, `forge-sql-orm-extra`, `forge-sql-orm-cli`) to **Drizzle ORM v1** (`drizzle-orm@^1.0.0`). Forge SQL ORM's own API (method names, options, caching, versioned operations) is unchanged — the breaking changes come from Drizzle v1 itself and from the Drizzle types that Forge SQL ORM re-exposes.
+
+> Staying on `drizzle-orm@0.45.x`? Keep using `forge-sql-orm@2.2.x`. Version 3.x does not work with Drizzle 0.x: the two major lines cannot be mixed.
+
+#### 1. Upgrade all packages together
+
+Upgrade every package you use to the same major version, and `drizzle-orm` to v1:
+
+```bash
+npm install forge-sql-orm@^3 @forge/sql drizzle-orm@^1 -S
+npm install forge-sql-orm-extra@^3 @forge/kvs -S   # only if you use L2 cache or Rovo
+npm install forge-sql-orm-cli@^3 -D                # only if you use the CLI
+```
+
+Make sure your lock file contains a **single** `drizzle-orm` copy (`npm ls drizzle-orm`). Two copies (for example one pulled in by an older `forge-sql-orm-cli`) produce confusing type errors.
+
+#### 2. Fix your Drizzle schema
+
+Drizzle v1 changed a few schema APIs that were used in generated and hand-written models:
+
+```typescript
+// ❌ Before: primary key name is not supported for MySQL in v1
+primaryKey({ columns: [table.id], name: "users_id" });
+
+// ✅ After
+primaryKey({ columns: [table.id] });
+```
+
+```typescript
+// ❌ Before (Relational Queries v1)
+import { relations } from "drizzle-orm/_relations";
+export const ordersRelations = relations(orders, ({ one }) => ({
+  user: one(users, { fields: [orders.userId], references: [users.id] }),
+}));
+
+// ✅ After (Relational Queries v2)
+import { defineRelations } from "drizzle-orm";
+import * as schema from "./schema";
+export const relations = defineRelations(schema, (r) => ({
+  orders: {
+    user: r.one.users({ from: r.orders.userId, to: r.users.id }),
+  },
+}));
+```
+
+See Drizzle's [Relations v1 → v2 guide](https://orm.drizzle.team/docs/relations-v1-v2) for the full syntax.
+
+If you generated models with `forge-sql-orm-cli generate:model`, re-generate them with the 3.x CLI and review the diff, or apply the two edits above manually. The 3.x CLI ships with `drizzle-kit` v1, so the generated files differ from 2.x:
+
+- `primaryKey({ columns })` has no `name`, and unique indexes are generated as `uniqueIndex(...)` instead of `unique(...).on(...)`.
+- `relations.ts` uses Drizzle v1 `defineRelations` (the exported `relations` object replaces the per-table `*Relations` exports).
+- Date/time columns still become `forgeDateTimeString` / `forgeTimestampString` / `forgeDateString` / `forgeTimeString` (the `fsp` precision option is not carried over, as before).
+
+`migrations:create`, `migrations:update`, `migrations:drop` and `schema:create` keep the same options and output format.
+
+Other Drizzle v1 changes are described in Drizzle's own upgrade notes — check them if you use features outside Forge SQL ORM's wrappers (for example `drizzle-kit` configuration or relational queries).
+
+#### 3. Generated SQL and error text
+
+🚧 **In progress.** Drizzle v1 slightly changes the generated SQL text and query error messages. The full list of differences is still being collected and will be documented here before the 3.0.0 release.
+
+#### 4. Migration checklist
+
+1. Upgrade `forge-sql-orm`, `forge-sql-orm-extra`, `forge-sql-orm-cli` to `^3` and `drizzle-orm` to `^1`.
+2. Run `npm ls drizzle-orm` — exactly one version.
+3. Remove `name` from `primaryKey({ … })` and migrate `relations` to `defineRelations` (or re-generate models).
+4. Run `tsc --noEmit` and your tests.
 
 ## License
 

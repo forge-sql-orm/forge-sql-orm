@@ -10,5 +10,5 @@ export const users = mysqlTable(
     name: varchar({ length: 200 }),
     email: varchar({ length: 200 }),
   },
-  (table) => [primaryKey({ columns: [table.id], name: "users_id" })],
+  (table) => [primaryKey({ columns: [table.id] })],
 );

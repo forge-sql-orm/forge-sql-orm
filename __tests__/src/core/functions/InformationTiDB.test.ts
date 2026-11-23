@@ -3,7 +3,6 @@
 
 import { describe, expect, it } from "vitest";
 import { sql as dsql } from "drizzle-orm";
-import { CasingCache } from "drizzle-orm/casing";
 import {
   connectionId,
   currentResourceGroup,
@@ -23,7 +22,6 @@ import {
 } from "../../../../src/core/functions/InformationTiDB";
 
 const mysqlQueryConfig = {
-  casing: new CasingCache(undefined),
   escapeName: (name: string) => `\`${name.replace(/`/g, "``")}\``,
   escapeParam: (_num: number) => `?`,
   escapeString: (str: string) => `'${str.replace(/'/g, "''")}'`,

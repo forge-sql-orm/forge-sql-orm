@@ -10,9 +10,9 @@
     "@forge/kvs": "^2.1.3",
     "@forge/resolver": "2.0.2",
     "@forge/sql": "^4.0.11",
-    "drizzle-orm": "^0.45.4",
-    "forge-sql-orm": "^2.2.6",
-    "forge-sql-orm-extra": "2.2.6"
+    "drizzle-orm": "rc",
+    "forge-sql-orm": "../..",
+    "forge-sql-orm-extra": "../../forge-sql-orm-extra"
   },
   "scripts": {
     "models:create": "forge-sql-orm-cli generate:model --output src/entities",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
-    "forge-sql-orm-cli": "^2.2.6",
+    "forge-sql-orm-cli": "../../forge-sql-orm-cli",
     "knip": "^6.48.0",
     "typescript": "^6.0.3"
   },
@@ -34,7 +34,6 @@
     "package-json": "npm:package-json@latest",
     "esbuild": "npm:esbuild@latest",
     "parse-url": "npm:parsed-url@latest",
-    "gry": "npm:gry@latest",
-    "minimatch": "npm:minimatch@latest"
+    "gry": "npm:gry@latest"
   }
 }
