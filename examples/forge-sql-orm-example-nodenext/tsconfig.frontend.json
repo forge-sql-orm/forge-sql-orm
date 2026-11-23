@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "./src/frontend"
+  ],
+  "exclude": [],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler"
+  }
+}

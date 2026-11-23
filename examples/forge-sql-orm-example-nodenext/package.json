@@ -1,0 +1,40 @@
+{
+  "name": "forge-sql-orm-example-nodenext",
+  "version": "1.0.0",
+  "description": "Forge app using forge-sql-orm and forge-sql-orm-extra under module/moduleResolution nodenext (#2865)",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@forge/bridge": "7.4.0",
+    "@forge/react": "12.6.0",
+    "@forge/resolver": "2.0.2",
+    "@forge/sql": "^4.0.11",
+    "drizzle-orm": "^0.45.4",
+    "forge-sql-orm": "^2.2.6",
+    "forge-sql-orm-extra": "2.2.6",
+    "react": "^18.2.0"
+  },
+  "scripts": {
+    "build:ci": "tsc --project tsconfig.json && tsc --project tsconfig.frontend.json",
+    "check:nodenext": "tsc --project tsconfig.json",
+    "check:node16": "tsc --project tsconfig.json --module node16 --moduleResolution node16",
+    "check:bundler": "tsc --project tsconfig.json --module esnext --moduleResolution bundler",
+    "check:no-skiplibcheck": "tsc --project tsconfig.json --skipLibCheck false",
+    "forge:debug": "forge tunnel -d -f index.handler",
+    "knip": "knip"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "knip": "^6.48.0",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "package-json": "npm:package-json@latest",
+    "esbuild": "npm:esbuild@latest",
+    "parse-url": "npm:parsed-url@latest",
+    "gry": "npm:gry@latest",
+    "minimatch": "npm:minimatch@latest"
+  }
+}

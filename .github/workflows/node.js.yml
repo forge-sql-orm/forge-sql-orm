@@ -175,6 +175,7 @@ jobs:
           - { dir: forge-sql-orm-example-ai,                    static: true }
           - { dir: forge-sql-orm-example-backend-ai,            static: true, ai_lib: true }
           - { dir: forge-sql-orm-example-ui-kit }
+          - { dir: forge-sql-orm-example-nodenext }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

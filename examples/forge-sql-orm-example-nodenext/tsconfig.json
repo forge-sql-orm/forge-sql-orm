@@ -1,0 +1,21 @@
+{
+  "include": [
+    "./src"
+  ],
+  "compilerOptions": {
+    "target": "ESNext",
+    "jsx": "react",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "node"
+    ]
+  },
+  "exclude": [
+    "./src/frontend"
+  ]
+}
