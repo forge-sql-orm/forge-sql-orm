@@ -28,6 +28,7 @@
     "react": "^18.2.0"
   },
   "overrides": {
+    "glob": "npm:glob@latest",
     "@compiled/react": "latest",
     "prosemirror-view": "npm:prosemirror-view@latest",
     "@esbuild-kit/core-utils": {

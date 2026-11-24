@@ -30,6 +30,8 @@
     "typescript": "^7.0.2"
   },
   "overrides": {
+    "glob": "npm:glob@latest",
+    "prosemirror-view": "npm:prosemirror-view@latest",
     "package-json": "npm:package-json@latest",
     "esbuild": "npm:esbuild@latest",
     "parse-url": "npm:parsed-url@latest",
