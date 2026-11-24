@@ -82,5 +82,9 @@
     "forge-sql-orm": "^2.2.7",
     "luxon": "^3.7.2",
     "node-sql-parser": "^5.4.0"
+  },
+  "overrides": {
+    "minimatch": "npm:minimatch@latest",
+    "glob": "npm:glob@latest"
   }
 }

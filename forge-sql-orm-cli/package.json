@@ -88,6 +88,7 @@
   },
   "overrides": {
     "esbuild": "npm:esbuild@latest",
-    "minimatch": "^11.0.1"
+    "minimatch": "npm:minimatch@latest",
+    "glob": "npm:glob@latest"
   }
 }
