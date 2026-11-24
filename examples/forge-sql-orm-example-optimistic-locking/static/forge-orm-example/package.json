@@ -47,6 +47,7 @@
     "gry": "npm:gry@latest",
     "got": "npm:got@latest",
     "prosemirror-view": "npm:prosemirror-view@latest",
-    "minimatch": "npm:minimatch@latest"
+    "minimatch": "npm:minimatch@latest",
+    "glob": "npm:glob@latest"
   }
 }
