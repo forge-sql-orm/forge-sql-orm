@@ -259,6 +259,12 @@ describe("ForgeSQLAnalizeOperation", () => {
       expect(query).toContain("TABLE_NAMES LIKE CONCAT(SCHEMA_NAME, '.', '%', 't2', '%')");
     });
 
+    it("should escape quotes and backslashes in table names", () => {
+      const query = analyzeOperation.buildClusterStatementQuery(["x') OR ('1'='1", "a\\"]);
+      expect(query).toContain("'x'') OR (''1''=''1'");
+      expect(query).toContain("'a\\\\'");
+    });
+
     it("should include date range conditions when provided", () => {
       const tables = ["t1"];
       const fromDate = new Date("2024-01-01");

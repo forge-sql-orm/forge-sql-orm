@@ -362,8 +362,14 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
     const formatDateTime = (date: Date): string =>
       DateTime.fromJSDate(date).toFormat("yyyy-LL-dd'T'HH:mm:ss.SSS");
 
+    // Escape for a single-quoted MySQL string literal to prevent SQL injection via table names
+    const escapeLiteral = (value: string): string =>
+      String(value).replaceAll("\\", "\\\\").replaceAll("'", "''");
+
     const tableConditions = tables
-      .map((table) => `TABLE_NAMES LIKE CONCAT(SCHEMA_NAME, '.', '%', '${table}', '%')`)
+      .map(
+        (table) => `TABLE_NAMES LIKE CONCAT(SCHEMA_NAME, '.', '%', '${escapeLiteral(table)}', '%')`,
+      )
       .join(" OR ");
 
     const timeConditions: string[] = [];
