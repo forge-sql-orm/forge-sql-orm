@@ -16,6 +16,26 @@ import { AnyMySqlTable, MySqlColumn } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
 import { getErrorMessage } from "forge-sql-orm";
 
+/** Untyped node of the `node-sql-parser` AST. */
+type AstNode = Record<string, unknown>;
+
+/** Keys of an AST node whose value is a list of table references. */
+const FROM_KEYS = new Set(["from", "join"]);
+
+/** Node types that represent a table reference. */
+const TABLE_NODE_TYPES = new Set(["table", "dual"]);
+
+function isAstNode(value: unknown): value is AstNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readTableName(table: unknown): string | null {
+  if (typeof table === "string") {
+    return table;
+  }
+  return isAstNode(table) && typeof table.name === "string" ? table.name : null;
+}
+
 /**
  * Configuration for RovoIntegrationSettingImpl.
  */
@@ -328,7 +348,7 @@ class RovoIntegrationSettingCreatorImpl implements RovoIntegrationSettingCreator
        */
       finish(): RovoIntegrationSettingCreator {
         this.parent.isUseRls = true;
-        this.rlsFieldsSettings.forEach((columnName) => this.parent.rlsFields.push(columnName));
+        this.parent.rlsFields.push(...this.rlsFieldsSettings);
         this.parent.wherePart = this.wherePartSettings;
         this.parent.isUseRlsConditional = this.isUseRlsConditionalSettings;
         return this.parent;
@@ -418,7 +438,7 @@ export class Rovo implements RovoIntegration {
    */
   private parseSqlQuery(sqlQuery: string): Select {
     const parser = new Parser();
-    let ast;
+    let ast: ReturnType<Parser["astify"]>;
     try {
       ast = parser.astify(sqlQuery);
     } catch (parseError) {
@@ -452,36 +472,36 @@ export class Rovo implements RovoIntegration {
    * Handles both the real `node-sql-parser` shape (`{ db, table: "users" }`) and the legacy
    * `{ type: "table", table: { name } }` shape.
    *
-   * @param {any} node - AST node with table information
+   * @param {unknown} node - AST node with table information
    * @returns {string | null} Table name in uppercase, or null if not applicable
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private extractTableName(node: any): string | null {
-    if (!node?.table || node.type === "column_ref") {
+  private extractTableName(node: unknown): string | null {
+    if (!isAstNode(node) || node.type === "column_ref") {
       return null;
     }
-    const name: unknown = typeof node.table === "string" ? node.table : node.table.name;
-    if (typeof name !== "string" || !name || name.toLowerCase() === "dual") {
+    const name = readTableName(node.table);
+    if (!name || name.toLowerCase() === "dual") {
       return null;
     }
-    const qualified = typeof node.db === "string" && node.db ? `${node.db}.${name}` : name;
-    return qualified.toUpperCase();
+    const db = typeof node.db === "string" ? node.db : "";
+    return (db ? `${db}.${name}` : name).toUpperCase();
+  }
+
+  /** Adds the table name of `node` (if it is a table reference) to `tables`. */
+  private pushTableName(node: unknown, tables: string[]): void {
+    const tableName = this.extractTableName(node);
+    if (tableName) {
+      tables.push(tableName);
+    }
   }
 
   /**
    * Collects table names from the items of a `from` (or legacy `join`) list and descends into
    * each item to find derived tables and subqueries in `ON` conditions.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private collectFromItems(items: any, tables: string[]): void {
+  private collectFromItems(items: unknown, tables: string[]): void {
     for (const item of Array.isArray(items) ? items : [items]) {
-      if (!item || typeof item !== "object") {
-        continue;
-      }
-      const tableName = this.extractTableName(item);
-      if (tableName) {
-        tables.push(tableName);
-      }
+      this.pushTableName(item, tables);
       this.collectTables(item, tables);
     }
   }
@@ -491,25 +511,21 @@ export class Rovo implements RovoIntegration {
    * `from`/`join` of the top-level select, this also covers subqueries anywhere (WHERE, HAVING,
    * ON, IN (...), EXISTS, derived tables), UNION branches (`_next`) and CTEs.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private collectTables(node: any, tables: string[]): void {
-    if (!node || typeof node !== "object") {
-      return;
-    }
+  private collectTables(node: unknown, tables: string[]): void {
     if (Array.isArray(node)) {
       for (const item of node) {
         this.collectTables(item, tables);
       }
       return;
     }
-    if (node.type === "table" || node.type === "dual") {
-      const tableName = this.extractTableName(node);
-      if (tableName) {
-        tables.push(tableName);
-      }
+    if (!isAstNode(node)) {
+      return;
+    }
+    if (TABLE_NODE_TYPES.has(String(node.type))) {
+      this.pushTableName(node, tables);
     }
     for (const [key, value] of Object.entries(node)) {
-      if (key === "from" || key === "join") {
+      if (FROM_KEYS.has(key)) {
         this.collectFromItems(value, tables);
       } else {
         this.collectTables(value, tables);
@@ -520,14 +536,32 @@ export class Rovo implements RovoIntegration {
   /**
    * Extracts all table names (upper-cased) referenced anywhere in the SQL AST.
    *
-   * @param {any} node - AST node to extract tables from
+   * @param {unknown} node - AST node to extract tables from
    * @returns {string[]} Array of table names in uppercase
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private extractTables(node: any): string[] {
+  private extractTables(node: unknown): string[] {
     const tables: string[] = [];
     this.collectTables(node, tables);
     return tables;
+  }
+
+  /** Returns the first forbidden construct found in any of `items`, or null. */
+  private findForbiddenInItems(items: unknown[]): string | null {
+    for (const item of items) {
+      const found = this.findForbiddenConstruct(item);
+      if (found) {
+        return found;
+      }
+    }
+    return null;
+  }
+
+  /** Returns the forbidden construct directly attached to a SELECT node, or null. */
+  private findForbiddenInSelect(node: AstNode): string | null {
+    if (isAstNode(node.into) && node.into.position) {
+      return "SELECT ... INTO";
+    }
+    return node.locking_read ? String(node.locking_read) : null;
   }
 
   /**
@@ -536,31 +570,15 @@ export class Rovo implements RovoIntegration {
    *
    * @returns {string | null} Description of the first forbidden construct, or null
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private findForbiddenConstruct(node: any): string | null {
-    if (!node || typeof node !== "object") {
-      return null;
-    }
+  private findForbiddenConstruct(node: unknown): string | null {
     if (Array.isArray(node)) {
-      for (const item of node) {
-        const found = this.findForbiddenConstruct(item);
-        if (found) return found;
-      }
+      return this.findForbiddenInItems(node);
+    }
+    if (!isAstNode(node)) {
       return null;
     }
-    if (node.type === "select") {
-      if (node.into?.position) {
-        return "SELECT ... INTO";
-      }
-      if (node.locking_read) {
-        return String(node.locking_read);
-      }
-    }
-    for (const value of Object.values(node)) {
-      const found = this.findForbiddenConstruct(value);
-      if (found) return found;
-    }
-    return null;
+    const own = node.type === "select" ? this.findForbiddenInSelect(node) : null;
+    return own ?? this.findForbiddenInItems(Object.values(node));
   }
 
   /**
