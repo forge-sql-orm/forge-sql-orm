@@ -251,29 +251,39 @@ describe("ForgeSQLAnalizeOperation", () => {
   });
 
   describe("buildClusterStatementQuery", () => {
-    it("should build a query with table conditions", () => {
-      const tables = ["t1", "t2"];
-      const query = analyzeOperation.buildClusterStatementQuery(tables);
+    it("should build a parameterized query with table conditions", () => {
+      const { query, params } = analyzeOperation.buildClusterStatementQuery(["t1", "t2"]);
 
-      expect(query).toContain("TABLE_NAMES LIKE CONCAT(SCHEMA_NAME, '.', '%', 't1', '%')");
-      expect(query).toContain("TABLE_NAMES LIKE CONCAT(SCHEMA_NAME, '.', '%', 't2', '%')");
+      expect(query).toContain("TABLE_NAMES LIKE CONCAT(SCHEMA_NAME, '.', '%', ?, '%')");
+      expect(query).not.toContain("t1");
+      expect(params).toEqual(["t1", "t2"]);
     });
 
-    it("should escape quotes and backslashes in table names", () => {
-      const query = analyzeOperation.buildClusterStatementQuery(["x') OR ('1'='1", "a\\"]);
-      expect(query).toContain("'x'') OR (''1''=''1'");
-      expect(query).toContain("'a\\\\'");
+    it("should pass table names with quotes only as parameters", () => {
+      const evil = "x') OR ('1'='1";
+      const { query, params } = analyzeOperation.buildClusterStatementQuery([evil]);
+
+      expect(query).not.toContain("OR ('1'");
+      expect(params).toEqual([evil]);
     });
 
-    it("should include date range conditions when provided", () => {
-      const tables = ["t1"];
-      const fromDate = new Date("2024-01-01");
-      const toDate = new Date("2024-01-02");
+    it("should include date range conditions as parameters", () => {
+      const { query, params } = analyzeOperation.buildClusterStatementQuery(
+        ["t1"],
+        new Date("2024-01-01"),
+        new Date("2024-01-02"),
+      );
 
-      const query = analyzeOperation.buildClusterStatementQuery(tables, fromDate, toDate);
+      expect(query).toContain("SUMMARY_BEGIN_TIME >= ?");
+      expect(query).toContain("SUMMARY_END_TIME <= ?");
+      expect(params).toHaveLength(3);
+      expect(params[0]).toBe("t1");
+    });
 
-      expect(query).toContain("SUMMARY_BEGIN_TIME >= ");
-      expect(query).toContain("SUMMARY_END_TIME <= ");
+    it("should omit WHERE when there are no conditions", () => {
+      const { query, params } = analyzeOperation.buildClusterStatementQuery([]);
+      expect(query).not.toContain("WHERE");
+      expect(params).toEqual([]);
     });
   });
 

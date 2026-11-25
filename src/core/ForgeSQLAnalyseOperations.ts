@@ -356,46 +356,49 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
    * @param {string[]} tables - The tables to analyze
    * @param {Date} [from] - The start date for the analysis
    * @param {Date} [to] - The end date for the analysis
-   * @returns {string} The SQL query for cluster statement history
+   * @returns {{ query: string; params: unknown[] }} The parameterized SQL query and its bind parameters
    */
-  buildClusterStatementQuery(tables: string[], from?: Date, to?: Date): string {
+  buildClusterStatementQuery(
+    tables: string[],
+    from?: Date,
+    to?: Date,
+  ): { query: string; params: unknown[] } {
     const formatDateTime = (date: Date): string =>
       DateTime.fromJSDate(date).toFormat("yyyy-LL-dd'T'HH:mm:ss.SSS");
 
-    // Escape for a single-quoted MySQL string literal to prevent SQL injection via table names
-    const escapeLiteral = (value: string): string =>
-      String(value).replaceAll("\\", "\\\\").replaceAll("'", "''");
+    const params: unknown[] = [];
 
     const tableConditions = tables
-      .map(
-        (table) => `TABLE_NAMES LIKE CONCAT(SCHEMA_NAME, '.', '%', '${escapeLiteral(table)}', '%')`,
-      )
+      .map((table) => {
+        params.push(table);
+        return "TABLE_NAMES LIKE CONCAT(SCHEMA_NAME, '.', '%', ?, '%')";
+      })
       .join(" OR ");
 
     const timeConditions: string[] = [];
     if (from) {
-      timeConditions.push(`SUMMARY_BEGIN_TIME >= '${formatDateTime(from)}'`);
+      timeConditions.push("SUMMARY_BEGIN_TIME >= ?");
+      params.push(formatDateTime(from));
     }
     if (to) {
-      timeConditions.push(`SUMMARY_END_TIME <= '${formatDateTime(to)}'`);
+      timeConditions.push("SUMMARY_END_TIME <= ?");
+      params.push(formatDateTime(to));
     }
 
-    let whereClauses;
-    if (tableConditions?.length) {
-      whereClauses = [tableConditions ? `(${tableConditions})` : "", ...timeConditions];
-    } else {
-      whereClauses = timeConditions;
-    }
+    const whereClauses = tableConditions
+      ? [`(${tableConditions})`, ...timeConditions]
+      : timeConditions;
 
-    return `
+    const query = `
       SELECT *
       FROM (
         SELECT * FROM INFORMATION_SCHEMA.CLUSTER_STATEMENTS_SUMMARY
         UNION ALL
         SELECT * FROM INFORMATION_SCHEMA.CLUSTER_STATEMENTS_SUMMARY_HISTORY
       ) AS combined
-      ${whereClauses?.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : ""}
+      ${whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : ""}
     `;
+    return { query, params };
   }
 
   /**
@@ -445,11 +448,10 @@ export class ForgeSQLAnalyseOperation implements SchemaAnalyzeForgeSql {
     fromDate?: Date,
     toDate?: Date,
   ): Promise<ClusterStatementRowCamelCase[]> {
+    const { query, params } = this.buildClusterStatementQuery(tables ?? [], fromDate, toDate);
     const results = await this.forgeOperations
       .fetch()
-      .executeRawSQL<ClusterStatementRow>(
-        this.buildClusterStatementQuery(tables ?? [], fromDate, toDate),
-      );
+      .executeRawSQL<ClusterStatementRow>(query, params as SqlParameters[]);
     return results.map((r) =>
       this.mapToCamelCaseClusterStatement(r as unknown as Record<string, unknown>),
     );
