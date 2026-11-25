@@ -506,6 +506,17 @@ export function generateDropTableStatements(
 
 type AliasColumnMap = Record<string, AnyColumn>;
 
+/**
+ * Builds a raw alias that is later placed inside backticks. Rejects backticks to prevent
+ * breaking out of the quoted identifier.
+ */
+function safeAlias(alias: string): SQL {
+  if (alias.includes("`")) {
+    throw new Error(`Invalid alias "${alias}": backticks are not allowed`);
+  }
+  return sql.raw(alias);
+}
+
 function mapSelectTableToAlias(
   table: MySqlTable,
   uniqPrefix: string,
@@ -516,7 +527,7 @@ function mapSelectTableToAlias(
   for (const name of Object.keys(columns)) {
     const column = columns[name];
     const uniqName = `a_${uniqPrefix}_${tableName}_${column.name}`.toLowerCase();
-    const fieldAlias = sql.raw(uniqName);
+    const fieldAlias = safeAlias(uniqName);
     selectionsTableFields[name] = sql`${column} as \`${fieldAlias}\``;
     aliasMap[uniqName] = column;
   }
@@ -539,7 +550,7 @@ export function mapSelectAllFieldsToAlias(
   } else if (isDrizzleColumn(fields)) {
     const column = fields as Column;
     const uniqAliasName = `a_${uniqName}_${column.name}`.toLowerCase();
-    let aliasName = sql.raw(uniqAliasName);
+    const aliasName = safeAlias(uniqAliasName);
     selections[name] = sql`${column} as \`${aliasName}\``;
     aliasMap[uniqAliasName] = column;
   } else if (isSQLWrapper(fields)) {
@@ -743,7 +754,7 @@ function processNullBranches(obj: Record<string, unknown>): Record<string, unkno
 }
 
 export function formatLimitOffset(limitOrOffset: number): number {
-  if (typeof limitOrOffset !== "number" || Number.isNaN(limitOrOffset)) {
+  if (typeof limitOrOffset !== "number" || !Number.isSafeInteger(limitOrOffset)) {
     throw new Error("limitOrOffset must be a valid number");
   }
   return sql.raw(`${limitOrOffset}`) as unknown as number;

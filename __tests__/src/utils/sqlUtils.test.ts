@@ -87,6 +87,11 @@ describe("transformValue", () => {
   });
 
   describe("formatLimitOffset", () => {
+    it("should reject Infinity and fractional values", () => {
+      expect(() => formatLimitOffset(Infinity)).toThrow("limitOrOffset must be a valid number");
+      expect(() => formatLimitOffset(1.5)).toThrow("limitOrOffset must be a valid number");
+    });
+
     it("should return a valid SQL raw number for valid input", () => {
       const result = formatLimitOffset(10);
       expect(result).toBeDefined();
