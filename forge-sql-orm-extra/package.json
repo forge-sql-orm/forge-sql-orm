@@ -64,11 +64,11 @@
     "README.md"
   ],
   "devDependencies": {
-    "@types/node": "^26.6.7",
-    "@vitest/coverage-v8": "^5.1.1",
+    "@types/node": "^26.6.10",
+    "@vitest/coverage-v8": "^5.1.2",
     "knip": "^6.48.0",
     "typescript": "^6.0.3",
-    "vitest": "^5.1.1",
+    "vitest": "^5.1.2",
     "license-checker-rseidelsohn": "^5.0.1"
   },
   "lint-staged": {
