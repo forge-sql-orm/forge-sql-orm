@@ -445,41 +445,80 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Recursively processes array or single node and extracts table names.
+   * Returns the upper-cased table name of a FROM/JOIN item, or null if the node is not a table
+   * reference (derived table, `dual`, column reference...). A schema qualifier is kept
+   * (`schema.table`), so references to other schemas never match the allowed table.
    *
-   * @param {any} items - Array of AST nodes or single AST node
-   * @param {string[]} tables - Accumulator array for collecting table names (modified in place)
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private extractTablesFromItems(items: any, tables: string[]): void {
-    if (Array.isArray(items)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-      items.forEach((item: any) => {
-        tables.push(...this.extractTables(item));
-      });
-    } else {
-      tables.push(...this.extractTables(items));
-    }
-  }
-
-  /**
-   * Extracts table name from table AST node.
+   * Handles both the real `node-sql-parser` shape (`{ db, table: "users" }`) and the legacy
+   * `{ type: "table", table: { name } }` shape.
    *
    * @param {any} node - AST node with table information
-   * @returns {string | null} Table name in uppercase, or null if not applicable (e.g., 'dual' table)
+   * @returns {string | null} Table name in uppercase, or null if not applicable
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
   private extractTableName(node: any): string | null {
-    if (!node.table) {
+    if (!node?.table || node.type === "column_ref") {
       return null;
     }
-    const tableName = node.table === "dual" ? "dual" : node.table.name || node.table;
-    return tableName && tableName !== "dual" ? tableName.toUpperCase() : null;
+    const name: unknown = typeof node.table === "string" ? node.table : node.table.name;
+    if (typeof name !== "string" || !name || name.toLowerCase() === "dual") {
+      return null;
+    }
+    const qualified = typeof node.db === "string" && node.db ? `${node.db}.${name}` : name;
+    return qualified.toUpperCase();
   }
 
   /**
-   * Recursively extracts all table names from SQL AST node.
-   * Traverses FROM and JOIN clauses to find all referenced tables.
+   * Collects table names from the items of a `from` (or legacy `join`) list and descends into
+   * each item to find derived tables and subqueries in `ON` conditions.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
+  private collectFromItems(items: any, tables: string[]): void {
+    for (const item of Array.isArray(items) ? items : [items]) {
+      if (!item || typeof item !== "object") {
+        continue;
+      }
+      const tableName = this.extractTableName(item);
+      if (tableName) {
+        tables.push(tableName);
+      }
+      this.collectTables(item, tables);
+    }
+  }
+
+  /**
+   * Walks the whole AST and collects every table the query reads from. Unlike a walk over only
+   * `from`/`join` of the top-level select, this also covers subqueries anywhere (WHERE, HAVING,
+   * ON, IN (...), EXISTS, derived tables), UNION branches (`_next`) and CTEs.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
+  private collectTables(node: any, tables: string[]): void {
+    if (!node || typeof node !== "object") {
+      return;
+    }
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        this.collectTables(item, tables);
+      }
+      return;
+    }
+    if (node.type === "table" || node.type === "dual") {
+      const tableName = this.extractTableName(node);
+      if (tableName) {
+        tables.push(tableName);
+      }
+    }
+    for (const [key, value] of Object.entries(node)) {
+      if (key === "from" || key === "join") {
+        this.collectFromItems(value, tables);
+      } else {
+        this.collectTables(value, tables);
+      }
+    }
+  }
+
+  /**
+   * Extracts all table names (upper-cased) referenced anywhere in the SQL AST.
    *
    * @param {any} node - AST node to extract tables from
    * @returns {string[]} Array of table names in uppercase
@@ -487,26 +526,41 @@ export class Rovo implements RovoIntegration {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
   private extractTables(node: any): string[] {
     const tables: string[] = [];
+    this.collectTables(node, tables);
+    return tables;
+  }
 
-    // Extract table name if node is a table type
-    if (node.type === "table" || node.type === "dual") {
-      const tableName = this.extractTableName(node);
-      if (tableName) {
-        tables.push(tableName);
+  /**
+   * Walks the AST looking for constructs that must never be executed on behalf of an LLM:
+   * `SELECT ... INTO` (file/variable output) and locking reads (`FOR UPDATE`).
+   *
+   * @returns {string | null} Description of the first forbidden construct, or null
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
+  private findForbiddenConstruct(node: any): string | null {
+    if (!node || typeof node !== "object") {
+      return null;
+    }
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        const found = this.findForbiddenConstruct(item);
+        if (found) return found;
+      }
+      return null;
+    }
+    if (node.type === "select") {
+      if (node.into?.position) {
+        return "SELECT ... INTO";
+      }
+      if (node.locking_read) {
+        return String(node.locking_read);
       }
     }
-
-    // Extract tables from FROM clause
-    if (node.from) {
-      this.extractTablesFromItems(node.from, tables);
+    for (const value of Object.values(node)) {
+      const found = this.findForbiddenConstruct(value);
+      if (found) return found;
     }
-
-    // Extract tables from JOIN clause
-    if (node.join) {
-      this.extractTablesFromItems(node.join, tables);
-    }
-
-    return tables;
+    return null;
   }
 
   /**
@@ -729,8 +783,22 @@ export class Rovo implements RovoIntegration {
    * @throws {Error} If query references other tables or contains scalar subqueries
    */
   private validateQueryStructure(selectAst: Select, tableName: string): void {
-    this.validateTableReferences(selectAst, tableName);
     this.validateNoSubqueriesInColumns(selectAst);
+    this.validateTableReferences(selectAst, tableName);
+    this.validateNoForbiddenConstructs(selectAst);
+  }
+
+  /**
+   * Rejects constructs that are never allowed in Rovo queries (see {@link findForbiddenConstruct}).
+   */
+  private validateNoForbiddenConstructs(selectAst: Select): void {
+    const forbidden = this.findForbiddenConstruct(selectAst);
+    if (forbidden) {
+      throw new Error(
+        `Security violation: ${forbidden} is not allowed in Rovo queries. ` +
+          "Only plain read-only SELECT statements over a single table are permitted.",
+      );
+    }
   }
 
   /**
