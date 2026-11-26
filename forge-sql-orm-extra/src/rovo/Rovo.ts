@@ -525,7 +525,9 @@ export class Rovo implements RovoIntegration {
    */
   private collectTables(node: unknown, tables: string[], ctes: ReadonlySet<string>): void {
     if (Array.isArray(node)) {
-      node.forEach((item) => this.collectTables(item, tables, ctes));
+      for (const item of node) {
+        this.collectTables(item, tables, ctes);
+      }
     } else if (isAstNode(node)) {
       this.collectTablesFromNode(node, tables, ctes);
     }
@@ -565,14 +567,24 @@ export class Rovo implements RovoIntegration {
       ? this.collectCteDefinitions(node.with, tables, ctes)
       : ctes;
     for (const [key, value] of Object.entries(node)) {
-      if (key === "with" && scope !== ctes) {
-        continue;
-      }
-      if (FROM_KEYS.has(key)) {
-        this.collectFromItems(value, tables, scope);
-      } else {
-        this.collectTables(value, tables, scope);
-      }
+      this.collectTablesFromChild(key, value, tables, scope);
+    }
+  }
+
+  /** Walks one property of an AST node; `with` was already handled by the parent. */
+  private collectTablesFromChild(
+    key: string,
+    value: unknown,
+    tables: string[],
+    scope: ReadonlySet<string>,
+  ): void {
+    if (key === "with" && Array.isArray(value)) {
+      return;
+    }
+    if (FROM_KEYS.has(key)) {
+      this.collectFromItems(value, tables, scope);
+    } else {
+      this.collectTables(value, tables, scope);
     }
   }
 
