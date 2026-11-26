@@ -1046,8 +1046,8 @@ const usersAlias = alias(Users, "u");
 const result = await forgeSQL
   .getDrizzleQueryBuilder()
   .select({
-    userId: sql < string > `${usersAlias.id} as \`userId\``,
-    userName: sql < string > `${usersAlias.name} as \`userName\``,
+    userId: (sql < string) > `${usersAlias.id} as \`userId\``,
+    userName: (sql < string) > `${usersAlias.name} as \`userName\``,
   })
   .from(usersAlias);
 
@@ -1055,8 +1055,8 @@ const result = await forgeSQL
 const db = drizzle(forgeDriver);
 const result = await db
   .select({
-    userId: sql < string > `${usersAlias.id} as \`userId\``,
-    userName: sql < string > `${usersAlias.name} as \`userName\``,
+    userId: (sql < string) > `${usersAlias.id} as \`userId\``,
+    userName: (sql < string) > `${usersAlias.name} as \`userName\``,
   })
   .from(usersAlias);
 // Returns: { userId: 1, userName: "John Doe" }
@@ -1793,9 +1793,6 @@ const result4 = await forgeSQL.executeWithMetadata(
   {}, // Empty object - all options use defaults
 );
 ```
-
-<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
-read_file
 
 **2. SummaryTable Mode**: Uses `CLUSTER_STATEMENTS_SUMMARY` for query analysis
 
