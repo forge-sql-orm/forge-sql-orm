@@ -16,6 +16,34 @@ import { AnyMySqlTable, MySqlColumn } from "drizzle-orm/mysql-core";
 import { getTableName } from "drizzle-orm/table";
 import { getErrorMessage } from "forge-sql-orm";
 
+/** Untyped node of the `node-sql-parser` AST. */
+type AstNode = Record<string, unknown>;
+
+/** Keys of an AST node whose value is a list of table references. */
+const FROM_KEYS = new Set(["from", "join"]);
+
+/** Node types that represent a table reference. */
+const TABLE_NODE_TYPES = new Set(["table", "dual"]);
+
+function isAstNode(value: unknown): value is AstNode {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readTableName(table: unknown): string | null {
+  if (typeof table === "string") {
+    return table;
+  }
+  return isAstNode(table) && typeof table.name === "string" ? table.name : null;
+}
+
+/** Reads a CTE name from `{ type: "default", value: "name" }` (or a plain string). */
+function readCteName(name: unknown): string | null {
+  if (typeof name === "string") {
+    return name;
+  }
+  return isAstNode(name) && typeof name.value === "string" ? name.value : null;
+}
+
 /**
  * Configuration for RovoIntegrationSettingImpl.
  */
@@ -328,7 +356,7 @@ class RovoIntegrationSettingCreatorImpl implements RovoIntegrationSettingCreator
        */
       finish(): RovoIntegrationSettingCreator {
         this.parent.isUseRls = true;
-        this.rlsFieldsSettings.forEach((columnName) => this.parent.rlsFields.push(columnName));
+        this.parent.rlsFields.push(...this.rlsFieldsSettings);
         this.parent.wherePart = this.wherePartSettings;
         this.parent.isUseRlsConditional = this.isUseRlsConditionalSettings;
         return this.parent;
@@ -418,7 +446,7 @@ export class Rovo implements RovoIntegration {
    */
   private parseSqlQuery(sqlQuery: string): Select {
     const parser = new Parser();
-    let ast;
+    let ast: ReturnType<Parser["astify"]>;
     try {
       ast = parser.astify(sqlQuery);
     } catch (parseError) {
@@ -445,68 +473,170 @@ export class Rovo implements RovoIntegration {
   }
 
   /**
-   * Recursively processes array or single node and extracts table names.
+   * Returns the upper-cased table name of a FROM/JOIN item, or null if the node is not a table
+   * reference (derived table, `dual`, column reference...). A schema qualifier is kept
+   * (`schema.table`), so references to other schemas never match the allowed table.
    *
-   * @param {any} items - Array of AST nodes or single AST node
-   * @param {string[]} tables - Accumulator array for collecting table names (modified in place)
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private extractTablesFromItems(items: any, tables: string[]): void {
-    if (Array.isArray(items)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-      items.forEach((item: any) => {
-        tables.push(...this.extractTables(item));
-      });
-    } else {
-      tables.push(...this.extractTables(items));
-    }
-  }
-
-  /**
-   * Extracts table name from table AST node.
+   * Handles both the real `node-sql-parser` shape (`{ db, table: "users" }`) and the legacy
+   * `{ type: "table", table: { name } }` shape.
    *
-   * @param {any} node - AST node with table information
-   * @returns {string | null} Table name in uppercase, or null if not applicable (e.g., 'dual' table)
+   * @param {unknown} node - AST node with table information
+   * @returns {string | null} Table name in uppercase, or null if not applicable
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private extractTableName(node: any): string | null {
-    if (!node.table) {
+  private extractTableName(node: unknown): string | null {
+    if (!isAstNode(node) || node.type === "column_ref") {
       return null;
     }
-    const tableName = node.table === "dual" ? "dual" : node.table.name || node.table;
-    return tableName && tableName !== "dual" ? tableName.toUpperCase() : null;
+    const name = readTableName(node.table);
+    if (!name || name.toLowerCase() === "dual") {
+      return null;
+    }
+    const db = typeof node.db === "string" ? node.db : "";
+    return (db ? `${db}.${name}` : name).toUpperCase();
   }
 
   /**
-   * Recursively extracts all table names from SQL AST node.
-   * Traverses FROM and JOIN clauses to find all referenced tables.
-   *
-   * @param {any} node - AST node to extract tables from
-   * @returns {string[]} Array of table names in uppercase
+   * Adds the table name of `node` (if it is a table reference) to `tables`. References that
+   * resolve to a CTE visible in the current scope are not physical tables and are skipped.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- node-sql-parser AST nodes are untyped
-  private extractTables(node: any): string[] {
-    const tables: string[] = [];
+  private pushTableName(node: unknown, tables: string[], ctes: ReadonlySet<string>): void {
+    const tableName = this.extractTableName(node);
+    if (tableName && !ctes.has(tableName)) {
+      tables.push(tableName);
+    }
+  }
 
-    // Extract table name if node is a table type
-    if (node.type === "table" || node.type === "dual") {
-      const tableName = this.extractTableName(node);
-      if (tableName) {
-        tables.push(tableName);
+  /**
+   * Collects table names from the items of a `from` (or legacy `join`) list and descends into
+   * each item to find derived tables and subqueries in `ON` conditions.
+   */
+  private collectFromItems(items: unknown, tables: string[], ctes: ReadonlySet<string>): void {
+    for (const item of Array.isArray(items) ? items : [items]) {
+      this.pushTableName(item, tables, ctes);
+      this.collectTables(item, tables, ctes);
+    }
+  }
+
+  /**
+   * Walks the whole AST and collects every physical table the query reads from. Unlike a walk
+   * over only `from`/`join` of the top-level select, this also covers subqueries anywhere
+   * (WHERE, HAVING, ON, IN (...), EXISTS, derived tables), UNION branches and CTE definitions.
+   * CTE names are tracked per SQL scope and are not reported as tables.
+   */
+  private collectTables(node: unknown, tables: string[], ctes: ReadonlySet<string>): void {
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        this.collectTables(item, tables, ctes);
+      }
+    } else if (isAstNode(node)) {
+      this.collectTablesFromNode(node, tables, ctes);
+    }
+  }
+
+  /**
+   * Walks the CTE definitions of a `WITH` clause. Each definition only sees the CTEs declared
+   * before it, so `WITH t AS (SELECT * FROM t)` still counts `t` as a physical table.
+   *
+   * @returns the CTE names visible to the rest of the query
+   */
+  private collectCteDefinitions(
+    definitions: unknown[],
+    tables: string[],
+    ctes: ReadonlySet<string>,
+  ): ReadonlySet<string> {
+    const scope = new Set(ctes);
+    for (const definition of definitions) {
+      if (!isAstNode(definition)) {
+        continue;
+      }
+      this.collectTables(definition.stmt, tables, scope);
+      const name = readCteName(definition.name);
+      if (name) {
+        scope.add(name.toUpperCase());
       }
     }
+    return scope;
+  }
 
-    // Extract tables from FROM clause
-    if (node.from) {
-      this.extractTablesFromItems(node.from, tables);
+  /** Records `node` itself if it is a table node, then walks its children. */
+  private collectTablesFromNode(node: AstNode, tables: string[], ctes: ReadonlySet<string>): void {
+    if (TABLE_NODE_TYPES.has(String(node.type))) {
+      this.pushTableName(node, tables, ctes);
     }
-
-    // Extract tables from JOIN clause
-    if (node.join) {
-      this.extractTablesFromItems(node.join, tables);
+    const scope = Array.isArray(node.with)
+      ? this.collectCteDefinitions(node.with, tables, ctes)
+      : ctes;
+    for (const [key, value] of Object.entries(node)) {
+      this.collectTablesFromChild(key, value, tables, scope);
     }
+  }
 
+  /** Walks one property of an AST node; `with` was already handled by the parent. */
+  private collectTablesFromChild(
+    key: string,
+    value: unknown,
+    tables: string[],
+    scope: ReadonlySet<string>,
+  ): void {
+    if (key === "with" && Array.isArray(value)) {
+      return;
+    }
+    if (FROM_KEYS.has(key)) {
+      this.collectFromItems(value, tables, scope);
+    } else {
+      this.collectTables(value, tables, scope);
+    }
+  }
+
+  /**
+   * Extracts all table names (upper-cased) referenced anywhere in the SQL AST.
+   *
+   * @param {unknown} node - AST node to extract tables from
+   * @returns {string[]} Array of table names in uppercase
+   */
+  private extractTables(node: unknown): string[] {
+    const tables: string[] = [];
+    this.collectTables(node, tables, new Set());
     return tables;
+  }
+
+  /** Returns the first forbidden construct found in any of `items`, or null. */
+  private findForbiddenInItems(items: unknown[]): string | null {
+    for (const item of items) {
+      const found = this.findForbiddenConstruct(item);
+      if (found) {
+        return found;
+      }
+    }
+    return null;
+  }
+
+  /** Returns the forbidden construct directly attached to a SELECT node, or null. */
+  private findForbiddenInSelect(node: AstNode): string | null {
+    if (isAstNode(node.into) && node.into.position) {
+      return "SELECT ... INTO";
+    }
+    if (!node.locking_read) {
+      return null;
+    }
+    return typeof node.locking_read === "string" ? node.locking_read : "locking read";
+  }
+
+  /**
+   * Walks the AST looking for constructs that must never be executed on behalf of an LLM:
+   * `SELECT ... INTO` (file/variable output) and locking reads (`FOR UPDATE`).
+   *
+   * @returns {string | null} Description of the first forbidden construct, or null
+   */
+  private findForbiddenConstruct(node: unknown): string | null {
+    if (Array.isArray(node)) {
+      return this.findForbiddenInItems(node);
+    }
+    if (!isAstNode(node)) {
+      return null;
+    }
+    const own = node.type === "select" ? this.findForbiddenInSelect(node) : null;
+    return own ?? this.findForbiddenInItems(Object.values(node));
   }
 
   /**
@@ -729,8 +859,22 @@ export class Rovo implements RovoIntegration {
    * @throws {Error} If query references other tables or contains scalar subqueries
    */
   private validateQueryStructure(selectAst: Select, tableName: string): void {
-    this.validateTableReferences(selectAst, tableName);
     this.validateNoSubqueriesInColumns(selectAst);
+    this.validateTableReferences(selectAst, tableName);
+    this.validateNoForbiddenConstructs(selectAst);
+  }
+
+  /**
+   * Rejects constructs that are never allowed in Rovo queries (see {@link findForbiddenConstruct}).
+   */
+  private validateNoForbiddenConstructs(selectAst: Select): void {
+    const forbidden = this.findForbiddenConstruct(selectAst);
+    if (forbidden) {
+      throw new Error(
+        `Security violation: ${forbidden} is not allowed in Rovo queries. ` +
+          "Only plain read-only SELECT statements over a single table are permitted.",
+      );
+    }
   }
 
   /**

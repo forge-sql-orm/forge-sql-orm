@@ -1222,4 +1222,92 @@ describe("Rovo", () => {
       Parser.prototype.astify = originalAstify;
     });
   });
+
+  // These tests use the REAL node-sql-parser (no Parser mocks) and a benign mocked execution
+  // plan, so a rejection can only come from the AST layer (first layer of defense).
+  describe("AST layer with the real parser", () => {
+    const forbiddenTable = "Security violation: Query references table(s) other than";
+
+    const reject = async (query: string, message: string) => {
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+      await expect(rovo.dynamicIsolatedQuery(query, settings)).rejects.toThrow(message);
+      expect(sql.executeRaw).not.toHaveBeenCalled();
+    };
+
+    it.each([
+      ["JOIN", "SELECT u.id FROM test_users u JOIN secrets s ON s.id = u.id"],
+      ["comma join", "SELECT a.id FROM test_users a, secrets b"],
+      ["subquery in WHERE", "SELECT id FROM test_users WHERE id IN (SELECT user_id FROM secrets)"],
+      [
+        "EXISTS subquery",
+        "SELECT id FROM test_users t WHERE EXISTS (SELECT 1 FROM secrets s WHERE s.id = t.id)",
+      ],
+      [
+        "subquery in HAVING",
+        "SELECT id FROM test_users GROUP BY id HAVING id > (SELECT 1 FROM secrets)",
+      ],
+      ["UNION", "SELECT id FROM test_users UNION SELECT id FROM secrets"],
+      ["UNION ALL", "SELECT id FROM test_users UNION ALL SELECT id FROM secrets"],
+      [
+        "schema-qualified table",
+        "SELECT id FROM test_users WHERE id IN (SELECT id FROM other_db.test_users)",
+      ],
+      [
+        "CTE definition reading another table",
+        "SELECT id FROM test_users UNION ALL (WITH s AS (SELECT id FROM secrets) SELECT id FROM s)",
+      ],
+      [
+        "CTE shadowing a real table inside its own definition",
+        "SELECT id FROM test_users UNION ALL (WITH secrets AS (SELECT id FROM secrets) SELECT id FROM secrets)",
+      ],
+      [
+        "CTE name used outside its scope",
+        "SELECT id FROM test_users UNION ALL (WITH s AS (SELECT id FROM test_users) SELECT id FROM test_users) UNION ALL SELECT id FROM s",
+      ],
+    ])("should reject %s referencing another table", async (_name, query) => {
+      await reject(query, forbiddenTable);
+    });
+
+    it("should reject SELECT ... INTO OUTFILE", async () => {
+      await reject("SELECT id FROM test_users INTO OUTFILE '/tmp/x'", "SELECT ... INTO");
+    });
+
+    it("should reject locking reads", async () => {
+      await reject("SELECT id FROM test_users FOR UPDATE", "FOR UPDATE");
+    });
+
+    it.each([
+      [
+        "CTE inside a UNION branch",
+        "SELECT id FROM test_users UNION ALL (WITH scoped AS (SELECT id FROM test_users) SELECT id FROM scoped)",
+      ],
+      [
+        "chained CTEs",
+        "SELECT id FROM test_users UNION ALL (WITH a AS (SELECT id FROM test_users), b AS (SELECT id FROM a) SELECT id FROM b)",
+      ],
+    ])("should allow %s that only reads the allowed table", async (_name, query) => {
+      vi.mocked(sql.executeRaw).mockResolvedValue({
+        rows: [{ id: 1 }],
+        metadata: { fields: [{ name: "id", orgTable: "test_users" }] },
+      } as any);
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(rovo.dynamicIsolatedQuery(query, settings)).resolves.toBeDefined();
+    });
+
+    it("should still allow plain queries and subqueries over the same table", async () => {
+      vi.mocked(sql.executeRaw).mockResolvedValue({
+        rows: [{ id: 1 }],
+        metadata: { fields: [{ name: "id", orgTable: "test_users" }] },
+      } as any);
+      const settings = await rovo.rovoRawSettingBuilder("test_users", "account-123").build();
+
+      await expect(
+        rovo.dynamicIsolatedQuery(
+          "SELECT id FROM test_users WHERE id IN (SELECT id FROM test_users WHERE name = 'a')",
+          settings,
+        ),
+      ).resolves.toBeDefined();
+    });
+  });
 });
