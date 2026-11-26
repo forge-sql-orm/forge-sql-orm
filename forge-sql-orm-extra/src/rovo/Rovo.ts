@@ -36,6 +36,14 @@ function readTableName(table: unknown): string | null {
   return isAstNode(table) && typeof table.name === "string" ? table.name : null;
 }
 
+/** Reads a CTE name from `{ type: "default", value: "name" }` (or a plain string). */
+function readCteName(name: unknown): string | null {
+  if (typeof name === "string") {
+    return name;
+  }
+  return isAstNode(name) && typeof name.value === "string" ? name.value : null;
+}
+
 /**
  * Configuration for RovoIntegrationSettingImpl.
  */
@@ -487,10 +495,13 @@ export class Rovo implements RovoIntegration {
     return (db ? `${db}.${name}` : name).toUpperCase();
   }
 
-  /** Adds the table name of `node` (if it is a table reference) to `tables`. */
-  private pushTableName(node: unknown, tables: string[]): void {
+  /**
+   * Adds the table name of `node` (if it is a table reference) to `tables`. References that
+   * resolve to a CTE visible in the current scope are not physical tables and are skipped.
+   */
+  private pushTableName(node: unknown, tables: string[], ctes: ReadonlySet<string>): void {
     const tableName = this.extractTableName(node);
-    if (tableName) {
+    if (tableName && !ctes.has(tableName)) {
       tables.push(tableName);
     }
   }
@@ -499,36 +510,68 @@ export class Rovo implements RovoIntegration {
    * Collects table names from the items of a `from` (or legacy `join`) list and descends into
    * each item to find derived tables and subqueries in `ON` conditions.
    */
-  private collectFromItems(items: unknown, tables: string[]): void {
+  private collectFromItems(items: unknown, tables: string[], ctes: ReadonlySet<string>): void {
     for (const item of Array.isArray(items) ? items : [items]) {
-      this.pushTableName(item, tables);
-      this.collectTables(item, tables);
+      this.pushTableName(item, tables, ctes);
+      this.collectTables(item, tables, ctes);
     }
   }
 
   /**
-   * Walks the whole AST and collects every table the query reads from. Unlike a walk over only
-   * `from`/`join` of the top-level select, this also covers subqueries anywhere (WHERE, HAVING,
-   * ON, IN (...), EXISTS, derived tables), UNION branches (`_next`) and CTEs.
+   * Walks the whole AST and collects every physical table the query reads from. Unlike a walk
+   * over only `from`/`join` of the top-level select, this also covers subqueries anywhere
+   * (WHERE, HAVING, ON, IN (...), EXISTS, derived tables), UNION branches and CTE definitions.
+   * CTE names are tracked per SQL scope and are not reported as tables.
    */
-  private collectTables(node: unknown, tables: string[]): void {
+  private collectTables(node: unknown, tables: string[], ctes: ReadonlySet<string>): void {
     if (Array.isArray(node)) {
-      for (const item of node) {
-        this.collectTables(item, tables);
+      node.forEach((item) => this.collectTables(item, tables, ctes));
+    } else if (isAstNode(node)) {
+      this.collectTablesFromNode(node, tables, ctes);
+    }
+  }
+
+  /**
+   * Walks the CTE definitions of a `WITH` clause. Each definition only sees the CTEs declared
+   * before it, so `WITH t AS (SELECT * FROM t)` still counts `t` as a physical table.
+   *
+   * @returns the CTE names visible to the rest of the query
+   */
+  private collectCteDefinitions(
+    definitions: unknown[],
+    tables: string[],
+    ctes: ReadonlySet<string>,
+  ): ReadonlySet<string> {
+    const scope = new Set(ctes);
+    for (const definition of definitions) {
+      if (!isAstNode(definition)) {
+        continue;
       }
-      return;
+      this.collectTables(definition.stmt, tables, scope);
+      const name = readCteName(definition.name);
+      if (name) {
+        scope.add(name.toUpperCase());
+      }
     }
-    if (!isAstNode(node)) {
-      return;
-    }
+    return scope;
+  }
+
+  /** Records `node` itself if it is a table node, then walks its children. */
+  private collectTablesFromNode(node: AstNode, tables: string[], ctes: ReadonlySet<string>): void {
     if (TABLE_NODE_TYPES.has(String(node.type))) {
-      this.pushTableName(node, tables);
+      this.pushTableName(node, tables, ctes);
     }
+    const scope = Array.isArray(node.with)
+      ? this.collectCteDefinitions(node.with, tables, ctes)
+      : ctes;
     for (const [key, value] of Object.entries(node)) {
+      if (key === "with" && scope !== ctes) {
+        continue;
+      }
       if (FROM_KEYS.has(key)) {
-        this.collectFromItems(value, tables);
+        this.collectFromItems(value, tables, scope);
       } else {
-        this.collectTables(value, tables);
+        this.collectTables(value, tables, scope);
       }
     }
   }
@@ -541,7 +584,7 @@ export class Rovo implements RovoIntegration {
    */
   private extractTables(node: unknown): string[] {
     const tables: string[] = [];
-    this.collectTables(node, tables);
+    this.collectTables(node, tables, new Set());
     return tables;
   }
 
@@ -561,7 +604,10 @@ export class Rovo implements RovoIntegration {
     if (isAstNode(node.into) && node.into.position) {
       return "SELECT ... INTO";
     }
-    return node.locking_read ? String(node.locking_read) : null;
+    if (!node.locking_read) {
+      return null;
+    }
+    return typeof node.locking_read === "string" ? node.locking_read : "locking read";
   }
 
   /**
