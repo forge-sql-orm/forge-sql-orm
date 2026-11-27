@@ -60,7 +60,7 @@
     "@types/node": "^26.6.11",
     "@typescript-eslint/eslint-plugin": "^8.74.0",
     "@typescript-eslint/parser": "^8.74.0",
-    "eslint-config-prettier": "^10.1.8",
+    "eslint-config-prettier": "^10.1.9",
     "knip": "^6.48.0",
     "reflect-metadata": "^0.2.2",
     "typescript": "^6.0.3",
